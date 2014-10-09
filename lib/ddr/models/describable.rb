@@ -3,16 +3,16 @@ module Ddr
     module Describable
       extend ActiveSupport::Concern
    
-    # included do
-    #   has_metadata name: DulHydra::Datastreams::DESC_METADATA, 
-    #                type: DulHydra::Datastreams::DescriptiveMetadataDatastream,
-    #                versionable: true, 
-    #                label: "Descriptive Metadata for this object", 
-    #                control_group: 'M'
-    #   has_attributes *DulHydra::Metadata::Vocabulary.term_names(RDF::DC11),
-    #                  datastream: DulHydra::Datastreams::DESC_METADATA, 
-    #                  multiple: true
-    # end
+    included do
+      has_metadata name: "descMetadata", #Ddr::Datastreams::DESC_METADATA, 
+                   type: Ddr::Datastreams::DescriptiveMetadataDatastream,
+                   versionable: true, 
+                   label: "Descriptive Metadata for this object", 
+                   control_group: 'M'
+      # has_attributes *DulHydra::Metadata::Vocabulary.term_names(RDF::DC11),
+      #                datastream: DulHydra::Datastreams::DESC_METADATA, 
+      #                multiple: true
+    end
     # 
     # def has_desc_metadata?
     #   descMetadata.has_content?

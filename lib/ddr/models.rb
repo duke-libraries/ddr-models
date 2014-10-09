@@ -1,5 +1,6 @@
 require 'active_fedora'
 require "ddr/models/version"
+require "ddr/datastreams"
 
 module Ddr
   module Models
