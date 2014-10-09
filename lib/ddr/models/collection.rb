@@ -1,4 +1,4 @@
-class Collection < Ddr::Base
+class Collection < Ddr::Models::Base
   
   # include Hydra::AdminPolicyBehavior
   # 

@@ -1,7 +1,8 @@
 require 'ddr/models/describable'
 
 module Ddr
-  class Base < ActiveFedora::Base
+  module Models
+    class Base < ActiveFedora::Base
 
     include Describable
   #   include Governable
@@ -32,6 +33,6 @@ module Ddr
   #   end
   # 
 
+    end
   end
-
 end

@@ -1,6 +1,7 @@
 module Ddr
-  module Describable
-    extend ActiveSupport::Concern
+  module Models
+    module Describable
+      extend ActiveSupport::Concern
    
     # included do
     #   has_metadata name: DulHydra::Datastreams::DESC_METADATA, 
@@ -75,5 +76,6 @@ module Ddr
     #   end
     # end
 
+    end
   end
 end
