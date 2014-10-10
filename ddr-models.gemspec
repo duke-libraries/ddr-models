@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   # spec.add_dependency "active-fedora", "~> 7.1"
+  spec.add_dependency "rails", "~> 4.1.4"
   spec.add_dependency "hydra-head", "~> 7.2.0"
   spec.add_dependency "hydra-validations", "~> 0.2"
   spec.add_development_dependency "bundler", "~> 1.6"

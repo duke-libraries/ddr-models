@@ -2,7 +2,8 @@ require 'active_fedora'
 require 'hydra-core'
 require 'hydra-access-controls'
 require 'hydra/validations'
-require "ddr/models/version"
+require 'ddr/models/engine'
+require 'ddr/models/version'
 require "ddr/datastreams"
 require 'ddr/index_fields'
 require "ddr/metadata"
