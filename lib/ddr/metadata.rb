@@ -3,6 +3,7 @@ module Ddr
     extend ActiveSupport::Autoload
 
     autoload :DukeTerms
+    autoload :PremisEvent
     autoload :RDFVocabularyParser
     autoload :Vocabulary
 
