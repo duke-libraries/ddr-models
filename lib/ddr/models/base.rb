@@ -1,22 +1,20 @@
-require 'ddr/models/describable'
-
 module Ddr
   module Models
     class Base < ActiveFedora::Base
 
     include Describable
   #   include Governable
-  #   include AccessControllable
+    include AccessControllable
   #   include Licensable
-  #   include HasProperties
-  #   include HasThumbnail
-  #   include ActiveFedora::Auditable
+    include HasProperties
+    include HasThumbnail
+    include ActiveFedora::Auditable
   #   include EventLoggable
   #   include FixityCheckable
   #   include FileManagement
-  #   include Indexing
+    include Indexing
   #   include PermanentIdentification
-  #   include Hydra::Validations
+    include Hydra::Validations
   # 
   #   def copy_admin_policy_or_permissions_from(other)
   #     copy_permissions_from(other) unless copy_admin_policy_from(other)
