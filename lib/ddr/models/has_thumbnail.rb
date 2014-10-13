@@ -2,7 +2,7 @@ module Ddr
   module Models
     module HasThumbnail
       extend ActiveSupport::Concern
-    
+  
       included do
         has_file_datastream name: Ddr::Datastreams::THUMBNAIL, 
                             versionable: true, 
@@ -23,5 +23,5 @@ module Ddr
       end
 
     end
-  end  
+  end
 end

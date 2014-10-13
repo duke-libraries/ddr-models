@@ -1,9 +1,9 @@
 module Ddr
-  module Models
-    class FixityCheckEvent < Ddr::Models::Event
+  module Events
+    class FixityCheckEvent < Event
 
-      include Ddr::Events::PreservationEventBehavior
-      include Ddr::Events::ReindexObjectAfterSave
+      include PreservationEventBehavior
+      include ReindexObjectAfterSave
 
       self.preservation_event_type = :fix
       self.description = "Validation of datastream checksums"

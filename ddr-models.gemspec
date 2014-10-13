@@ -51,6 +51,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 4.1.6"
 
   s.add_dependency "hydra-head", "~> 7.2.0"
+  s.add_dependency "hydra-derivatives"
   s.add_dependency "hydra-validations", "~> 0.2"
   s.add_dependency 'clamav'
   s.add_dependency 'noid', '~> 0.7'

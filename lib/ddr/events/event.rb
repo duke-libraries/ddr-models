@@ -1,5 +1,5 @@
 module Ddr
-  module Models
+  module Events
     class Event < ActiveRecord::Base
 
       belongs_to :user, inverse_of: :events

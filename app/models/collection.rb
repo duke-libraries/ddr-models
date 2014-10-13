@@ -1,14 +1,14 @@
 class Collection < Ddr::Models::Base
   
-  # include Hydra::AdminPolicyBehavior
-  # 
-  # include DulHydra::HasChildren
-  # include DulHydra::HasAttachments
-  # 
-  # has_attributes :default_license_title, datastream: DulHydra::Datastreams::DEFAULT_RIGHTS, at: [:license, :title], multiple: false
-  # has_attributes :default_license_description, datastream: DulHydra::Datastreams::DEFAULT_RIGHTS, at: [:license, :description], multiple: false
-  # has_attributes :default_license_url, datastream: DulHydra::Datastreams::DEFAULT_RIGHTS, at: [:license, :url], multiple: false
-  # 
+  include Hydra::AdminPolicyBehavior
+  
+  include Ddr::Models::HasChildren
+  include Ddr::Models::HasAttachments
+  
+  has_attributes :default_license_title, datastream: Ddr::Datastreams::DEFAULT_RIGHTS, at: [:license, :title], multiple: false
+  has_attributes :default_license_description, datastream: Ddr::Datastreams::DEFAULT_RIGHTS, at: [:license, :description], multiple: false
+  has_attributes :default_license_url, datastream: Ddr::Datastreams::DEFAULT_RIGHTS, at: [:license, :url], multiple: false
+  
   # has_many :children, property: :is_member_of_collection, class_name: 'Item'
   # has_many :targets, property: :is_external_target_for, class_name: 'Target'
   # 

@@ -2,7 +2,7 @@ module Ddr
   module Models
     module Describable
       extend ActiveSupport::Concern
-   
+ 
     included do
       has_metadata name: Ddr::Datastreams::DESC_METADATA, 
                    type: Ddr::Datastreams::DescriptiveMetadataDatastream,
@@ -13,11 +13,11 @@ module Ddr
                      datastream: Ddr::Datastreams::DESC_METADATA, 
                      multiple: true
     end
-    
+  
     def has_desc_metadata?
       descMetadata.has_content?
     end
-    
+  
     def desc_metadata_terms *args
       return Ddr::Datastreams::DescriptiveMetadataDatastream.term_names if args.empty?
       arg = args.pop
@@ -46,30 +46,30 @@ module Ddr
         terms | desc_metadata_terms(*args)
       end
     end
-    
+  
     def desc_metadata_attributes
       defattrs = self.class.defined_attributes
       defattrs.keys.select {|k| defattrs[k].dsid == "descMetadata"}.map(&:to_sym)
     end
-    
+  
     def desc_metadata_values term
       descMetadata.values term
     end
-    
+  
     def desc_metadata_vocabs
       descMetadata.class.vocabularies
     end
-    
+  
     def set_desc_metadata_values term, values
       descMetadata.set_values term, values
     end
-    
+  
     # Update all descMetadata terms with values in hash
     # Note that term not having key in hash will be set to nil!
     def set_desc_metadata term_values_hash
       desc_metadata_terms.each { |t| set_desc_metadata_values(t, term_values_hash[t]) }
     end
-    
+  
     module ClassMethods
       def find_by_identifier(identifier)
         find(Ddr::IndexFields::IDENTIFIER => identifier)
