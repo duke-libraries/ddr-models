@@ -7,12 +7,12 @@ module Ddr
       end
 
       def fixity_checks
-        FixityCheckEvent.for_object(self)
+        Ddr::Events::FixityCheckEvent.for_object(self)
       end
 
-      # Returns a FixityCheck::Result for the object
+      # Returns a Ddr::Actions::FixityCheck::Result for the object
       def fixity_check
-        FixityCheck.execute(self)
+        Ddr::Actions::FixityCheck.execute(self)
       end
  
     end
