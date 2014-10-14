@@ -24,7 +24,7 @@ module Ddr
       private 
 
       def event_class_name token
-        "#{token.to_s.camelize}Event"
+        "Ddr::Events::#{token.to_s.camelize}Event"
       end
 
       def event_class token
