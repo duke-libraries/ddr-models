@@ -59,7 +59,7 @@ module Ddr
       # Rendering methods
 
       def display_type
-        type.sub("Event", "").underscore.gsub(/_/, " ").titleize
+        type.sub("Ddr::Events::", "").sub("Event", "").underscore.gsub(/_/, " ").titleize
       end
   
       def performed_by
