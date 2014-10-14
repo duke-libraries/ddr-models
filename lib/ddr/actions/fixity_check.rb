@@ -4,7 +4,7 @@ module Ddr
 
       # Return result of fixity check - wrapped by a notifier
       def self.execute(object)
-        ActiveSupport::Notifications.instrument(DulHydra::Notifications::FIXITY_CHECK) do |payload|
+        ActiveSupport::Notifications.instrument(Ddr::Notifications::FIXITY_CHECK) do |payload|
           payload[:result] = _execute(object)
         end
       end

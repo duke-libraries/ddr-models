@@ -76,7 +76,7 @@ module Ddr::Utils
   # Find an object with a given identifier and return its PID.
   # Returns the PID if a single object is found.
   # Returns nil if no object is found.
-  # Raises DulHydra::Error if more than one object is found.
+  # Raises Ddr::Error if more than one object is found.
   # Options can be provided to limit the scope of matching objects
   #   model: Will only consider objects of that model
   #   collection: Will only consider objects that either are that collection or which are
@@ -86,7 +86,7 @@ module Ddr::Utils
     model = opts.fetch(:model, nil)
     collection = opts.fetch(:collection, nil)
     objs = []
-    ActiveFedora::Base.find_each( { DulHydra::IndexFields::IDENTIFIER => identifier }, { :cast => true } ) { |o| objs << o }
+    ActiveFedora::Base.find_each( { Ddr::IndexFields::IDENTIFIER => identifier }, { :cast => true } ) { |o| objs << o }
     pids = []
     objs.each { |obj| pids << obj.pid }
     if model.present?
