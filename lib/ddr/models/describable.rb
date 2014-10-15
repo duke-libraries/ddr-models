@@ -36,7 +36,7 @@ module Ddr
               when :dcterms_elements11
                 Ddr::Metadata::Vocabulary.term_names(RDF::DC11)
               when :duke
-                Ddr::Metadata::Vocabulary.term_names(DukeTerms)
+                Ddr::Metadata::Vocabulary.term_names(Ddr::Metadata::DukeTerms)
               else
                 raise ArgumentError, "Invalid argument: #{arg.inspect}"
               end
