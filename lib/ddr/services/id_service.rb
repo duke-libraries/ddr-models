@@ -18,7 +18,7 @@ module Ddr
       def self.mint
         @semaphore.synchronize do
           while true
-            minted = MintedId.new(minted_id: self.next_id)
+            minted = Ddr::Models::MintedId.new(minted_id: self.next_id)
             return minted.minted_id if minted.save
           end
         end
@@ -28,7 +28,7 @@ module Ddr
 
       def self.next_id
         noid = ''
-        File.open(Ddr.Models::minter_statefile, File::RDWR|File::CREAT, 0644) do |f|
+        File.open(Ddr::Models.minter_statefile, File::RDWR|File::CREAT, 0644) do |f|
           f.flock(File::LOCK_EX)
           yaml = YAML::load(f.read)
           yaml = {template: noid_template} unless yaml
