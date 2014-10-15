@@ -152,7 +152,7 @@ module Ddr
       end
 
       def external_file_store
-        Ddr.external_file_store
+        Ddr::Models.external_file_store
       end
 
       def set_external_file_permissions! file_path
@@ -164,7 +164,7 @@ module Ddr
       end
 
       def generate_external_directory_subpath(file_name)
-        m = Ddr.external_file_subpath_regexp.match(file_name)
+        m = Ddr::Models.external_file_subpath_regexp.match(file_name)
         raise "File name does not match external file subpath pattern: #{file_name}" unless m
         subpath_segments = m.to_a[1..-1]
         File.join *subpath_segments
