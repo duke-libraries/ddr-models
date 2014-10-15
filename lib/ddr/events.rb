@@ -9,6 +9,7 @@ module Ddr
     autoload :UpdateEvent
     autoload :ValidationEvent
     autoload :VirusCheckEvent
+    autoload :PreservationEventType
     autoload :PreservationEventBehavior
     autoload :ReindexObjectAfterSave
     
