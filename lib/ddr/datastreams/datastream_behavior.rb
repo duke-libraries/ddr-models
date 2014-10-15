@@ -19,7 +19,7 @@ module Ddr
         if checksum == ds_checksum
           "The checksum [#{algorithm}]#{checksum} is valid for datastream #{version_info}."
         else
-          raise Ddr::Errors::ChecksumInvalid, "The checksum [#{algorithm}]#{checksum} is not valid for datastream #{version_info}."
+          raise Ddr::Models::ChecksumInvalid, "The checksum [#{algorithm}]#{checksum} is not valid for datastream #{version_info}."
         end
       end
 
