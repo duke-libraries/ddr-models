@@ -42,6 +42,7 @@ module Ddr
     autoload :Licensable
     autoload :MintedId
     autoload :PermanentIdentification
+    autoload :SolrDocument
     
     # require 'ddr/models/collection'
     #require 'ddr/models/item'
