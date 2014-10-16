@@ -18,13 +18,13 @@ class Collection < Ddr::Models::Base
   validates_presence_of :title
   
   def components_from_solr
-    outer = Ddr::Models::IndexFields::IS_PART_OF
-    inner = Ddr::Models::IndexFields::INTERNAL_URI
+    outer = Ddr::IndexFields::IS_PART_OF
+    inner = Ddr::IndexFields::INTERNAL_URI
     where = ActiveFedora::SolrService.construct_query_for_rel(:is_member_of_collection => internal_uri)
     query = "{!join to=#{outer} from=#{inner}}#{where}"
     filter = ActiveFedora::SolrService.construct_query_for_rel(:has_model => Component.to_class_uri)
     results = ActiveFedora::SolrService.query(query, fq: filter, rows: 100000)
-    results.lazy.map {|doc| SolrDocument.new(doc)}
+    results.lazy.map {|doc| Ddr::Models::SolrDocument.new(doc)}
   end
   
   def default_license

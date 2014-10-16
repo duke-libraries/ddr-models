@@ -7,7 +7,7 @@ module Ddr
 
       # Columns in the CSV report generated for a collection
       # Each column represents a *method* of a SolrDocument
-      # See DulHydra::SolrDocument
+      # See Ddr::Models::SolrDocument
       # mattr_accessor :collection_report_fields
 
       ## Remote groups (i.e., Grouper) config settings
