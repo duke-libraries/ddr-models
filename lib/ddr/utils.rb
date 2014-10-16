@@ -103,7 +103,7 @@ module Ddr::Utils
     when 1
       pids.first
     else
-      raise Ddr::Error, I18n.t('dul_hydra.errors.multiple_object_matches', :criteria => "identifier #{identifier}")
+      raise Ddr::Error, I18n.t('ddr.errors.multiple_object_matches', :criteria => "identifier #{identifier}")
     end
   end
 
