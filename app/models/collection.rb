@@ -24,7 +24,7 @@ class Collection < Ddr::Models::Base
     query = "{!join to=#{outer} from=#{inner}}#{where}"
     filter = ActiveFedora::SolrService.construct_query_for_rel(:has_model => Component.to_class_uri)
     results = ActiveFedora::SolrService.query(query, fq: filter, rows: 100000)
-    results.lazy.map {|doc| Ddr::Models::SolrDocument.new(doc)}
+    results.lazy.map {|doc| SolrDocument.new(doc)}
   end
   
   def default_license
