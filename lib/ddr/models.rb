@@ -1,11 +1,10 @@
-require 'active_record'
-require 'active_fedora'
 require 'hydra-core'
-require 'hydra-access-controls'
 require 'hydra/derivatives'
 require 'hydra/validations'
+
 require 'ddr/models/engine'
 require 'ddr/models/version'
+
 require 'ddr/actions'
 require 'ddr/configurable'
 require 'ddr/datastreams'
@@ -45,10 +44,6 @@ module Ddr
     autoload :PermanentIdentification
     autoload :SolrDocument
     
-    # require 'ddr/models/collection'
-    #require 'ddr/models/item'
-    #require 'ddr/models/component'
-
     include Ddr::Configurable
 
   end
