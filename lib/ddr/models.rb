@@ -36,6 +36,7 @@ module Ddr
     autoload :HasContent
     autoload :HasContentMetadata
     autoload :HasProperties
+    autoload :HasRoleAssignments
     autoload :HasThumbnail
     autoload :Indexing
     autoload :FileManagement

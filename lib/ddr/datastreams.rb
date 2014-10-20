@@ -26,6 +26,7 @@ module Ddr
     autoload :DescriptiveMetadataDatastream
     autoload :PropertiesDatastream
     autoload :DatastreamBehavior
+    autoload :RoleAssignmentsDatastream
 
   end
 end

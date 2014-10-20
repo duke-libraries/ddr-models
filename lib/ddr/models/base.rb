@@ -14,6 +14,7 @@ module Ddr
       include FileManagement
       include Indexing
       include PermanentIdentification
+      include HasRoleAssignments
       include Hydra::Validations
       
       def copy_admin_policy_or_permissions_from(other)
