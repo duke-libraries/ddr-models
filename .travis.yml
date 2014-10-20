@@ -1,0 +1,11 @@
+language: ruby
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libclamav6 libclamav-dev clamav
+  - sudo freshclam -v
+rvm:
+  - 2.1
+cache: bundler
+notifications:
+  email:
+    - lib-drs@duke.edu
