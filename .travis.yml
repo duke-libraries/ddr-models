@@ -5,6 +5,7 @@ before_install:
   - sudo freshclam -v
 rvm:
   - 2.1
+script: "bundle exec rake ci"
 cache: bundler
 notifications:
   email:

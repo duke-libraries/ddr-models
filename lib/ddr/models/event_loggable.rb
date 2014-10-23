@@ -2,14 +2,13 @@ module Ddr
   module Models
     module EventLoggable
       extend ActiveSupport::Concern
-      extend Deprecation
 
       def events
-        Ddr::Events::Event.for_object(self)
+        event_class.for_object(self)
       end
 
       def update_events
-        Ddr::Events::UpdateEvent.for_object(self)
+        event_class(:update).for_object(self)
       end
 
       # TESTME
@@ -23,11 +22,12 @@ module Ddr
 
       private 
 
-      def event_class_name token
-        "Ddr::Events::#{token.to_s.camelize}Event"
+      def event_class_name(token=nil)
+        type = token ? "#{token.to_s.camelize}Event" : "Event"
+        "Ddr::Events::#{type}"
       end
 
-      def event_class token
+      def event_class(token=nil)
         event_class_name(token).constantize
       end
 
