@@ -1,9 +1,14 @@
+require 'ddr/models/engine'
+require 'ddr/models/version'
+
+# Awful hack to make Hydra::AccessControls::Permissions accessible
+$: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/concerns"
+
+require 'active_record'
+
 require 'hydra-core'
 require 'hydra/derivatives'
 require 'hydra/validations'
-
-require 'ddr/models/engine'
-require 'ddr/models/version'
 
 require 'ddr/actions'
 require 'ddr/configurable'
@@ -48,3 +53,5 @@ module Ddr
 
   end
 end
+
+Dir[Ddr::Models::Engine.root.to_s + "/app/models/*.rb"].each { |m| require m }

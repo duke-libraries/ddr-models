@@ -1,4 +1,3 @@
-
 module Ddr
   module Models
     class Base < ActiveFedora::Base
