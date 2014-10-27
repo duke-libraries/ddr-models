@@ -1,14 +1,14 @@
 ENV['RAILS_ENV'] ||= "test"
 
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
-#require "engine_cart"
-#EngineCart.load_application!
 
 require "ddr-models"
 require "rails"
 require "rspec/rails"
 require "factory_girl_rails"
 require "database_cleaner"
+
+Dir[File.join(File.dirname(__FILE__), "support", "*.rb")].each { |f| require f }
 
 DatabaseCleaner.strategy = :truncation
 
@@ -32,7 +32,7 @@ RSpec.configure do |config|
 
   config.include ActionDispatch::TestProcess
   config.fixture_path = File.join(Ddr::Models::Engine.root, "spec", "fixtures")
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = true  
 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

@@ -2,13 +2,6 @@ def mock_object(opts={})
   double("object", {create_date: "2014-01-01T01:01:01.000Z", modified_date: "2014-06-01T01:01:01.000Z"}.merge(opts))
 end
 
-RSpec.shared_examples "a Ddr::Models software event" do
-  it "should set software to the Ddr::Models version" do
-    subject.valid?
-    expect(subject.software).to eq "DDR #{Ddr::Models::VERSION}"
-  end
-end
-
 RSpec.shared_examples "a preservation-related event" do
   subject { described_class.new }
   it "should have an event_type" do
