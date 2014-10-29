@@ -13,6 +13,9 @@ module Ddr
       it "should be a referent for the permanent id" do
         expect(Ddr::Models::MintedId.find_by(minted_id: object.permanent_id).referent).to eql(object.pid)
       end
+      it "should have a permlink" do
+        expect(object.permalink).to eql(Ddr::Models::PermanentIdentification::PERMALINK_BASE_URL + object.permanent_id)
+      end
     end
 
     RSpec.describe PermanentIdentification, type: :model do
