@@ -16,7 +16,7 @@ module Ddr
       # Message sent by ActiveSupport::Notifications
       def self.call(*args)
         notification = ActiveSupport::Notifications::Event.new(*args)
-        result = notification.payload[:result] # Ddr::Services::Antivirus::ScanResult instance
+        result = notification.payload[:result] # Ddr::Antivirus::ScanResult instance
         create(pid: notification.payload[:pid],
                event_date_time: result.scanned_at,
                outcome: result.ok? ? SUCCESS : FAILURE,
