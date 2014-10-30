@@ -1,3 +1,5 @@
+require "ddr-antivirus"
+
 module Ddr
   module Models
     module FileManagement
@@ -139,10 +141,10 @@ module Ddr
       end
 
       def virus_scan
-        file = file_to_add[:file]
-        if Ddr::Utils.file_or_path?(file) # can't virus scan blob
-          virus_scan_results << Ddr::Services::Antivirus.scan(file) 
-        end
+        path = Ddr::Utils.file_path(file_to_add[:file])
+        virus_scan_results << Ddr::Antivirus::Scanner.scan(path)
+      rescue ArgumentError => e # file is a blob
+        logger.error(e)
       end
 
       def notify_virus_scan_results

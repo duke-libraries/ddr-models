@@ -118,23 +118,18 @@ RSpec.shared_examples "an object that can have content" do
 
   describe "#upload" do
     let(:file) { fixture_file_upload("library-devil.tiff", "image/tiff") }
-    it "should change the content" do
-      expect { object.upload file }.to change(object, :content_changed?).from(false).to(true)
-    end
-    it "should check the file for viruses" do
-      expect(Ddr::Services::Antivirus).to receive(:scan).with(file)
-      object.upload file
+    it "should add the file to the content datastream" do
+      expect(object).to receive(:add_file).with(file, "content", {})
+      object.upload(file)
     end
   end
 
   describe "#upload!" do 
     let(:file) { fixture_file_upload("library-devil.tiff", "image/tiff") }
-    it "should change the content" do
-      expect { object.upload! file }.to change { object.content.content }
-    end    
-    it "should save the object" do
+    it "should add the file to the content datastream and save the object" do
+      expect(object).to receive(:add_file).with(file, "content", {}).and_call_original
       expect(object).to receive(:save)
-      object.upload! file
+      object.upload!(file)
     end
   end
 

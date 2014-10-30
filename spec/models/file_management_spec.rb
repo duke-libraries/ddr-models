@@ -35,8 +35,7 @@ module Ddr
 
       describe "#add_file" do
         it "should run a virus scan on the file" do
-          expect(Ddr::Services::Antivirus).to receive(:scan).with(file)
-          expect(object).to receive(:virus_scan).and_call_original
+          expect(object).to receive(:virus_scan)
           object.add_file file, "m_content"
         end
         it "should call add_file_datastream by default" do
