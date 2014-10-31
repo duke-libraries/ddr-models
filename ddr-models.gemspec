@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = %q{Models used in the Duke Digital Repository}
   s.license     = "BSD-3-Clause"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE.txt", "Rakefile", "README.md"]
+  s.files = Dir["{app,config,db,lib}/**/*", "spec/factories/**/*", "LICENSE.txt", "Rakefile", "README.md"]
   s.test_files = Dir["spec/**/*"]
 
   s.require_paths = ["lib", "app/models"]
