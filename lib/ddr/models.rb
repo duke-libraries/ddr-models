@@ -19,6 +19,7 @@ require 'ddr/metadata'
 require 'ddr/notifications'
 require 'ddr/services'
 require 'ddr/utils'
+require 'ddr/workflow'
 
 module Ddr
   module Models
@@ -42,6 +43,7 @@ module Ddr
     autoload :HasProperties
     autoload :HasRoleAssignments
     autoload :HasThumbnail
+    autoload :HasWorkflow
     autoload :Indexing
     autoload :FileManagement
     autoload :Licensable
