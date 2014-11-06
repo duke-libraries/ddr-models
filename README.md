@@ -1,3 +1,5 @@
 # Ddr::Models
 
-Models used in the Duke Digital Repository
+[![Build Status](https://travis-ci.org/duke-libraries/ddr-models.svg?branch=develop)](https://travis-ci.org/duke-libraries/ddr-models)
+
+Hydra models for the Duke Digital Repository.
