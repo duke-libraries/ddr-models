@@ -61,7 +61,7 @@ FactoryGirl.define do
     title [ "DulHydra Test Content Object" ]
     sequence(:identifier) { |n| [ "testcontent%05d" % n ] }
     after(:build) do |c|
-      c.upload File.new(File.join(Rails.root, "spec", "fixtures", "library-devil.tiff"))
+      c.upload File.join(Ddr::Models::Engine.root, "spec", "fixtures", "library-devil.tiff")
     end
       
     factory :test_content_with_fixity_check do
@@ -125,7 +125,7 @@ FactoryGirl.define do
     title [ "DulHydra Test Omnibus Object" ]
     sequence(:identifier) { |n| [ "test%05d" % n ] }
     after(:build) do |c|
-      c.upload File.new(File.join(Rails.root, "spec", "fixtures", "library-devil.tiff"))
+      c.upload File.join(Ddr::Models::Engine.root, "spec", "fixtures", "library-devil.tiff")
     end
   end
   
