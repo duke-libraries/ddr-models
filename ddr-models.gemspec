@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
   s.add_dependency "clamav"
   s.add_dependency "noid", "~> 0.7"
   s.add_dependency "ddr-antivirus", "~> 1.0.2"
+  s.add_dependency "devise-remote-user"
+  s.add_dependency "grouper-rest-client"
 
   s.add_development_dependency "bundler", "~> 1.7"
   s.add_development_dependency "rake"
