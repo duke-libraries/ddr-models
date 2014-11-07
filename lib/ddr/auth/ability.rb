@@ -7,11 +7,7 @@ module Ddr
       def custom_permissions
         action_aliases
         discover_permissions
-        #export_sets_permissions
         events_permissions
-        #batches_permissions
-        #ingest_folders_permissions
-        #metadata_files_permissions
         attachment_permissions
         children_permissions
         upload_permissions
@@ -38,34 +34,13 @@ module Ddr
         end
       end
 
-      def export_sets_permissions
-        can :create, ExportSet if authenticated_user?
-        can :manage, ExportSet, user: current_user
-      end
-
       def events_permissions
         can :read, Ddr::Events::Event, user: current_user
         can :read, Ddr::Events::Event do |e|
           can? :read, e.pid
         end
       end
-      
-      def batches_permissions
-        can :manage, DulHydra::Batch::Models::Batch, :user_id => current_user.id
-        can :manage, DulHydra::Batch::Models::BatchObject do |batch_object|
-          can? :manage, batch_object.batch
-        end
-      end
-
-      def ingest_folders_permissions
-        can :create, IngestFolder if IngestFolder.permitted_folders(current_user).present?
-        can [:show, :procezz], IngestFolder, user: current_user
-      end
-      
-      def metadata_files_permissions
-        can [:show, :procezz], MetadataFile, user: current_user
-      end
-      
+            
       def download_permissions
         can :download, ActiveFedora::Base do |obj|
           if obj.is_a? Component
