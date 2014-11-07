@@ -1,5 +1,18 @@
-# Ddr::Models
+# ddr-models
 
 [![Build Status](https://travis-ci.org/duke-libraries/ddr-models.svg?branch=develop)](https://travis-ci.org/duke-libraries/ddr-models)
 
-Hydra models for the Duke Digital Repository.
+A Rails engine providing Hydra and ActiveRecord models and common services for the Duke Digital Repository.
+
+## Installation
+
+Add to your application's Gemfile:
+
+    gem 'ddr-models'
+    
+and
+
+    bundle install
+
+
+
