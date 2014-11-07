@@ -4,9 +4,6 @@ module Ddr
     class Error < StandardError; end
   
     # Invalid checksum
-    class ChecksumInvalid < Ddr::Models::Error; end
-
-    # Virus found
-    class VirusFoundError < Ddr::Models::Error; end
+    class ChecksumInvalid < Error; end
   end
 end
