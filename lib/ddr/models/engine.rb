@@ -13,6 +13,15 @@ module Ddr
         g.helper false
       end
 
+      initializer 'ddr_models.external_files' do
+        Ddr::Models.external_file_store = ENV['EXTERNAL_FILE_STORE']
+        Ddr::Models.external_file_subpath_pattern = ENV['EXTERNAL_FILE_SUBPATH_PATTERN'] || "--"
+      end
+
+      initializer 'ddr_models.id_minter' do
+        Ddr::Models.minter_statefile = ENV['MINTER_STATEFILE']
+      end
+
       # Add custom predicates to ActiveFedora
       initializer 'ddr_models.predicates' do
         ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
