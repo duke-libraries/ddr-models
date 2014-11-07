@@ -19,7 +19,7 @@ and
 
 ddr-models has several runtime dependencies that are independently configurable:
 
-- [active-fedora](https://github.com/projecthydra/active-fedora)
+- [active_fedora](https://github.com/projecthydra/active_fedora)
 - [hydra-head](https://github.com/projecthydra/hydra-head)
 - [ddr-antivirus](https://github.com/duke-libraries/ddr-antivirus)
 - [devise-remote-user](https://github.com/duke-libraries/devise-remote-user)
