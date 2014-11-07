@@ -31,8 +31,9 @@ module Ddr
     OBJECT_CREATE_DATE        = solr_name :system_create, :stored_sortable, type: :date
     OBJECT_MODIFIED_DATE      = solr_name :system_modified, :stored_sortable, type: :date
     ORIGINAL_FILENAME         = solr_name :original_filename, :symbol
-    PERMANENT_ID              = solr_name :permanent_id, :symbol
+    PERMANENT_ID              = solr_name :permanent_id, :stored_sortable, type: :string
     TITLE                     = solr_name :title, :stored_sortable
+    WORKFLOW_STATE            = solr_name :workflow_state, :stored_sortable
 
   end
 end

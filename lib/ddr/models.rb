@@ -1,12 +1,17 @@
-require 'active_record'
-require 'active_fedora'
-require 'hydra-core'
-require 'hydra-access-controls'
-require 'hydra/derivatives'
-require 'hydra/validations'
 require 'ddr/models/engine'
 require 'ddr/models/version'
+
+# Awful hack to make Hydra::AccessControls::Permissions accessible
+$: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/concerns"
+
+require 'active_record'
+
+require 'hydra-core'
+require 'hydra/derivatives'
+require 'hydra/validations'
+
 require 'ddr/actions'
+require 'ddr/auth'
 require 'ddr/configurable'
 require 'ddr/datastreams'
 require 'ddr/events'
@@ -15,6 +20,7 @@ require 'ddr/metadata'
 require 'ddr/notifications'
 require 'ddr/services'
 require 'ddr/utils'
+require 'ddr/workflow'
 
 module Ddr
   module Models
@@ -28,7 +34,6 @@ module Ddr
     autoload :EventLoggable
     autoload :Error
     autoload :ChecksumInvalid, 'ddr/models/error'
-    autoload :VirusFoundError, 'ddr/models/error'
     autoload :FixityCheckable
     autoload :Governable
     autoload :HasAttachments
@@ -36,7 +41,9 @@ module Ddr
     autoload :HasContent
     autoload :HasContentMetadata
     autoload :HasProperties
+    autoload :HasRoleAssignments
     autoload :HasThumbnail
+    autoload :HasWorkflow
     autoload :Indexing
     autoload :FileManagement
     autoload :Licensable
@@ -44,11 +51,9 @@ module Ddr
     autoload :PermanentIdentification
     autoload :SolrDocument
     
-    # require 'ddr/models/collection'
-    #require 'ddr/models/item'
-    #require 'ddr/models/component'
-
     include Ddr::Configurable
 
   end
 end
+
+Dir[Ddr::Models::Engine.root.to_s + "/app/models/*.rb"].each { |m| require m }

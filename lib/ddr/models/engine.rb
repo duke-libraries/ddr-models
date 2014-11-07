@@ -1,6 +1,58 @@
+require 'rails'
+
 module Ddr
   module Models
     class Engine < ::Rails::Engine
+
+      engine_name 'ddr_models'
+
+      config.generators do |g|
+        g.test_framework :rspec
+        g.fixture_replacement :factory_girl
+        g.assets false
+        g.helper false
+      end
+
+      # Add custom predicates to ActiveFedora
+      initializer 'ddr_models.predicates' do
+        ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
+      end
+
+      # Configure devise-remote-user
+      initializer 'ddr_auth.remote_user' do
+        require 'devise_remote_user'
+        DeviseRemoteUser.configure do |config|
+          config.auto_create = true
+          config.attribute_map = {
+            email: 'mail', 
+            first_name: 'givenName',
+            middle_name: 'duMiddleName1',
+            nickname: 'eduPersonNickname',
+            last_name: 'sn',
+            display_name: 'displayName'
+          }
+          config.auto_update = true
+          config.logout_url = "/Shibboleth.sso/Logout?return=https://shib.oit.duke.edu/cgi-bin/logout.pl"
+        end
+      end
+
+      # Integration of remote (Grouper) groups via Shibboleth
+      initializer 'ddr_auth.grouper' do
+        # Load configuration for Grouper service, if present
+        if File.exists? "#{Rails.root}/config/grouper.yml"
+          Ddr::Auth::GrouperService.config = YAML.load_file("#{Rails.root}/config/grouper.yml")[Rails.env]
+        end
+
+        Warden::Manager.after_set_user do |user, auth, opts|
+          user.group_service = Ddr::Auth::RemoteGroupService.new(auth.env)
+        end
+      end
+
+      # Set superuser group
+      initializer 'ddr_auth.superuser' do
+        Ddr::Auth.superuser_group = ENV["SUPERUSER_GROUP"]
+      end
+
     end
   end
 end

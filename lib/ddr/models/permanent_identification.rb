@@ -3,9 +3,20 @@ module Ddr
     module PermanentIdentification
       extend ActiveSupport::Concern
 
+      PERMALINK_BASE_URL = 'http://id.library.duke.edu/'
+
       included do
         has_attributes :permanent_id, datastream: Ddr::Datastreams::PROPERTIES, multiple: false
         after_create :assign_permanent_identifier
+
+        def self.permalink(permanent_id)
+          PERMALINK_BASE_URL + permanent_id
+        end
+
+      end
+
+      def permalink
+        self.class.permalink(permanent_id)
       end
 
       protected
