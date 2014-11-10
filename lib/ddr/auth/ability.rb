@@ -6,6 +6,7 @@ module Ddr
 
       def custom_permissions
         action_aliases
+        collection_permissions
         discover_permissions
         events_permissions
         attachment_permissions
@@ -18,6 +19,10 @@ module Ddr
         alias_action :attachments, :collection_info, :components, :event, :events, :items, :targets, to: :read
         # edit/update aliases
         alias_action :permissions, :default_permissions, to: :update
+      end
+
+      def collection_permissions
+        can :create, Collection if current_user.member_of?(Ddr::Auth.collection_creators_group)
       end
 
       def read_permissions
