@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency "hydra-core", "~> 7.2"
   s.add_dependency "hydra-derivatives"
   s.add_dependency "hydra-validations"
-  s.add_dependency "clamav"
   s.add_dependency "noid", "~> 0.7"
   s.add_dependency "ddr-antivirus", "~> 1.2"
   s.add_dependency "devise-remote-user"
