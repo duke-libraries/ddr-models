@@ -6,10 +6,6 @@ FactoryGirl.define do
     after(:build) do |a|
       a.upload File.new(File.join(Ddr::Models::Engine.root.to_s, 'spec', 'fixtures', 'sample.docx'))
     end
-  
-    trait :attached do
-      association :attached_to, :factory => :test_model_omnibus
-    end
   end
   
 end
