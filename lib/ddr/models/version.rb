@@ -1,5 +1,5 @@
 module Ddr
   module Models
-    VERSION = "1.2.1.post"
+    VERSION = "1.3.0.post"
   end
 end
