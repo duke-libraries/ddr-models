@@ -1,10 +1,10 @@
-require 'rails'
+require "rails"
 
 module Ddr
   module Models
     class Engine < ::Rails::Engine
 
-      engine_name 'ddr_models'
+      engine_name "ddr_models"
 
       config.generators do |g|
         g.test_framework :rspec
@@ -13,23 +13,32 @@ module Ddr
         g.helper false
       end
 
+      initializer "ddr_models.external_files" do
+        Ddr::Models.external_file_store = ENV["EXTERNAL_FILE_STORE"]
+        Ddr::Models.external_file_subpath_pattern = ENV["EXTERNAL_FILE_SUBPATH_PATTERN"] || "--"
+      end
+
+      initializer "ddr_models.id_minter" do
+        Ddr::Models.minter_statefile = ENV["MINTER_STATEFILE"]
+      end
+
       # Add custom predicates to ActiveFedora
-      initializer 'ddr_models.predicates' do
+      initializer "ddr_models.predicates" do
         ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
       end
 
       # Configure devise-remote-user
-      initializer 'ddr_auth.remote_user' do
-        require 'devise_remote_user'
+      initializer "ddr_auth.remote_user" do
+        require "devise_remote_user"
         DeviseRemoteUser.configure do |config|
           config.auto_create = true
           config.attribute_map = {
-            email: 'mail', 
-            first_name: 'givenName',
-            middle_name: 'duMiddleName1',
-            nickname: 'eduPersonNickname',
-            last_name: 'sn',
-            display_name: 'displayName'
+            email: "mail", 
+            first_name: "givenName",
+            middle_name: "duMiddleName1",
+            nickname: "eduPersonNickname",
+            last_name: "sn",
+            display_name: "displayName"
           }
           config.auto_update = true
           config.logout_url = "/Shibboleth.sso/Logout?return=https://shib.oit.duke.edu/cgi-bin/logout.pl"
@@ -37,7 +46,7 @@ module Ddr
       end
 
       # Integration of remote (Grouper) groups via Shibboleth
-      initializer 'ddr_auth.grouper' do
+      initializer "ddr_auth.grouper" do
         # Load configuration for Grouper service, if present
         if File.exists? "#{Rails.root}/config/grouper.yml"
           Ddr::Auth::GrouperService.config = YAML.load_file("#{Rails.root}/config/grouper.yml")[Rails.env]
@@ -49,8 +58,12 @@ module Ddr
       end
 
       # Set superuser group
-      initializer 'ddr_auth.superuser' do
+      initializer "ddr_auth.superuser" do
         Ddr::Auth.superuser_group = ENV["SUPERUSER_GROUP"]
+      end
+
+      initializer "ddr_auth.collection_creators" do
+        Ddr::Auth.collection_creators_group = ENV["COLLECTION_CREATORS_GROUP"]
       end
 
     end

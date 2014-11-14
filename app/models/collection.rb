@@ -1,3 +1,9 @@
+#
+# A Collection is a conceptual and administrative entity containing a set of items. 
+#
+# Provides default permissions (Hydra admin policy) for objects associated with the collection 
+# via an isGovernedBy relation.
+#
 class Collection < Ddr::Models::Base
   
   include Hydra::AdminPolicyBehavior
@@ -17,6 +23,9 @@ class Collection < Ddr::Models::Base
   
   validates_presence_of :title
   
+  # Returns the SolrDocuments for Components associated with the Collection through its member Items.
+  #
+  # @return A lazy enumerator of SolrDocuments.
   def components_from_solr
     outer = Ddr::IndexFields::IS_PART_OF
     inner = Ddr::IndexFields::INTERNAL_URI
@@ -27,20 +36,29 @@ class Collection < Ddr::Models::Base
     results.lazy.map {|doc| SolrDocument.new(doc)}
   end
   
+  # Returns the license attributes provided as default values for objects governed by the Collection.
+  #
+  # @return [Hash] the attributes, `:title`, `:description`, and `:url`.
   def default_license
     if default_license_title.present? or default_license_description.present? or default_license_url.present?
       {title: default_license_title, description: default_license_description, url: default_license_url}
     end
   end
   
+  # Sets the default license attributes for objects governed by the Collection.
   def default_license=(new_license)
-    raise ArgumentError unless new_license.is_a?(Hash)
+    raise ArgumentError unless new_license.is_a?(Hash) # XXX don't do this - not duck-typeable
     l = new_license.with_indifferent_access
     self.default_license_title = l[:title]
     self.default_license_description = l[:description]
     self.default_license_url = l[:url]
   end
   
+  # Returns a list of entities (either users or groups) having a default access level on objects governed by the Collection.
+  # 
+  # @param type [String] the type of entity, "user" or "group".
+  # @param access [String] the default access level, "discover", "read", or "edit".
+  # @return [Array<String>] the entities (users or groups)
   def default_entities_for_permission(type, access)
     default_permissions.collect { |p| p[:name] if p[:type] == type and p[:access] == access }.compact
   end
