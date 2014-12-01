@@ -9,8 +9,11 @@ module Ddr
     autoload :GrouperService
     autoload :RemoteGroupService
 
-    # Superuser group
+    # Group authorized to act as superuser
     mattr_accessor :superuser_group
+
+    # Group authorized to create Collections
+    mattr_accessor :collection_creators_group
 
     ## Remote groups (i.e., Grouper) config settings
     # request.env key for group memberships
@@ -33,10 +36,12 @@ module Ddr
       "duke:library:repository:ddr:"
     end
 
+    # Name of group of which everyone (including anonymous users) is a member
     mattr_accessor :everyone_group do
       "public"
     end
 
+    # Group of authenticated users
     mattr_accessor :authenticated_users_group do
       "registered"
     end

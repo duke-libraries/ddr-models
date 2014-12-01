@@ -4,8 +4,10 @@ module Ddr
   module Services
     module IdService
 
+      NOID_TEMPLATE = "2.reeddeeddk"
+
       def self.noid_template
-        Ddr::Models.noid_template
+        NOID_TEMPLATE
       end
 
       @minter = ::Noid::Minter.new(template: noid_template)

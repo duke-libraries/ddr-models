@@ -12,7 +12,7 @@ module Ddr
     CONTENT_SIZE_HUMAN        = solr_name :content_size_human, :symbol
     HAS_MODEL                 = solr_name :has_model, :symbol
     IDENTIFIER                = solr_name :identifier, :stored_sortable
-    INTERNAL_URI              = solr_name :internal_uri, :symbol
+    INTERNAL_URI              = solr_name :internal_uri, :stored_sortable
     IS_ATTACHED_TO            = solr_name :is_attached_to, :symbol
     IS_EXTERNAL_TARGET_FOR    = solr_name :is_external_target_for, :symbol
     IS_GOVERNED_BY            = solr_name :is_governed_by, :symbol

@@ -13,8 +13,6 @@ module Ddr
 
         has_attributes :original_filename, datastream: "properties", multiple: false
 
-        validates_presence_of :content
-
         include Hydra::Derivatives
         include FileManagement unless include?(FileManagement)
 

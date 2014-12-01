@@ -1,3 +1,8 @@
+# 
+# An Item is a  member of a Collection -- i.e., a "work" -- the principal describable resource.
+#
+# Examples: photograph, book, article, sound recording, video, etc.
+#
 class Item < Ddr::Models::Base
   
   include Ddr::Models::HasContentMetadata

@@ -1,3 +1,8 @@
+#
+# A Component is a part of an Item; the principal content-bearing repository resource.
+#
+# Examples: Page of a book, track of a recording, etc.
+#
 class Component < Ddr::Models::Base
  
   include Ddr::Models::HasContent

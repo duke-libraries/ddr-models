@@ -49,13 +49,6 @@ RSpec.shared_examples "an object that can have content" do
 
   describe "save" do
 
-    describe "when content is not present" do
-      it "should not save" do
-        expect(object.save).to be false
-        expect(object.errors[:content]).to include "can't be blank"
-      end
-    end
-
     describe "when new content is present" do
 
       context "and it's a new object" do
