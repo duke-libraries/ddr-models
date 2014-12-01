@@ -83,6 +83,21 @@ class Ability < Ddr::Auth::Ability
 end
 ```
 
+#### SolrDocument model
+
+Include `Ddr::Models::SolrDocument` in `app/models/solr_document.rb` 
+
+```ruby
+class SolrDocument 
+
+  include Blacklight::Solr::Document
+  include Ddr::Models::SolrDocument
+
+...
+
+end
+```
+
 #### Migrations
 
 Install the ddr-models migrations:
