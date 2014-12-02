@@ -4,15 +4,8 @@ module Ddr
 
       include Hydra::PolicyAwareAbility
 
-      def custom_permissions
-        action_aliases
-        collection_permissions
-        discover_permissions
-        events_permissions
-        attachment_permissions
-        children_permissions
-        upload_permissions
-      end
+      self.ability_logic.insert(self.ability_logic.index(:custom_permissions), :action_aliases, :collection_permissions,
+            :discover_permissions, :events_permissions, :attachment_permissions, :children_permissions, :upload_permissions)
 
       def action_aliases
         # read aliases
