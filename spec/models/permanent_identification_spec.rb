@@ -20,6 +20,8 @@ module Ddr
 
     RSpec.describe PermanentIdentification, type: :model do
 
+      before { skip }
+
       before(:all) do
         class PermanentlyIdentifiable < ActiveFedora::Base
           include Ddr::Models::Describable

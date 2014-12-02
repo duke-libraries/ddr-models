@@ -17,7 +17,6 @@ require 'ddr/events'
 require 'ddr/index_fields'
 require 'ddr/metadata'
 require 'ddr/notifications'
-require 'ddr/services'
 require 'ddr/utils'
 require 'ddr/workflow'
 
@@ -54,9 +53,6 @@ module Ddr
     # Regexp for building external file subpath from hex digest
     mattr_accessor :external_file_subpath_regexp
       
-    # Noid minter state file location
-    mattr_accessor :minter_statefile
-
     # Yields an object with module configuration accessors
     def self.configure
       yield self
