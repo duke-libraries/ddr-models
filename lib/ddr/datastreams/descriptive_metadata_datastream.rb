@@ -32,7 +32,7 @@ module Ddr
 
       # Add terms from the vocabularies as properties
       vocabularies.each do |vocab|
-        vocab.each do |term|
+        Ddr::Metadata::Vocabulary.property_terms(vocab).each do |term|
           term_name = Ddr::Metadata::Vocabulary.term_name(vocab, term)
           property term_name, predicate: term do |index|
             index.as *indexers_for(term_name)

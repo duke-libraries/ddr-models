@@ -4,15 +4,8 @@ module Ddr
 
       include Hydra::PolicyAwareAbility
 
-      def custom_permissions
-        action_aliases
-        collection_permissions
-        discover_permissions
-        events_permissions
-        attachment_permissions
-        children_permissions
-        upload_permissions
-      end
+      self.ability_logic.insert(self.ability_logic.index(:custom_permissions), :action_aliases, :collection_permissions,
+            :discover_permissions, :events_permissions, :attachment_permissions, :children_permissions, :upload_permissions)
 
       def action_aliases
         # read aliases
@@ -148,7 +141,7 @@ module Ddr
       def discover_persons(pid)
         doc = permissions_doc(pid)
         return [] if doc.nil?
-        dp = edit_persons(pid) | read_persons(pid) | (doc[self.class.discover_person_field] || [])
+        dp = edit_users(pid) | read_users(pid) | (doc[self.class.discover_person_field] || [])
         Rails.logger.debug("[CANCAN] discover_persons: #{dp.inspect}")
         return dp
       end
