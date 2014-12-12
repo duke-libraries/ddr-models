@@ -141,7 +141,7 @@ module Ddr
       def discover_persons(pid)
         doc = permissions_doc(pid)
         return [] if doc.nil?
-        dp = edit_persons(pid) | read_persons(pid) | (doc[self.class.discover_person_field] || [])
+        dp = edit_users(pid) | read_users(pid) | (doc[self.class.discover_person_field] || [])
         Rails.logger.debug("[CANCAN] discover_persons: #{dp.inspect}")
         return dp
       end
