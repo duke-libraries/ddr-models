@@ -4,6 +4,11 @@ module Ddr
 
       belongs_to :user, inverse_of: :events
 
+      # ActiveSupport::Notifications::Instrumenter sets payload[:exception]
+      #   to an array of [<exception class name>, <exception message>]
+      #   and we want to store this data in a string field.
+      serialize :exception, JSON
+
       # Event date time - for PREMIS and Solr
       DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
 
@@ -32,6 +37,7 @@ module Ddr
       validate :object_exists # unless/until we have a deaccession-type of event
  
       after_initialize :set_defaults
+      before_save { failure! if exception.present? }
 
       # Receive message sent by ActiveSupport::Notifications
       def self.call(*args)
