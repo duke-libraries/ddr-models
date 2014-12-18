@@ -15,9 +15,11 @@ require 'ddr/auth'
 require 'ddr/datastreams'
 require 'ddr/events'
 require 'ddr/index_fields'
+require 'ddr/managers'
 require 'ddr/metadata'
 require 'ddr/notifications'
 require 'ddr/utils'
+require 'ddr/vocab'
 require 'ddr/workflow'
 
 module Ddr
@@ -36,6 +38,7 @@ module Ddr
     autoload :HasChildren
     autoload :HasContent
     autoload :HasContentMetadata
+    autoload :HasPreservationMetadata
     autoload :HasProperties
     autoload :HasRoleAssignments
     autoload :HasThumbnail
@@ -43,16 +46,17 @@ module Ddr
     autoload :Indexing
     autoload :FileManagement
     autoload :Licensable
-    autoload :MintedId
-    autoload :PermanentIdentification
     autoload :SolrDocument
-    
+
     # Base directory of external file store
-    mattr_accessor :external_file_store      
+    mattr_accessor :external_file_store
 
     # Regexp for building external file subpath from hex digest
     mattr_accessor :external_file_subpath_regexp
-      
+
+    # Whether permanent IDs should be automatically assigned on create
+    mattr_accessor :auto_assign_permanent_ids
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self

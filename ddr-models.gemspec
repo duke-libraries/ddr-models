@@ -18,15 +18,16 @@ Gem::Specification.new do |s|
 
   s.require_paths = ["lib", "app/models"]
 
-  s.add_dependency "rails", "~> 4.1.6"	
+  s.add_dependency "rails", "~> 4.1.6"
   s.add_dependency "active-fedora", "~> 7.0"
   s.add_dependency "hydra-core", "~> 7.2"
   s.add_dependency "hydra-derivatives"
   s.add_dependency "hydra-validations"
-  s.add_dependency "noid", "~> 0.7"
   s.add_dependency "ddr-antivirus", "~> 1.2"
   s.add_dependency "devise-remote-user"
   s.add_dependency "grouper-rest-client"
+  s.add_dependency "ezid-client", "~> 0.9"
+  s.add_dependency "resque", "~> 1.25"
 
   s.add_development_dependency "bundler", "~> 1.7"
   s.add_development_dependency "rake"
