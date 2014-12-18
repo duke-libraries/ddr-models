@@ -11,6 +11,9 @@ require "rspec/rails"
 require "factory_girl_rails"
 require "database_cleaner"
 require "tempfile"
+require "resque"
+
+Resque.inline = true
 
 Dir[File.join(File.dirname(__FILE__), "support", "*.rb")].each { |f| require f }
 

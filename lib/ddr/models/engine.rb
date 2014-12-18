@@ -23,6 +23,10 @@ module Ddr
         ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
       end
 
+      initializer "ddr_models.permanent_ids" do
+        Ddr::Models.auto_assign_permanent_ids = Rails.env.production?
+      end
+
       # Configure devise-remote-user
       initializer "ddr_auth.remote_user" do
         require "devise_remote_user"
@@ -60,6 +64,13 @@ module Ddr
 
       initializer "ddr_auth.collection_creators" do
         Ddr::Auth.collection_creators_group = ENV["COLLECTION_CREATORS_GROUP"]
+      end
+
+      initializer "ezid_client" do
+        unless Rails.env.production?
+          require "ezid/test_helper"
+          ezid_test_mode!
+        end
       end
 
     end

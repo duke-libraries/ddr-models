@@ -176,4 +176,12 @@ RSpec.shared_examples "an event" do
       end
     end
   end
+
+  describe "when the exception attribute is set" do
+    before { subject.exception = "Gah!" }
+    it "should be persisted as a failure" do
+      subject.save(validate: false)
+      expect(subject).to be_failure
+    end
+  end
 end

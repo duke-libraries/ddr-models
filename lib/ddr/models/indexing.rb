@@ -12,9 +12,14 @@ module Ddr
           Ddr::IndexFields::TITLE => title_display,
           Ddr::IndexFields::INTERNAL_URI => internal_uri,
           Ddr::IndexFields::IDENTIFIER => identifier_sort,
-          Ddr::IndexFields::PERMANENT_ID => permanent_id,
           Ddr::IndexFields::WORKFLOW_STATE => workflow_state
         }
+        if permanent_id.present?
+          fields[Ddr::IndexFields::PERMANENT_ID] = permanent_id
+        end
+        if permanent_url.present?
+          fields[Ddr::IndexFields::PERMANENT_URL] = permanent_url
+        end
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last
           fields.merge!(last_fixity_check.to_solr) if last_fixity_check
