@@ -2,6 +2,8 @@ module Ddr
   module Models
     module Indexing
 
+      include Ddr::IndexFields
+
       def to_solr(solr_doc=Hash.new, opts={})
         solr_doc = super(solr_doc, opts)
         solr_doc.merge index_fields
@@ -9,16 +11,16 @@ module Ddr
 
       def index_fields
         fields = {
-          Ddr::IndexFields::TITLE => title_display,
-          Ddr::IndexFields::INTERNAL_URI => internal_uri,
-          Ddr::IndexFields::IDENTIFIER => identifier_sort,
-          Ddr::IndexFields::WORKFLOW_STATE => workflow_state
+          TITLE => title_display,
+          INTERNAL_URI => internal_uri,
+          IDENTIFIER => identifier_sort,
+          WORKFLOW_STATE => workflow_state
         }
         if permanent_id.present?
-          fields[Ddr::IndexFields::PERMANENT_ID] = permanent_id
+          fields[PERMANENT_ID] = permanent_id
         end
         if permanent_url.present?
-          fields[Ddr::IndexFields::PERMANENT_URL] = permanent_url
+          fields[PERMANENT_URL] = permanent_url
         end
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last
@@ -29,15 +31,15 @@ module Ddr
           fields.merge!(last_virus_check.to_solr) if last_virus_check
         end
         if respond_to?(:original_filename) && original_filename.present?
-          fields[Ddr::IndexFields::ORIGINAL_FILENAME] = original_filename
+          fields[ORIGINAL_FILENAME] = original_filename
         end
         if has_content?
-          fields[Ddr::IndexFields::CONTENT_CONTROL_GROUP] = content.controlGroup
-          fields[Ddr::IndexFields::CONTENT_SIZE] = content_size
-          fields[Ddr::IndexFields::CONTENT_SIZE_HUMAN] = content_human_size
-          fields[Ddr::IndexFields::MEDIA_TYPE] = content_type
-          fields[Ddr::IndexFields::MEDIA_MAJOR_TYPE] = content_major_type
-          fields[Ddr::IndexFields::MEDIA_SUB_TYPE] = content_sub_type
+          fields[CONTENT_CONTROL_GROUP] = content.controlGroup
+          fields[CONTENT_SIZE] = content_size
+          fields[CONTENT_SIZE_HUMAN] = content_human_size
+          fields[MEDIA_TYPE] = content_type
+          fields[MEDIA_MAJOR_TYPE] = content_major_type
+          fields[MEDIA_SUB_TYPE] = content_sub_type
         end
         fields
       end
