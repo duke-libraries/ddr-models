@@ -41,6 +41,9 @@ module Ddr
           fields[MEDIA_MAJOR_TYPE] = content_major_type
           fields[MEDIA_SUB_TYPE] = content_sub_type
         end
+        if is_a? Component
+          fields[COLLECTION_URI] = collection_uri
+        end
         fields
       end
 

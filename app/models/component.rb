@@ -17,4 +17,8 @@ class Component < Ddr::Models::Base
     self.parent.parent rescue nil
   end
 
+  def collection_uri
+    self.collection.internal_uri rescue nil
+  end
+
 end
