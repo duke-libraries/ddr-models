@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Collection, :type => :model do
 
   it_behaves_like "a DDR model"
-  
+
   it_behaves_like "it has an association", :has_many, :children, :is_member_of_collection, "Item"
 
   it_behaves_like "it has an association", :has_many, :targets, :is_external_target_for, "Target"
@@ -27,6 +27,13 @@ RSpec.describe Collection, :type => :model do
     it "should require a title" do
       expect(collection).to_not be_valid
       expect(collection.errors.messages).to have_key(:title)
+    end
+  end
+
+  context "creation" do
+    let(:collection) { Collection.create(title: [ "Test Collection" ]) }
+    it "should be governed by itself" do
+      expect(collection.admin_policy).to eq(collection)
     end
   end
 
