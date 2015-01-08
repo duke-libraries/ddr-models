@@ -2,7 +2,8 @@ module Ddr
   module Vocab
     extend ActiveSupport::Autoload
 
-    autoload :Preservation
+    autoload :Asset
+    autoload :Roles
 
   end
 end

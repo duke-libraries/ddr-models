@@ -5,7 +5,6 @@ module Ddr
     autoload :DukeTerms
     autoload :PremisEvent
     autoload :RDFVocabularyParser
-    autoload :RolesVocabulary
     autoload :Vocabulary
 
     PREDICATES = {

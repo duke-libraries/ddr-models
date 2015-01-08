@@ -3,6 +3,7 @@ module Ddr
     extend ActiveSupport::Autoload
 
     autoload :PermanentIdManager
+    autoload :RoleManager
 
   end
 end

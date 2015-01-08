@@ -34,13 +34,12 @@ module Ddr
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :FixityCheckable
     autoload :Governable
+    autoload :HasAdminMetadata
     autoload :HasAttachments
     autoload :HasChildren
     autoload :HasContent
     autoload :HasContentMetadata
-    autoload :HasPreservationMetadata
     autoload :HasProperties
-    autoload :HasRoleAssignments
     autoload :HasThumbnail
     autoload :HasWorkflow
     autoload :Indexing

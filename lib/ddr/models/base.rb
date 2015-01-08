@@ -13,10 +13,9 @@ module Ddr
       include FixityCheckable
       include FileManagement
       include Indexing
-      include HasRoleAssignments
       include Hydra::Validations
       include HasWorkflow
-      include HasPreservationMetadata
+      include HasAdminMetadata
 
       def copy_admin_policy_or_permissions_from(other)
         copy_permissions_from(other) unless copy_admin_policy_from(other)
