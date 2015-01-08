@@ -55,6 +55,12 @@ module Ddr
         end
       end
 
+      describe "#group_service" do
+        it "should be RemoteGroupService by default" do
+          expect(subject.group_service).to be_a(RemoteGroupService)
+        end
+      end
+
     end
   end
 end
