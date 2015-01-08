@@ -1,6 +1,6 @@
 module Ddr
   module Vocab
-    class Preservation < RDF::StrictVocabulary("http://repository.lib.duke.edu/vocab/preservation/")
+    class Asset < RDF::StrictVocabulary("http://repository.lib.duke.edu/vocab/asset/")
 
       property "permanentId", 
       label: "Permanent Identifier",

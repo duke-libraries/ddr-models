@@ -92,7 +92,7 @@ module Ddr
       alias_method :title_display, :title # duck-type Ddr::Models::Base
 
       def principal_has_role?(principal, role)
-        (Array(get("role_assignments__#{role}_ssim")) & Array(principal)).any?
+        (Array(get("admin_metadata__#{role}_ssim")) & Array(principal)).any?
       end
 
       def identifier
