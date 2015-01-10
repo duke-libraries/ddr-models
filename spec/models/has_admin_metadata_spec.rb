@@ -10,7 +10,6 @@ module Ddr
           class PermanentlyIdentifiable < ActiveFedora::Base
             include Ddr::Models::Describable
             include Ddr::Models::Indexing
-            include Ddr::Models::HasWorkflow
             include Ddr::Models::HasAdminMetadata
             include Ddr::Models::EventLoggable
           end
@@ -113,7 +112,6 @@ module Ddr
       end
 
       describe "role assignments" do
-
         before(:all) do
           class RoleAssignable < ActiveFedora::Base
             include HasAdminMetadata
@@ -136,6 +134,61 @@ module Ddr
           it "should raise an error when given an invalid role" do
             expect { subject.principal_has_role?("bob", :foo) }.to raise_error
           end
+        end
+      end
+
+      describe "workflow" do
+        before(:all) do
+          class Workflowable < ActiveFedora::Base
+            include HasAdminMetadata
+          end
+        end
+
+        subject { Workflowable.new }
+
+        describe "#published?" do
+          context "object is published" do
+            before { allow(subject).to receive(:workflow_state) { Ddr::Managers::WorkflowManager::PUBLISHED } }
+            it "should return true" do
+              expect(subject).to be_published
+            end
+          end
+          context "object is not published" do
+            before { allow(subject).to receive(:workflow_state) { nil } }
+            it "should return false" do
+              expect(subject).not_to be_published
+            end
+          end
+        end
+
+        describe "#publish" do
+          it "should publish the object" do
+            subject.publish
+            expect(subject).to be_published
+          end
+        end
+
+        describe "#publish!" do
+          it "should publish and persist the object" do
+            subject.publish!
+            expect(subject.reload).to be_published
+          end
+        end
+        
+        describe "#unpublish" do
+          before { subject.publish }
+          it "should unpublish the object" do
+            subject.unpublish
+            expect(subject).not_to be_published
+          end
+        end
+
+        describe "#unpublish!" do
+          before { subject.publish! }
+          it "should unpublish and persist the object" do
+            subject.unpublish!
+            expect(subject.reload).not_to be_published
+          end          
         end
       end
     

@@ -9,10 +9,11 @@ module Ddr
                      versionable: true,
                      control_group: "M"
 
-        has_attributes :permanent_id, :permanent_url, 
+        has_attributes :permanent_id, :permanent_url, :workflow_state,
                        datastream: "adminMetadata", multiple: false
 
         delegate :principal_has_role?, to: :roles
+        delegate :publish, :publish!, :unpublish, :unpublish!, :published?, to: :workflow
 
         after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
       end
@@ -23,6 +24,10 @@ module Ddr
 
       def roles
         @roles || Ddr::Managers::RoleManager.new(self)
+      end
+
+      def workflow
+        @workflow ||= Ddr::Managers::WorkflowManager.new(self)
       end
 
       def assign_permanent_id!
