@@ -23,7 +23,7 @@ module Ddr
       end
 
       def roles
-        @roles || Ddr::Managers::RoleManager.new(self)
+        @roles ||= Ddr::Managers::RoleManager.new(self)
       end
 
       def workflow
