@@ -57,7 +57,7 @@ module Ddr
 
             context "and user has the downloader role", roles: true do
               before do
-                resource.roleAssignments.downloader << user.principal_name
+                resource.roles.downloader << user.principal_name
                 resource.save
               end
               context "and user has edit permission" do
@@ -116,7 +116,7 @@ module Ddr
 
               context "and user has the downloader role", roles: true do
                 before do
-                  obj.roleAssignments.downloader << user.principal_name
+                  obj.roles.downloader << user.principal_name
                   obj.save
                 end
                 context "and user has read permission on the object" do

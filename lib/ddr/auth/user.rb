@@ -31,7 +31,7 @@ module Ddr
       end
 
       def group_service
-        @group_service ||= GroupService.new
+        @group_service ||= RemoteGroupService.new
       end
 
       def to_s

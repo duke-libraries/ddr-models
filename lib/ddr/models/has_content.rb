@@ -11,7 +11,7 @@ module Ddr
                             label: "Content file for this object",
                             control_group: "M"
 
-        has_attributes :original_filename, datastream: "properties", multiple: false
+        has_attributes :original_filename, datastream: "adminMetadata", multiple: false
 
         include Hydra::Derivatives
         include FileManagement unless include?(FileManagement)
