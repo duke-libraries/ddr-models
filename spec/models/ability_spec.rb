@@ -54,7 +54,7 @@ module Ddr
                 it { is_expected.not_to be_able_to(:download, resource) }
               end
             end
-
+            # Component
             context "and user has the downloader role", roles: true do
               before do
                 resource.roles.downloader << user.principal_name
@@ -95,8 +95,55 @@ module Ddr
           end
         end
 
-        context "on a datastream", datastreams: true do
+        context "on a Solr document" do
+          let(:resource) { SolrDocument.new(doc) }
+          context "for a Component" do
+            let(:doc) { {'id'=>'test:1', 'active_fedora_model_ssi'=>'Component'} }
+            context "on which the user has the downloader role" do
+              before { doc.merge!('admin_metadata__downloader_ssim'=>[user.to_s]) }
+              context "but does not have read permission" do
+                it { is_expected.not_to be_able_to(:download, resource) }
+              end
+              context "and has read permission" do
+                before { doc.merge!('read_access_person_ssim'=>[user.to_s]) }
+                it { is_expected.to be_able_to(:download, resource) }
+              end
+              context "and has edit permission" do
+                before { doc.merge!('edit_access_person_ssim'=>[user.to_s]) }
+                it { is_expected.to be_able_to(:download, resource) }
+              end
+            end
+            context "on which the user does NOT have the downloader role" do
+              context "and does not have read permission" do
+                it { is_expected.not_to be_able_to(:download, resource) }
+              end
+              context "but has read permission" do
+                before { doc.merge!('read_access_person_ssim'=>[user.to_s]) }
+                it { is_expected.not_to be_able_to(:download, resource) }
+              end
+              context "but has edit permission" do
+                before { doc.merge!('edit_access_person_ssim'=>[user.to_s]) }
+                it { is_expected.to be_able_to(:download, resource) }
+              end              
+            end
+          end
+          context "for a non-Component" do
+            let(:doc) { {'id'=>'test:1', 'active_fedora_model_ssi'=>'Attachment'} }
+            context "on which the user does NOT have read permission" do
+              it { is_expected.not_to be_able_to(:download, resource) }
+            end
+            context "on which the user has read permission" do
+              before { doc.merge!('read_access_person_ssim'=>[user.to_s]) }
+              it { is_expected.to be_able_to(:download, resource) }
+            end
+            context "on which the user has edit permission" do
+              before { doc.merge!('edit_access_person_ssim'=>[user.to_s]) }
+              it { is_expected.to be_able_to(:download, resource) }
+            end              
+          end
+        end
 
+        context "on a datastream", datastreams: true do
           context "named 'content'", content: true do
             let(:resource) { obj.content }
             context "and object is a Component", components: true do
@@ -113,7 +160,7 @@ module Ddr
                   it { is_expected.not_to be_able_to(:download, resource) }
                 end
               end
-
+              # Component content datastream
               context "and user has the downloader role", roles: true do
                 before do
                   obj.roles.downloader << user.principal_name
@@ -131,7 +178,7 @@ module Ddr
                 end          
               end
             end
-
+            # non-Component content datastream
             context "and object is not a Component" do
               let(:obj) { FactoryGirl.create(:test_content) }
               context "and user has read permission on the object" do
@@ -147,7 +194,7 @@ module Ddr
             end
 
           end
-
+          # datastream - not "content"
           context "not named 'content'" do
             let(:obj) { FactoryGirl.create(:test_model) }
             let(:resource) { obj.descMetadata }

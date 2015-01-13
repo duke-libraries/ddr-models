@@ -30,9 +30,6 @@ module Ddr
           last_virus_check = virus_checks.last
           fields.merge!(last_virus_check.to_solr) if last_virus_check
         end
-        if respond_to?(:original_filename) && original_filename.present?
-          fields[ORIGINAL_FILENAME] = original_filename
-        end
         if has_content?
           fields[CONTENT_CONTROL_GROUP] = content.controlGroup
           fields[CONTENT_SIZE] = content_size

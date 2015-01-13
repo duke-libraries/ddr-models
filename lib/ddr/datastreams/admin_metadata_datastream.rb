@@ -5,8 +5,13 @@ module Ddr
     class AdminMetadataDatastream < ActiveFedora::NtriplesRDFDatastream
 
       property :permanent_id, predicate: Ddr::Vocab::Asset.permanentId
+
       property :permanent_url, predicate: Ddr::Vocab::Asset.permanentUrl
-      property :original_filename, predicate: RDF::Vocab::PREMIS::V1.hasOriginalName
+
+      property :original_filename, predicate: RDF::Vocab::PREMIS::V1.hasOriginalName do |index|
+        index.as :stored_sortable
+      end
+
       property :workflow_state, predicate: Ddr::Vocab::Asset.workflowState
 
       Ddr::Vocab::Roles.each do |term|
