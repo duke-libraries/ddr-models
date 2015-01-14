@@ -2,6 +2,7 @@ module Ddr
   module Models
     class Base < ActiveFedora::Base
 
+      include Indexing
       include Describable
       include Governable
       include AccessControllable
@@ -12,9 +13,10 @@ module Ddr
       include EventLoggable
       include FixityCheckable
       include FileManagement
-      include Indexing
       include Hydra::Validations
       include HasAdminMetadata
+
+      index :internal_uri, :stored_sortable
 
       def copy_admin_policy_or_permissions_from(other)
         copy_permissions_from(other) unless copy_admin_policy_from(other)

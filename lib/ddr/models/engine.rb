@@ -19,9 +19,9 @@ module Ddr
       end
 
       # Add custom predicates to ActiveFedora
-      initializer "ddr_models.predicates" do
-        ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
-      end
+      # initializer "ddr_models.predicates" do
+      #   ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
+      # end
 
       initializer "ddr_models.permanent_ids" do
         Ddr::Models.auto_assign_permanent_ids = Rails.env.production?

@@ -12,8 +12,7 @@ RSpec.describe Component, type: :model, components: true do
       allow_any_instance_of(Component).to receive(:collection) { Collection.new(pid: 'test:1') }
     end
     it "should include the COLLECTION_URI field in its indexing" do
-      expect(component.index_fields).to have_key(Ddr::IndexFields::COLLECTION_URI)
-      expect(component.index_fields[Ddr::IndexFields::COLLECTION_URI]).to eq('info:fedora/test:1')
+      expect(component.indexes).to have_key(:collection_uri)
     end
   end
 end

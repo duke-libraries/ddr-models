@@ -80,26 +80,17 @@ RSpec.describe ActiveFedora::Base do
   end
 
   describe "content" do
-    before do
-      class Contentable < ActiveFedora::Base
-        include Ddr::Models::HasContent
-      end
-    end
-    after do
-      Object.send(:remove_const, :Contentable)
-    end
     describe "#can_have_content?" do
       it "should return true if object can have content, else false" do
-        expect(Contentable.new.can_have_content?).to be_truthy
-        expect(ActiveFedora::Base.new.can_have_content?).to be_falsey
+        expect(Component.new.can_have_content?).to be true
+        expect(ActiveFedora::Base.new.can_have_content?).to be false
       end
     end
     describe "#has_content?" do
-      let(:contentable) { Contentable.new }
-      before { allow(contentable.datastreams[Ddr::Datastreams::CONTENT]).to receive(:has_content?).and_return(true) }
+      let(:contentable) { FactoryGirl.build(:component) }
       it "should return true if object has content, else false" do
         expect(contentable).to have_content
-        expect(Contentable.new).not_to have_content
+        expect(Component.new).not_to have_content
         expect(ActiveFedora::Base.new).not_to have_content
       end
     end

@@ -25,6 +25,15 @@ module Ddr
         end
 
         delegate :validate_checksum!, to: :content
+
+        index :content_control_group,    :searchable, type: :string
+        index :content_media_major_type, :facetable
+        index :content_media_sub_type,   :facetable
+        index :content_media_type,       :symbol
+        index :content_size,             :stored_sortable, type: :integer
+        index :content_size_human,       :symbol
+        index :last_virus_check_on,      :stored_sortable, type: :date
+        index :last_virus_check_outcome, :symbol
       end
 
       # Convenience method wrapping FileManagement#add_file
@@ -45,18 +54,22 @@ module Ddr
       def content_human_size
         ActiveSupport::NumberHelper.number_to_human_size(content_size) if content_size
       end
+      alias_method :content_size_human, :content_human_size
 
       def content_type
         content.mimeType
       end
+      alias_method :content_media_type, :content_type
 
       def content_major_type
-        content_type.split("/").first
+        content_type.split("/").first if content_type
       end
+      alias_method :content_media_major_type, :content_major_type
 
       def content_sub_type
-        content_type.split("/").last
+        content_type.split("/").last if content_type
       end
+      alias_method :content_media_sub_type, :content_sub_type
 
       def content_type= mime_type
         self.content.mimeType = mime_type
@@ -86,6 +99,18 @@ module Ddr
 
       def content_changed?
         content.external? ? content.dsLocation_changed? : content.content_changed?
+      end
+
+      def content_control_group
+        content.controlGroup
+      end
+
+      def last_virus_check_on
+        virus_checks.last.event_date_time_s rescue nil
+      end
+
+      def last_virus_check_outcome
+        virus_checks.last.outcome rescue nil
       end
 
       protected

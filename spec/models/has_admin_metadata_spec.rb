@@ -93,22 +93,6 @@ module Ddr
             end
           end
         end
-
-        describe "indexing" do
-          let(:permanent_id) { "ark:/99999/fk4zzz" }
-          let(:permanent_url) { "http://id.library.duke.edu/ark:/99999/fk4zzz" }
-          before do
-            subject.permanent_id = permanent_id
-            subject.permanent_url = permanent_url
-          end
-          it "should index the permanent id value" do
-            expect(subject.to_solr[Ddr::IndexFields::PERMANENT_ID]).to eq(permanent_id)
-          end
-          it "should index the permanent url" do
-            expect(subject.to_solr[Ddr::IndexFields::PERMANENT_URL]).to eq(permanent_url)
-          end
-        end
-
       end
 
       describe "role assignments" do

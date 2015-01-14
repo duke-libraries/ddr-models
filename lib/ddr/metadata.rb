@@ -17,5 +17,7 @@ module Ddr
       }
     }
 
+    ActiveFedora::Predicates.set_predicates(PREDICATES)
+
   end
 end
