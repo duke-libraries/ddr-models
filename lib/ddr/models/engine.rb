@@ -42,6 +42,7 @@ module Ddr
           }
           config.auto_update = true
           config.logout_url = "/Shibboleth.sso/Logout?return=https://shib.oit.duke.edu/cgi-bin/logout.pl"
+          config.login_url = Proc.new { |env| "/Shibboleth.sso/Login?target=#{env['REQUEST_URI']}" }
         end
       end
 
