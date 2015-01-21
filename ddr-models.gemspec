@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency "hydra-derivatives"
   s.add_dependency "hydra-validations"
   s.add_dependency "ddr-antivirus", "~> 1.3.1"
-  s.add_dependency "devise-remote-user"
+  s.add_dependency "devise-remote-user", "~> 0.5"
   s.add_dependency "grouper-rest-client"
   s.add_dependency "ezid-client", "~> 0.9"
   s.add_dependency "resque", "~> 1.25"
@@ -35,6 +35,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec-rails", "~> 3.1"
   s.add_development_dependency "factory_girl_rails", "~> 4.4"
-  s.add_development_dependency "jettywrapper"
+  s.add_development_dependency "jettywrapper", "~> 1.8"
   s.add_development_dependency "database_cleaner"
 end
