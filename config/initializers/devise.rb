@@ -214,6 +214,20 @@ Devise.setup do |config|
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', :scope => 'user,public_repo'
 
+  # Shibboleth
+  # Explicit require is needed here for devise to find strategy
+  require "omniauth-shibboleth"
+  config.omniauth :shibboleth, {
+    uid_field: "eppn",
+    name_field: "displayName",
+    info_fields: {
+      email: "mail", 
+      first_name: "givenName",
+      last_name: "sn",
+      nickname: "eduPersonNickname"
+    }
+  }
+
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
   # change the failure app, you can configure them inside the config.warden block.
@@ -226,7 +240,7 @@ Devise.setup do |config|
   config.warden do |manager|
     # :superuser scope
     manager.serialize_into_session(:superuser) { |superuser| superuser.id }
-    manager.serialize_from_session(:superuser) { |id| User.find(id) }
+    manager.serialize_from_session(:superuser) { |id| Devise.mappings[:user].to.find(id) }
   end
 
   # ==> Mountable engine configurations
