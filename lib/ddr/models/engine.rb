@@ -13,6 +13,9 @@ module Ddr
         g.helper false
       end
 
+      #
+      # Initializers
+      #
       initializer "ddr_models.external_files" do
         Ddr::Models.external_file_store = ENV["EXTERNAL_FILE_STORE"]
         Ddr::Models.external_file_subpath_pattern = ENV["EXTERNAL_FILE_SUBPATH_PATTERN"] || "--"
@@ -21,29 +24,6 @@ module Ddr
       # Add custom predicates to ActiveFedora
       initializer "ddr_models.predicates" do
         ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
-      end
-
-      initializer "ddr_models.permanent_ids" do
-        Ddr::Models.auto_assign_permanent_ids = Rails.env.production?
-      end
-
-      # Configure devise-remote-user
-      initializer "ddr_auth.remote_user" do
-        require "devise_remote_user"
-        DeviseRemoteUser.configure do |config|
-          config.auto_create = true
-          config.attribute_map = {
-            email: "mail", 
-            first_name: "givenName",
-            middle_name: "duMiddleName1",
-            nickname: "eduPersonNickname",
-            last_name: "sn",
-            display_name: "displayName"
-          }
-          config.auto_update = true
-          config.logout_url = "/Shibboleth.sso/Logout?return=https://shib.oit.duke.edu/cgi-bin/logout.pl"
-          config.login_url = Proc.new { |env| "/Shibboleth.sso/Login?target=#{env['REQUEST_URI']}" }
-        end
       end
 
       # Integration of remote (Grouper) groups via Shibboleth
