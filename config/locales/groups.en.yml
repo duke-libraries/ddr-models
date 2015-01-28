@@ -1,0 +1,6 @@
+en:
+  groups:
+    public: Public
+    registered: Duke Community
+# Grouper group example:
+#    "duke:library:repository:ddr:archivists": Archivists          
