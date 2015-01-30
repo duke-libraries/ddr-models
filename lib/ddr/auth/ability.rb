@@ -33,7 +33,6 @@ module Ddr
       end
 
       def events_permissions
-        can :read, Ddr::Events::Event, user: current_user
         can :read, Ddr::Events::Event do |e|
           can? :read, e.pid
         end

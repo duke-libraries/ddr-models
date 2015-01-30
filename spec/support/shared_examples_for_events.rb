@@ -165,7 +165,9 @@ RSpec.shared_examples "an event" do
 
   describe "rendering who/what performed the action" do
     context "when performed by a user" do
-      before { subject.user = User.new(username: "bob") }
+      before do
+        subject.user_key = "bob"
+      end
       it "should render the user" do
         expect(subject.performed_by).to eq "bob"
       end
