@@ -28,7 +28,7 @@ module Ddr
       # For rendering "performed by" when no associated user
       SYSTEM = "SYSTEM"
 
-      DDR_SOFTWARE = "DDR #{Ddr::Models::VERSION}"
+      DDR_SOFTWARE = "ddr-models #{Ddr::Models::VERSION}"
 
       class_attribute :description
   
@@ -70,7 +70,7 @@ module Ddr
       end
   
       def performed_by
-        user ? user.to_s : SYSTEM
+        user_key || SYSTEM
       end
 
       def comment_or_summary
@@ -99,6 +99,12 @@ module Ddr
 
       def object
         @object ||= ActiveFedora::Base.find(pid) if pid
+      end
+
+      # Sets user_key to user.user_key
+      # For compatibility with ddr-models <= 1.9.0
+      def user=(user)
+        self.user_key = user.user_key
       end
 
       def object=(obj)
@@ -157,7 +163,7 @@ module Ddr
       end
 
       def default_summary
-        self.class.description
+        description
       end
 
       def default_event_date_time

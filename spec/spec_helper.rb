@@ -100,6 +100,8 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 
+  config.include Devise::TestHelpers, type: :controller
+
   config.before(:suite) do
     DatabaseCleaner.clean
     ActiveFedora::Base.destroy_all
