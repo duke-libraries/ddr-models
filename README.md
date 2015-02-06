@@ -24,7 +24,8 @@ ddr-models has several runtime dependencies that are independently configurable:
 - [active_fedora](https://github.com/projecthydra/active_fedora)
 - [hydra-head](https://github.com/projecthydra/hydra-head)
 - [ddr-antivirus](https://github.com/duke-libraries/ddr-antivirus)
-- [devise-remote-user](https://github.com/duke-libraries/devise-remote-user)
+- [devise](https://github.com/plataformatec/devise)
+- [omniauth-shibboleth](https://github.com/toyokazu/omniauth-shibboleth)
 - [ezid-client](https://github.com/duke-libaries/ezid-client)
 
 ddr-models configuration options:
