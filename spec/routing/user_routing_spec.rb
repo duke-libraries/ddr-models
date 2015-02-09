@@ -17,10 +17,4 @@ RSpec.describe "users router", type: :routing do
   it "should have a shibboleth authentication path helper" do
     expect(get: user_omniauth_authorize_path(:shibboleth)).to route_to(controller: 'users/omniauth_callbacks', action: 'passthru', provider: 'shibboleth')
   end
-  describe "redirects", type: :request do
-    it "should have a signed out path" do
-      get '/users/signed_out'
-      expect(response).to redirect_to('/')
-    end
-  end
 end
