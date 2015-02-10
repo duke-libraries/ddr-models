@@ -8,6 +8,7 @@ module Ddr
     autoload :GroupService
     autoload :GrouperService
     autoload :RemoteGroupService
+    autoload :FailureApp
 
     # Group authorized to act as superuser
     mattr_accessor :superuser_group
