@@ -10,6 +10,10 @@ RSpec.describe Users::SessionsController, type: :controller do
         get :new
         expect(response).to redirect_to(user_omniauth_authorize_path(:shibboleth, origin: "/foo/bar"))
       end
+      it "should discard the flash alert" do
+        expect_any_instance_of(ActionDispatch::Flash::FlashHash).to receive(:discard).with(:alert)
+        get :new
+      end
     end
 
     describe "when shibboleth user authentication is NOT required" do
@@ -18,6 +22,10 @@ RSpec.describe Users::SessionsController, type: :controller do
         expect(subject).to receive(:store_location_for).with(:user, "/foo/bar")
         get :new
         expect(response).to render_template(:new)
+      end
+      it "should NOT discard the flash alert" do
+        expect_any_instance_of(ActionDispatch::Flash::FlashHash).not_to receive(:discard).with(:alert)
+        get :new
       end
     end
   end
