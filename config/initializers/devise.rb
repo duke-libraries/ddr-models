@@ -238,7 +238,6 @@ Devise.setup do |config|
   # end
 
   config.warden do |manager|
-    manager.failure_app = Ddr::Auth::FailureApp
     # :superuser scope
     manager.serialize_into_session(:superuser) { |superuser| superuser.id }
     manager.serialize_from_session(:superuser) { |id| Devise.mappings[:user].to.find(id) }

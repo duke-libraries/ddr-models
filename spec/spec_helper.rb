@@ -15,6 +15,8 @@ require "resque"
 
 Resque.inline = true
 
+OmniAuth.config.test_mode = true
+
 Dir[File.join(File.dirname(__FILE__), "support", "*.rb")].each { |f| require f }
 
 DatabaseCleaner.strategy = :truncation

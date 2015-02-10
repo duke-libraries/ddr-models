@@ -8,7 +8,6 @@ module Ddr
     autoload :GroupService
     autoload :GrouperService
     autoload :RemoteGroupService
-    autoload :FailureApp
 
     # Group authorized to act as superuser
     mattr_accessor :superuser_group
@@ -50,6 +49,10 @@ module Ddr
     # Whether to require Shibboleth authentication 
     mattr_accessor :require_shib_user_authn do
       false
+    end
+
+    mattr_accessor :sso_logout_url do
+      "/Shibboleth.sso/Logout?return=https://shib.oit.duke.edu/cgi-bin/logout.pl"
     end
 
   end
