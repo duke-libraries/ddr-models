@@ -8,8 +8,4 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     sign_in_and_redirect user
   end
 
-  def after_sign_in_path_for(resource)
-    request.env["omniauth.origin"] || super
-  end
-
 end
