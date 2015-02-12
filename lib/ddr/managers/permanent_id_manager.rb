@@ -10,7 +10,7 @@ module Ddr
     class PermanentIdManager
 
       PERMANENT_URL_BASE = "http://id.library.duke.edu/"
-      TARGET_URL_BASE = "http://repository.lib.duke.edu/"
+      TARGET_URL_BASE = "https://repository.lib.duke.edu/id/"
 
       ASSIGN_EVENT_SUMMARY = "Permanent ID assigned"
 
