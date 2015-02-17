@@ -25,14 +25,11 @@ class Collection < Ddr::Models::Base
 
   validates_presence_of :title
 
-  # Returns the SolrDocuments for Components associated with the Collection through its member Items.
+  # Returns the SolrDocuments for Components associated with the Collection.
   #
   # @return A lazy enumerator of SolrDocuments.
   def components_from_solr
-    outer = Ddr::IndexFields::IS_PART_OF
-    inner = Ddr::IndexFields::INTERNAL_URI
-    where = ActiveFedora::SolrService.construct_query_for_rel(:is_member_of_collection => internal_uri)
-    query = "{!join to=#{outer} from=#{inner}}#{where}"
+    query = "#{Ddr::IndexFields::COLLECTION_URI}:#{RSolr.escape(internal_uri)}"
     filter = ActiveFedora::SolrService.construct_query_for_rel(:has_model => Component.to_class_uri)
     results = ActiveFedora::SolrService.query(query, fq: filter, rows: 100000)
     results.lazy.map {|doc| SolrDocument.new(doc)}
