@@ -28,7 +28,6 @@ module Ddr
     #autoload :PreservationMetadataDatastream
     autoload :PropertiesDatastream
     autoload :DatastreamBehavior
-    #autoload :RoleAssignmentsDatastream
 
   end
 end
