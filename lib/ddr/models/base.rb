@@ -8,7 +8,6 @@ module Ddr
       include Licensable
       include HasProperties
       include HasThumbnail
-      include ActiveFedora::Auditable
       include EventLoggable
       include FixityCheckable
       include FileManagement
