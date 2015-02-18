@@ -22,6 +22,19 @@ RSpec.describe Collection, :type => :model do
     end
   end
 
+  describe "#components_from_solr" do
+    let(:collection) { Collection.new(pid: 'test:1') }
+    before do
+      allow_any_instance_of(Component).to receive(:collection_uri).and_return(collection.internal_uri)
+    end
+    it "should return the correct component(s)" do
+      component = Component.create
+      docs = collection.components_from_solr
+      expect(docs.size).to eq(1)
+      expect(docs.first.id).to eq(component.pid)
+    end
+  end
+
   context "validation" do
     let(:collection) { Collection.new }
     it "should require a title" do
