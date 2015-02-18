@@ -73,7 +73,7 @@ EZID Metadata:
           @record = mint
           object.permanent_id = record.id
           object.permanent_url = (PERMANENT_URL_BASE + object.permanent_id)
-          object.save
+          object.save!
         end
 
         # @return [Ezid::Identifier]
