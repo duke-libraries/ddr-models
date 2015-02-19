@@ -76,7 +76,7 @@ module Ddr::Utils
   # Find an object with a given identifier and return its PID.
   # Returns the PID if a single object is found.
   # Returns nil if no object is found.
-  # Raises Ddr::Error if more than one object is found.
+  # Raises Ddr::Models::Error if more than one object is found.
   # Options can be provided to limit the scope of matching objects
   #   model: Will only consider objects of that model
   #   collection: Will only consider objects that either are that collection or which are
@@ -103,7 +103,7 @@ module Ddr::Utils
     when 1
       pids.first
     else
-      raise Ddr::Error, I18n.t('ddr.errors.multiple_object_matches', :criteria => "identifier #{identifier}")
+      raise Ddr::Models::Error, I18n.t('ddr.errors.multiple_object_matches', :criteria => "identifier #{identifier}")
     end
   end
 
