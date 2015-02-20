@@ -19,15 +19,7 @@ module Ddr
         end
         return parsed
       end
-      
-      def to_solr(solr_doc=Hash.new)
-        solr_doc = super(solr_doc)
-        if self.content
-          solr_doc.merge!({Ddr::IndexFields::CONTENT_METADATA_PARSED => parse.to_json})
-        end
-        solr_doc
-      end    
-      
+            
       def first_pid
         find_first_pid(parse.first)
       end

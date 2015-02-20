@@ -1,47 +1,44 @@
 module Ddr
   module Models
     module Indexing
+      extend ActiveSupport::Concern
 
-      include Ddr::IndexFields
+      included do
+        class_attribute :indexes
+        self.indexes = {}
 
-      def to_solr(solr_doc=Hash.new, opts={})
-        solr_doc = super(solr_doc, opts)
-        solr_doc.merge index_fields
+        def self.index_name(key)
+          indexes[key].name
+        end
+        
+        def self.index(key, *args, &block)
+          name = ActiveFedora::SolrService.solr_name(key, *args)
+          method = block || key
+          idx = Index.new(name, method)
+          self.indexes = indexes.merge(key => idx)
+        end
+        
+        index :title, :stored_sortable do
+          title_display 
+        end
+
+        index :identifier, :stored_sortable do
+          identifier_sort
+        end
+      end
+
+      def index_value(key)
+        indexes[key].value(self)
       end
 
       def index_fields
-        fields = {
-          TITLE => title_display,
-          INTERNAL_URI => internal_uri,
-          IDENTIFIER => identifier_sort,
-          WORKFLOW_STATE => workflow_state
-        }
-        if permanent_id.present?
-          fields[PERMANENT_ID] = permanent_id
+        indexes.values.each_with_object({}) do |idx, doc|
+          doc[idx.name] = idx.value(self)
         end
-        if permanent_url.present?
-          fields[PERMANENT_URL] = permanent_url
-        end
-        if respond_to? :fixity_checks
-          last_fixity_check = fixity_checks.last
-          fields.merge!(last_fixity_check.to_solr) if last_fixity_check
-        end
-        if respond_to? :virus_checks
-          last_virus_check = virus_checks.last
-          fields.merge!(last_virus_check.to_solr) if last_virus_check
-        end
-        if has_content?
-          fields[CONTENT_CONTROL_GROUP] = content.controlGroup
-          fields[CONTENT_SIZE] = content_size
-          fields[CONTENT_SIZE_HUMAN] = content_human_size
-          fields[MEDIA_TYPE] = content_type
-          fields[MEDIA_MAJOR_TYPE] = content_major_type
-          fields[MEDIA_SUB_TYPE] = content_sub_type
-        end
-        if is_a? Component
-          fields[COLLECTION_URI] = collection_uri
-        end
-        fields
+      end
+
+      def to_solr(solr_doc=Hash.new, opts={})
+        super(solr_doc, opts).merge(index_fields)
       end
 
       def title_display

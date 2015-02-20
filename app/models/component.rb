@@ -10,6 +10,8 @@ class Component < Ddr::Models::Base
   belongs_to :parent, :property => :is_part_of, :class_name => 'Item'
   belongs_to :target, :property => :has_external_target, :class_name => 'Target'
 
+  index :collection_uri, :symbol
+
   alias_method :item, :parent
   alias_method :item=, :parent=
 

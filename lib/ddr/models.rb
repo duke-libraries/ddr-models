@@ -14,7 +14,6 @@ require 'ddr/actions'
 require 'ddr/auth'
 require 'ddr/datastreams'
 require 'ddr/events'
-require 'ddr/index_fields'
 require 'ddr/managers'
 require 'ddr/metadata'
 require 'ddr/notifications'
@@ -41,6 +40,7 @@ module Ddr
     autoload :HasProperties
     autoload :HasThumbnail
     autoload :Indexing
+    autoload :Index
     autoload :FileManagement
     autoload :Licensable
     autoload :SolrDocument
@@ -71,3 +71,5 @@ module Ddr
 end
 
 Dir[Ddr::Models::Engine.root.to_s + "/app/models/*.rb"].each { |m| require m }
+
+require 'ddr/index_fields'

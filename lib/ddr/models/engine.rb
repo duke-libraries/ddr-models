@@ -22,9 +22,9 @@ module Ddr
       end
 
       # Add custom predicates to ActiveFedora
-      initializer "ddr_models.predicates" do
-        ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
-      end
+      # initializer "ddr_models.predicates" do
+      #   ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
+      # end
 
       # Integration of remote (Grouper) groups via Shibboleth
       initializer "ddr_auth.grouper" do

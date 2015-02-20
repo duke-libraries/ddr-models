@@ -27,11 +27,6 @@ module Ddr
                )
       end
 
-      def to_solr
-        { Ddr::IndexFields::LAST_FIXITY_CHECK_ON => event_date_time_s,
-          Ddr::IndexFields::LAST_FIXITY_CHECK_OUTCOME => outcome }
-      end
-
       protected
 
       def default_software
