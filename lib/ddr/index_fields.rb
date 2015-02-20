@@ -10,6 +10,8 @@ module Ddr
     CONTENT_CONTROL_GROUP     = solr_name :content_control_group, :searchable, type: :string
     CONTENT_SIZE              = solr_name :content_size, :stored_sortable, type: :integer
     CONTENT_SIZE_HUMAN        = solr_name :content_size_human, :symbol
+    FILE_GROUP                = solr_name :struct_metadata__file_group, :stored_sortable
+    FILE_USE                  = solr_name :struct_metadata__file_use, :stored_sortable
     HAS_MODEL                 = solr_name :has_model, :symbol
     IDENTIFIER                = solr_name :identifier, :stored_sortable
     INTERNAL_URI              = solr_name :internal_uri, :stored_sortable
@@ -30,6 +32,7 @@ module Ddr
     OBJECT_STATE              = solr_name :object_state, :stored_sortable
     OBJECT_CREATE_DATE        = solr_name :system_create, :stored_sortable, type: :date
     OBJECT_MODIFIED_DATE      = solr_name :system_modified, :stored_sortable, type: :date
+    ORDER                     = solr_name :struct_metadata__order, :stored_sortable, type: :integer
     PERMANENT_ID              = solr_name :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL             = solr_name :permanent_url, :stored_sortable, type: :string
     TITLE                     = solr_name :title, :stored_sortable

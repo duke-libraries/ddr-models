@@ -11,6 +11,7 @@ module Ddr
     PROPERTIES = "properties"
     RELS_EXT = "RELS-EXT"
     RIGHTS_METADATA = "rightsMetadata"
+    STRUCT_METADATA = "structMetadata"
     THUMBNAIL = "thumbnail"
 
     CHECKSUM_TYPE_MD5 = "MD5"
@@ -25,6 +26,7 @@ module Ddr
     autoload :DescriptiveMetadataDatastream
     #autoload :PreservationMetadataDatastream
     autoload :PropertiesDatastream
+    autoload :StructMetadataDatastream
     autoload :DatastreamBehavior
 
   end
