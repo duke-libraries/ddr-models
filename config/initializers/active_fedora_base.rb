@@ -25,10 +25,6 @@ module ActiveFedora
       can_have_content? && content.has_content?
     end
 
-    def has_content_metadata?
-      self.is_a?(DulHydra::HasContentMetadata) && self.datastreams[Ddr::Datastreams::CONTENT_METADATA].has_content?
-    end
-
     def describable?
       self.is_a? Ddr::Models::Describable
     end
