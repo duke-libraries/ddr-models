@@ -5,7 +5,6 @@
 #
 class Item < Ddr::Models::Base
   
-  include Ddr::Models::HasContentMetadata
   include Ddr::Models::HasChildren
 
   has_many :children, property: :is_part_of, class_name: 'Component'

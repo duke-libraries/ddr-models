@@ -150,10 +150,6 @@ module Ddr
         has_datastream?(Ddr::Datastreams::DEFAULT_RIGHTS)
       end
     
-      def parsed_content_metadata
-        JSON.parse(self[Ddr::IndexFields::CONTENT_METADATA_PARSED].first)
-      end
-
       def association(name)
         get_pid(ActiveFedora::SolrService.solr_name(name, :symbol))
       end

@@ -8,7 +8,6 @@ module Ddr
     ACTIVE_FEDORA_MODEL       = solr_name :active_fedora_model, :stored_sortable
     COLLECTION_URI            = solr_name :collection_uri, :symbol
     CONTENT_CONTROL_GROUP     = solr_name :content_control_group, :searchable, type: :string
-    CONTENT_METADATA_PARSED   = solr_name :content_metadata_parsed, :symbol
     CONTENT_SIZE              = solr_name :content_size, :stored_sortable, type: :integer
     CONTENT_SIZE_HUMAN        = solr_name :content_size_human, :symbol
     HAS_MODEL                 = solr_name :has_model, :symbol
