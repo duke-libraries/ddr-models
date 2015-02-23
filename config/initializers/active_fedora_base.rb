@@ -41,7 +41,15 @@ module ActiveFedora
       ds = self.datastreams[Ddr::Datastreams::RIGHTS_METADATA]
       ds && ds.size && ds.size > 0
     end
-    
+
+    def can_have_struct_metadata?
+      datastreams.include? Ddr::Datastreams::STRUCT_METADATA
+    end
+
+    def has_struct_metadata?
+      can_have_struct_metadata? && structMetadata.has_content?
+    end
+
     def can_have_thumbnail?
       datastreams.include? "thumbnail"
     end
