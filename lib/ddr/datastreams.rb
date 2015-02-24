@@ -4,6 +4,7 @@ module Ddr
   module Datastreams
     extend ActiveSupport::Autoload
 
+    ADMIN_METADATA = "adminMetadata"
     CONTENT = "content"
     DC = "DC"
     DEFAULT_RIGHTS = "defaultRights"
