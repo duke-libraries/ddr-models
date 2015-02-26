@@ -77,6 +77,22 @@ module Ddr
           expect(ds.resource).to be_isomorphic_with(RDF::Reader.for(:ntriples).new(content))
         end
       end
+      context "using the set_values and add_value methods" do
+        let(:ds) { described_class.new(nil, 'descMetadata') }
+        before { ds.type = "Photograph" }
+        context "#set_values" do
+          it "should set the values of the term to those supplied" do
+            ds.set_values :type, [ "Image", "Still Image" ]
+            expect(ds.type).to eq([ "Image", "Still Image" ])
+          end
+        end
+        context "#add_value" do
+          it "should add the supplied value to those of the term" do
+            ds.add_value :type, "Image"
+            expect(ds.type).to eq([ "Photograph", "Image" ])
+          end
+        end
+      end
       context "solrization" do
         let(:ds) { described_class.new(nil, 'descMetadata') }
         subject { ds.to_solr }
