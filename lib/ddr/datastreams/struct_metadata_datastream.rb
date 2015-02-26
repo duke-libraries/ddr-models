@@ -2,7 +2,7 @@ require "rdf-vocab"
 
 module Ddr
   module Datastreams
-    class StructMetadataDatastream < ActiveFedora::NtriplesRDFDatastream
+    class StructMetadataDatastream < MetadataDatastream
 
       # analogous to METS fileSec "USE" attribute
       property :file_use, predicate: Ddr::Vocab::Asset.fileUse do |index|
