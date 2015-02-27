@@ -13,3 +13,6 @@ ActiveSupport::Notifications.subscribe(Ddr::Notifications::CREATION, Ddr::Events
 
 # Update
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::UPDATE, Ddr::Events::UpdateEvent)
+
+# Deletion
+ActiveSupport::Notifications.subscribe(Ddr::Notifications::DELETION, Ddr::Events::DeletionEvent)

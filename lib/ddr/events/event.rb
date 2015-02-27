@@ -34,7 +34,6 @@ module Ddr
   
       validates_presence_of :event_date_time, :pid
       validates :outcome, inclusion: {in: OUTCOMES, message: "\"%{value}\" is not a valid event outcome"}
-      validate :object_exists # unless/until we have a deaccession-type of event
  
       after_initialize :set_defaults
       before_save { failure! if exception.present? }
@@ -126,13 +125,6 @@ module Ddr
         event_date_time.utc.strftime DATE_TIME_FORMAT
       end
 
-      # Return boolean indicator of object existence
-      def object_exists?
-        !object.nil?
-      rescue ActiveFedora::ObjectNotFoundError => e
-        false
-      end
-
       protected
 
       def set_defaults
@@ -145,13 +137,6 @@ module Ddr
           software: default_software,
           outcome: default_outcome
         }
-      end
-
-      # Validation method
-      def object_exists
-        unless object_exists?
-          errors.add(:pid, "Object \"#{pid}\" does not exist in the repository") 
-        end
       end
 
       def default_software

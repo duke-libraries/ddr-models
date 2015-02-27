@@ -5,6 +5,7 @@ module Ddr
     VIRUS_CHECK = "virus_check.events.ddr"
     CREATION = "creation.events.ddr"
     UPDATE = "update.events.ddr"
+    DELETION = "deletion.events.ddr"
 
     def self.notify_event(type, args={})
       name = "#{type}.events.ddr"
