@@ -15,7 +15,7 @@ module Ddr
       property :workflow_state, predicate: Ddr::Vocab::Asset.workflowState
 
       Ddr::Vocab::Roles.each do |term|
-        property Ddr::Metadata::Vocabulary.term_name(Ddr::Vocab::Roles, term), 
+        property Ddr::Vocab::Vocabulary.term_name(Ddr::Vocab::Roles, term), 
                  predicate: term do |index|
           index.as :symbol
         end

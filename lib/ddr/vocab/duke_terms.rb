@@ -1,5 +1,5 @@
 module Ddr
-  module Metadata
+  module Vocab
 
     class DukeTerms < RDF::StrictVocabulary("http://library.duke.edu/metadata/terms/")
 

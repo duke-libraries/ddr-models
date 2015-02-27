@@ -9,7 +9,7 @@ module Ddr
                    versionable: true, 
                    label: "Descriptive Metadata for this object", 
                    control_group: 'M'
-      has_attributes *Ddr::Metadata::Vocabulary.term_names(RDF::DC11),
+      has_attributes *Ddr::Vocab::Vocabulary.term_names(RDF::DC11),
                      datastream: Ddr::Datastreams::DESC_METADATA, 
                      multiple: true
     end
@@ -31,12 +31,12 @@ module Ddr
               when :required
                 desc_metadata_terms(:defined_attributes).select {|t| required? t}
               when :dcterms
-                Ddr::Metadata::Vocabulary.term_names(RDF::DC11) +
-                      (Ddr::Metadata::Vocabulary.term_names(RDF::DC) - Ddr::Metadata::Vocabulary.term_names(RDF::DC11))
+                Ddr::Vocab::Vocabulary.term_names(RDF::DC11) +
+                      (Ddr::Vocab::Vocabulary.term_names(RDF::DC) - Ddr::Vocab::Vocabulary.term_names(RDF::DC11))
               when :dcterms_elements11
-                Ddr::Metadata::Vocabulary.term_names(RDF::DC11)
+                Ddr::Vocab::Vocabulary.term_names(RDF::DC11)
               when :duke
-                Ddr::Metadata::Vocabulary.term_names(Ddr::Metadata::DukeTerms)
+                Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms)
               else
                 raise ArgumentError, "Invalid argument: #{arg.inspect}"
               end
