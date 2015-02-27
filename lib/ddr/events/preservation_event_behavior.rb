@@ -1,3 +1,5 @@
+require "rdf-vocab"
+
 module Ddr
   module Events
     module PreservationEventBehavior
@@ -16,7 +18,7 @@ module Ddr
 
       def as_premis
         Ddr::Metadata::PremisEvent.new.tap do |doc|
-          doc.event_type = PreservationEventType.label_for(preservation_event_type)
+          doc.event_type = RDF::Vocab::PremisEventType.label_for(preservation_event_type)
           doc.event_id_type = EVENT_ID_TYPE
           doc.event_id_value = id
           doc.event_detail = summary
