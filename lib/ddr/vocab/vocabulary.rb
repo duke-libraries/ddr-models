@@ -1,5 +1,5 @@
 module Ddr
-  module Metadata
+  module Vocab
     class Vocabulary
 
       def self.label(rdf_vocabulary)

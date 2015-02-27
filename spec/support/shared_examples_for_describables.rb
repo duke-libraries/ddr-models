@@ -15,11 +15,11 @@ RSpec.shared_examples "a describable object" do
     end
     describe "arguments" do
       it "with fixed results" do
-        expect(object.desc_metadata_terms(:dcterms)).to eq(Ddr::Metadata::Vocabulary.term_names(RDF::DC11) + (Ddr::Metadata::Vocabulary.term_names(RDF::DC) - Ddr::Metadata::Vocabulary.term_names(RDF::DC11)))
-        expect(object.desc_metadata_terms(:dcterms)).to match_array Ddr::Metadata::Vocabulary.term_names(RDF::DC)
-        expect(object.desc_metadata_terms(:duke)).to eq Ddr::Metadata::Vocabulary.term_names(Ddr::Metadata::DukeTerms)
-        expect(object.desc_metadata_terms(:dcterms_elements11)).to eq Ddr::Metadata::Vocabulary.term_names(RDF::DC11)
-        expect(object.desc_metadata_terms(:defined_attributes)).to match_array Ddr::Metadata::Vocabulary.term_names(RDF::DC11)
+        expect(object.desc_metadata_terms(:dcterms)).to eq(Ddr::Vocab::Vocabulary.term_names(RDF::DC11) + (Ddr::Vocab::Vocabulary.term_names(RDF::DC) - Ddr::Vocab::Vocabulary.term_names(RDF::DC11)))
+        expect(object.desc_metadata_terms(:dcterms)).to match_array Ddr::Vocab::Vocabulary.term_names(RDF::DC)
+        expect(object.desc_metadata_terms(:duke)).to eq Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms)
+        expect(object.desc_metadata_terms(:dcterms_elements11)).to eq Ddr::Vocab::Vocabulary.term_names(RDF::DC11)
+        expect(object.desc_metadata_terms(:defined_attributes)).to match_array Ddr::Vocab::Vocabulary.term_names(RDF::DC11)
       end
       context "with variable results" do
         before do
