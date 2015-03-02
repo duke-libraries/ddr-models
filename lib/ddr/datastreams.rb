@@ -27,7 +27,7 @@ module Ddr
     autoload :AdminMetadataDatastream
     autoload :DescriptiveMetadataDatastream
     autoload :PropertiesDatastream
-    autoload :StructMetadataDatastream
+    autoload :StructuralMetadataDatastream
     autoload :DatastreamBehavior
 
   end

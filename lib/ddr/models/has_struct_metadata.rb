@@ -8,7 +8,7 @@ module Ddr
 
       included do
         has_metadata "structMetadata",
-                     type: Ddr::Datastreams::StructMetadataDatastream,
+                     type: Ddr::Datastreams::StructuralMetadataDatastream,
                      versionable: true,
                      control_group: "M"
 
