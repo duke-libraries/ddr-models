@@ -2,7 +2,7 @@ require "rdf-vocab"
 
 module Ddr
   module Datastreams
-    class AdminMetadataDatastream < MetadataDatastream
+    class AdministrativeMetadataDatastream < MetadataDatastream
 
       property :permanent_id, predicate: Ddr::Vocab::Asset.permanentId
 

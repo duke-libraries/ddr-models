@@ -5,7 +5,7 @@ module Ddr
 
       included do
         has_metadata "adminMetadata",
-                     type: Ddr::Datastreams::AdminMetadataDatastream,
+                     type: Ddr::Datastreams::AdministrativeMetadataDatastream,
                      versionable: true,
                      control_group: "M"
 
