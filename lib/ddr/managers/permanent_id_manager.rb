@@ -7,12 +7,13 @@ module Ddr
     # PermanentIdManager is responsible for managing the permanent id for an object.
     #
     # @api private
+    #
     class PermanentIdManager
 
       PERMANENT_URL_BASE = "http://id.library.duke.edu/"
       TARGET_URL_BASE = "https://repository.lib.duke.edu/id/"
 
-      ASSIGN_EVENT_SUMMARY = "Permanent ID assigned"
+      ASSIGN_EVENT_SUMMARY = "Permanent ID assignment"
 
       SOFTWARE = Ezid::Client.version
 

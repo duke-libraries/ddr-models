@@ -4,12 +4,12 @@ module Ddr
 
     autoload :Event
     autoload :CreationEvent
+    autoload :DeletionEvent
     autoload :FixityCheckEvent
     autoload :IngestionEvent
     autoload :UpdateEvent
     autoload :ValidationEvent
     autoload :VirusCheckEvent
-    autoload :PreservationEventType
     autoload :PreservationEventBehavior
     autoload :ReindexObjectAfterSave
     

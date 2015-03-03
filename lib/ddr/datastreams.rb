@@ -4,14 +4,15 @@ module Ddr
   module Datastreams
     extend ActiveSupport::Autoload
 
+    ADMIN_METADATA = "adminMetadata"
     CONTENT = "content"
-    CONTENT_METADATA = "contentMetadata"
     DC = "DC"
     DEFAULT_RIGHTS = "defaultRights"
     DESC_METADATA = "descMetadata"
     PROPERTIES = "properties"
     RELS_EXT = "RELS-EXT"
     RIGHTS_METADATA = "rightsMetadata"
+    STRUCT_METADATA = "structMetadata"
     THUMBNAIL = "thumbnail"
 
     CHECKSUM_TYPE_MD5 = "MD5"
@@ -22,11 +23,11 @@ module Ddr
 
     CHECKSUM_TYPES = [ CHECKSUM_TYPE_MD5, CHECKSUM_TYPE_SHA1, CHECKSUM_TYPE_SHA256, CHECKSUM_TYPE_SHA384, CHECKSUM_TYPE_SHA512 ]
 
-    autoload :AdminMetadataDatastream
-    autoload :ContentMetadataDatastream
+    autoload :MetadataDatastream
+    autoload :AdministrativeMetadataDatastream
     autoload :DescriptiveMetadataDatastream
-    #autoload :PreservationMetadataDatastream
     autoload :PropertiesDatastream
+    autoload :StructuralMetadataDatastream
     autoload :DatastreamBehavior
 
   end

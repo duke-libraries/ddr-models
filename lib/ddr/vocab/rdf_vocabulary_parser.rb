@@ -1,7 +1,7 @@
 require 'rdf/rdfxml'
 
 module Ddr
-  module Metadata
+  module Vocab
     class RDFVocabularyParser
 
       attr_reader :source, :prefix

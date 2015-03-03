@@ -60,5 +60,13 @@ module Ddr
         expect(subject.display_type).to eq "Validation"
       end
     end
+
+    RSpec.describe DeletionEvent, type: :model, events: true do
+      it_behaves_like "an event"
+      it_behaves_like "a preservation-related event"
+      it "should have a display type" do
+        expect(subject.display_type).to eq "Deletion"
+      end
+    end
   end
 end

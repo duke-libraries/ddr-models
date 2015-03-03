@@ -31,27 +31,12 @@ end
 
 RSpec.shared_examples "an event" do
   describe "validation" do
-    context "of pid" do
-      it "should require presence" do
-        expect(subject).not_to be_valid
-        expect(subject.errors[:pid]).to include "can't be blank"
-      end
-      context "when the object exists" do
-        before { subject.pid = ActiveFedora::Base.create.pid }
-        it "should be valid" do
-          expect(subject).to be_valid
-        end
-      end
-      context "when the object doesn't exist" do
-        before { subject.pid = "test:123" }
-        it "should not be valid" do
-          expect(subject).not_to be_valid
-          expect(subject.errors).to have_key :pid
-        end
-      end
+    it "should require a PID" do
+      expect(subject).not_to be_valid
+      expect(subject.errors[:pid]).to include "can't be blank"
     end
     it "should require an event_date_time" do
-      subject.event_date_time = nil # reset b/c set to default after init
+      allow(subject).to receive(:event_date_time) { nil } # b/c set to default after init
       expect(subject).not_to be_valid
       expect(subject.errors[:event_date_time]).to include "can't be blank"
     end
@@ -132,27 +117,6 @@ RSpec.shared_examples "an event" do
     it "should raise an ArgumentError if object is a new record" do
       allow(object).to receive(:new_record?) { true }
       expect { subject.object = object }.to raise_error ArgumentError
-    end
-  end
-
-  describe "object existence" do
-    it "should be false if pid is nil" do
-      expect(subject.object_exists?).to be_falsey
-    end
-    it "should be false if pid not found in repository" do
-      subject.pid = "test:123"
-      expect(subject.object_exists?).to be_falsey
-    end
-    it "should be true if object exists in repository" do
-      allow(ActiveFedora::Base).to receive(:find).with("test:123") { mock_object }
-      subject.pid = "test:123"
-      expect(subject.object_exists?).to be_truthy
-    end
-    it "should be true if object instance variable is set" do
-      obj = mock_object(pid: "test:123")
-      allow(obj).to receive(:new_record?) { false }
-      subject.object = obj
-      expect(subject.object_exists?).to be_truthy
     end
   end
 

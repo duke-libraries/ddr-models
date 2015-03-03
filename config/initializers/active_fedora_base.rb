@@ -25,10 +25,6 @@ module ActiveFedora
       can_have_content? && content.has_content?
     end
 
-    def has_content_metadata?
-      self.is_a?(DulHydra::HasContentMetadata) && self.datastreams[Ddr::Datastreams::CONTENT_METADATA].has_content?
-    end
-
     def describable?
       self.is_a? Ddr::Models::Describable
     end
@@ -45,7 +41,15 @@ module ActiveFedora
       ds = self.datastreams[Ddr::Datastreams::RIGHTS_METADATA]
       ds && ds.size && ds.size > 0
     end
-    
+
+    def can_have_struct_metadata?
+      datastreams.include? Ddr::Datastreams::STRUCT_METADATA
+    end
+
+    def has_struct_metadata?
+      can_have_struct_metadata? && structMetadata.has_content?
+    end
+
     def can_have_thumbnail?
       datastreams.include? "thumbnail"
     end

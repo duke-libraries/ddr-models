@@ -25,19 +25,19 @@ module Ddr
       context "terminology" do
         subject { described_class.term_names }
         it "should have a term for each term name in the RDF::DC vocab" do
-          expect(subject).to include(*Ddr::Metadata::Vocabulary.term_names(RDF::DC))
+          expect(subject).to include(*Ddr::Vocab::Vocabulary.term_names(RDF::DC))
         end
         it "should have a term for each term name in the DukeTerms vocab" do
-          expect(subject).to include(*Ddr::Metadata::Vocabulary.term_names(Ddr::Metadata::DukeTerms))
+          expect(subject).to include(*Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms))
         end
       end
       context "properties" do
         subject { described_class.properties.map { |prop| prop[1].predicate } }
         it "should include all the RDF::DC predicates" do
-          expect(subject).to include(*Ddr::Metadata::Vocabulary.property_terms(RDF::DC))
+          expect(subject).to include(*Ddr::Vocab::Vocabulary.property_terms(RDF::DC))
         end
         it "should include all the DukeTerms predicates" do
-          expect(subject).to include(*Ddr::Metadata::Vocabulary.property_terms(Ddr::Metadata::DukeTerms))
+          expect(subject).to include(*Ddr::Vocab::Vocabulary.property_terms(Ddr::Vocab::DukeTerms))
         end
       end
       context "raw content" do
@@ -75,6 +75,22 @@ module Ddr
         end
         it "should create equivalent RDF graph to that based on the raw version" do
           expect(ds.resource).to be_isomorphic_with(RDF::Reader.for(:ntriples).new(content))
+        end
+      end
+      context "using the set_values and add_value methods" do
+        let(:ds) { described_class.new(nil, 'descMetadata') }
+        before { ds.type = "Photograph" }
+        context "#set_values" do
+          it "should set the values of the term to those supplied" do
+            ds.set_values :type, [ "Image", "Still Image" ]
+            expect(ds.type).to eq([ "Image", "Still Image" ])
+          end
+        end
+        context "#add_value" do
+          it "should add the supplied value to those of the term" do
+            ds.add_value :type, "Image"
+            expect(ds.type).to eq([ "Photograph", "Image" ])
+          end
         end
       end
       context "solrization" do
