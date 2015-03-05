@@ -8,14 +8,14 @@ module Ddr
 
         has_many :events, inverse_of: :user, class_name: "Ddr::Events::Event"
 
+        attr_writer :groups
+
         delegate :can?, :cannot?, to: :ability
 
         validates_uniqueness_of :username, :case_sensitive => false
         validates_format_of :email, with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/
 
         devise :database_authenticatable, :omniauthable, omniauth_providers: [:shibboleth]
-
-        attr_writer :group_service
 
         class_attribute :user_key_attribute
         self.user_key_attribute = Devise.authentication_keys.first
@@ -43,10 +43,6 @@ module Ddr
         send(user_key_attribute)
       end
 
-      def group_service
-        @group_service ||= RemoteGroupService.new
-      end
-
       def to_s
         user_key
       end
@@ -56,15 +52,15 @@ module Ddr
       end
 
       def groups
-        @groups ||= group_service.user_groups(self)
+        @groups ||= Groups.new(self)
       end
 
       def member_of?(group)
-        group ? self.groups.include?(group) : false
+        groups.include? group
       end
       
       def authorized_to_act_as_superuser?
-        member_of? group_service.superuser_group
+        member_of? Ddr::Auth.superuser_group
       end
 
       def principal_name

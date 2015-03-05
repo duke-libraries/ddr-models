@@ -26,15 +26,9 @@ module Ddr
         ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
       end
 
-      # Integration of remote (Grouper) groups via Shibboleth
-      initializer "ddr_auth.grouper" do
-        # Load configuration for Grouper service, if present
-        if File.exists? "#{Rails.root}/config/grouper.yml"
-          Ddr::Auth::GrouperService.config = YAML.load_file("#{Rails.root}/config/grouper.yml")[Rails.env]
-        end
-
+      initializer "ddr_auth.groups" do
         Warden::Manager.after_set_user do |user, auth, opts|
-          user.group_service = Ddr::Auth::RemoteGroupService.new(auth.env)
+          user.groups = Ddr::Auth::Groups.new(user, auth.env)
         end
       end
 
