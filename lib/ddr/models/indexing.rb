@@ -30,6 +30,11 @@ module Ddr
           last_virus_check = virus_checks.last
           fields.merge!(last_virus_check.to_solr) if last_virus_check
         end
+        if respond_to? :license
+          fields[LICENSE_DESCRIPTION] = license_description,
+          fields[LICENSE_TITLE] = license_title,
+          fields[LICENSE_URL] = license_url
+        end
         if has_content?
           fields[CONTENT_CONTROL_GROUP] = content.controlGroup
           fields[CONTENT_SIZE] = content_size
@@ -40,6 +45,11 @@ module Ddr
         end
         if is_a? Component
           fields[COLLECTION_URI] = collection_uri
+        end
+        if is_a? Collection
+          fields[DEFAULT_LICENSE_DESCRIPTION] = default_license_description,
+          fields[DEFAULT_LICENSE_TITLE] = default_license_title,
+          fields[DEFAULT_LICENSE_URL] = default_license_url
         end
         fields
       end
