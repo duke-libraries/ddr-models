@@ -21,9 +21,9 @@ RSpec.describe Collection, :type => :model do
       expect(collection.defaultRights.license.url.first).to eq("http://library.duke.edu")
     end
     it "should index the terms" do
-      expect(collection.to_solr.keys).to include(Ddr::IndexFields::DEFAULT_LICENSE_TITLE,
-                                                 Ddr::IndexFields::DEFAULT_LICENSE_DESCRIPTION,
-                                                 Ddr::IndexFields::DEFAULT_LICENSE_URL)
+      expect(collection.to_solr[Ddr::IndexFields::DEFAULT_LICENSE_TITLE]).to eq("License Title")
+      expect(collection.to_solr[Ddr::IndexFields::DEFAULT_LICENSE_DESCRIPTION]).to eq("License Description")
+      expect(collection.to_solr[Ddr::IndexFields::DEFAULT_LICENSE_URL]).to eq("http://library.duke.edu")
     end
   end
 
