@@ -7,9 +7,9 @@ RSpec.shared_examples "a licensable object" do
   end
   describe "indexing" do
     it "should index the license terms" do
-      expect(object.to_solr.keys).to include(Ddr::IndexFields::LICENSE_TITLE,
-                                             Ddr::IndexFields::LICENSE_DESCRIPTION,
-                                             Ddr::IndexFields::LICENSE_URL)
+      expect(object.to_solr[Ddr::IndexFields::LICENSE_TITLE]).to eq("License Title")
+      expect(object.to_solr[Ddr::IndexFields::LICENSE_DESCRIPTION]).to eq("License Description")
+      expect(object.to_solr[Ddr::IndexFields::LICENSE_URL]).to eq("http://library.duke.edu")
     end
   end
 end
