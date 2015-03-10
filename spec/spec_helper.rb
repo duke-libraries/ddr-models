@@ -6,6 +6,8 @@ Coveralls.wear!("rails")
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 
 require "ddr-models"
+require "ddr/auth/test_helpers"
+
 require "rails"
 require "rspec/rails"
 require "factory_girl_rails"
