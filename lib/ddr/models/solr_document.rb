@@ -158,6 +158,29 @@ module Ddr
         active_fedora_model.tableize
       end
 
+      def inherited_license
+        if admin_policy_pid
+          query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
+          results = ActiveFedora::SolrService.query(query)
+          doc = results.map { |result| ::SolrDocument.new(result) }.first
+          { title: doc.get(Ddr::IndexFields::DEFAULT_LICENSE_TITLE),
+            description: doc.get(Ddr::IndexFields::DEFAULT_LICENSE_DESCRIPTION),
+            url: doc.get(Ddr::IndexFields::DEFAULT_LICENSE_URL) }
+        end
+      end
+
+      def license
+        if get(Ddr::IndexFields::LICENSE_TITLE) || get(Ddr::IndexFields::LICENSE_DESCRIPTION) || get(Ddr::IndexFields::LICENSE_URL)
+          { title: get(Ddr::IndexFields::LICENSE_TITLE),
+            description: get(Ddr::IndexFields::LICENSE_DESCRIPTION),
+            url: get(Ddr::IndexFields::LICENSE_URL) }
+        end
+      end
+
+      def effective_license
+        @effective_license ||= license || inherited_license || {}
+      end
+
       private
 
       def targets_query
