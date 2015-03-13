@@ -47,6 +47,11 @@ module Ddr
         user_key
       end
 
+      def to_agent
+        Person.build(self)
+      end
+      alias_method :to_person, :to_agent
+
       def ability
         @ability ||= ::Ability.new(self)
       end
@@ -56,22 +61,35 @@ module Ddr
       end
 
       def member_of?(group)
-        groups.include? group
+        if group.is_a? Group
+          groups.include?(group)
+        else
+          member_of?(Group.build(group))
+        end
       end
+      alias_method :is_member_of?, :member_of?
       
       def authorized_to_act_as_superuser?
-        member_of? Ddr::Auth.superuser_group
+        member_of?(Groups::Superusers)
       end
 
       def principal_name
         user_key
       end
+      alias_method :name, :principal_name
+      alias_method :eppn, :principal_name
+
+      def agents
+        Agents.new(self)
+      end
 
       def principals
+        warn "DEPRECATION WARNING: `User#principals` is deprecated; use `#agents`."
         groups.dup << principal_name
       end
 
       def has_role?(obj, role)
+        warn "DEPRECATION WARNING: `User#has_role` is deprecated."
         obj.principal_has_role?(principals, role)
       end
 

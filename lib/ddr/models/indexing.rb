@@ -51,6 +51,9 @@ module Ddr
           fields[DEFAULT_LICENSE_TITLE] = default_license_title
           fields[DEFAULT_LICENSE_URL] = default_license_url
         end
+        if respond_to? :roles
+          fields.merge!(roles.index_fields)
+        end
         fields
       end
 

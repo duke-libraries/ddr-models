@@ -11,9 +11,20 @@ class Collection < Ddr::Models::Base
   include Ddr::Models::HasChildren
   include Ddr::Models::HasAttachments
 
-  has_attributes :default_license_title, datastream: Ddr::Datastreams::DEFAULT_RIGHTS, at: [:license, :title], multiple: false
-  has_attributes :default_license_description, datastream: Ddr::Datastreams::DEFAULT_RIGHTS, at: [:license, :description], multiple: false
-  has_attributes :default_license_url, datastream: Ddr::Datastreams::DEFAULT_RIGHTS, at: [:license, :url], multiple: false
+  has_attributes :default_license_title, 
+    datastream: Ddr::Datastreams::DEFAULT_RIGHTS, 
+    at: [:license, :title], 
+    multiple: false
+
+  has_attributes :default_license_description, 
+    datastream: Ddr::Datastreams::DEFAULT_RIGHTS, 
+    at: [:license, :description], 
+    multiple: false
+
+  has_attributes :default_license_url, 
+    datastream: Ddr::Datastreams::DEFAULT_RIGHTS, 
+    at: [:license, :url], 
+    multiple: false
 
   has_many :children, property: :is_member_of_collection, class_name: 'Item'
   has_many :targets, property: :is_external_target_for, class_name: 'Target'
@@ -21,6 +32,7 @@ class Collection < Ddr::Models::Base
   alias_method :items, :children
   alias_method :item_ids, :child_ids
 
+  before_save :set_policy_roles, if: :default_permissions_changed?
   after_create :set_admin_policy
 
   validates_presence_of :title
@@ -35,7 +47,8 @@ class Collection < Ddr::Models::Base
     results.lazy.map {|doc| SolrDocument.new(doc)}
   end
 
-  # Returns the license attributes provided as default values for objects governed by the Collection.
+  # Returns the license attributes provided as default values for objects 
+  # governed by the Collection.
   #
   # @return [Hash] the attributes, `:title`, `:description`, and `:url`.
   def default_license
@@ -53,7 +66,8 @@ class Collection < Ddr::Models::Base
     self.default_license_url = l[:url]
   end
 
-  # Returns a list of entities (either users or groups) having a default access level on objects governed by the Collection.
+  # Returns a list of entities (either users or groups) having a default access 
+  # level on objects governed by the Collection.
   # 
   # @param type [String] the type of entity, "user" or "group".
   # @param access [String] the default access level, "discover", "read", or "edit".
@@ -68,11 +82,26 @@ class Collection < Ddr::Models::Base
     end
   end
 
+  # Sets policy roles based on default permissions
+  def set_policy_roles    
+    roles.revoke_policy_roles
+    roles.grant *default_permissions_to_policy_roles
+  end
+
   private
+
+  def default_permissions_to_policy_roles
+    Ddr::Auth::HydraPermissions.new(default_permissions).to_policy_roles
+  end
 
   def set_admin_policy
     self.admin_policy = self
     self.save
+  end
+
+  def default_permissions_changed?
+    # XXX This is not strictly accurate, but close enough 
+    defaultRights.changed?
   end
 
 end

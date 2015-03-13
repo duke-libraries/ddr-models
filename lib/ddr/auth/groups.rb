@@ -4,32 +4,30 @@ module Ddr
   module Auth
     class Groups < SimpleDelegator
 
-      AFFILIATIONS = %w( faculty student staff affiliate alumni emeritus )
-      AFFILIATION_GROUP_MAP = AFFILIATIONS.map { |a| [a, "duke.#{a}"] }.to_h
+      Public     = Group.build("public")
+      Registered = Group.build("registered")
+      DukeEppn   = Group.build("duke.all")
+      
+      Superusers = Group.build("superusers")
+      CollectionCreators = Group.build("collection_creators")
 
-      AFFILIATION_RE = Regexp.new('(%{a})(?=@duke\.edu)' % {a: AFFILIATIONS.join("|")})
-      EPPN_RE = Regexp.new('(?=@duke\.edu)')
       ISMEMBEROF_RE = Regexp.new('urn:mace:duke\.edu:groups:library:repository:ddr:[\w:]+')
+      DUKE_EPPN_RE = Regexp.new('(?=@duke\.edu)')
+      AFFILIATION_RE = Regexp.new('(%{a})(?=@duke\.edu)' % {a: Affiliation::VALUES.join("|")})
 
       class << self
+      # Return the list of all groups available for use in the repository
+      # @return [Array<Group>] the groups
         def all
-          hydra_groups + affiliation_groups + [duke_netid_group] + repository_groups
+          Affiliation.groups + remote + [Public, Registered, DukeEppn]
         end
 
-        def repository_groups
-          Ddr::Auth.grouper_gateway.new.repository_group_names
+        def remote
+          grouper.repository_group_names.map { |name| Group.build(name) }
         end
 
-        def affiliation_groups
-          AFFILIATION_GROUP_MAP.values
-        end
-
-        def hydra_groups
-          [Ddr::Auth.everyone_group, Ddr::Auth.authenticated_users_group]
-        end
-
-        def duke_netid_group
-          "duke.all"
+        def grouper
+          Ddr::Auth.grouper_gateway.new
         end
       end
 
@@ -38,54 +36,67 @@ module Ddr
       def initialize(user, env=nil)
         @user = user
         @env = env
-        super(calculate_groups)
+        groups = [ Public ] # everybody 
+        if user.persisted?
+          groups << Registered 
+          groups << DukeEppn if duke_eppn?
+          groups.concat(remote)
+          groups.concat(affiliation)
+        end
+        super(groups)
+        self << Superusers if names.include?(Ddr::Auth.superuser_group)
+        self << CollectionCreators if names.include?(Ddr::Auth.collection_creators_group)
       end
 
       def inspect
-        "#<#{self.class.name} @user=#{user.inspect}, @env=#{env ? '[YES]' : '[NO]'}, groups=#{__getobj__.inspect}>"
+        "#<#{self.class.name} user=\"#{user}\", env=#{env ? '[YES]' : '[NO]'}, groups=#{names.inspect}>"
       end
 
-      def calculate_groups
-        groups = []
-        groups << self.class.duke_netid_group if duke_netid?
-        groups.concat remote_groups
-        groups.concat affiliation_groups
+      def to_s
+        names.to_s
       end
 
-      def duke_netid?
-        eppn = env ? env["eppn"] : user.principal_name 
-        ((eppn =~ EPPN_RE) && true) || false
+      # Return a list of the group names
+      # @return [Array<String>] the names
+      def names
+        map(&:to_s)
       end
 
-      def remote_groups
-        env ? env_ismemberof : grouper.user_group_names(user)
-      end
-
-      def affiliation_groups
-        affiliations.map { |affiliation| AFFILIATION_GROUP_MAP[affiliation] }.compact
-      end
+      private        
 
       def grouper
-        @grouper ||= Ddr::Auth.grouper_gateway.new
+        self.class.grouper
+      end
+
+      def remote
+        names = if env && env["ismemberof"]
+                  env["ismemberof"].scan(ISMEMBEROF_RE).map { |name| name.sub(/^urn:mace:duke.edu:groups/, "duke") }
+                else
+                  grouper.user_group_names(user)
+                end
+        names.map { |name| Group.build(name) }
+      end
+
+      def duke_eppn?
+        eppn = if env && env["eppn"]
+                 env["eppn"]
+               else
+                 user.principal_name 
+               end
+        !!(eppn =~ DUKE_EPPN_RE)
+      end
+
+      def affiliation
+        affiliations = if env && env["affiliation"]
+                         env["affiliation"].scan(AFFILIATION_RE).flatten
+                       else
+                         ldap.affiliations(user.principal_name)
+                       end
+        affiliations.map { |a| Affiliation.group(a) }
       end
 
       def ldap
-        @ldap ||= Ddr::Auth.ldap_gateway.new
-      end
-
-      private
-
-      def affiliations
-        env ? env_affiliations : ldap.affiliations(user.principal_name)
-      end
-
-      def env_affiliations
-        env["affiliation"] ? env["affiliation"].scan(AFFILIATION_RE).flatten : []
-      end
-
-      def env_ismemberof
-        groups = env["ismemberof"] ? env["ismemberof"].scan(ISMEMBEROF_RE) : []
-        groups.map { |group| group.sub("urn:mace:duke.edu:groups", "duke") }
+        Ddr::Auth.ldap_gateway.new
       end
 
     end
