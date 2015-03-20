@@ -6,6 +6,7 @@
 class Component < Ddr::Models::Base
  
   include Ddr::Models::HasContent
+  include Ddr::Models::HasMultiresImage
   include Ddr::Models::HasStructMetadata
 
   belongs_to :parent, :property => :is_part_of, :class_name => 'Item'

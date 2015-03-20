@@ -18,6 +18,7 @@ module Ddr
       #
       initializer "ddr_models.external_files" do
         Ddr::Models.external_file_store = ENV["EXTERNAL_FILE_STORE"]
+        Ddr::Models.multires_image_external_file_store = ENV["MULTIRES_IMAGE_EXTERNAL_FILE_STORE"]
         Ddr::Models.external_file_subpath_pattern = ENV["EXTERNAL_FILE_SUBPATH_PATTERN"] || "--"
       end
 

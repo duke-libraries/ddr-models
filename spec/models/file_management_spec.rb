@@ -22,7 +22,7 @@ module Ddr
   module Models
     RSpec.describe FileManagement, :type => :model do
 
-      let(:object) { FileManageable.new }
+      let(:object) { FileManageable.new(pid: 'test:543') }
       let(:file) { fixture_file_upload("library-devil.tiff", "image/tiff") }
 
       before(:all) do
@@ -30,6 +30,9 @@ module Ddr
           include Ddr::Models::FileManagement
           has_file_datastream name: "e_content", control_group: "E"
           has_file_datastream name: "m_content", control_group: "M"
+          def original_filename
+            'image001.tiff'
+          end
         end
       end
 
@@ -73,27 +76,66 @@ module Ddr
           object.add_external_file(file, "e_content")
         end
         context "storage path generation" do
-          it "should generate a UUID for the for the file name" do
+          it "should generate a UUID for the file path" do
             expect(SecureRandom).to receive(:uuid).and_call_original
             object.add_external_file(file, "e_content")
           end
-          it "should set the file name to the UUID" do
-            uuid = "dfa9fd19-3ec6-4d59-ac34-f7a796902397"
-            allow(object).to receive(:generate_external_file_name) { uuid }          
-            object.add_external_file(file, "e_content")
-            expect(object.e_content.file_name).to eq uuid
-          end
-          it "should prepend the configured external file store base directory" do
-            object.add_external_file(file, "e_content")
-            expect(object.e_content.file_path.start_with?(Ddr::Models.external_file_store)).to be true
-          end
           it "should add a subpath using the configured pattern" do
-            uuid = "dfa9fd19-3ec6-4d59-ac34-f7a796902397"
-            allow(object).to receive(:generate_external_file_name) { uuid }
+            allow(SecureRandom).to receive(:uuid) { 'ebe837db-1d50-4e4f-a242-16c29f331023' }
             object.add_external_file(file, "e_content")
             path = object.e_content.file_path
             subpath = File.dirname(path.sub(Ddr::Models.external_file_store, "").sub("/", ""))
-            expect(Ddr::Models.external_file_subpath_regexp.match(uuid)[0]).to eq subpath
+            expect(subpath).to eq 'eb/ebe837db-1d50-4e4f-a242-16c29f331023'
+          end
+          describe "external file name" do
+            context "datastream without designated file name extension" do
+              context "original file name present" do
+                it "should set the file name to the original file name" do
+                  object.add_external_file(file, "e_content")
+                  expect(object.e_content.file_name).to eq object.original_filename
+                end
+              end
+              context "original file name not present" do
+                before { allow(object).to receive(:original_filename) { nil } }
+                it "should set the file name to the datastream default file name" do
+                  object.add_external_file(file, "e_content")
+                  expect(object.e_content.file_name).to eq object.e_content.default_file_name
+                end
+              end
+            end
+            context "multiresImage datastream" do
+              context "original file name present" do
+                it "should set the file name to the original file name with the designated extension" do
+                  object.add_external_file(file, Ddr::Datastreams::MULTIRES_IMAGE, mime_type: "image/tiff")
+                  expect(object.datastreams[Ddr::Datastreams::MULTIRES_IMAGE].file_name).to eq 'image001.ptif'
+                end
+              end
+              context "original file name not present" do
+                let(:expected_file_name) do
+                  default_fn = object.datastreams[Ddr::Datastreams::MULTIRES_IMAGE].default_file_name
+                  "#{File.basename(default_fn, File.extname(default_fn))}.ptif"
+                end
+                before { allow(object).to receive(:original_filename) { nil } }
+                it "should set the file name to the datastream default file name with the designated extension" do
+                  object.add_external_file(file, Ddr::Datastreams::MULTIRES_IMAGE)
+                  expect(object.datastreams[Ddr::Datastreams::MULTIRES_IMAGE].file_name).to eq expected_file_name
+                end
+              end
+            end
+          end
+          describe "external file store base directory" do
+            describe "datastream with default base directory" do
+              it "should prepend the configured external file store base directory" do
+                object.add_external_file(file, "e_content")
+                expect(object.e_content.file_path.start_with?(Ddr::Models.external_file_store)).to be true
+              end
+            end
+            describe "datastream with default multires image base directory" do
+              it "should prepend the configured multires image external file store base directory" do
+                object.add_external_file(file, Ddr::Datastreams::MULTIRES_IMAGE)
+                expect(object.datastreams[Ddr::Datastreams::MULTIRES_IMAGE].file_path.start_with?(Ddr::Models.multires_image_external_file_store)).to be true
+              end
+            end
           end
         end
         it "should set dsLocation to URI for generated file path by default" do

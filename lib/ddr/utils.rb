@@ -53,6 +53,13 @@ module Ddr::Utils
     URI.parse(uri).scheme == "file"
   end
 
+  def self.sanitize_filename file_name
+    return unless file_name
+    raise ArgumentError, "file_name argument must be a string" unless file_name.is_a?(String)
+    raise ArgumentError, "file_name argument must not include path" if file_name.include?(File::SEPARATOR)
+    file_name.gsub(/[^\w\.\-]/,"_")
+  end
+
   # Return file path for URI string 
   # Should reverse .path_to_uri
   # "file:/path/to/file" => "/path/to/file"

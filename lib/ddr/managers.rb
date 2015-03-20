@@ -3,6 +3,7 @@ module Ddr
     extend ActiveSupport::Autoload
 
     autoload :Manager
+    autoload :DerivativesManager
     autoload :PermanentIdManager
     autoload :RoleManager
     autoload :WorkflowManager

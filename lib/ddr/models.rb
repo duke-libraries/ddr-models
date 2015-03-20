@@ -13,6 +13,7 @@ require 'hydra/validations'
 require 'ddr/actions'
 require 'ddr/auth'
 require 'ddr/datastreams'
+require 'ddr/derivatives'
 require 'ddr/events'
 require 'ddr/index_fields'
 require 'ddr/managers'
@@ -37,6 +38,7 @@ module Ddr
     autoload :HasAttachments
     autoload :HasChildren
     autoload :HasContent
+    autoload :HasMultiresImage
     autoload :HasProperties
     autoload :HasStructMetadata
     autoload :HasThumbnail
@@ -45,8 +47,11 @@ module Ddr
     autoload :Licensable
     autoload :SolrDocument
 
-    # Base directory of external file store
+    # Base directory of default external file store
     mattr_accessor :external_file_store
+
+    # Base directory of external file store for multires image derivatives
+    mattr_accessor :multires_image_external_file_store
 
     # Regexp for building external file subpath from hex digest
     mattr_accessor :external_file_subpath_regexp

@@ -30,7 +30,7 @@ RSpec.shared_examples "an object that can have content" do
         expect(object.content_type).to eq("image/tiff")
       end
       it "should create a 'virus check' event for the object" do
-        expect { object.save }.to change { object.virus_checks.count }.by(1)
+        expect { object.save }.to change { object.virus_checks.count }
       end
     end
     context "with option `:original_name=>false`" do
@@ -53,57 +53,19 @@ RSpec.shared_examples "an object that can have content" do
 
       context "and it's a new object" do
         before { object.add_file file, "content" }
-
-        context "and the content is an image" do
-          let(:file) { fixture_file_upload("library-devil.tiff", "image/tiff") }
-          it "should generate a thumbnail" do
-            expect(object.thumbnail).not_to be_present
-            object.save
-            expect(object.thumbnail).to be_present
-          end
-        end
-        context "and the content is a pdf" do
-          let(:file) { fixture_file_upload("sample.pdf", "application/pdf") }
-          it "should generate a thumbnail" do
-            expect(object.thumbnail).not_to be_present
-            object.save
-            expect(object.thumbnail).to be_present
-          end
-        end
-        context "and the content is neither an image nor a pdf" do
-          let(:file) { fixture_file_upload("sample.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document") }
-          it "should not generate a thumbnail" do
-            expect(object.thumbnail).not_to be_present
-            object.save
-            expect(object.thumbnail).not_to be_present
-          end
+        let(:file) { fixture_file_upload("library-devil.tiff", "image/tiff") }
+        it "should generate derivatives" do
+          expect(object.derivatives).to receive(:update_derivatives)
+          object.save
         end
       end
 
       context "and it's an existing object with content" do
         before { object.upload! fixture_file_upload('library-devil.tiff', 'image/tiff') }
-
-        context "and the content is an image" do
-          let(:file) { fixture_file_upload("image1.tiff", "image/tiff") }
-          it "should generate a new thumbnail" do
-            expect(object.thumbnail).to be_present
-            expect { object.upload! file }.to change { object.thumbnail.content }
-          end
-        end
-        context "and the content is a pdf" do
-          let(:file) { fixture_file_upload("sample.pdf", "application/pdf") }
-          it "should generate a new thumbnail" do
-            expect(object.thumbnail).to be_present
-            expect { object.upload! file }.to change { object.thumbnail.content }
-          end
-        end
-        context "and the content is neither an image nor a pdf" do
-          let(:file) { fixture_file_upload("sample.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document") }
-          it "should delete the thumbnail" do
-            expect(object.thumbnail).to be_present
-            object.upload! file
-            expect(object.thumbnail).to_not be_present
-          end
+        let(:file) { fixture_file_upload("image1.tiff", "image/tiff") }
+        it "should generate derivatives" do
+          expect(object.derivatives).to receive(:update_derivatives)
+          object.upload! file
         end
       end
     end
