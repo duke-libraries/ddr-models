@@ -8,10 +8,11 @@ module Ddr
 
         before(:all) do
           class PermanentlyIdentifiable < ActiveFedora::Base
-            include Ddr::Models::Describable
-            include Ddr::Models::Indexing
-            include Ddr::Models::HasAdminMetadata
-            include Ddr::Models::EventLoggable
+            include Describable
+            include Indexing
+            include AccessControllable
+            include HasAdminMetadata
+            include EventLoggable
           end
         end
 
@@ -111,37 +112,16 @@ module Ddr
 
       end
 
-      describe "role assignments" do
-        before(:all) do
-          class RoleAssignable < ActiveFedora::Base
-            include HasAdminMetadata
-          end
-        end
-        
-        after(:all) do
-          Ddr::Models.send(:remove_const, :RoleAssignable)
-        end
-
-        subject { RoleAssignable.new }
-
-        describe "#principal_has_role?" do
-          it "should respond when given a list of principals and a valid role" do
-            expect { subject.principal_has_role?(["bob", "admins"], :administrator) }.not_to raise_error
-          end
-          it "should respond when given a principal name and a valid role" do
-            expect { subject.principal_has_role?("bob", :administrator) }.not_to raise_error
-          end
-          it "should raise an error when given an invalid role" do
-            expect { subject.principal_has_role?("bob", :foo) }.to raise_error
-          end
-        end
-      end
-
       describe "workflow" do
         before(:all) do
           class Workflowable < ActiveFedora::Base
+            include AccessControllable
             include HasAdminMetadata
           end
+        end
+
+        after(:all) do
+          Ddr::Models.send(:remove_const, :Workflowable)
         end
 
         subject { Workflowable.new }
@@ -190,6 +170,43 @@ module Ddr
             expect(subject.reload).not_to be_published
           end          
         end
+      end
+
+      describe "roles" do
+        let(:resource) { Item.new }
+
+        describe "#role_based_permissions" do
+          let(:policy) { Collection.new(pid: "coll:1") }
+          let(:user) { FactoryGirl.build(:user) }
+          before do
+            resource.admin_policy = policy
+            allow(user).to receive(:persisted?) { true }            
+            resource.roles.grant type: :downloader, group: Ddr::Auth::Groups::Public, scope: :resource
+            policy.roles.grant type: :contributor, person: user, scope: :policy
+          end
+          it "should return the list of permissions granted to the user's agents on the resource in resource scope, plust the permissions granted to the user's agents on the resource policy in policy scope" do
+            expect(resource.role_based_permissions(user)).to match_array([:read, :download, :add_children])
+          end
+        end
+
+        describe "when permissions have changed" do
+          it "should update the resource roles" do
+            resource.permissions_attributes = [{access: "edit", type: "group", name: "Editors"},
+                                               {access: "discover", type: "group", name: "public"},
+                                               {access: "read", type: "person", name: "bob"}]
+            resource.save!
+            expect(resource.roles.granted).to include(Ddr::Auth::Roles::Viewer.build(person: "bob", scope: :resource),
+                                                     Ddr::Auth::Roles::Editor.build(group: "Editors", scope: :resource),
+                                                     Ddr::Auth::Roles::Viewer.build(group: "public", scope: :resource))
+          end
+        end
+
+        describe "when permissions haven't changed" do
+          it "shouldn't change the resource roles" do
+            expect { resource.save }.not_to change { resource.roles.where(scope: :resource) }
+          end
+        end
+
       end
     
     end

@@ -2,28 +2,40 @@ module Ddr
   module Auth
     extend ActiveSupport::Autoload
 
-    autoload :User
-    autoload :Superuser
     autoload :Ability
-    autoload :Groups
-    autoload :GrouperGateway
+    autoload :Affiliation
+    autoload :Agent
+    autoload :Agents
     autoload :FailureApp
+    autoload :Group
+    autoload :GrouperGateway
+    autoload :Groups
+    autoload :HydraPermission
+    autoload :HydraPermissions
     autoload :LdapGateway
+    autoload :Person
+    autoload :Permission
+    autoload :RoleBasedAccessControlsEnforcement
+    autoload :Roles
+    autoload :Superuser
+    autoload :User
 
-    # Group authorized to act as superuser
+    # Name of group whose members are authorized to act as superuser
     mattr_accessor :superuser_group
 
-    # Group authorized to create Collections
+    # Name of group whose members are authorized to create Collections
     mattr_accessor :collection_creators_group
 
-    # Name of group of which everyone (including anonymous users) is a member
-    mattr_accessor :everyone_group do
-      "public"
+    # Group of which everyone (including anonymous users) is a member
+    def self.everyone_group
+      warn "DEPRECATION WARNING: `Ddr::Auth.everyone_group` is deprecated; use `Ddr::Auth::Groups::Public`."
+      Groups::Public
     end
 
     # Group of authenticated users
-    mattr_accessor :authenticated_users_group do
-      "registered"
+    def self.authenticated_users_group
+      warn "DEPRECATION WARNING: `Ddr::Auth.authenticated_users_group` is deprecated; use `Ddr::Auth::Groups::Registered`."
+      Groups::Registered
     end
 
     # Whether to require Shibboleth authentication 
@@ -41,6 +53,14 @@ module Ddr
 
     mattr_accessor :ldap_gateway do
       LdapGateway
+    end
+
+    def self.get_agent_class(agent_type)
+      agent_class = const_get(agent_type.to_s.camelize)
+      unless agent_class < Agent || agent_class === Agent
+        raise ArgumentError, "#{agent_type.inspect} is not a valid agent type."
+      end
+      agent_class
     end
 
   end

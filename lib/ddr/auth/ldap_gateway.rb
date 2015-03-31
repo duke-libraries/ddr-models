@@ -24,14 +24,13 @@ module Ddr
                         filter: filter,
                         size: 1,
                         attributes: ["eduPersonAffiliation"])
-        aff = if result_set
-                result = result_set.first
-                result ? result[:edupersonaffiliation] : []
-              else # error
-                Rails.logger.error get_operation_result.message
-                []
-              end
-        aff
+        if result_set
+          result = result_set.first
+          result ? result[:edupersonaffiliation] : []
+        else # error
+          Rails.logger.error get_operation_result.message
+          []
+        end
       end
 
     end

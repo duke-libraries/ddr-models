@@ -10,6 +10,7 @@ require "ddr/auth/test_helpers"
 
 require "rails"
 require "rspec/rails"
+require "rspec/its"
 require "factory_girl_rails"
 require "database_cleaner"
 require "tempfile"

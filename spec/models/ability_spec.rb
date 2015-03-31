@@ -9,10 +9,8 @@ module Ddr
       let(:user) { FactoryGirl.create(:user) }
 
       describe "collection permissions" do
-        before { allow(Ddr::Auth).to receive(:collection_creators_group) { "Collection Creators" } }
-
         context "user is a collection creator" do
-          before { allow(user).to receive(:groups) { ["Collection Creators"] } }
+          before { allow(user).to receive(:groups) { [Groups::CollectionCreators] } }
           it { is_expected.to be_able_to(:create, Collection) }
         end
 
@@ -268,10 +266,6 @@ module Ddr
         end
 
       end # download_permissions
-
-      describe "#discover_permissions" do
-        # TODO
-      end
 
       describe "#events_permissions", events: true do
         let(:resource) { Ddr::Events::Event.new(pid: "test:1") }
