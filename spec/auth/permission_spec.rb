@@ -4,7 +4,7 @@ module Ddr::Auth
     describe "class methods" do
       describe ".all" do
         subject { described_class.all }
-        it { is_expected.to match_array([described_class::Read, described_class::Download, described_class::Edit, described_class::AddChildren, described_class::Upload, described_class::Arrange, described_class::Grant]) }
+        it { is_expected.to match_array([described_class::Read, described_class::Download, described_class::Edit, described_class::AddChildren, described_class::Replace, described_class::Arrange, described_class::Grant]) }
       end
       describe ".get" do
         subject { described_class.get(:read) }
@@ -33,10 +33,10 @@ module Ddr::Auth
         it { is_expected.to eq(described_class.get(:add_children)) }
         it { is_expected.to eq(:add_children) }
       end
-      describe "Upload" do
-        subject { described_class::Upload }
-        it { is_expected.to eq(described_class.get(:upload)) }
-        it { is_expected.to eq(:upload) }
+      describe "Replace" do
+        subject { described_class::Replace }
+        it { is_expected.to eq(described_class.get(:replace)) }
+        it { is_expected.to eq(:replace) }
       end
       describe "Arrange" do
         subject { described_class::Arrange }
