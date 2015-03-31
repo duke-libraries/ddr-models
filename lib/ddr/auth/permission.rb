@@ -4,7 +4,7 @@ module Ddr
   module Auth
     class Permission < SimpleDelegator
 
-      VALUES = [:read, :download, :add_children, :edit, :upload, :arrange, :grant]
+      VALUES = [:read, :download, :add_children, :edit, :replace, :arrange, :grant]
 
       VALUES.each do |value|
         const_set(value.to_s.camelize, new(value))

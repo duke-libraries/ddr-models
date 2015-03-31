@@ -5,7 +5,7 @@ module Ddr
       class Owner < Role
         configure type: Ddr::Vocab::Roles.Owner
 
-        has_permission :read, :download, :add_children, :edit, :upload, :arrange, :grant
+        has_permission :read, :download, :add_children, :edit, :replace, :arrange, :grant
       end
 
     end

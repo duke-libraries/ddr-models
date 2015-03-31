@@ -38,7 +38,7 @@ module Ddr::Managers
       describe "#permissions_in_scope_for_agents" do
         it "should return the permissions granted in scope to any of the agents" do
           expect(subject.permissions_in_scope_for_agents(:resource, [Ddr::Auth::Group.build("Contributors"), Ddr::Auth::Group.build("Downloaders"), Ddr::Auth::Person.build("bob")])).to match_array([:read, :add_children, :download])
-          expect(subject.permissions_in_scope_for_agents(:policy, [Ddr::Auth::Group.build("Contributors"), Ddr::Auth::Group.build("Downloaders"), Ddr::Auth::Person.build("bob")])).to match_array([:read, :add_children, :download, :edit, :upload, :arrange, :grant])
+          expect(subject.permissions_in_scope_for_agents(:policy, [Ddr::Auth::Group.build("Contributors"), Ddr::Auth::Group.build("Downloaders"), Ddr::Auth::Person.build("bob")])).to match_array([:read, :add_children, :download, :edit, :replace, :arrange, :grant])
         end
       end
     end

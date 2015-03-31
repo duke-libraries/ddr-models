@@ -5,7 +5,7 @@ module Ddr
       class Curator < Role
         configure type: Ddr::Vocab::Roles.Curator
 
-        has_permission :read, :download, :add_children, :edit, :upload, :arrange, :grant
+        has_permission :read, :download, :add_children, :edit, :replace, :arrange, :grant
       end
 
     end
