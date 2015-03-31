@@ -5,14 +5,10 @@ module Ddr
   module Auth
     class LdapGateway < SimpleDelegator
 
-      HOST = ENV["LDAP_HOST"]
-      PORT = 389
-      AUTH = { method: :anonymous }
-      BASE = ENV["LDAP_BASE"] 
       SCOPE = Net::LDAP::SearchScope_SingleLevel
 
       def initialize
-        super Net::LDAP.new(host: HOST, port: PORT, auth: AUTH, base: BASE)
+        super Net::LDAP.new(config)
       end
 
       # Returns a list of affiliations for a principal (person)
@@ -31,6 +27,15 @@ module Ddr
           Rails.logger.error get_operation_result.message
           []
         end
+      end
+
+      private
+
+      def config
+        { host: ENV["LDAP_HOST"],
+          port: ENV["LDAP_PORT"],
+          base: ENV["LDAP_BASE"]
+        }
       end
 
     end
