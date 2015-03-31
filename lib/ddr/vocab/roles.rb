@@ -8,12 +8,6 @@ module Ddr
         # type: "rdfs:Class"
         # subClassOf: "http://www.w3.org/ns/auth/acl#Authorization"
 
-      term :Owner,
-        label: "Owner",
-        comment: "The Owner role conveys ultimate responsibility for a resource."
-        # type: "rdfs:Class"
-        # subClassOf: "http://repository.lib.duke.edu/vocab/roles/Role"
-
       term :Curator,
         label: "Curator",
         comment: "The Curator role conveys responsibility for curating a resource and delegating responsibilities to other agents."

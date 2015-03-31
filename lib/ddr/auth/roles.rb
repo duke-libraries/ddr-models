@@ -6,7 +6,6 @@ module Ddr
       autoload :Role
       autoload :RoleSet
 
-      autoload :Owner
       autoload :Curator
       autoload :Editor
       autoload :MetadataEditor
@@ -17,8 +16,8 @@ module Ddr
       class << self
         # Return the class for a type of role specified as a symbol or string
         # @example
-        #   get_role_class(:owner) 
-        #   => Ddr::Auth::Roles::Owner
+        #   get_role_class(:curator) 
+        #   => Ddr::Auth::Roles::Curator
         # @param role_type [Symbol, String] the role type
         # @return [Class] the role class
         def get_role_class(role_type)

@@ -14,14 +14,14 @@ module Ddr::Managers
 
     describe "#index_fields" do
       let(:roles) do
-        [{ type: :owner, person: "bob", scope: :resource },
+        [{ type: :curator, person: "bob", scope: :resource },
          { type: :curator, person: "sue", scope: :policy },
          { type: :editor, group: "Editors", scope: :policy },
          { type: :editor, person: "jane", scope: :policy }]
       end
       before { subject.grant *roles }
       it "should return the index fields" do
-        expect(subject.index_fields).to eq({"resource_owner_role_ssim" => ["bob"],
+        expect(subject.index_fields).to eq({"resource_curator_role_ssim" => ["bob"],
                                              "policy_curator_role_ssim" => ["sue"],
                                              "policy_editor_role_ssim" => ["Editors", "jane"],
                                              "policy_role_sim" => ["sue", "Editors", "jane"],
