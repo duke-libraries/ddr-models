@@ -2,7 +2,6 @@ module Ddr::Auth
   RSpec.describe Roles do
     describe ".get_role_class" do
       it "should return the class for the role type" do
-        expect(Roles.get_role_class(:owner)).to eq(Roles::Owner)
         expect(Roles.get_role_class(:curator)).to eq(Roles::Curator)
         expect(Roles.get_role_class(:editor)).to eq(Roles::Editor)
         expect(Roles.get_role_class(:contributor)).to eq(Roles::Contributor)
@@ -18,8 +17,8 @@ module Ddr::Auth
       end
     end
     describe ".build_role" do
-      subject {  Roles.build_role(type: :owner, person: "bob", scope: :resource) }
-      it { is_expected.to be_a(Roles::Owner) }
+      subject {  Roles.build_role(type: :curator, person: "bob", scope: :resource) }
+      it { is_expected.to be_a(Roles::Curator) }
       its(:agent_name) { is_expected.to eq("bob") }
       its(:scope_type) { is_expected.to eq(:resource) }
       it "should have a Person agent" do

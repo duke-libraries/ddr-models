@@ -56,7 +56,7 @@ module Ddr
 
           # Return the role "type" (not RDF type) -- i.e., a symbol for the role class
           #   This should be the inverse operation of Ddr::Auth::Roles.get_role_class(type)
-          # @example Ddr::Auth::Roles::Owner.role_type => :owner 
+          # @example Ddr::Auth::Roles::Curator.role_type => :curator
           # @return [Symbol] the role type
           def role_type
             @role_type ||= self.name.split("::").last.underscore.to_sym

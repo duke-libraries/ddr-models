@@ -12,8 +12,8 @@ module Ddr
         #   Note that we reject roles that are included because
         #   ActiveTriples::Term#<< does not support isomorphism. 
         #   https://github.com/ActiveTriples/ActiveTriples/issues/42
-        # @example - default scope
-        #   grant type: :owner, person: "bob"
+        # @example - default scope (:resource)
+        #   grant type: :curator, person: "bob"
         # @example - explicit scope
         #   grant type: :curator, person: "sue", scope: :policy
         # @param roles [Array<Ddr::Auth::Roles::Role, Hash>] the roles to grant
@@ -34,7 +34,7 @@ module Ddr
         #   support isomorphism.
         #   https://github.com/ActiveTriples/ActiveTriples/issues/42
         # @example
-        #   revoke type: :owner, agent: "bob", scope: :resource
+        #   revoke type: :curator, agent: "bob", scope: :resource
         # @param role [Ddr::Auth::Roles::Role, Hash] the role to revoke
         def revoke(*roles)
           coerce(roles).each do |role|
