@@ -1,13 +1,11 @@
 module Ddr::Auth::Roles
   RSpec.describe Editor do
 
-    it { is_expected.to be_a(Role) }
-    its(:role_type) { is_expected.to eq(:editor) }
-    
-    describe "RDF type" do
-      subject { described_class.type }
-      it { is_expected.to eq(Ddr::Vocab::Roles.Editor) }
-    end    
+    it_behaves_like "a role" do
+      let(:role_type) { :editor }
+      let(:type) { Ddr::Vocab::Roles.Editor }
+      let(:permissions) { [:read, :download, :add_children, :edit, :replace, :arrange] }
+    end
 
   end
 end

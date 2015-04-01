@@ -58,40 +58,18 @@ module Ddr
         end
 
         def to_a
-          map(&:to_h)
+          map.to_a
         end
 
-        def where(args={})
-          select do |role|
-            args.all? do |key, val|
-              case key
-              when :type
-                Array(val).include?(role.role_type)
-              when :agent, :person, :group
-                if val.is_a?(Agent)
-                  val == role.agent.first
-                else
-                  value = case val
-                          when Array
-                            val
-                          when Ddr::Auth::Agents
-                            val.to_a
-                          else
-                            # using Array() to #to_a with an ActiveTriples::Resource (RDF::Graph)
-                            # returns an array of RDF statements -- not what we want!
-                            [val]
-                          end
-                  agent_cls = Ddr::Auth.const_get(key.to_s.capitalize)
-                  value.any? { |v| agent_cls.build(v) == role.agent.first }
-                end
-              when :scope
-                val == role.scope_type
-              end
-            end
-          end
+        def where(criteria)
+          query.where(criteria)
         end
 
         private
+
+        def query
+          Query.new(self)
+        end
 
         def coerce(role)
           case role

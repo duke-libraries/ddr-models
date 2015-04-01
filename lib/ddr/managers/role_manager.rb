@@ -18,7 +18,7 @@ module Ddr
 
       # Return a list of the permissions granted in scope to any of the agents 
       def permissions_in_scope_for_agents(scope, agents)
-        where(agent: agents, scope: scope).map(&:permissions).flatten.uniq
+        where(scope: scope, agent: agents).map(&:permissions).flatten.uniq
       end
 
       # Return a list of the permissions granted in resource scope to any of the agents

@@ -75,8 +75,12 @@ module Ddr
           isomorphic_with? other
         end
 
+        def to_s
+          to_h.to_s
+        end
+
         def inspect
-          "#<#{self.class.name} #{to_h.inspect}>"
+          "#<#{self.class.name} agent=#{agent.first.to_h.inspect}, scope=#{scope_type.inspect}>"
         end
 
         # @see .role_type
@@ -88,31 +92,43 @@ module Ddr
         #   This should be the inverse operation of Ddr::Auth::Roles.get_scope_term(scope)
         # @return [Symbol, nil] the scope type, or nil if there is no scope
         def scope_type
-          if scope.present?
-            scope.first.rdf_subject.to_s.split("/").last.downcase.to_sym
+          if sc = get_scope
+            sc.to_s.split("/").last.downcase.to_sym
           end
         end
 
         # Return the agent name associated with the role
         # @return [String, nil] the agent name, or nil if there is no agent
         def agent_name
-          if agent.present?
-            agent.first.name.first
+          if ag = get_agent
+            ag.agent_name
           end
         end
 
         # Return the agent type associated with the role
         # @return [Symbol, nil] the agent type, or nil if there is no agent
         def agent_type
-          if agent.present?
-            agent.first.type.first.to_s.split("/").last.downcase.to_sym
+          if ag = get_agent
+            ag.agent_type
           end
         end
 
+        def person_agent?
+          agent_type == :person
+        end
+
+        def group_agent?
+          agent_type == :group
+        end
+
         def to_h
-          val = {type: role_type}
-          val[:scope] = scope_type if scope.present?
-          val[agent_type] = agent_name if agent.present?
+          val = { 
+            type: role_type,
+            scope: scope_type            
+          }
+          if agent.present?
+            val[agent_type] = agent_name 
+          end
           val
         end
         alias_method :to_hash, :to_h
@@ -120,6 +136,18 @@ module Ddr
         # @see .permissions
         def permissions
           self.class.permissions
+        end
+
+        def get_scope
+          if scope.present?
+            scope.first.rdf_subject
+          end
+        end
+
+        def get_agent
+          if agent.present?
+            agent.first
+          end
         end
 
       end

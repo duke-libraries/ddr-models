@@ -9,7 +9,8 @@ module Ddr
     # @abstract
     #
     class Agent < ActiveTriples::Resource
-
+      
+      include Hydra::Validations
       include RDF::Isomorphic
 
       configure type: RDF::FOAF.Agent
@@ -23,29 +24,41 @@ module Ddr
       end
 
       def to_s
-        name.first
+        agent_name
+      end
+
+      def to_h
+        {type: agent_type, name: agent_name}
       end
 
       def inspect
         "#<#{self.class.name}(#{self})>"
       end
 
+      def agent_name
+        name.first
+      end
+
+      def agent_type
+        self.class.agent_type
+      end
+
       class << self
         # Factory method
         #   Assumes that the string representation of the object may be used as the agent's name.
         # @param obj [Object] the object from which to build the agent
-        # @param force [Boolean] whether to force the instantiation of a new agent
-        #   even if the obj is an agent instance (default: `false`). If false,
-        #   and the object is an agent, it is simply returned.
         # @return [Agent] the agent
-        def build(obj, force=false)
-          if !force && obj.is_a?(self)
-            return obj
-          end
+        def build(obj)
           new.tap do |agent| 
             agent.name = obj.to_s
-            # validate! 
+            if agent.invalid?
+              raise Ddr::Models::Error, "Invalid #{self.name}: #{agent.errors.messages.inspect}"
+            end
           end
+        end
+
+        def agent_type
+          @agent_type ||= self.name.split("::").last.underscore.to_sym
         end
       end
 

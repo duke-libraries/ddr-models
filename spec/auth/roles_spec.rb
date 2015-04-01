@@ -17,9 +17,9 @@ module Ddr::Auth
       end
     end
     describe ".build_role" do
-      subject {  Roles.build_role(type: :curator, person: "bob", scope: :resource) }
+      subject {  Roles.build_role(type: :curator, person: "bob@example.com", scope: :resource) }
       it { is_expected.to be_a(Roles::Curator) }
-      its(:agent_name) { is_expected.to eq("bob") }
+      its(:agent_name) { is_expected.to eq("bob@example.com") }
       its(:scope_type) { is_expected.to eq(:resource) }
       it "should have a Person agent" do
         expect(subject.agent.first).to be_a(Person)

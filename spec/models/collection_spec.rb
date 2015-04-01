@@ -59,9 +59,9 @@ RSpec.describe Collection, type: :model do
       it "should update the policy roles" do
         subject.default_permissions = [{access: "edit", type: "group", name: "Editors"},
                                        {access: "discover", type: "group", name: "public"},
-                                       {access: "read", type: "person", name: "bob"}]
+                                       {access: "read", type: "person", name: "bob@example.com"}]
         subject.save!
-        expect(subject.roles.granted).to include(Ddr::Auth::Roles::Viewer.build(person: "bob", scope: :policy),
+        expect(subject.roles.granted).to include(Ddr::Auth::Roles::Viewer.build(person: "bob@example.com", scope: :policy),
                                                  Ddr::Auth::Roles::Editor.build(group: "Editors", scope: :policy),
                                                  Ddr::Auth::Roles::Viewer.build(group: "public", scope: :policy))
       end
