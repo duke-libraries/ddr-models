@@ -180,7 +180,7 @@ module Ddr
           let(:user) { FactoryGirl.build(:user) }
           before do
             resource.admin_policy = policy
-            allow(user).to receive(:persisted?) { true }            
+            allow(user).to receive(:persisted?) { true }
             resource.roles.grant type: :downloader, group: Ddr::Auth::Groups::Public, scope: :resource
             policy.roles.grant type: :contributor, person: user, scope: :policy
           end
@@ -193,9 +193,9 @@ module Ddr
           it "should update the resource roles" do
             resource.permissions_attributes = [{access: "edit", type: "group", name: "Editors"},
                                                {access: "discover", type: "group", name: "public"},
-                                               {access: "read", type: "person", name: "bob"}]
+                                               {access: "read", type: "person", name: "bob@example.com"}]
             resource.save!
-            expect(resource.roles.granted).to include(Ddr::Auth::Roles::Viewer.build(person: "bob", scope: :resource),
+            expect(resource.roles.granted).to include(Ddr::Auth::Roles::Viewer.build(person: "bob@example.com", scope: :resource),
                                                      Ddr::Auth::Roles::Editor.build(group: "Editors", scope: :resource),
                                                      Ddr::Auth::Roles::Viewer.build(group: "public", scope: :resource))
           end

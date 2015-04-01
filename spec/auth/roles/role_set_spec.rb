@@ -14,6 +14,8 @@ module Ddr::Auth
 
       subject { described_class.new(ResourceWithRoles.new.role) }
 
+      let(:person) { FactoryGirl.build(:person) }
+
       describe "#grant" do
         let(:role1) { Ddr::Auth::Roles.build_role(type: :editor, person: "bob@example.com", scope: :resource) }
         let(:role2) { Ddr::Auth::Roles.build_role(type: :curator, person: "sue@example.com", scope: :policy) }
@@ -107,41 +109,26 @@ module Ddr::Auth
         end
         it "should revoke all roles" do
           expect { subject.revoke_all }.to change(subject, :size).from(2).to(0)
+        end        
+      end
+
+      describe "#to_a" do
+        let(:role1) { Ddr::Auth::Roles.build_role(type: :editor, person: "bob@example.com", scope: :resource) }
+        let(:role2) { Ddr::Auth::Roles.build_role(type: :curator, person: "sue@example.com", scope: :policy) }        
+        before do
+          subject.grant role1, role2
+        end
+        it "should return a plain array containing the roles" do
+          result = subject.to_a
+          expect(result).not_to be_a(described_class)
+          expect(result).to be_a(Array)
+          expect(result).to eq([role1, role2])
         end
       end
 
       describe "#where" do
-        before do
-          subject.grant({type: :contributor, group: "Contributors", scope: :resource},
-                        {type: :downloader, group: "Downloaders", scope: :resource},
-                        {type: :curator, person: "bob@example.com", scope: :policy})
-        end
-        it "should filter by a type" do
-          expect(subject.where(type: :contributor)).to eq([Contributor.build(group: "Contributors", scope: :resource)])
-        end
-        it "should filter by a list of types" do
-          expect(subject.where(type: [:contributor, :curator])).to eq([Contributor.build(group: "Contributors", scope: :resource), Curator.build(person: "bob@example.com", scope: :policy)])
-        end
-        it "should filter by agent" do
-          expect(subject.where(agent: Group.build("Contributors"))).to eq([Contributor.build(group: "Contributors", scope: :resource)])
-        end
-        it "should filter by a list of agents" do
-          expect(subject.where(agent: [Group.build("Contributors"), Person.build("bob@example.com")])).to eq([Contributor.build(group: "Contributors", scope: :resource), Curator.build(person: "bob@example.com", scope: :policy)])
-        end
-        it "should filter by a group" do
-          expect(subject.where(group: Group.build("Contributors"))).to eq([Contributor.build(group: "Contributors", scope: :resource)])
-        end
-        it "should filter by a list of groups" do
-          expect(subject.where(group: [Group.build("Contributors"), Group.build("Downloaders")])).to eq([Contributor.build(group: "Contributors", scope: :resource), Downloader.build(group: "Downloaders", scope: :resource)])
-        end
-        it "should filter by a person" do
-          expect(subject.where(person: Person.build("bob@example.com"))).to eq([Curator.build(person: "bob@example.com", scope: :policy)])
-        end
-        it "should filter by a list of persons" do
-          expect(subject.where(person: [Person.build("bob@example.com")])).to eq([Curator.build(person: "bob@example.com", scope: :policy)])
-        end
-        it "should filter by scope" do
-          expect(subject.where(scope: :policy)).to eq([Curator.build(person: "bob@example.com", scope: :policy)])
+        it "should be a Query object" do
+          expect(subject.where(type: :contributor)).to be_a(Query)
         end
       end
 

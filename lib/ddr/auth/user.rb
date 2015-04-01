@@ -51,6 +51,8 @@ module Ddr
         Person.build(self)
       end
       alias_method :to_person, :to_agent
+      alias_method :agent, :to_agent
+      alias_method :person, :to_agent
 
       def ability
         @ability ||= ::Ability.new(self)
@@ -80,7 +82,7 @@ module Ddr
       alias_method :eppn, :principal_name
 
       def agents
-        Agents.new(self)
+        groups + [person]
       end
 
       def principals

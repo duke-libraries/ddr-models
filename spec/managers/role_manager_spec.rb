@@ -14,31 +14,33 @@ module Ddr::Managers
 
     describe "#index_fields" do
       let(:roles) do
-        [{ type: :curator, person: "bob", scope: :resource },
-         { type: :curator, person: "sue", scope: :policy },
+        [{ type: :curator, person: "bob@example.com", scope: :resource },
+         { type: :curator, person: "sue@example.com", scope: :policy },
          { type: :editor, group: "Editors", scope: :policy },
-         { type: :editor, person: "jane", scope: :policy }]
+         { type: :editor, person: "jane@example.com", scope: :policy }]
       end
       before { subject.grant *roles }
       it "should return the index fields" do
-        expect(subject.index_fields).to eq({"resource_curator_role_ssim" => ["bob"],
-                                             "policy_curator_role_ssim" => ["sue"],
-                                             "policy_editor_role_ssim" => ["Editors", "jane"],
-                                             "policy_role_sim" => ["sue", "Editors", "jane"],
-                                             "resource_role_sim" => ["bob"]})
+        expect(subject.index_fields).to eq({"resource_curator_role_ssim" => ["bob@example.com"],
+                                             "policy_curator_role_ssim" => ["sue@example.com"],
+                                             "policy_editor_role_ssim" => ["Editors", "jane@example.com"],
+                                             "policy_role_sim" => ["sue@example.com", "Editors", "jane@example.com"],
+                                             "resource_role_sim" => ["bob@example.com"]})
       end
     end
 
     describe "permissions" do
+      let(:contributor_role) { Ddr::Auth::Roles::Contributor.build(group: "Contributors", scope: :resource) }
+      let(:downloader_role) { Ddr::Auth::Roles::Downloader.build(group: "Downloaders", scope: :resource) }
+      let(:curator_role) { Ddr::Auth::Roles::Curator.build(person: "bob@example.com", scope: :policy) }
+      let(:agents) { [contributor_role.get_agent, downloader_role.get_agent, curator_role.get_agent] }
       before do
-        subject.grant({type: :contributor, group: "Contributors", scope: :resource},
-                      {type: :downloader, group: "Downloaders", scope: :resource},
-                      {type: :curator, person: "bob", scope: :policy})
+        subject.grant(contributor_role, downloader_role, curator_role)
       end
       describe "#permissions_in_scope_for_agents" do
         it "should return the permissions granted in scope to any of the agents" do
-          expect(subject.permissions_in_scope_for_agents(:resource, [Ddr::Auth::Group.build("Contributors"), Ddr::Auth::Group.build("Downloaders"), Ddr::Auth::Person.build("bob")])).to match_array([:read, :add_children, :download])
-          expect(subject.permissions_in_scope_for_agents(:policy, [Ddr::Auth::Group.build("Contributors"), Ddr::Auth::Group.build("Downloaders"), Ddr::Auth::Person.build("bob")])).to match_array([:read, :add_children, :download, :edit, :replace, :arrange, :grant])
+          expect(subject.permissions_in_scope_for_agents(:resource, agents)).to match_array([:read, :add_children, :download])
+          expect(subject.permissions_in_scope_for_agents(:policy, agents)).to match_array([:read, :add_children, :download, :edit, :replace, :arrange, :grant])
         end
       end
     end

@@ -42,15 +42,20 @@ module Ddr
       end
 
       describe "#agents" do
-        it "should be a list of the user's groups + the user as Agent (Person)" do
+        it "should be a array of the user's groups and the user's person agent" do
           allow(subject).to receive(:groups) { [Group.build("foo"), Group.build("bar")] }
-          expect(subject.agents).to include(Group.build("foo"), Group.build("bar"), subject.to_agent)
+          expect(subject.agents).to eq([Group.build("foo"), Group.build("bar"), subject.person])
         end
       end
 
       describe "#to_agent" do
         it "should return a Person agent for the user" do
           expect(subject.to_agent).to eq(Person.build(subject))
+        end
+        describe "aliases" do
+          its(:agent) { is_expected.to eq(subject.to_agent) }
+          its(:person) { is_expected.to eq(subject.to_agent) }
+          its(:to_person) { is_expected.to eq(subject.to_agent) }
         end
       end
 
