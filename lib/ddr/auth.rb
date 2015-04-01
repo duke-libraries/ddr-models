@@ -9,9 +9,9 @@ module Ddr
     autoload :Group
     autoload :GrouperGateway
     autoload :Groups
-    autoload :HydraPermission
-    autoload :HydraPermissions
     autoload :LdapGateway
+    autoload :LegacyPermissions
+    autoload :LegacyRoles    
     autoload :Person
     autoload :Permission
     autoload :RoleBasedAccessControlsEnforcement

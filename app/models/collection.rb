@@ -85,14 +85,14 @@ class Collection < Ddr::Models::Base
   # Sets policy roles based on default permissions
   def set_policy_roles    
     roles.revoke_policy_roles
-    roles.grant *default_permissions_to_policy_roles
+    roles.grant *(legacy_default_permissions.to_policy_roles)
+  end
+
+  def legacy_default_permissions
+    Ddr::Auth::LegacyPermissions.new(default_permissions)
   end
 
   private
-
-  def default_permissions_to_policy_roles
-    Ddr::Auth::HydraPermissions.new(default_permissions).to_policy_roles
-  end
 
   def set_admin_policy
     self.admin_policy = self

@@ -173,37 +173,67 @@ module Ddr
       end
 
       describe "roles" do
-        let(:resource) { Item.new }
+        subject { FactoryGirl.build(:item) }
 
         describe "#role_based_permissions" do
           let(:policy) { Collection.new(pid: "coll:1") }
           let(:user) { FactoryGirl.build(:user) }
           before do
-            resource.admin_policy = policy
+            subject.admin_policy = policy
             allow(user).to receive(:persisted?) { true }
-            resource.roles.grant type: :downloader, group: Ddr::Auth::Groups::Public, scope: :resource
+            subject.roles.grant type: :downloader, group: Ddr::Auth::Groups::Public, scope: :resource
             policy.roles.grant type: :contributor, person: user, scope: :policy
           end
-          it "should return the list of permissions granted to the user's agents on the resource in resource scope, plust the permissions granted to the user's agents on the resource policy in policy scope" do
-            expect(resource.role_based_permissions(user)).to match_array([:read, :download, :add_children])
+          it "should return the list of permissions granted to the user's agents on the subject in resource scope, plust the permissions granted to the user's agents on the subject's policy in policy scope" do
+            expect(subject.role_based_permissions(user)).to match_array([:read, :download, :add_children])
           end
         end
 
-        describe "when permissions have changed" do
-          it "should update the resource roles" do
-            resource.permissions_attributes = [{access: "edit", type: "group", name: "Editors"},
-                                               {access: "discover", type: "group", name: "public"},
-                                               {access: "read", type: "person", name: "bob@example.com"}]
-            resource.save!
-            expect(resource.roles.granted).to include(Ddr::Auth::Roles::Viewer.build(person: "bob@example.com", scope: :resource),
-                                                     Ddr::Auth::Roles::Editor.build(group: "Editors", scope: :resource),
-                                                     Ddr::Auth::Roles::Viewer.build(group: "public", scope: :resource))
+        describe "syncing legacy downloader role to resource roles" do
+          describe "when legacy downloader role has changed" do
+            before do
+              subject.adminMetadata.downloader = ["bob@example.com", "Downloaders"]
+            end
+            it "should set matching Downloader resource roles" do
+              expect { subject.save }.to change { subject.roles.where(type: :downloader) }
+                .from([])
+                .to([Ddr::Auth::Roles::Downloader.build(person: "bob@example.com", scope: :resource), 
+                     Ddr::Auth::Roles::Downloader.build(group: "Downloaders", scope: :resource)])
+            end
+          end
+          describe "when legacy downloader role has NOT changed" do
+            it "should not set Downloader resource roles" do
+              subject.title = ["Changed Title"]
+              expect { subject.save }.not_to change { subject.roles.where(type: :downloader) }
+            end
           end
         end
 
-        describe "when permissions haven't changed" do
-          it "shouldn't change the resource roles" do
-            expect { resource.save }.not_to change { resource.roles.where(scope: :resource) }
+        describe "syncing legacy permissions to resource roles" do
+          describe "when legacy permissions have changed" do
+            before do
+              subject.permissions_attributes = [{access: "edit", type: "group", name: "Editors"},
+                                                {access: "discover", type: "group", name: "public"},
+                                                {access: "read", type: "person", name: "bob@example.com"}]
+            end
+            it "should update the resource roles" do
+              expect { subject.save }.to change { subject.roles.where(scope: :resource) }
+                .from([])
+                .to(include(Ddr::Auth::Roles::Viewer.build(person: "bob@example.com", scope: :resource),
+                     Ddr::Auth::Roles::Editor.build(group: "Editors", scope: :resource),
+                     Ddr::Auth::Roles::Viewer.build(group: "public", scope: :resource)))
+            end
+          end
+
+          describe "when legacy permissions haven't changed" do
+            before do
+              subject.roles.grant type: :viewer, person: "bob@example.com", scope: :resource
+              subject.save!
+            end
+            it "shouldn't change the resource roles" do
+              subject.title = ["Changed Title"]
+              expect { subject.save }.not_to change { subject.roles.where(scope: :resource) }
+            end
           end
         end
 
