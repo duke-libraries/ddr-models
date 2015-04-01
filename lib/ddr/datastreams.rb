@@ -9,6 +9,7 @@ module Ddr
     DC = "DC"
     DEFAULT_RIGHTS = "defaultRights"
     DESC_METADATA = "descMetadata"
+    MULTIRES_IMAGE = "multiresImage"
     PROPERTIES = "properties"
     RELS_EXT = "RELS-EXT"
     RIGHTS_METADATA = "rightsMetadata"

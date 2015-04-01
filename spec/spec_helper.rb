@@ -112,6 +112,7 @@ RSpec.configure do |config|
     ActiveFedora::Base.destroy_all
     Ddr::Models.configure do |config|
       config.external_file_store = Dir.mktmpdir
+      config.multires_image_external_file_store = Dir.mktmpdir
       config.external_file_subpath_pattern = "--"
     end
   end
@@ -119,6 +120,9 @@ RSpec.configure do |config|
   config.after(:suite) do
     if Ddr::Models.external_file_store && Dir.exist?(Ddr::Models.external_file_store)
       FileUtils.remove_entry_secure(Ddr::Models.external_file_store) 
+    end
+    if Ddr::Models.multires_image_external_file_store && Dir.exist?(Ddr::Models.multires_image_external_file_store)
+      FileUtils.remove_entry_secure(Ddr::Models.multires_image_external_file_store)
     end
   end
 
