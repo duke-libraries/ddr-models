@@ -71,7 +71,6 @@ module Ddr
       #
 
       LEGACY_ROLES.each do |legacy_role|
-        warn "DEPRECATION WARNING: `#{legacy_role.inspect}` is a deprecated term."
         term legacy_role, label: legacy_role.to_s.capitalize
       end
 

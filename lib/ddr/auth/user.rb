@@ -86,12 +86,10 @@ module Ddr
       end
 
       def principals
-        warn "DEPRECATION WARNING: `User#principals` is deprecated; use `#agents`."
-        groups.dup << principal_name
+        groups.map(&:to_s) + [principal_name]
       end
 
       def has_role?(obj, role)
-        warn "DEPRECATION WARNING: `User#has_role` is deprecated."
         obj.principal_has_role?(principals, role)
       end
 

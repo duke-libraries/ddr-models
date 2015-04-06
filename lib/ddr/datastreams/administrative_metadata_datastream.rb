@@ -15,7 +15,6 @@ module Ddr
       property :workflow_state, predicate: Ddr::Vocab::Asset.workflowState
 
       Ddr::Vocab::Roles::LEGACY_ROLES.each do |legacy_role|
-        warn "DEPRECATION WARNING: `#{legacy_role.inspect}` is a deprecated legacy role."
         property legacy_role, predicate: Ddr::Vocab::Roles.send(legacy_role) do |index|
           index.as :symbol
         end
