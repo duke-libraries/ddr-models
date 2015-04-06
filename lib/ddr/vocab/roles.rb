@@ -2,6 +2,8 @@ module Ddr
   module Vocab
     class Roles < RDF::StrictVocabulary("http://repository.lib.duke.edu/vocab/roles/")
 
+      LEGACY_ROLES = [:administrator, :editor, :contributor, :downloader]
+
       term :Role,
         label: "Role",
         comment: "A role granted to an agent."
@@ -68,10 +70,10 @@ module Ddr
       # Deprecated terms
       #
 
-      term :administrator, label: "Administrator"
-      term :editor, label: "Editor"
-      term :contributor, label: "Contributor"
-      term :downloader, label: "Downloader"
+      LEGACY_ROLES.each do |legacy_role|
+        warn "DEPRECATION WARNING: `#{legacy_role.inspect}` is a deprecated term."
+        term legacy_role, label: legacy_role.to_s.capitalize
+      end
 
     end
   end

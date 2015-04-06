@@ -7,11 +7,13 @@ module Ddr
       def granted
         @granted ||= Ddr::Auth::Roles::RoleSet.new(ds.access_role)
       end
-
+      
+      # Revoke all roles in policy scope
       def revoke_policy_roles
         revoke *(where(scope: :policy))
       end
 
+      # Revoke all role in resource scope
       def revoke_resource_roles
         revoke *(where(scope: :resource))
       end
@@ -51,16 +53,6 @@ module Ddr
         perms
       end
 
-      def principal_has_role?(principal, role)
-        warn "DEPRECATION WARNING -- Ddr::Managers::RoleManager#principal_has_role? is deprecated."
-        ( principals(role) & Array(principal) ).any?
-      end
-
-      def principals(role)
-        warn "DEPRECATION WARNING -- Ddr::Managers::RoleManager#principals is deprecated."
-        object.adminMetadata.send(role)
-      end
-
       # Return a hash of role information to index
       # @return [Hash] the fields
       def index_fields
@@ -73,17 +65,7 @@ module Ddr
           fields[scope_role_field] << role.agent_name
         end
       end
-
-      def method_missing(method, *args)
-        if args.size == 0
-          begin
-            return principals(method)
-          rescue NoMethodError
-          end
-        end
-        super
-      end
-
+      
       private
 
       def scope_index_field(role)
