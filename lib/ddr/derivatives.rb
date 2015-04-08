@@ -14,7 +14,7 @@ module Ddr
                         Derivative.new( :multires_image,
                                         Ddr::Datastreams::MULTIRES_IMAGE,
                                         Ddr::Derivatives::PtifGenerator,
-                                        "-define tiff:tile-geometry=256x256 -compress JPEG -quality 90"),
+                                        "jpeg:90,tile:256x256,pyramid"),
                     thumbnail:
                         Derivative.new( :thumbnail,
                                         Ddr::Datastreams::THUMBNAIL,

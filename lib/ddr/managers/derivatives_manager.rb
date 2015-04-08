@@ -62,7 +62,7 @@ module Ddr
           else
             Rails.logger.error results.stderr
             raise Ddr::Models::DerivativeGenerationFailure,
-                    "Failure generating #{derivative.name} for #{object.pid}.  See Rails log file for more information."
+                    "Failure generating #{derivative.name} for #{object.pid}: #{results.stderr}"
           end
           generator_output.close unless generator_output.closed?
         end

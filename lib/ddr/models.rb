@@ -32,6 +32,7 @@ module Ddr
     autoload :EventLoggable
     autoload :Error
     autoload :ChecksumInvalid, 'ddr/models/error'
+    autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :FixityCheckable
     autoload :Governable
     autoload :HasAdminMetadata
