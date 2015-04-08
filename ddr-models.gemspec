@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec-rails", "~> 3.1"
+  s.add_development_dependency "rspec-its"
   s.add_development_dependency "factory_girl_rails", "~> 4.4"
   s.add_development_dependency "jettywrapper", "~> 1.8"
   s.add_development_dependency "database_cleaner"

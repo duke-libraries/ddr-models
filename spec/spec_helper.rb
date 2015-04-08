@@ -8,6 +8,7 @@ require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "ddr-models"
 require "rails"
 require "rspec/rails"
+require "rspec/its"
 require "factory_girl_rails"
 require "database_cleaner"
 require "tempfile"

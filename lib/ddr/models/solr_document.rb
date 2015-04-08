@@ -158,6 +158,10 @@ module Ddr
         active_fedora_model.tableize
       end
 
+      def permanent_id
+        get(Ddr::IndexFields::PERMANENT_ID)
+      end
+
       private
 
       def targets_query
