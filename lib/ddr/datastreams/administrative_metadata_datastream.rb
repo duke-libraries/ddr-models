@@ -8,7 +8,7 @@ module Ddr
 
       property :permanent_url, predicate: Ddr::Vocab::Asset.permanentUrl
 
-      property :original_filename, predicate: RDF::Vocab::PREMIS::V1.hasOriginalName do |index|
+      property :original_filename, predicate: Ddr::Vocab::PREMIS.hasOriginalName do |index|
         index.as :stored_sortable
       end
 
@@ -21,6 +21,8 @@ module Ddr
       end
 
       property :access_role, predicate: Ddr::Vocab::Roles.hasRole
+
+      property :local_id, predicate: RDF::Vocab::Identifiers.local
 
     end
   end

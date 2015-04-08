@@ -5,12 +5,13 @@ module Ddr
 
       included do        
         has_metadata "adminMetadata",
-                     type: Ddr::Datastreams::AdministrativeMetadataDatastream,
-                     versionable: true,
-                     control_group: "M"
+          type: Ddr::Datastreams::AdministrativeMetadataDatastream,
+          versionable: true,
+          control_group: "M"
 
-        has_attributes :permanent_id, :permanent_url, :workflow_state,
-                       datastream: "adminMetadata", multiple: false
+        has_attributes :local_id, :permanent_id, :permanent_url, :workflow_state,
+          datastream: "adminMetadata", 
+          multiple: false
 
         delegate :role_based_permissions, to: :roles
         delegate :publish, :publish!, :unpublish, :unpublish!, :published?, to: :workflow
