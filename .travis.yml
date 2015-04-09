@@ -1,7 +1,6 @@
 language: ruby
-#before_install:
-#  - sudo apt-get update -qq
-#  - sudo apt-get install -y libclamav-dev clamav
+before_install:
+  - sudo apt-get install libvips-dev
 rvm:
   - 2.1
 script: "bundle exec rake ci"
