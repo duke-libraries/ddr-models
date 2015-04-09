@@ -4,6 +4,36 @@ module Ddr
   module Models
     RSpec.describe HasAdminMetadata, type: :model do
 
+      describe "local id" do
+        subject { FactoryGirl.build(:item) }
+        describe "setting" do
+          it "should set the value" do
+            expect { subject.local_id = "foo" }.to change(subject, :local_id).from(nil).to("foo")
+          end
+        end        
+        describe "re-setting" do
+          before { subject.local_id = "foo" }
+          it "should change the value" do
+            expect { subject.local_id = "bar" }.to change(subject, :local_id).from("foo").to("bar")
+          end
+        end
+        describe "indexing" do
+          before { subject.local_id = "foo" }
+          it "should index the local id value" do
+            expect(subject.to_solr).to include(Ddr::IndexFields::LOCAL_ID => "foo")
+          end
+        end
+        describe "finding" do
+          before do
+            subject.local_id = "foo"
+            subject.save!
+          end
+          it "should be able to find by the local id" do
+            expect(ActiveFedora::Base.where(Ddr::IndexFields::LOCAL_ID => "foo").first).to eq(subject)
+          end
+        end
+      end
+
       describe "permanent id and permanent url" do
 
         before(:all) do

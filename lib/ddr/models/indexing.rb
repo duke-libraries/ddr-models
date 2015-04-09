@@ -54,6 +54,9 @@ module Ddr
         if respond_to? :roles
           fields.merge!(roles.index_fields)
         end
+        if local_id.present?
+          fields[LOCAL_ID] = local_id
+        end
         fields
       end
 
