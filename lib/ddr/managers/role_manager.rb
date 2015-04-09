@@ -69,11 +69,11 @@ module Ddr
       private
 
       def scope_index_field(role)
-        "#{role.scope_type}_role_sim"
+        "#{role.scope.first}_role_sim"
       end
 
       def scope_role_index_field(role)
-        "#{role.scope_type}_#{role.role_type}_role_ssim"
+        "#{role.scope.first}_#{role.role_type}_role_ssim"
       end
 
       def ds

@@ -10,17 +10,13 @@ module Ddr::Auth
         expect(Roles.get_role_class(:viewer)).to eq(Roles::Viewer)
       end
     end
-    describe ".get_scope_term" do
-      it "should return the vocab term for the scope" do
-        expect(Roles.get_scope_term(:resource)).to eq(Ddr::Vocab::Scopes.Resource)
-        expect(Roles.get_scope_term(:policy)).to eq(Ddr::Vocab::Scopes.Policy)
-      end
-    end
     describe ".build_role" do
-      subject {  Roles.build_role(type: :curator, person: "bob@example.com", scope: :resource) }
+      subject {  Roles.build_role(type: :curator, person: "bob@example.com", scope: "resource") }
       it { is_expected.to be_a(Roles::Curator) }
       its(:agent_name) { is_expected.to eq("bob@example.com") }
-      its(:scope_type) { is_expected.to eq(:resource) }
+      it "should have 'resource' scope" do
+        expect(subject.scope.first).to eq("resource")
+      end
       it "should have a Person agent" do
         expect(subject.agent.first).to be_a(Person)
       end

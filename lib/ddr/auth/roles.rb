@@ -6,6 +6,7 @@ module Ddr
       autoload :Role
       autoload :RoleSet
       autoload :Query
+      autoload :Scopes
 
       autoload :Curator
       autoload :Editor

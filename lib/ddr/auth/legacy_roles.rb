@@ -3,8 +3,6 @@ module Ddr
     module LegacyRoles
       extend ActiveSupport::Concern
 
-      warn "DEPRECATION WARNING: `Ddr::Auth::LegacyRoles` is deprecated. It should be removed when deprecated roles are no longer used."
-
       LEGACY_ROLES = [:administrator, :editor, :downloader, :contributor]
 
       def legacy_downloader_to_resource_roles
@@ -15,12 +13,10 @@ module Ddr
       end      
 
       def principal_has_role?(principal, role)
-        warn "DEPRECATION WARNING: `principal_has_role?` is deprecated (old roles)."
         ( principals(role) & Array(principal) ).any?
       end
 
       def principals(role)
-        warn "DEPRECATION WARNING: `principals` is deprecated (old roles)."
         if LEGACY_ROLES.include?(role)
           adminMetadata.send(role)
         else

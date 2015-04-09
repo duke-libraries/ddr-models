@@ -24,11 +24,11 @@ module Ddr::Auth
         let(:contributor_group) { FactoryGirl.build(:group) }
         let(:downloader_group) { FactoryGirl.build(:group) }
         let(:viewer_group) { FactoryGirl.build(:group) }
-        let(:contributor_role) { Contributor.build(group: contributor_group, scope: :resource) }
-        let(:downloader_role) { Downloader.build(group: downloader_group, scope: :resource) }
-        let(:editor_role) { Editor.build(person: editor, scope: :resource) }
-        let(:curator_role) { Curator.build(person: curator, scope: :policy) }
-        let(:viewer_role) { Viewer.build(group: viewer_group, scope: :policy) }
+        let(:contributor_role) { Contributor.build(group: contributor_group, scope: "resource") }
+        let(:downloader_role) { Downloader.build(group: downloader_group, scope: "resource") }
+        let(:editor_role) { Editor.build(person: editor, scope: "resource") }
+        let(:curator_role) { Curator.build(person: curator, scope: "policy") }
+        let(:viewer_role) { Viewer.build(group: viewer_group, scope: "policy") }
         let(:policy_roles) { [curator_role, viewer_role] }
         let(:resource_roles) { [contributor_role, downloader_role, editor_role] }
         before do
@@ -86,17 +86,11 @@ module Ddr::Auth
 
         end
         describe "filtering by scope" do
-          it "should filter by the policy scope term" do
-            expect(subject.where(scope: Ddr::Vocab::Scopes.Policy)).to eq(policy_roles)
+          it "should filter by the policy scope" do
+            expect(subject.where(scope: "policy")).to eq(policy_roles)
           end
-          it "should filter by the resource scope term" do
-            expect(subject.where(scope: Ddr::Vocab::Scopes.Resource)).to eq(resource_roles)
-          end
-          it "should filter by the policy scope type" do
-            expect(subject.where(scope: :policy)).to eq(policy_roles)
-          end
-          it "should filter by the resource scope type" do
-            expect(subject.where(scope: :resource)).to eq(resource_roles)
+          it "should filter by the resource scope" do
+            expect(subject.where(scope: "resource")).to eq(resource_roles)
           end
         end
       end

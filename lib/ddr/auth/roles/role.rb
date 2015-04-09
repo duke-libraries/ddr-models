@@ -11,8 +11,6 @@ module Ddr
       #
       class Role < ActiveTriples::Resource
 
-        DEFAULT_SCOPE = Ddr::Vocab::Scopes.Resource
-
         AGENT_TYPES = [:person, :group, :agent]
 
         include RDF::Isomorphic
@@ -38,19 +36,8 @@ module Ddr
               agent_key = AGENT_TYPES.detect { |k| args.key?(k) }
               agent_class = Ddr::Auth.get_agent_class(agent_key)
               role.agent = agent_class.build(args[agent_key])
-              role.scope = get_scope(args[:scope])
+              role.scope = args.fetch(:scope, Scopes::DEFAULT)
               # validate!
-            end
-          end
-
-          def get_scope(scope)
-            case scope
-            when RDF::URI
-              scope
-            when Symbol
-              Ddr::Auth::Roles.get_scope_term(scope)
-            else
-              DEFAULT_SCOPE
             end
           end
 
@@ -80,21 +67,12 @@ module Ddr
         end
 
         def inspect
-          "#<#{self.class.name} agent=#{agent.first.to_h.inspect}, scope=#{scope_type.inspect}>"
+          "#<#{self.class.name} agent=#{agent.first.to_h.inspect}, scope=#{scope.first.inspect}>"
         end
 
         # @see .role_type
         def role_type
           self.class.role_type
-        end
-
-        # The "scope type" of the role instance
-        #   This should be the inverse operation of Ddr::Auth::Roles.get_scope_term(scope)
-        # @return [Symbol, nil] the scope type, or nil if there is no scope
-        def scope_type
-          if sc = get_scope
-            sc.to_s.split("/").last.downcase.to_sym
-          end
         end
 
         # Return the agent name associated with the role
@@ -124,7 +102,7 @@ module Ddr
         def to_h
           val = { 
             type: role_type,
-            scope: scope_type            
+            scope: scope.first
           }
           if agent.present?
             val[agent_type] = agent_name 
@@ -136,12 +114,6 @@ module Ddr
         # @see .permissions
         def permissions
           self.class.permissions
-        end
-
-        def get_scope
-          if scope.present?
-            scope.first.rdf_subject
-          end
         end
 
         def get_agent
