@@ -16,7 +16,6 @@ module Ddr
     autoload :DukeTerms
     autoload :RDFVocabularyParser
     autoload :Roles
-    autoload :Scopes
     autoload :Vocabulary
 
   end

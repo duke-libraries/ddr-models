@@ -22,9 +22,7 @@ module Ddr
         private
 
         def any_scope?(scopes, role)
-          Array(scopes).any? do |scope|
-            scope == (scope.is_a?(RDF::URI) ? role.get_scope : role.scope_type)
-          end
+          Array(scopes).any? { |scope| scope == role.scope.first }
         end
 
         def any_type?(types, role)
