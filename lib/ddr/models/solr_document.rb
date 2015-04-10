@@ -24,7 +24,7 @@ module Ddr
       def internal_uri
         get(Ddr::IndexFields::INTERNAL_URI)
       end
-    
+      
       def object_profile
         @object_profile ||= get_json(Ddr::IndexFields::OBJECT_PROFILE)
       end
@@ -92,7 +92,7 @@ module Ddr
       alias_method :title_display, :title # duck-type Ddr::Models::Base
 
       def principal_has_role?(principal, role)
-        (Array(get("admin_metadata__#{role}_ssim")) & Array(principal)).any?
+        (Array(self["admin_metadata__#{role}_ssim"]) & Array(principal)).any?
       end
 
       def identifier
@@ -103,7 +103,7 @@ module Ddr
       def source
         get(ActiveFedora::SolrService.solr_name(:source, :stored_searchable, type: :text))
       end
-    
+      
       def has_thumbnail?
         has_datastream?(Ddr::Datastreams::THUMBNAIL)
       end
@@ -129,11 +129,11 @@ module Ddr
       def content_size_human
         get(Ddr::IndexFields::CONTENT_SIZE_HUMAN)
       end
-    
+      
       def content_checksum
         content_ds["dsChecksum"] rescue nil
       end
-    
+      
       def targets
         @targets ||= ActiveFedora::SolrService.query(targets_query)
       end
@@ -141,21 +141,44 @@ module Ddr
       def targets_count
         @targets_count ||= ActiveFedora::SolrService.count(targets_query)
       end
-    
+      
       def has_target?
         targets_count > 0
       end
-    
+      
       def has_default_rights?
         has_datastream?(Ddr::Datastreams::DEFAULT_RIGHTS)
       end
-    
+      
       def association(name)
         get_pid(ActiveFedora::SolrService.solr_name(name, :symbol))
       end
 
       def controller_name
         active_fedora_model.tableize
+      end
+
+      def inherited_license
+        if admin_policy_pid
+          query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
+          results = ActiveFedora::SolrService.query(query)
+          doc = results.map { |result| ::SolrDocument.new(result) }.first
+          { title: doc.get(Ddr::IndexFields::DEFAULT_LICENSE_TITLE),
+            description: doc.get(Ddr::IndexFields::DEFAULT_LICENSE_DESCRIPTION),
+            url: doc.get(Ddr::IndexFields::DEFAULT_LICENSE_URL) }
+        end
+      end
+
+      def license
+        if get(Ddr::IndexFields::LICENSE_TITLE) || get(Ddr::IndexFields::LICENSE_DESCRIPTION) || get(Ddr::IndexFields::LICENSE_URL)
+          { title: get(Ddr::IndexFields::LICENSE_TITLE),
+            description: get(Ddr::IndexFields::LICENSE_DESCRIPTION),
+            url: get(Ddr::IndexFields::LICENSE_URL) }
+        end
+      end
+
+      def effective_license
+        @effective_license ||= license || inherited_license || {}
       end
 
       def permanent_id

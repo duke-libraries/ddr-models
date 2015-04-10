@@ -8,18 +8,21 @@ module Ddr
 
       property :permanent_url, predicate: Ddr::Vocab::Asset.permanentUrl
 
-      property :original_filename, predicate: RDF::Vocab::PREMIS::V1.hasOriginalName do |index|
+      property :original_filename, predicate: Ddr::Vocab::PREMIS.hasOriginalName do |index|
         index.as :stored_sortable
       end
 
       property :workflow_state, predicate: Ddr::Vocab::Asset.workflowState
 
-      Ddr::Vocab::Roles.each do |term|
-        property Ddr::Vocab::Vocabulary.term_name(Ddr::Vocab::Roles, term), 
-                 predicate: term do |index|
+      Ddr::Vocab::Roles::LEGACY_ROLES.each do |legacy_role|
+        property legacy_role, predicate: Ddr::Vocab::Roles.send(legacy_role) do |index|
           index.as :symbol
         end
       end
+
+      property :access_role, predicate: Ddr::Vocab::Roles.hasRole
+
+      property :local_id, predicate: RDF::Vocab::Identifiers.local
 
     end
   end

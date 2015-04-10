@@ -4,14 +4,45 @@ module Ddr
   module Models
     RSpec.describe HasAdminMetadata, type: :model do
 
+      describe "local id" do
+        subject { FactoryGirl.build(:item) }
+        describe "setting" do
+          it "should set the value" do
+            expect { subject.local_id = "foo" }.to change(subject, :local_id).from(nil).to("foo")
+          end
+        end        
+        describe "re-setting" do
+          before { subject.local_id = "foo" }
+          it "should change the value" do
+            expect { subject.local_id = "bar" }.to change(subject, :local_id).from("foo").to("bar")
+          end
+        end
+        describe "indexing" do
+          before { subject.local_id = "foo" }
+          it "should index the local id value" do
+            expect(subject.to_solr).to include(Ddr::IndexFields::LOCAL_ID => "foo")
+          end
+        end
+        describe "finding" do
+          before do
+            subject.local_id = "foo"
+            subject.save!
+          end
+          it "should be able to find by the local id" do
+            expect(ActiveFedora::Base.where(Ddr::IndexFields::LOCAL_ID => "foo").first).to eq(subject)
+          end
+        end
+      end
+
       describe "permanent id and permanent url" do
 
         before(:all) do
           class PermanentlyIdentifiable < ActiveFedora::Base
-            include Ddr::Models::Describable
-            include Ddr::Models::Indexing
-            include Ddr::Models::HasAdminMetadata
-            include Ddr::Models::EventLoggable
+            include Describable
+            include Indexing
+            include AccessControllable
+            include HasAdminMetadata
+            include EventLoggable
           end
         end
 
@@ -111,37 +142,16 @@ module Ddr
 
       end
 
-      describe "role assignments" do
-        before(:all) do
-          class RoleAssignable < ActiveFedora::Base
-            include HasAdminMetadata
-          end
-        end
-        
-        after(:all) do
-          Ddr::Models.send(:remove_const, :RoleAssignable)
-        end
-
-        subject { RoleAssignable.new }
-
-        describe "#principal_has_role?" do
-          it "should respond when given a list of principals and a valid role" do
-            expect { subject.principal_has_role?(["bob", "admins"], :administrator) }.not_to raise_error
-          end
-          it "should respond when given a principal name and a valid role" do
-            expect { subject.principal_has_role?("bob", :administrator) }.not_to raise_error
-          end
-          it "should raise an error when given an invalid role" do
-            expect { subject.principal_has_role?("bob", :foo) }.to raise_error
-          end
-        end
-      end
-
       describe "workflow" do
         before(:all) do
           class Workflowable < ActiveFedora::Base
+            include AccessControllable
             include HasAdminMetadata
           end
+        end
+
+        after(:all) do
+          Ddr::Models.send(:remove_const, :Workflowable)
         end
 
         subject { Workflowable.new }
@@ -190,6 +200,73 @@ module Ddr
             expect(subject.reload).not_to be_published
           end          
         end
+      end
+
+      describe "roles" do
+        subject { FactoryGirl.build(:item) }
+
+        describe "#role_based_permissions" do
+          let(:policy) { Collection.new(pid: "coll:1") }
+          let(:user) { FactoryGirl.build(:user) }
+          before do
+            subject.admin_policy = policy
+            allow(user).to receive(:persisted?) { true }
+            subject.roles.grant type: :downloader, group: Ddr::Auth::Groups::Public, scope: :resource
+            policy.roles.grant type: :contributor, person: user, scope: :policy
+          end
+          it "should return the list of permissions granted to the user's agents on the subject in resource scope, plust the permissions granted to the user's agents on the subject's policy in policy scope" do
+            expect(subject.role_based_permissions(user)).to match_array([:read, :download, :add_children])
+          end
+        end
+
+        describe "syncing legacy downloader role to resource roles" do
+          describe "when legacy downloader role has changed" do
+            before do
+              subject.adminMetadata.downloader = ["bob@example.com", "Downloaders"]
+            end
+            it "should set matching Downloader resource roles" do
+              expect { subject.save }.to change { subject.roles.where(type: :downloader) }
+                .from([])
+                .to([Ddr::Auth::Roles::Downloader.build(person: "bob@example.com", scope: :resource), 
+                     Ddr::Auth::Roles::Downloader.build(group: "Downloaders", scope: :resource)])
+            end
+          end
+          describe "when legacy downloader role has NOT changed" do
+            it "should not set Downloader resource roles" do
+              subject.title = ["Changed Title"]
+              expect { subject.save }.not_to change { subject.roles.where(type: :downloader) }
+            end
+          end
+        end
+
+        describe "syncing legacy permissions to resource roles" do
+          describe "when legacy permissions have changed" do
+            before do
+              subject.permissions_attributes = [{access: "edit", type: "group", name: "Editors"},
+                                                {access: "discover", type: "group", name: "public"},
+                                                {access: "read", type: "person", name: "bob@example.com"}]
+            end
+            it "should update the resource roles" do
+              expect { subject.save }.to change { subject.roles.where(scope: :resource) }
+                .from([])
+                .to(include(Ddr::Auth::Roles::Viewer.build(person: "bob@example.com", scope: :resource),
+                     Ddr::Auth::Roles::Editor.build(group: "Editors", scope: :resource),
+                     Ddr::Auth::Roles::Viewer.build(group: "public", scope: :resource)))
+            end
+          end
+
+          describe "when legacy permissions haven't changed" do
+            before do
+              subject.roles.grant type: :viewer, person: "bob@example.com", scope: :resource
+              subject.save!
+            end
+            it "shouldn't change the resource roles" do
+              subject.title = ["Changed Title"]
+              expect { subject.save }.not_to change { subject.roles.where(scope: :resource) }
+            end
+          end
+        end
+
       end
     
     end

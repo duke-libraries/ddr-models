@@ -26,7 +26,7 @@ module Ddr
         include Hydra::Derivatives
         include FileManagement unless include?(FileManagement)
 
-        around_save :update_thumbnail, if: :content_changed?
+        around_save :update_derivatives, if: :content_changed?
 
         after_add_file do
           if file_to_add.original_name && file_to_add.dsid == "content"
@@ -46,6 +46,10 @@ module Ddr
       def upload! file, opts={}
         upload(file, opts)
         save
+      end
+
+      def derivatives
+        @derivatives ||= Ddr::Managers::DerivativesManager.new(self)
       end
 
       def content_size
@@ -80,16 +84,6 @@ module Ddr
         content_type == "application/pdf"
       end
 
-      def generate_thumbnail
-        return false unless thumbnailable?
-        transform_datastream :content, { thumbnail: { size: "100x100>", datastream: "thumbnail" } }
-        thumbnail_changed?
-      end
-
-      def generate_thumbnail!
-        generate_thumbnail && save
-      end
-
       def virus_checks
         Ddr::Events::VirusCheckEvent.for_object(self)
       end
@@ -99,18 +93,10 @@ module Ddr
       end
 
       protected
-    
-      def update_thumbnail
-        yield
-        if thumbnailable?
-          generate_thumbnail!
-        else
-          thumbnail.delete
-        end
-      end
 
-      def thumbnailable?
-        has_content? && (image? || pdf?)
+      def update_derivatives
+        yield
+        derivatives.update_derivatives(:later)
       end
 
       def default_content_type

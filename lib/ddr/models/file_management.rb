@@ -87,7 +87,7 @@ module Ddr
           store_path = file_path
         else
           # generate new storage path for file
-          store_path = create_external_file_path!
+          store_path = create_external_file_path!(ds)
           # copy the original file to the storage location
           FileUtils.cp file_path, store_path
         end
@@ -100,8 +100,8 @@ module Ddr
       end
 
       # Create directory (if necessary) for newly generated file path and return path
-      def create_external_file_path!
-        file_path = generate_external_file_path
+      def create_external_file_path! ds
+        file_path = generate_external_file_path(ds)
         FileUtils.mkdir_p(File.dirname(file_path))
         file_path
       end
@@ -111,9 +111,9 @@ module Ddr
       #
       # => {external_file_store}/1/e/69/1e691815-0631-4f9b-8e23-2dfb2eec9c70
       #
-      def generate_external_file_path
-        file_name = generate_external_file_name
-        File.join(external_file_store, generate_external_directory_subpath(file_name), file_name)
+      def generate_external_file_path ds
+        file_name = generate_external_file_name(ds)
+        File.join(external_file_store(ds.dsid), generate_external_directory_subpath, file_name)
       end
 
       def external_datastreams
@@ -153,23 +153,38 @@ module Ddr
         end
       end
 
-      def external_file_store
-        Ddr::Models.external_file_store
+      def external_file_store dsid
+        case dsid
+        when Ddr::Datastreams::MULTIRES_IMAGE
+          Ddr::Models.multires_image_external_file_store
+        else
+          Ddr::Models.external_file_store
+        end
       end
 
       def set_external_file_permissions! file_path
         File.chmod(EXTERNAL_FILE_PERMISSIONS, file_path)
       end
 
-      def generate_external_file_name
-        SecureRandom.uuid      
+      def generate_external_file_name ds
+        content_file_name = Ddr::Utils::sanitize_filename(original_filename) || datastreams[ds.dsid].default_file_name
+        case ds.dsid
+        when Ddr::Datastreams::MULTIRES_IMAGE
+          case ds.mimeType
+          when "image/tiff"
+            "#{File.basename(content_file_name, File.extname(content_file_name))}.ptif"
+          end
+        else
+          content_file_name
+        end
       end
 
-      def generate_external_directory_subpath(file_name)
-        m = Ddr::Models.external_file_subpath_regexp.match(file_name)
+      def generate_external_directory_subpath
+        subdir = SecureRandom.uuid
+        m = Ddr::Models.external_file_subpath_regexp.match(subdir)
         raise "File name does not match external file subpath pattern: #{file_name}" unless m
         subpath_segments = m.to_a[1..-1]
-        File.join *subpath_segments
+        File.join *subpath_segments, subdir
       end
 
       def cleanup_external_files_on_destroy

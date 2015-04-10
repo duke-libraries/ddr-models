@@ -3,11 +3,10 @@ en:
     public: Public
     registered: Duke Community
     duke:
+      all: Duke NetIDs
       staff: Duke Staff
       faculty: Duke Faculty
       student: Duke Students
       affiliate: Duke Affiliates
       alumni: Duke Alumni
       emeritus: Duke Emeritus Faculty
-# Grouper group example:
-#    "duke:library:repository:ddr:archivists": Archivists          

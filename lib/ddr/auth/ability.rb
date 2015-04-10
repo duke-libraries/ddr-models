@@ -15,7 +15,7 @@ module Ddr
       end
 
       def collection_permissions
-        can :create, Collection if current_user.member_of?(Ddr::Auth.collection_creators_group)
+        can :create, Collection if current_user.member_of?(Groups::CollectionCreators)
       end
 
       def read_permissions

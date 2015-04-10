@@ -8,14 +8,14 @@ module Ddr
 
         has_many :events, inverse_of: :user, class_name: "Ddr::Events::Event"
 
+        attr_writer :groups
+
         delegate :can?, :cannot?, to: :ability
 
         validates_uniqueness_of :username, :case_sensitive => false
         validates_format_of :email, with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/
 
         devise :database_authenticatable, :omniauthable, omniauth_providers: [:shibboleth]
-
-        attr_writer :group_service
 
         class_attribute :user_key_attribute
         self.user_key_attribute = Devise.authentication_keys.first
@@ -43,36 +43,50 @@ module Ddr
         send(user_key_attribute)
       end
 
-      def group_service
-        @group_service ||= RemoteGroupService.new
-      end
-
       def to_s
         user_key
       end
+
+      def to_agent
+        Person.build(self)
+      end
+      alias_method :to_person, :to_agent
+      alias_method :agent, :to_agent
+      alias_method :person, :to_agent
 
       def ability
         @ability ||= ::Ability.new(self)
       end
 
       def groups
-        @groups ||= group_service.user_groups(self)
+        @groups ||= Groups.new(self)
       end
 
       def member_of?(group)
-        group ? self.groups.include?(group) : false
+        if group.is_a? Group
+          groups.include?(group)
+        else
+          member_of?(Group.build(group))
+        end
       end
+      alias_method :is_member_of?, :member_of?
       
       def authorized_to_act_as_superuser?
-        member_of? group_service.superuser_group
+        member_of?(Groups::Superusers)
       end
 
       def principal_name
         user_key
       end
+      alias_method :name, :principal_name
+      alias_method :eppn, :principal_name
+
+      def agents
+        groups + [person]
+      end
 
       def principals
-        groups.dup << principal_name
+        groups.map(&:to_s) + [principal_name]
       end
 
       def has_role?(obj, role)

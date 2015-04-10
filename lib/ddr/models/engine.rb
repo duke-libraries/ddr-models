@@ -18,6 +18,7 @@ module Ddr
       #
       initializer "ddr_models.external_files" do
         Ddr::Models.external_file_store = ENV["EXTERNAL_FILE_STORE"]
+        Ddr::Models.multires_image_external_file_store = ENV["MULTIRES_IMAGE_EXTERNAL_FILE_STORE"]
         Ddr::Models.external_file_subpath_pattern = ENV["EXTERNAL_FILE_SUBPATH_PATTERN"] || "--"
       end
 
@@ -26,15 +27,9 @@ module Ddr
         ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
       end
 
-      # Integration of remote (Grouper) groups via Shibboleth
-      initializer "ddr_auth.grouper" do
-        # Load configuration for Grouper service, if present
-        if File.exists? "#{Rails.root}/config/grouper.yml"
-          Ddr::Auth::GrouperService.config = YAML.load_file("#{Rails.root}/config/grouper.yml")[Rails.env]
-        end
-
+      initializer "ddr_auth.groups" do
         Warden::Manager.after_set_user do |user, auth, opts|
-          user.group_service = Ddr::Auth::RemoteGroupService.new(auth.env)
+          user.groups = Ddr::Auth::Groups.new(user, auth.env)
         end
       end
 

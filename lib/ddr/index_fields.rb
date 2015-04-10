@@ -31,6 +31,7 @@ module Ddr
     LICENSE_DESCRIPTION         = solr_name :license_description, type: :string
     LICENSE_TITLE               = solr_name :license_title, type: :string
     LICENSE_URL                 = solr_name :license_url, type: :string
+    LOCAL_ID                    = solr_name :local_id, :stored_sortable
     MEDIA_SUB_TYPE              = solr_name :content_media_sub_type, :facetable
     MEDIA_MAJOR_TYPE            = solr_name :content_media_major_type, :facetable
     MEDIA_TYPE                  = solr_name :content_media_type, :symbol
