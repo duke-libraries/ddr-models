@@ -3,6 +3,7 @@ module Ddr
     class RoleManager < Manager
 
       delegate :grant, :revoke, :granted?, :replace, :revoke_all, :where, to: :granted
+      delegate :downloader, to: :ds
 
       def granted
         @granted ||= Ddr::Auth::Roles::RoleSet.new(ds.access_role)

@@ -3,7 +3,18 @@ module Ddr::Managers
 
     let(:obj) { FactoryGirl.build(:collection) }
 
-    subject { obj.roles }
+    subject { described_class.new(obj) }
+
+    describe "legacy roles" do
+      describe "#downloader" do
+        before do
+          obj.adminMetadata.downloader = "bob@example.com"
+        end
+        it "should return the downloader property of the adminMetadata datastream" do
+          expect(subject.downloader).to eq(["bob@example.com"])
+        end
+      end
+    end
 
     describe "granted roles" do
       it "should return the access roles defined on the datastream" do
