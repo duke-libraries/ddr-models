@@ -16,5 +16,12 @@ module Ddr::Auth
       end
     end
 
+    describe "backward-compatible behavior" do
+      it "should delegate missing methods to the group name string" do
+        name = subject.to_s
+        expect(subject.sub("Group", "Apple")).to eq(name.sub("Group", "Apple"))
+      end
+    end
+
   end
 end
