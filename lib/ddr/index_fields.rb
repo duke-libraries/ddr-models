@@ -35,6 +35,7 @@ module Ddr
     MEDIA_SUB_TYPE              = solr_name :content_media_sub_type, :facetable
     MEDIA_MAJOR_TYPE            = solr_name :content_media_major_type, :facetable
     MEDIA_TYPE                  = solr_name :content_media_type, :symbol
+    MULTIRES_IMAGE_FILE_PATH    = solr_name :multires_image_file_path, :stored_sortable
     OBJECT_PROFILE              = solr_name :object_profile, :displayable
     OBJECT_STATE                = solr_name :object_state, :stored_sortable
     OBJECT_CREATE_DATE          = solr_name :system_create, :stored_sortable, type: :date
