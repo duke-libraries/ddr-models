@@ -74,10 +74,6 @@ module Ddr
         identifier.first
       end
 
-      def multires_image_file_path
-        URI.parse(datastreams[Ddr::Datastreams::MULTIRES_IMAGE].dsLocation).path
-      end
-
     end
   end
 end

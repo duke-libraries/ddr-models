@@ -185,6 +185,10 @@ module Ddr
         get(Ddr::IndexFields::PERMANENT_ID)
       end
 
+      def multires_image_file_path
+        get(Ddr::IndexFields::MULTIRES_IMAGE_FILE_PATH)
+      end
+
       private
 
       def targets_query
