@@ -11,6 +11,10 @@ module Ddr
         include FileManagement unless include?(FileManagement)
       end
 
+      def multires_image_file_path
+        URI.parse(datastreams[Ddr::Datastreams::MULTIRES_IMAGE].dsLocation).path if datastreams[Ddr::Datastreams::MULTIRES_IMAGE].dsLocation
+      end
+
     end
   end
 end
