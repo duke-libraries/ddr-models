@@ -48,25 +48,23 @@ module Ddr
       end
 
       def to_agent
-        Person.build(self)
+        principal_name
       end
-      alias_method :to_person, :to_agent
       alias_method :agent, :to_agent
-      alias_method :person, :to_agent
 
       def ability
         @ability ||= ::Ability.new(self)
       end
 
       def groups
-        @groups ||= Groups.new(self)
+        @groups ||= Groups.build(self)
       end
 
       def member_of?(group)
         if group.is_a? Group
           groups.include?(group)
         else
-          member_of?(Group.build(group))
+          member_of?(Group.new(group))
         end
       end
       alias_method :is_member_of?, :member_of?
@@ -82,7 +80,7 @@ module Ddr
       alias_method :eppn, :principal_name
 
       def agents
-        groups + [person]
+        groups.agents + [agent]
       end
 
       def principals

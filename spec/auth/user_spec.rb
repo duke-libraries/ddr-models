@@ -8,15 +8,15 @@ module Ddr
 
       describe "#member_of?" do
         before do
-          allow(subject).to receive(:groups) { [Group.build("foo"), Group.build("bar")] }
+          allow(subject).to receive(:groups) { [Group.new("foo"), Group.new("bar")] }
         end
         it "should return true if the user is a member of the group" do
           expect(subject).to be_member_of("foo")
-          expect(subject).to be_member_of(Group.build("foo"))
+          expect(subject).to be_member_of(Group.new("foo"))
         end
         it "should return false if the user is not a member of the group" do
           expect(subject).not_to be_member_of("baz")
-          expect(subject).not_to be_member_of(Group.build("baz"))
+          expect(subject).not_to be_member_of(Group.new("baz"))
         end
       end
 
@@ -26,7 +26,7 @@ module Ddr
           expect(subject).not_to be_authorized_to_act_as_superuser
         end
         it "should return false if the user is not a member of the superuser group" do
-          allow(subject).to receive(:groups) { [ Group.build("normal") ] }
+          allow(subject).to receive(:groups) { [ Group.new("normal") ] }
           expect(subject).not_to be_authorized_to_act_as_superuser
         end
         it "should return true if the user is a member of the superuser group" do
@@ -43,19 +43,17 @@ module Ddr
 
       describe "#agents" do
         it "should be a array of the user's groups and the user's person agent" do
-          allow(subject).to receive(:groups) { [Group.build("foo"), Group.build("bar")] }
-          expect(subject.agents).to eq([Group.build("foo"), Group.build("bar"), subject.person])
+          allow(subject).to receive(:groups) { Groups.new([Group.new("foo"), Group.new("bar")]) }
+          expect(subject.agents).to contain_exactly("foo", "bar", subject.agent)
         end
       end
 
       describe "#to_agent" do
-        it "should return a Person agent for the user" do
-          expect(subject.to_agent).to eq(Person.build(subject))
+        it "should return the agent representation of the user" do
+          expect(subject.to_agent).to eq(subject.principal_name)
         end
         describe "aliases" do
           its(:agent) { is_expected.to eq(subject.to_agent) }
-          its(:person) { is_expected.to eq(subject.to_agent) }
-          its(:to_person) { is_expected.to eq(subject.to_agent) }
         end
       end
 

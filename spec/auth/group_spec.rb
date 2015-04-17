@@ -1,25 +1,23 @@
 module Ddr::Auth
-  RSpec.describe Group, agents: true do
+  RSpec.describe Group do
 
-    subject { FactoryGirl.build(:group) }
+    subject { described_class.new("admins") }
 
-    it_behaves_like "an agent" do
-      let(:type) { RDF::FOAF.Group }
-      let(:agent_type) { :group }
-    end
+    its(:agent) { is_expected.to eq("admins") }
 
-    describe "validation" do
-      describe "when built with a name is in the format of an email address" do
-        it "should raise an exception" do
-          expect { described_class.build("bob@example.com") }.to raise_error
+    describe "#has_member?" do
+      let!(:user) { FactoryGirl.build(:user) }
+      context "when the user's groups include the group" do
+        before { allow(user).to receive(:groups) { Groups.new([subject]) } }
+        it "should be true" do
+          expect(subject.has_member?(user)).to be true
         end
       end
-    end
-
-    describe "backward-compatible behavior" do
-      it "should delegate missing methods to the group name string" do
-        name = subject.to_s
-        expect(subject.sub("Group", "Apple")).to eq(name.sub("Group", "Apple"))
+      context "when the user's groups do not include the group" do
+        before { allow(user).to receive(:groups) { Groups.new([Group.new("foo")]) } }
+        it "should be false" do
+          expect(subject.has_member?(user)).to be false
+        end
       end
     end
 

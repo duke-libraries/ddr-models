@@ -4,59 +4,63 @@ module Ddr
   module Auth
     module Roles
       #
-      # An abstract class representing the assignment of a role to
-      # an agent within a scope.
-      #
-      # @abstract
+      # Represents the assignment of a role to an agent within a scope.
       #
       class Role < ActiveTriples::Resource
 
-        AGENT_TYPES = [:person, :group, :agent]
+        DEFAULT_SCOPE = Roles::RESOURCE_SCOPE
+
+        # TYPES = {
+        #   "Curator" => {
+        #     permissions: [:read, :download, :add_children, :edit, :replace, :arrange, :grant].freeze
+        #     }.freeze,
+
+        #   "Editor" => {
+        #     permissions: [:read, :download, :add_children, :edit, :replace, :arrange].freeze
+        #     }.freeze,
+
+        #   "MetadataEditor" => {
+        #     permissions: [:read, :download, :edit].freeze
+        #     }.freeze,
+
+        #   "Contributor" => {
+        #     permissions: [:read, :add_children].freeze
+        #     }.freeze,
+
+        #   "Downloader" => {
+        #     permissions: [:read, :download].freeze
+        #     }.freeze,
+
+        #   "Viewer" => {
+        #     permissions: [:read].freeze
+        #     }.freeze
+
+        # }.freeze
 
         include RDF::Isomorphic
+        include Hydra::Validations
 
+        configure type: Ddr::Vocab::Roles.Role
+        property :role_type, predicate: Ddr::Vocab::Roles.type
         property :agent, predicate: Ddr::Vocab::Roles.agent
         property :scope, predicate: Ddr::Vocab::Roles.scope
 
-        validates_presence_of :agent, :scope
+        validates_presence_of :agent
+        validates_inclusion_of :role_type, in: Roles.type_map.keys
+        validates_inclusion_of :scope, in: Roles::SCOPES
 
-        class << self
-
-          attr_accessor :permissions
-
-          def has_permission(*permissions)
-            self.permissions += permissions.map { |p| Ddr::Auth::Permission.get(p) }
-          end
-
-          # Builds a new role object from the hash arguments
-          # @param args [Hash] a hash of options
-          # @return [Ddr::Auth::Roles::Role]
-          def build(args={})
-            new.tap do |role| 
-              agent_key = AGENT_TYPES.detect { |k| args.key?(k) }
-              agent_class = Ddr::Auth.get_agent_class(agent_key)
-              role.agent = agent_class.build(args[agent_key])
-              role.scope = args.fetch(:scope, Scopes::DEFAULT)
-              # validate!
+        def self.build(args={})
+          new.tap do |role| 
+            role.agent     = args.fetch(:agent).to_s
+            role.scope     = args.fetch(:scope, DEFAULT_SCOPE).to_s
+            role.role_type = args.fetch(:type).to_s
+            if role.invalid?
+              raise Ddr::Models::Error, "Invalid #{self.name}: #{role.errors.full_messages.join('; ')}"
             end
           end
-
-          # Return the role "type" (not RDF type) -- i.e., a symbol for the role class
-          #   This should be the inverse operation of Ddr::Auth::Roles.get_role_class(type)
-          # @example Ddr::Auth::Roles::Curator.role_type => :curator
-          # @return [Symbol] the role type
-          def role_type
-            @role_type ||= self.name.split("::").last.underscore.to_sym
-          end
-
-          def inherited(subclass)            
-            subclass.permissions = []
-          end
-
         end
 
         # Roles are considered equivalent if the RDF graphs are isomorphic
-        # -- i.e., if the RDF type, Agent name, scope are all equal.
         # @return [Boolean] the result
         def ==(other)
           isomorphic_with? other
@@ -67,63 +71,22 @@ module Ddr
         end
 
         def inspect
-          "#<#{self.class.name} agent=#{agent.first.to_h.inspect}, scope=#{scope.first.inspect}>"
-        end
-
-        # @see .role_type
-        def role_type
-          self.class.role_type
-        end
-
-        # Return the agent name associated with the role
-        # @return [String, nil] the agent name, or nil if there is no agent
-        def agent_name
-          if ag = get_agent
-            ag.agent_name
-          end
-        end
-
-        # Return the agent type associated with the role
-        # @return [Symbol, nil] the agent type, or nil if there is no agent
-        def agent_type
-          if ag = get_agent
-            ag.agent_type
-          end
-        end
-
-        def person_agent?
-          agent_type == :person
-        end
-
-        def group_agent?
-          agent_type == :group
+          "#<#{self.class.name} type=#{role_type.first.inspect}, " \
+          "agent=#{agent.first.inspect}, scope=#{scope.first.inspect}>"
         end
 
         def to_h
-          val = { 
-            type: role_type,
-            scope: scope.first
-          }
-          if agent.present?
-            val[agent_type] = agent_name 
-          end
-          val
+          { type: role_type.first,
+            scope: scope.first,
+            agent: agent.first }
         end
         alias_method :to_hash, :to_h
         
-        # @see .permissions
         def permissions
-          self.class.permissions
-        end
-
-        def get_agent
-          if agent.present?
-            agent.first
-          end
+          Roles.type_map[role_type.first].permissions
         end
 
       end
-
     end
   end
 end

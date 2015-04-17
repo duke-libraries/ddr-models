@@ -12,10 +12,10 @@ module Ddr
         #   Note that we reject roles that are included because
         #   ActiveTriples::Term#<< does not support isomorphism. 
         #   https://github.com/ActiveTriples/ActiveTriples/issues/42
-        # @example - default scope (:resource)
-        #   grant type: :curator, person: "bob"
+        # @example - default scope ("resource")
+        #   grant type: "Curator", agent: "bob"
         # @example - explicit scope
-        #   grant type: :curator, person: "sue", scope: :policy
+        #   grant type: "Curator", agent: "sue", scope: "policy"
         # @param roles [Array<Ddr::Auth::Roles::Role, Hash>] the roles to grant
         def grant(*roles)
           self << coerce(roles).reject { |r| include?(r) }
@@ -48,13 +48,13 @@ module Ddr
         # @param roles [Array<Ddr::Auth::Roles::Role, Hash>] the roles to grant
         def replace(*roles)
           revoke_all
-          # XXX Not sure why we have to use __getobj__ here
-          __getobj__.set coerce(roles)
+          grant(*roles)
         end
 
         # Remove all roles from the role set
         def revoke_all          
-          delete(*__getobj__)
+          each(&:destroy)
+          self
         end
 
         def to_a
@@ -78,7 +78,7 @@ module Ddr
           when Role
             role
           else
-            Ddr::Auth::Roles.build_role(role)
+            Role.build(role)
           end
         end
 

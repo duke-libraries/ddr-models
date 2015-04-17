@@ -11,12 +11,12 @@ module Ddr
       
       # Revoke all roles in policy scope
       def revoke_policy_roles
-        revoke *(where(scope: :policy))
+        revoke *(where(scope: "policy"))
       end
 
       # Revoke all role in resource scope
       def revoke_resource_roles
-        revoke *(where(scope: :resource))
+        revoke *(where(scope: "resource"))
       end
 
       # Return a list of the permissions granted in scope to any of the agents 
@@ -26,12 +26,12 @@ module Ddr
 
       # Return a list of the permissions granted in resource scope to any of the agents
       def resource_permissions_for_agents(agents)
-        permissions_in_scope_for_agents(:resource, agents)
+        permissions_in_scope_for_agents("resource", agents)
       end
 
       # Return a list of the permissions granted in policy scope to any of the agents
       def policy_permissions_for_agents(agents)
-        permissions_in_scope_for_agents(:policy, agents)
+        permissions_in_scope_for_agents("policy", agents)
       end     
 
       # Return the permissions granted to the user in resource scope (via roles on the object)
@@ -60,10 +60,10 @@ module Ddr
         granted.each_with_object({}) do |role, fields|
           scope_field = scope_index_field(role)
           fields[scope_field] ||= []
-          fields[scope_field] |= [role.agent_name]
+          fields[scope_field] |= [role.agent.first]
           scope_role_field = scope_role_index_field(role)
           fields[scope_role_field] ||= []
-          fields[scope_role_field] << role.agent_name
+          fields[scope_role_field] << role.agent.first
         end
       end
       
@@ -74,7 +74,7 @@ module Ddr
       end
 
       def scope_role_index_field(role)
-        "#{role.scope.first}_#{role.role_type}_role_ssim"
+        "#{role.scope.first}_#{role.role_type.first.underscore}_role_ssim"
       end
 
       def ds
