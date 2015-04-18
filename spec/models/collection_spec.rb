@@ -60,18 +60,18 @@ RSpec.describe Collection, type: :model do
         subject.default_permissions = [{access: "edit", type: "group", name: "Editors"},
                                        {access: "discover", type: "group", name: "public"},
                                        {access: "read", type: "person", name: "bob@example.com"}]
-        expect { subject.save }.to change { subject.roles.where(scope: :policy) }
+        expect { subject.save }.to change { subject.roles.where(scope: "policy") }
           .from([])
-          .to(include(Ddr::Auth::Roles::Viewer.build(person: "bob@example.com", scope: :policy),
-                      Ddr::Auth::Roles::Editor.build(group: "Editors", scope: :policy),
-                      Ddr::Auth::Roles::Viewer.build(group: "public", scope: :policy)))
+          .to(include(Ddr::Auth::Roles::Role.build(type: "Viewer", agent: "bob@example.com", scope: "policy"),
+                      Ddr::Auth::Roles::Role.build(type: "Editor", agent: "Editors", scope: "policy"),
+                      Ddr::Auth::Roles::Role.build(type: "Viewer", agent: "public", scope: "policy")))
       end
     end
 
     describe "when default permissions haven't changed" do
       it "shouldn't change the policy roles" do
         subject.title = ["Changed Title"]
-        expect { subject.save }.not_to change { subject.roles.where(scope: :policy) }
+        expect { subject.save }.not_to change { subject.roles.where(scope: "Policy") }
       end
     end
   end

@@ -5,15 +5,15 @@ module Ddr
       attr_reader :permissions
 
       LEGACY_PERMISSION_ROLE_MAP = {
-        "discover" => :viewer,
-        "read" => :viewer,
-        "edit" => :editor
+        "discover" => "Viewer",
+        "read" => "Viewer",
+        "edit" => "Editor"
       }
 
       def initialize(permissions)
         @permissions = permissions
       end
-      
+
       def to_resource_roles
         to_roles(:resource)
       end
@@ -24,9 +24,7 @@ module Ddr
 
       def to_roles(scope)
         permissions.map do |perm|
-          Roles.build_role(:type=>role_type(perm), 
-                           agent_type(perm)=>perm[:name], 
-                           :scope=>scope)          
+          Roles::Role.build(type: role_type(perm), agent: perm[:name], scope: scope)
         end
       end
 

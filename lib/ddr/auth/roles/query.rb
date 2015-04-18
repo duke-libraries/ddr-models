@@ -22,28 +22,15 @@ module Ddr
         private
 
         def any_scope?(scopes, role)
-          Array(scopes).any? { |scope| scope == role.scope.first }
+          Array(scopes).include? role.scope.first
         end
 
         def any_type?(types, role)
-          Array(types).any? { |t| t == role.role_type }
-        end
-
-        def any_person?(persons, role)
-          role.person_agent? ? any_agent?(persons, role) : false
-        end
-
-        def any_group?(groups, role)
-          role.group_agent? ? any_agent?(groups, role) : false
+          Array(types).include? role.role_type.first
         end
 
         def any_agent?(agents, role)
-          unless agents.is_a?(Array)
-            agents = [agents]
-          end
-          agents.any? do |agent|
-            agent == (agent.is_a?(Ddr::Auth::Agent) ? role.get_agent : role.agent_name)
-          end
+          Array(agents).include? role.agent.first
         end
 
       end

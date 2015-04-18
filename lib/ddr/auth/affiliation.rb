@@ -12,7 +12,7 @@ module Ddr
       end
 
       def group
-        Group.build("duke.#{self}")
+        Group.new("duke.#{self}")
       end
 
       def inspect

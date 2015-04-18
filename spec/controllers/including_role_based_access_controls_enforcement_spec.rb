@@ -9,7 +9,7 @@ RSpec.describe ApplicationController, type: :controller do
 
   before do
     sign_in user
-    allow(controller.current_user).to receive(:agents) { [Ddr::Auth::Group.build("foo"), Ddr::Auth::Group.build("bar"), Ddr::Auth::Person.build(user)] }
+    allow(controller.current_user).to receive(:groups) { Ddr::Auth::Groups.new([Ddr::Auth::Group.new("foo"), Ddr::Auth::Group.new("bar")]) }
   end
 
   describe "#resource_role_filters" do
@@ -21,12 +21,12 @@ RSpec.describe ApplicationController, type: :controller do
   describe "#role_policies" do
     let(:collections) { FactoryGirl.build_list(:collection, 3) }
     before do
-      collections[0].roles.grant type: :curator, person: user, scope: :policy
+      collections[0].roles.grant type: "Curator", agent: user, scope: "policy"
       collections[0].save
-      collections[1].roles.grant type: :editor, group: "foo", scope: :policy
-      collections[1].roles.grant type: :contributor, group: "bar", scope: :policy
+      collections[1].roles.grant type: "Editor", agent: "foo", scope: "policy"
+      collections[1].roles.grant type: "Contributor", agent: "bar", scope: "policy"
       collections[1].save
-      collections[2].roles.grant type: :viewer, group: "foo:bar", scope: :policy
+      collections[2].roles.grant type: "Viewer", agent: "foo:bar", scope: "policy"
       collections[2].save
     end
     it "should return a list of PIDs for collections on which the current user has a role" do
