@@ -11,10 +11,7 @@ module Ddr
     class PermanentIdManager
 
       PERMANENT_URL_BASE = "http://id.library.duke.edu/"
-      TARGET_URL_BASE = "https://repository.lib.duke.edu/id/"
-
       ASSIGN_EVENT_SUMMARY = "Permanent ID assignment"
-
       SOFTWARE = Ezid::Client.version
 
       attr_reader :object
@@ -86,7 +83,7 @@ EZID Metadata:
         end
 
         def default_target_url(id)
-          TARGET_URL_BASE + id
+          Ddr::Models.permanent_id_target_url_base + id
         end
 
     end
