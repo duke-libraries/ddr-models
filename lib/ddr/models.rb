@@ -7,7 +7,6 @@ $: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/con
 require 'active_record'
 
 require 'hydra-core'
-require 'hydra/derivatives'
 require 'hydra/validations'
 
 require 'ddr/actions'
