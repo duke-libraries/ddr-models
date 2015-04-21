@@ -126,6 +126,19 @@ module Ddr::Auth
         end
       end
 
+      describe "serialization / deserialization" do
+        let(:role1) { {type: "Editor", agent: "bob@example.com", scope: "resource"} }
+        let(:role2) { {type: "Curator", agent: "sue@example.com", scope: "policy"} }
+        before { subject.grant role1, role2 }
+        it "should serialize to :ruby format by default" do
+          expect(subject.serialize).to eq([role1, role2])
+        end
+        it "should deserialize to an equalivalent role set" do
+          expect(described_class.deserialize(subject.serialize)).to eq(subject)
+          expect(described_class.deserialize(subject.serialize(:json), :json)).to eq(subject)
+        end
+      end
+
       describe "#where" do
         it "should be a Query object" do
           expect(subject.where(type: "Contributor")).to be_a(Query)

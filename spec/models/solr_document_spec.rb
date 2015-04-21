@@ -34,4 +34,47 @@ RSpec.describe SolrDocument, type: :model do
     its(:permanent_id) { is_expected.to eq("foo") }
   end
 
+  describe "#admin_policy" do
+    describe "when there is not admin policy relationship" do
+      its(:admin_policy) { is_expected.to be_nil }
+    end
+    describe "where there is an admin policy relationship" do
+      let!(:query) { ActiveFedora::SolrService.construct_query_for_pids(["test:1"]) }
+      let!(:admin_policy) { described_class.new({"id"=>"test:1"}) }
+      before do
+        subject[Ddr::IndexFields::IS_GOVERNED_BY] = ["info:fedora/test:1"]
+        allow(ActiveFedora::SolrService).to receive(:query).with(query) { admin_policy }
+      end
+      it "should get the admin policy document" do
+        expect(subject.admin_policy.id).to eq(admin_policy.id)
+      end
+    end
+  end
+
+  describe "roles" do
+    before do
+      subject[Ddr::IndexFields::ACCESS_ROLE] = "[{\"type\":\"Editor\",\"scope\":\"policy\",\"agent\":\"Editors\"},{\"type\":\"Contributor\",\"scope\":\"resource\",\"agent\":\"bob@example.com\"}]"
+    end
+    its(:roles) { is_expected.to be_a(Ddr::Managers::SolrDocumentRoleManager) }
+    describe "granted roles" do
+      it "should be a role set" do
+        expect(subject.roles.granted).to be_a(Ddr::Auth::Roles::RoleSet)
+      end
+      it "should deserialize the role data" do
+        expect(subject.roles.granted).to include(Ddr::Auth::Roles::Role.build(type: "Editor", agent: "Editors", scope: "policy"))
+        expect(subject.roles.granted).to include(Ddr::Auth::Roles::Role.build(type: "Contributor", agent: "bob@example.com", scope: "resource"))
+      end
+    end
+    describe "permissions" do
+      let(:admin_policy) { described_class.new({Ddr::IndexFields::ACCESS_ROLE=>"[{\"type\":\"MetadataEditor\",\"scope\":\"policy\",\"agent\":\"bob@example.com\"},{\"type\":\"Viewer\",\"scope\":\"policy\",\"agent\":\"public\"}]"}) }
+      let(:user) { FactoryGirl.build(:user, username: "bob@example.com") }
+      before do
+        allow(subject).to receive(:admin_policy) { admin_policy }
+      end
+      it "should calculate the right permissions" do
+        expect(subject.role_based_permissions(user)).to contain_exactly(:read, :add_children, :download, :edit)
+      end
+    end
+  end
+
 end

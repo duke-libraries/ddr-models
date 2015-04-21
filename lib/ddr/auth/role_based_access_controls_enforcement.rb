@@ -10,7 +10,7 @@ module Ddr
 
       # List of PIDs for policies on which any of the current user's principals has a policy role
       def role_policies
-        filters = current_user.agents.map { |agent| "policy_role_sim:\"#{agent}\"" }.join(" OR ") 
+        filters = current_user.agents.map { |agent| "#{Ddr::IndexFields::POLICY_ROLE}:\"#{agent}\"" }.join(" OR ")
         query = "#{Ddr::IndexFields::ACTIVE_FEDORA_MODEL}:Collection AND (#{filters})"
         results = ActiveFedora::SolrService.query(query, rows: Collection.count, fl: "id")
         results.map { |r| r["id"] }
@@ -22,7 +22,7 @@ module Ddr
       end
 
       def resource_role_filters
-        current_user.agents.map { |agent| "resource_role_sim:\"#{agent}\"" }.join(" OR ")
+        current_user.agents.map { |agent| "#{Ddr::IndexFields::RESOURCE_ROLE}:\"#{agent}\"" }.join(" OR ")
       end
 
       def gated_discovery_filters
