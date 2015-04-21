@@ -10,33 +10,6 @@ module Ddr
 
         DEFAULT_SCOPE = Roles::RESOURCE_SCOPE
 
-        # TYPES = {
-        #   "Curator" => {
-        #     permissions: [:read, :download, :add_children, :edit, :replace, :arrange, :grant].freeze
-        #     }.freeze,
-
-        #   "Editor" => {
-        #     permissions: [:read, :download, :add_children, :edit, :replace, :arrange].freeze
-        #     }.freeze,
-
-        #   "MetadataEditor" => {
-        #     permissions: [:read, :download, :edit].freeze
-        #     }.freeze,
-
-        #   "Contributor" => {
-        #     permissions: [:read, :add_children].freeze
-        #     }.freeze,
-
-        #   "Downloader" => {
-        #     permissions: [:read, :download].freeze
-        #     }.freeze,
-
-        #   "Viewer" => {
-        #     permissions: [:read].freeze
-        #     }.freeze
-
-        # }.freeze
-
         include RDF::Isomorphic
         include Hydra::Validations
 
