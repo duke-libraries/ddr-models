@@ -57,7 +57,7 @@ module Ddr::Auth
       describe "#group" do
         subject { described_class::Faculty }
         it "should return the group for the affiliation" do
-          expect(subject.group).to eq(Group.build("duke.faculty"))
+          expect(subject.group).to eq(Group.new("duke.faculty"))
         end
       end
     end

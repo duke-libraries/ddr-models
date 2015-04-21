@@ -8,7 +8,7 @@ module Ddr
       def legacy_downloader_to_resource_roles
         principals(:downloader).map do |name|
           agent_type = (name =~ /@/ ? :person : :group)
-          Roles::Downloader.build(agent_type=>name, :scope=>:resource)
+          Roles::Role.build(:type=>:downloader, agent_type=>name, :scope=>:resource)
         end
       end      
 

@@ -20,7 +20,7 @@ module Ddr
         end
       end
 
-      property :access_role, predicate: Ddr::Vocab::Roles.hasRole
+      property :access_role, predicate: Ddr::Vocab::Roles.hasRole, class_name: Ddr::Auth::Roles::Role
 
       property :local_id, predicate: RDF::Vocab::Identifiers.local
 

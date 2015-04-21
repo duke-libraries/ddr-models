@@ -12,7 +12,6 @@ module Ddr
     autoload :LdapGateway
     autoload :LegacyPermissions
     autoload :LegacyRoles    
-    autoload :Person
     autoload :Permission
     autoload :RoleBasedAccessControlsEnforcement
     autoload :Roles
@@ -27,14 +26,14 @@ module Ddr
 
     # Group of which everyone (including anonymous users) is a member
     def self.everyone_group
-      warn "DEPRECATION WARNING: `Ddr::Auth.everyone_group` is deprecated; use `Ddr::Auth::Groups::Public`."
-      Groups::Public
+      warn "DEPRECATION WARNING: `Ddr::Auth.everyone_group` is deprecated; use `Ddr::Auth::Groups::PUBLIC`."
+      Groups::PUBLIC
     end
 
     # Group of authenticated users
     def self.authenticated_users_group
-      warn "DEPRECATION WARNING: `Ddr::Auth.authenticated_users_group` is deprecated; use `Ddr::Auth::Groups::Registered`."
-      Groups::Registered
+      warn "DEPRECATION WARNING: `Ddr::Auth.authenticated_users_group` is deprecated; use `Ddr::Auth::Groups::REGISTERED`."
+      Groups::REGISTERED
     end
 
     # Whether to require Shibboleth authentication 
@@ -52,14 +51,6 @@ module Ddr
 
     mattr_accessor :ldap_gateway do
       LdapGateway
-    end
-
-    def self.get_agent_class(agent_type)
-      agent_class = const_get(agent_type.to_s.camelize)
-      unless agent_class < Agent || agent_class === Agent
-        raise ArgumentError, "#{agent_type.inspect} is not a valid agent type."
-      end
-      agent_class
     end
 
   end

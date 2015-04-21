@@ -21,37 +21,46 @@ module Ddr::Managers
         expect(obj.adminMetadata).to receive(:access_role) { [] }
         subject.granted
       end
+      it "should be a RoleSet" do
+        expect(subject.granted).to be_a(Ddr::Auth::Roles::RoleSet)
+      end
     end
 
     describe "#index_fields" do
       let(:roles) do
-        [{ type: :curator, person: "bob@example.com", scope: :resource },
-         { type: :curator, person: "sue@example.com", scope: :policy },
-         { type: :editor, group: "Editors", scope: :policy },
-         { type: :editor, person: "jane@example.com", scope: :policy }]
+        [{ type: "Curator", agent: "bob@example.com", scope: "resource" },
+         { type: "Curator", agent: "sue@example.com", scope: "policy" },
+         { type: "Editor", agent: "Editors", scope: "policy" },
+         { type: "Editor", agent: "jane@example.com", scope: "policy" }]
       end
       before { subject.grant *roles }
       it "should return the index fields" do
-        expect(subject.index_fields).to eq({"resource_curator_role_ssim" => ["bob@example.com"],
-                                             "policy_curator_role_ssim" => ["sue@example.com"],
-                                             "policy_editor_role_ssim" => ["Editors", "jane@example.com"],
-                                             "policy_role_sim" => ["sue@example.com", "Editors", "jane@example.com"],
-                                             "resource_role_sim" => ["bob@example.com"]})
+        expect(subject.index_fields)
+          .to eq({ Ddr::IndexFields::ACCESS_ROLE => "[{\"type\":\"Curator\",\"scope\":\"resource\",\"agent\":\"bob@example.com\"},{\"type\":\"Curator\",\"scope\":\"policy\",\"agent\":\"sue@example.com\"},{\"type\":\"Editor\",\"scope\":\"policy\",\"agent\":\"Editors\"},{\"type\":\"Editor\",\"scope\":\"policy\",\"agent\":\"jane@example.com\"}]",
+                   Ddr::IndexFields::POLICY_ROLE => ["sue@example.com", "Editors", "jane@example.com"],
+                   Ddr::IndexFields::RESOURCE_ROLE => ["bob@example.com"]
+                 })
       end
     end
 
     describe "permissions" do
-      let(:contributor_role) { Ddr::Auth::Roles::Contributor.build(group: "Contributors", scope: :resource) }
-      let(:downloader_role) { Ddr::Auth::Roles::Downloader.build(group: "Downloaders", scope: :resource) }
-      let(:curator_role) { Ddr::Auth::Roles::Curator.build(person: "bob@example.com", scope: :policy) }
-      let(:agents) { [contributor_role.get_agent, downloader_role.get_agent, curator_role.get_agent] }
+      let(:contributor_role) { Ddr::Auth::Roles::Role.build(type: "Contributor", 
+                                                            agent: "Contributors", 
+                                                            scope: "resource") }
+      let(:downloader_role) { Ddr::Auth::Roles::Role.build(type: "Downloader", 
+                                                           agent: "Downloaders", 
+                                                           scope: "resource") }
+      let(:curator_role) { Ddr::Auth::Roles::Role.build(type: "Curator", 
+                                                        agent: "bob@example.com", 
+                                                        scope: "policy") }
+      let(:agents) { [contributor_role.agent.first, downloader_role.agent.first, curator_role.agent.first] }
       before do
         subject.grant(contributor_role, downloader_role, curator_role)
       end
       describe "#permissions_in_scope_for_agents" do
         it "should return the permissions granted in scope to any of the agents" do
-          expect(subject.permissions_in_scope_for_agents(:resource, agents)).to match_array([:read, :add_children, :download])
-          expect(subject.permissions_in_scope_for_agents(:policy, agents)).to match_array([:read, :add_children, :download, :edit, :replace, :arrange, :grant])
+          expect(subject.permissions_in_scope_for_agents("resource", agents)).to match_array([:read, :add_children, :download])
+          expect(subject.permissions_in_scope_for_agents("policy", agents)).to match_array([:read, :add_children, :download, :edit, :replace, :arrange, :grant])
         end
       end
     end

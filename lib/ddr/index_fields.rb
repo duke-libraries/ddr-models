@@ -5,6 +5,7 @@ module Ddr
       ActiveFedora::SolrService.solr_name(*args)
     end
 
+    ACCESS_ROLE                 = solr_name :access_role, :stored_sortable
     ACTIVE_FEDORA_MODEL         = solr_name :active_fedora_model, :stored_sortable
     COLLECTION_URI              = solr_name :collection_uri, :symbol
     CONTENT_CONTROL_GROUP       = solr_name :content_control_group, :searchable, type: :string
@@ -35,6 +36,7 @@ module Ddr
     MEDIA_SUB_TYPE              = solr_name :content_media_sub_type, :facetable
     MEDIA_MAJOR_TYPE            = solr_name :content_media_major_type, :facetable
     MEDIA_TYPE                  = solr_name :content_media_type, :symbol
+    MULTIRES_IMAGE_FILE_PATH    = solr_name :multires_image_file_path, :stored_sortable
     OBJECT_PROFILE              = solr_name :object_profile, :displayable
     OBJECT_STATE                = solr_name :object_state, :stored_sortable
     OBJECT_CREATE_DATE          = solr_name :system_create, :stored_sortable, type: :date
@@ -42,6 +44,8 @@ module Ddr
     ORDER                       = solr_name :struct_metadata__order, :stored_sortable, type: :integer
     PERMANENT_ID                = solr_name :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = solr_name :permanent_url, :stored_sortable, type: :string
+    POLICY_ROLE                 = solr_name :policy_role, :facetable, type: :string
+    RESOURCE_ROLE               = solr_name :resource_role, :facetable, type: :string
     TITLE                       = solr_name :title, :stored_sortable
     WORKFLOW_STATE              = solr_name :workflow_state, :stored_sortable
 

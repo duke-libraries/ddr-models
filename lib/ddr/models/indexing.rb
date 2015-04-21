@@ -43,6 +43,9 @@ module Ddr
           fields[MEDIA_MAJOR_TYPE] = content_major_type
           fields[MEDIA_SUB_TYPE] = content_sub_type
         end
+        if has_multires_image?
+          fields[MULTIRES_IMAGE_FILE_PATH] = multires_image_file_path
+        end
         if is_a? Component
           fields[COLLECTION_URI] = collection_uri
         end

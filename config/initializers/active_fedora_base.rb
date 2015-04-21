@@ -50,6 +50,14 @@ module ActiveFedora
       can_have_struct_metadata? && structMetadata.has_content?
     end
 
+    def can_have_multires_image?
+      datastreams.include? Ddr::Datastreams::MULTIRES_IMAGE
+    end
+
+    def has_multires_image?
+      can_have_multires_image? && datastreams[Ddr::Datastreams::MULTIRES_IMAGE].has_content?
+    end
+
     def can_have_thumbnail?
       datastreams.include? "thumbnail"
     end

@@ -7,6 +7,7 @@ module Ddr
 
       included do
         alias_method :pid, :id
+        delegate :role_based_permissions, to: :roles
       end
 
       def to_partial_path
@@ -76,6 +77,13 @@ module Ddr
       def admin_policy_pid
         uri = admin_policy_uri
         uri &&= ActiveFedora::Base.pid_from_uri(uri)
+      end
+
+      def admin_policy
+        if admin_policy_pid
+          query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
+          self.class.new(ActiveFedora::SolrService.query(query))
+        end
       end
 
       def has_children?
@@ -183,6 +191,18 @@ module Ddr
 
       def permanent_id
         get(Ddr::IndexFields::PERMANENT_ID)
+      end
+
+      def multires_image_file_path
+        get(Ddr::IndexFields::MULTIRES_IMAGE_FILE_PATH)
+      end
+
+      def roles
+        @roles ||= Ddr::Managers::SolrDocumentRoleManager.new(self)
+      end
+
+      def access_role
+         get("access_role_ssi")
       end
 
       private

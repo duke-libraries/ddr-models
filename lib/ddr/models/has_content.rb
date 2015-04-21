@@ -23,8 +23,7 @@ module Ddr
 
         has_attributes :original_filename, datastream: "adminMetadata", multiple: false
 
-        include Hydra::Derivatives
-        include FileManagement unless include?(FileManagement)
+        include FileManagement
 
         around_save :update_derivatives, if: :content_changed?
 

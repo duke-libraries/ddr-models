@@ -16,7 +16,6 @@ module Ddr
         delegate :role_based_permissions, to: :roles
         delegate :publish, :publish!, :unpublish, :unpublish!, :published?, to: :workflow
 
-        before_save :set_resource_roles_from_legacy_data
         after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
       end
 
