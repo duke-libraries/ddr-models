@@ -39,7 +39,7 @@ RSpec.describe ApplicationController, type: :controller do
       allow(subject).to receive(:role_policies) { ["test:13", "test:45"] }
     end
     it "should include clauses for is_governed_by relationships to the #role_policies PIDs" do
-      expect(subject.policy_role_filters).to eq("_query_:\"{!raw f=is_governed_by_ssim}test:13\" OR _query_:\"{!raw f=is_governed_by_ssim}test:45\"")
+      expect(subject.policy_role_filters).to eq("_query_:\"{!raw f=#{Ddr::IndexFields::IS_GOVERNED_BY}}test:13\" OR _query_:\"{!raw f=#{Ddr::IndexFields::IS_GOVERNED_BY}}test:45\"")
     end
   end
 

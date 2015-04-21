@@ -8,6 +8,17 @@ module Ddr
       #
       class RoleSet < SimpleDelegator
 
+        def self.deserialize(serialized, fmt = :ruby)
+          if fmt == :json
+            deserialize JSON.parse(serialized)
+          else # :ruby
+            role_set = serialized.map do |role_data|
+              Role.build(role_data.with_indifferent_access)
+            end
+            new(role_set)
+          end
+        end
+
         # Grants roles - i.e., adds them to the role set
         #   Note that we reject roles that are included because
         #   ActiveTriples::Term#<< does not support isomorphism. 
@@ -59,6 +70,19 @@ module Ddr
 
         def to_a
           map.to_a
+        end
+
+        def to_json
+          serialize(:json)
+        end
+
+        def serialize(fmt = :ruby)
+          case fmt
+          when :json
+            serialize(:ruby).to_json
+          else # :ruby
+            to_a.map(&:to_h)
+          end
         end
 
         def where(criteria)
