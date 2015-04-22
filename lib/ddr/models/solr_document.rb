@@ -18,6 +18,10 @@ module Ddr
         id.sub(/:/, "-")
       end
 
+      def local_id
+        get(Ddr::IndexFields::LOCAL_ID)
+      end
+
       def active_fedora_model
         get(Ddr::IndexFields::ACTIVE_FEDORA_MODEL)
       end
