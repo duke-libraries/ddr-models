@@ -51,6 +51,11 @@ RSpec.describe SolrDocument, type: :model do
     end
   end
 
+  describe "#local_id" do
+    before { subject[Ddr::IndexFields::LOCAL_ID] = "abcdef" }
+    its(:local_id) { is_expected.to eq("abcdef") }
+  end
+
   describe "roles" do
     before do
       subject[Ddr::IndexFields::ACCESS_ROLE] = "[{\"type\":\"Editor\",\"scope\":\"policy\",\"agent\":\"Editors\"},{\"type\":\"Contributor\",\"scope\":\"resource\",\"agent\":\"bob@example.com\"}]"
