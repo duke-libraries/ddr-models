@@ -36,21 +36,7 @@ module Ddr
 
       describe "permanent id and permanent url" do
 
-        before(:all) do
-          class PermanentlyIdentifiable < ActiveFedora::Base
-            include Describable
-            include Indexing
-            include AccessControllable
-            include HasAdminMetadata
-            include EventLoggable
-          end
-        end
-
-        after(:all) do
-          Ddr::Models.send(:remove_const, :PermanentlyIdentifiable)
-        end
-
-        subject { PermanentlyIdentifiable.new }
+        subject { FactoryGirl.build(:item) }
 
         describe "permanent_id" do
           describe "when a permanent id has not been assigned" do
@@ -65,15 +51,15 @@ module Ddr
             context "and auto-assignment is enabled" do
               before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
               it "should assign a permanent id" do
-                expect_any_instance_of(PermanentlyIdentifiable).to receive(:assign_permanent_id!) { nil }
-                PermanentlyIdentifiable.create
+                expect(subject).to receive(:assign_permanent_id!) { nil }
+                subject.save!
               end
             end
             context "and auto-assignment is disabled" do
               before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false } }
               it "should not assign a permanent id" do
-                expect_any_instance_of(PermanentlyIdentifiable).not_to receive(:assign_permanent_id!)
-                PermanentlyIdentifiable.create
+                expect(subject).not_to receive(:assign_permanent_id!)
+                subject.save!
               end
             end
           end        
@@ -82,16 +68,16 @@ module Ddr
               before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
               it "should assign a permanent id once" do
                 expect(subject).to receive(:assign_permanent_id!).once { nil }
-                subject.save
+                subject.save!
                 subject.title = ["New Title"]
-                subject.save
+                subject.save!
               end
             end
             context "and auto-assignment is disabled" do
               before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false } }
               it "should not assign a permanent id" do
                 expect(subject).not_to receive(:assign_permanent_id!)
-                subject.save
+                subject.save!
               end
             end
           end
@@ -143,18 +129,8 @@ module Ddr
       end
 
       describe "workflow" do
-        before(:all) do
-          class Workflowable < ActiveFedora::Base
-            include AccessControllable
-            include HasAdminMetadata
-          end
-        end
 
-        after(:all) do
-          Ddr::Models.send(:remove_const, :Workflowable)
-        end
-
-        subject { Workflowable.new }
+        subject { FactoryGirl.build(:item) }
 
         describe "#published?" do
           context "object is published" do
