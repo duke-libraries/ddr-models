@@ -41,6 +41,10 @@ module Ddr
         raise ContentModelError, "Cannot adapt to nil content model."
       end
 
+      def has_extracted_text?
+        false
+      end
+
     end
   end
 end

@@ -16,10 +16,18 @@ module Ddr
       end
 
       included do
-        has_file_datastream name: Ddr::Datastreams::CONTENT,
-                            versionable: true, 
-                            label: "Content file for this object",
-                            control_group: "M"
+        has_file_datastream \
+          name: Ddr::Datastreams::CONTENT,
+          versionable: true,
+          label: "Content file for this object",
+          control_group: "M"
+
+        has_file_datastream \
+          name: Ddr::Datastreams::EXTRACTED_TEXT,
+          type: Ddr::Datastreams::PlainTextDatastream,
+          versionable: true,
+          label: "Text extracted from the content file",
+          control_group: "M"
 
         has_attributes :original_filename, datastream: "adminMetadata", multiple: false
 
@@ -89,6 +97,10 @@ module Ddr
 
       def content_changed?
         content.external? ? content.dsLocation_changed? : content.content_changed?
+      end
+
+      def has_extracted_text?
+        extractedText.has_content?
       end
 
       protected
