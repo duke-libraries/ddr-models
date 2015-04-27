@@ -17,6 +17,7 @@ module Ddr
         delegate :publish, :publish!, :unpublish, :unpublish!, :published?, to: :workflow
 
         after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
+        around_destroy :update_permanent_id_on_destroy, if: "permanent_id.present?"
       end
 
       include Ddr::Auth::LegacyRoles
@@ -38,6 +39,12 @@ module Ddr
       end
 
       private
+
+      def update_permanent_id_on_destroy
+        @permanent_id = permanent_id
+        yield
+        Resque.enqueue(Ddr::Jobs::PermanentId::MakeUnavailable, @permanent_id, "deleted")
+      end
 
       def legacy_permissions
         Ddr::Auth::LegacyPermissions.new(permissions)

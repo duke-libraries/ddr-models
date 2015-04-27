@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'support/ezid_mock_identifier'
 
 module Ddr
   module Models
@@ -35,19 +36,14 @@ module Ddr
       end
 
       describe "permanent id and permanent url" do
-
         subject { FactoryGirl.build(:item) }
 
-        describe "permanent_id" do
-          describe "when a permanent id has not been assigned" do
-            it "should be nil" do
-              expect(subject.permanent_id).to be_nil
-            end
+        describe "#assign_permanent_id!" do
+          it "should assign the permanent id later" do
+            expect(subject.permanent_id_manager).to receive(:assign_later) { nil }
+            subject.assign_permanent_id!
           end
-        end
-
-        describe "object lifecycle" do
-          context "when created" do
+          context "when the object is created (first saved)" do
             context "and auto-assignment is enabled" do
               before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
               it "should assign a permanent id" do
@@ -62,7 +58,7 @@ module Ddr
                 subject.save!
               end
             end
-          end        
+          end
           context "when saved" do
             context "and auto-assignment is enabled" do
               before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
@@ -83,18 +79,29 @@ module Ddr
           end
         end
 
-        describe "#assign_permanent_id!" do
-          it "should assign the permanent id later" do
-            expect(subject.permanent_id_manager).to receive(:assign_later) { nil }
-            subject.assign_permanent_id!
+        describe "lifecycle" do
+          let!(:identifier) { Ezid::MockIdentifier.new(id: "ark:/99999/fk4zzz", status: "public") }
+          before do
+            allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false }
+            allow(Ezid::Identifier).to receive(:find).with("ark:/99999/fk4zzz") { identifier }
+            subject.permanent_id = "ark:/99999/fk4zzz"
+            subject.save!
+          end
+          it "should update the status of the identifier when the object is destroyed" do
+            expect { subject.destroy }.to change(identifier, :status).from("public").to("unavailable | deleted")
           end
         end
 
         describe "events" do
-          before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }  
+          before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
           context "when the operation succeeds" do
-            let(:stub_identifier) { double(id: "ark:/99999/fk4zzz", metadata: "_target: http://example.com") }
-            before { allow_any_instance_of(Ddr::Managers::PermanentIdManager).to receive(:mint) { stub_identifier } }
+            let!(:mock_identifier) { Ezid::MockIdentifier.new(id: "ark:/99999/fk4zzz",
+                                                              metadata: "_target: http://example.com") }
+            before do
+              allow(Ezid::Identifier).to receive(:create) { mock_identifier }
+              allow(Ezid::Identifier).to receive(:find) { mock_identifier }
+              allow(subject.permanent_id_manager).to receive(:record) { mock_identifier }
+            end
             it "should create a success event" do
               expect { subject.save }.to change { subject.update_events.count }.by(1)
             end
