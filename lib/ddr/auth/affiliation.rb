@@ -1,7 +1,7 @@
 module Ddr
   module Auth
     # @abstract
-    class Affiliation < SimpleDelegator      
+    class Affiliation < SimpleDelegator
 
       private_class_method :new
 
@@ -17,7 +17,7 @@ module Ddr
 
       def inspect
         "#<#{self.class.name}(#{self})>"
-      end        
+      end
 
       class << self
         def all

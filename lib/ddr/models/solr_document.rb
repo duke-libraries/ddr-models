@@ -29,7 +29,7 @@ module Ddr
       def internal_uri
         get(Ddr::IndexFields::INTERNAL_URI)
       end
-      
+
       def object_profile
         @object_profile ||= get_json(Ddr::IndexFields::OBJECT_PROFILE)
       end
@@ -115,7 +115,7 @@ module Ddr
       def source
         get(ActiveFedora::SolrService.solr_name(:source, :stored_searchable, type: :text))
       end
-      
+
       def has_thumbnail?
         has_datastream?(Ddr::Datastreams::THUMBNAIL)
       end
@@ -141,11 +141,11 @@ module Ddr
       def content_size_human
         get(Ddr::IndexFields::CONTENT_SIZE_HUMAN)
       end
-      
+
       def content_checksum
         content_ds["dsChecksum"] rescue nil
       end
-      
+
       def targets
         @targets ||= ActiveFedora::SolrService.query(targets_query)
       end
@@ -153,15 +153,15 @@ module Ddr
       def targets_count
         @targets_count ||= ActiveFedora::SolrService.count(targets_query)
       end
-      
+
       def has_target?
         targets_count > 0
       end
-      
+
       def has_default_rights?
         has_datastream?(Ddr::Datastreams::DEFAULT_RIGHTS)
       end
-      
+
       def association(name)
         get_pid(ActiveFedora::SolrService.solr_name(name, :symbol))
       end

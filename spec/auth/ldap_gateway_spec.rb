@@ -7,7 +7,7 @@ module Ddr::Auth
       before do
         @ldap_host, @ldap_base = ENV.values_at("LDAP_HOST", "LDAP_BASE")
         ENV["LDAP_HOST"] = "ldap.example.com"
-        ENV["LDAP_BASE"] = "ou=people,dc=example,dc=com" 
+        ENV["LDAP_BASE"] = "ou=people,dc=example,dc=com"
       end
       after do
         ENV["LDAP_HOST"] = @ldap_host

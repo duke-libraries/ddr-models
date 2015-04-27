@@ -1,6 +1,6 @@
 module Ddr
   module Events
-    class UpdateEvent < Event 
+    class UpdateEvent < Event
 
       self.description = "Object updated"
 

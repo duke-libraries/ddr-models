@@ -1,7 +1,7 @@
 module Ddr
   module Models
     module FixityCheckable
-   
+
       def datastreams_to_validate
         datastreams.select { |dsid, ds| ds.has_content? }
       end
@@ -14,7 +14,7 @@ module Ddr
       def fixity_check
         Ddr::Actions::FixityCheck.execute(self)
       end
- 
+
     end
   end
 end

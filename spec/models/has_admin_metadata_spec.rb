@@ -11,7 +11,7 @@ module Ddr
           it "should set the value" do
             expect { subject.local_id = "foo" }.to change(subject, :local_id).from(nil).to("foo")
           end
-        end        
+        end
         describe "re-setting" do
           before { subject.local_id = "foo" }
           it "should change the value" do
@@ -167,7 +167,7 @@ module Ddr
             expect(subject.reload).to be_published
           end
         end
-        
+
         describe "#unpublish" do
           before { subject.publish }
           it "should unpublish the object" do
@@ -181,7 +181,7 @@ module Ddr
           it "should unpublish and persist the object" do
             subject.unpublish!
             expect(subject.reload).not_to be_published
-          end          
+          end
         end
       end
 
@@ -213,7 +213,7 @@ module Ddr
           end
         end
 
-      end    
+      end
     end
   end
 end

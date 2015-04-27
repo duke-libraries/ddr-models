@@ -65,7 +65,7 @@ module Ddr
           object.add_external_file(file, "random_ds_3")
         end
         it "should raise an error if datastream is not external" do
-          expect { object.add_external_file(file, "m_content") }.to raise_error 
+          expect { object.add_external_file(file, "m_content") }.to raise_error
         end
         it "should raise an error if dsLocation has changed" do
           allow(object.e_content).to receive(:dsLocation_changed?) { true }
@@ -188,7 +188,7 @@ module Ddr
           object.save
           object.add_file(file3, "e_content_2", external: true)
           object.save
-        end      
+        end
         it "should return a list of file paths for all versions of all external datastreams for the object" do
           paths = object.external_datastream_file_paths
           expect(paths.size).to eq 3
@@ -209,7 +209,7 @@ module Ddr
           object.save
           object.add_file(file3, "e_content_2", external: true)
           object.save
-        end      
+        end
         it "should delete all files for all versions of all external datastreams" do
           expect(File).to receive(:unlink).with(*object.external_datastream_file_paths)
           object.destroy

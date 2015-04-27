@@ -9,7 +9,7 @@ module Ddr
       PREMIS_VERSION = "2.2"
       PREMIS_XMLNS = "info:lc/xmlns/premis-v2"
       PREMIS_SCHEMA = "http://www.loc.gov/standards/premis/v2/premis.xsd"
-    
+
       #
       # PREMIS terminology based on version 2.2 of PREMIS standard
       # http://www.loc.gov/standards/premis/v2/premis-2-2.pdf
@@ -23,7 +23,7 @@ module Ddr
         t.event_type(:path => "eventType")
         t.event_date_time(:path => "eventDateTime")
         t.event_detail(:path => "eventDetail")
-        t.event_outcome_information(:path => "eventOutcomeInformation") { 
+        t.event_outcome_information(:path => "eventOutcomeInformation") {
           t.outcome(:path => "eventOutcome")
           t.detail(:path => "eventOutcomeDetail") {
             t.note(:path => "eventOutcomeDetailNote")
@@ -34,7 +34,7 @@ module Ddr
           t.type(:path => "linkingObjectIdentifierType")
           t.value(:path => "linkingObjectIdentifierValue")
         }
-      
+
         # proxy terms
         t.event_id_type(:proxy => [:event_identifier, :type])
         t.event_id_value(:proxy => [:event_identifier, :value])
@@ -43,10 +43,10 @@ module Ddr
         t.linking_object_id_type(:proxy => [:linking_object_identifier, :type])
         t.linking_object_id_value(:proxy => [:linking_object_identifier, :value])
       end
-    
+
       def self.xml_template
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.event(:xmlns => PREMIS_XMLNS, 
+          xml.event(:xmlns => PREMIS_XMLNS,
                     "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
                     "xsi:schemaLocation" => "#{PREMIS_XMLNS} #{PREMIS_SCHEMA}",
                     :version => PREMIS_VERSION)

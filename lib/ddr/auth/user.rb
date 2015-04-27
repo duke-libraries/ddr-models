@@ -27,9 +27,9 @@ module Ddr
         end
 
         def from_omniauth(auth)
-          user = find_by_user_key(auth.uid) || 
+          user = find_by_user_key(auth.uid) ||
             new(user_key_attribute => auth.uid, :password => Devise.friendly_token)
-          user.update!(email: auth.info.email, 
+          user.update!(email: auth.info.email,
                        display_name: auth.info.name,
                        first_name: auth.info.first_name,
                        last_name: auth.info.last_name,
@@ -68,7 +68,7 @@ module Ddr
         end
       end
       alias_method :is_member_of?, :member_of?
-      
+
       def authorized_to_act_as_superuser?
         member_of?(Groups::Superusers)
       end

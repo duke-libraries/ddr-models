@@ -35,7 +35,7 @@ RSpec.configure do |config|
 
   config.include ActionDispatch::TestProcess
   config.fixture_path = File.join(Ddr::Models::Engine.root, "spec", "fixtures")
-  config.use_transactional_fixtures = true  
+  config.use_transactional_fixtures = true
 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
@@ -119,7 +119,7 @@ RSpec.configure do |config|
 
   config.after(:suite) do
     if Ddr::Models.external_file_store && Dir.exist?(Ddr::Models.external_file_store)
-      FileUtils.remove_entry_secure(Ddr::Models.external_file_store) 
+      FileUtils.remove_entry_secure(Ddr::Models.external_file_store)
     end
     if Ddr::Models.multires_image_external_file_store && Dir.exist?(Ddr::Models.multires_image_external_file_store)
       FileUtils.remove_entry_secure(Ddr::Models.multires_image_external_file_store)

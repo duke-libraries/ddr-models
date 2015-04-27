@@ -27,14 +27,14 @@ module Ddr::Utils
   rescue ArgumentError
     false
   end
-  
+
   def self.file_path? file
     # length is a sanity check
     file.is_a?(String) && (file.length < 1024) && File.exists?(file)
   end
 
   def self.file_path file
-    if file.respond_to?(:path) 
+    if file.respond_to?(:path)
       File.absolute_path(file.path)
     elsif file_path?(file)
       file
@@ -60,7 +60,7 @@ module Ddr::Utils
     file_name.gsub(/[^\w\.\-]/,"_")
   end
 
-  # Return file path for URI string 
+  # Return file path for URI string
   # Should reverse .path_to_uri
   # "file:/path/to/file" => "/path/to/file"
   def self.path_from_uri(uri)
@@ -79,7 +79,7 @@ module Ddr::Utils
   def self.ds_as_of_date_time(ds)
     ds.create_date_string
   end
-  
+
   # Find an object with a given identifier and return its PID.
   # Returns the PID if a single object is found.
   # Returns nil if no object is found.
@@ -156,5 +156,5 @@ module Ddr::Utils
     end
     return klass
   end
-  
+
 end

@@ -1,5 +1,5 @@
 module Ddr
-  module Datastreams  
+  module Datastreams
     class PropertiesDatastream < ActiveFedora::OmDatastream
 
       set_terminology do |t|
@@ -12,7 +12,7 @@ module Ddr
         # Squash AF 8.0 deprecation warning
         ""
       end
-      
+
       def self.xml_template
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.fields

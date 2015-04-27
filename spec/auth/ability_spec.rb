@@ -92,7 +92,7 @@ module Ddr
                   subject.cannot :read, resource
                 end
                 it { is_expected.not_to be_able_to(:download, resource) }
-              end          
+              end
             end
           end
 
@@ -113,7 +113,7 @@ module Ddr
                 subject.cannot :read, resource
               end
               it { is_expected.not_to be_able_to(:download, resource) }
-            end                  
+            end
           end
         end
 
@@ -155,7 +155,7 @@ module Ddr
               context "but has edit permission" do
                 before { doc.merge!('edit_access_person_ssim'=>[user.to_s]) }
                 it { is_expected.to be_able_to(:download, resource) }
-              end              
+              end
             end
           end
 
@@ -174,7 +174,7 @@ module Ddr
             context "on which the user has edit permission" do
               before { doc.merge!('edit_access_person_ssim'=>[user.to_s]) }
               it { is_expected.to be_able_to(:download, resource) }
-            end              
+            end
           end
         end
 
@@ -185,15 +185,15 @@ module Ddr
             let(:solr_doc) { SolrDocument.new({id: obj.pid}) }
             before do
               allow(subject).to receive(:solr_doc).with(obj.pid) { solr_doc }
-              subject.cannot :edit, obj.pid 
+              subject.cannot :edit, obj.pid
             end
 
             context "and object is a Component", components: true do
               let(:obj) { Component.new(pid: "test:1") }
 
-              context "and user does not have the downloader role" do            
+              context "and user does not have the downloader role" do
                 before do
-                  allow(subject.current_user).to receive(:has_role?).with(solr_doc, :downloader) { false } 
+                  allow(subject.current_user).to receive(:has_role?).with(solr_doc, :downloader) { false }
                 end
 
                 context "and user has read permission on the object" do
@@ -210,7 +210,7 @@ module Ddr
               # Component content datastream
               context "and user has the downloader role", roles: true do
                 before do
-                  allow(subject.current_user).to receive(:has_role?).with(solr_doc, :downloader) { true } 
+                  allow(subject.current_user).to receive(:has_role?).with(solr_doc, :downloader) { true }
                 end
 
                 context "and user has read permission on the object" do
@@ -221,7 +221,7 @@ module Ddr
                 context "and user lacks read permission on the object" do
                   before { subject.cannot :read, obj.pid }
                   it { is_expected.not_to be_able_to(:download, resource) }
-                end          
+                end
               end
             end
 
@@ -237,7 +237,7 @@ module Ddr
               context "and user lacks read permission on the object" do
                 before { subject.cannot :read, obj.pid }
                 it { is_expected.not_to be_able_to(:download, resource) }
-              end                  
+              end
             end
 
           end
@@ -248,19 +248,19 @@ module Ddr
 
             context "and user has read permission on the object" do
               before do
-                subject.cannot :edit, obj.pid 
-                subject.can :read, obj.pid 
+                subject.cannot :edit, obj.pid
+                subject.can :read, obj.pid
               end
               it { is_expected.to be_able_to(:download, resource) }
             end
 
             context "and user lacks read permission on the object" do
               before do
-                subject.cannot :edit, obj.pid 
-                subject.cannot :read, obj.pid 
+                subject.cannot :edit, obj.pid
+                subject.cannot :read, obj.pid
               end
               it { is_expected.not_to be_able_to(:download, resource) }
-            end        
+            end
           end
 
         end
@@ -324,7 +324,7 @@ module Ddr
           let(:resource) { FactoryGirl.build(:collection) }
           before { subject.cannot(:edit, resource) }
           it { is_expected.not_to be_able_to(:add_children, resource) }
-        end    
+        end
       end
 
     end

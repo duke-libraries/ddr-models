@@ -14,7 +14,7 @@ module Ddr
           {title: license_title, description: license_description, url: license_url}.with_indifferent_access
         end
       end
-  
+
       def license=(new_license)
         raise ArgumentError unless new_license.is_a?(Hash)
         l = new_license.with_indifferent_access

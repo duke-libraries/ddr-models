@@ -3,7 +3,7 @@ require 'support/shared_examples_for_events'
 
 module Ddr
   module Events
-    RSpec.describe Event, type: :model, events: true do  
+    RSpec.describe Event, type: :model, events: true do
       it_behaves_like "an event"
     end
 

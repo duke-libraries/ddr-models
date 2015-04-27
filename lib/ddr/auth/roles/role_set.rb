@@ -21,7 +21,7 @@ module Ddr
 
         # Grants roles - i.e., adds them to the role set
         #   Note that we reject roles that are included because
-        #   ActiveTriples::Term#<< does not support isomorphism. 
+        #   ActiveTriples::Term#<< does not support isomorphism.
         #   https://github.com/ActiveTriples/ActiveTriples/issues/42
         # @example - default scope ("resource")
         #   grant type: "Curator", agent: "bob"
@@ -40,7 +40,7 @@ module Ddr
         end
 
         # Revokes roles - i.e., removes them from the role set
-        #   Note that we have to destroy resources on the 
+        #   Note that we have to destroy resources on the
         #   ActiveTriples::Term because Term#delete does not
         #   support isomorphism.
         #   https://github.com/ActiveTriples/ActiveTriples/issues/42
@@ -63,7 +63,7 @@ module Ddr
         end
 
         # Remove all roles from the role set
-        def revoke_all          
+        def revoke_all
           each(&:destroy)
           self
         end

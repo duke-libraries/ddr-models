@@ -1,5 +1,5 @@
 module Ddr::Models
-  RSpec.describe HasChildren do 
+  RSpec.describe HasChildren do
 
     subject { FactoryGirl.create(:collection) }
 
@@ -16,7 +16,7 @@ module Ddr::Models
           child1.identifier = ["test002"]
           child1.save
           child2.identifier = ["test001"]
-          child2.save          
+          child2.save
           subject.children << child1
           subject.children << child2
           subject.save

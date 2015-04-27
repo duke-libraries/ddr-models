@@ -2,24 +2,24 @@
   module Vocab
     class Asset < RDF::StrictVocabulary("http://repository.lib.duke.edu/vocab/asset/")
 
-      property "order", 
+      property "order",
         label: "Order"
 
-      property "permanentId", 
+      property "permanentId",
         label: "Permanent Identifier"
 
-      property "permanentUrl", 
+      property "permanentUrl",
         label: "Permanent URL"
 
-      property "fileGroup", 
+      property "fileGroup",
         label: "File Group"
 
-      property "fileUse", 
+      property "fileUse",
         label: "File Use"
 
-      property "workflowState", 
+      property "workflowState",
         label: "Workflow State"
-                                  
+
     end
   end
 end

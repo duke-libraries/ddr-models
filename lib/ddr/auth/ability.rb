@@ -37,7 +37,7 @@ module Ddr
           can? :read, e.pid
         end
       end
-            
+
       def download_permissions
         can :download, ActiveFedora::Base do |obj|
           if obj.is_a? Component
@@ -82,12 +82,12 @@ module Ddr
 
         can :discover, ActiveFedora::Base do |obj|
           test_discover(obj.pid)
-        end 
-        
+        end
+
         can :discover, SolrDocument do |obj|
           cache.put(obj.id, obj)
           test_discover(obj.id)
-        end 
+        end
       end
 
       def attachment_permissions
@@ -102,7 +102,7 @@ module Ddr
         group_intersection = user_groups & discover_groups(pid)
         result = !group_intersection.empty? || discover_persons(pid).include?(current_user.user_key)
         result || test_discover_from_policy(pid)
-      end 
+      end
 
       # Mimics Hydra::PolicyAwareAbility#test_read_from_policy
       def test_discover_from_policy(object_pid)
@@ -116,7 +116,7 @@ module Ddr
           Rails.logger.debug("[CANCAN] -policy- decision: #{result}")
           result
         end
-      end 
+      end
 
       # Mimics Hydra::Ability#read_groups
       def discover_groups(pid)
@@ -153,7 +153,7 @@ module Ddr
         return dp
       end
 
-      def self.discover_person_field 
+      def self.discover_person_field
         Hydra.config[:permissions][:discover][:individual]
       end
 

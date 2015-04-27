@@ -18,7 +18,7 @@ module Ddr
         detail = [DETAIL_PREAMBLE]
         result.results.each do |dsid, dsProfile|
           validation = dsProfile["dsChecksumValid"] ? VALID : INVALID
-          detail << DETAIL_TEMPLATE % {dsid: dsid, validation: validation} 
+          detail << DETAIL_TEMPLATE % {dsid: dsid, validation: validation}
         end
         create(pid: result.pid,
                event_date_time: notification.time,

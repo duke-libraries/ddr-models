@@ -18,7 +18,7 @@ module Ddr::Auth
         it { is_expected.to eq(described_class.get(:read)) }
         it { is_expected.to eq(:read) }
       end
-      describe "Download" do 
+      describe "Download" do
         subject { described_class::Download }
         it { is_expected.to eq(described_class.get(:download)) }
         it { is_expected.to eq(:download) }

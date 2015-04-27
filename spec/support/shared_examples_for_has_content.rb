@@ -95,7 +95,7 @@ RSpec.shared_examples "an object that can have content" do
     end
   end
 
-  describe "#upload!" do 
+  describe "#upload!" do
     let(:file) { fixture_file_upload("library-devil.tiff", "image/tiff") }
     it "should add the file to the content datastream and save the object" do
       expect(subject).to receive(:add_file).with(file, "content", {}).and_call_original

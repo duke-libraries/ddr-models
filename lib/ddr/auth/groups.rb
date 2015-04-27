@@ -8,7 +8,7 @@ module Ddr
       PUBLIC     = Group.new("public").freeze
       REGISTERED = Group.new("registered").freeze
       DUKE_EPPN   = Group.new("duke.all").freeze
-      
+
       Superusers = Group.new("superusers").freeze
       CollectionCreators = Group.new("collection_creators").freeze
 
@@ -26,9 +26,9 @@ module Ddr
 
         # Build a Groups instance for the user and env context (if any)
         def build(user, env=nil)
-          groups = [ PUBLIC ] # everybody 
+          groups = [ PUBLIC ] # everybody
           if user.persisted?
-            groups << REGISTERED 
+            groups << REGISTERED
             groups << DUKE_EPPN if duke_eppn?(user, env)
             groups.concat remote(user, env)
             groups.concat affiliation(user, env)
@@ -43,7 +43,7 @@ module Ddr
             grouper.repository_group_names.map { |name| Group.new(name) }
           else
             user, env = args
-            names = 
+            names =
               if env && env["ismemberof"]
                 env["ismemberof"].scan(ISMEMBEROF_RE).map { |name|  name.sub(/^urn:mace:duke.edu:groups/, "duke") }
               else
@@ -58,7 +58,7 @@ module Ddr
             Affiliation.groups
           else
             user, env = args
-            affiliations = 
+            affiliations =
               if env && env["affiliation"]
                 env["affiliation"].scan(AFFILIATION_RE).flatten
               else
@@ -69,11 +69,11 @@ module Ddr
         end
 
         def duke_eppn?(user, env)
-          eppn = 
+          eppn =
             if env && env["eppn"]
               env["eppn"]
             else
-              user.principal_name 
+              user.principal_name
             end
           !!(eppn =~ DUKE_EPPN_RE)
         end

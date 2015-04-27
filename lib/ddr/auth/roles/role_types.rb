@@ -26,7 +26,7 @@ module Ddr
                                    "resources to a resource, such as works to a collection.",
                                    [:read, :add_children]
                                    )
-        
+
         DOWNLOADER = RoleType.new("Downloader",
                                   "The Downloader role conveys access to the \"master\" file " \
                                   "(original content bitstream) of a resource.",
@@ -39,7 +39,7 @@ module Ddr
                               [:read]
                               )
 
-      end        
+      end
     end
   end
 end

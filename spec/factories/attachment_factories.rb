@@ -7,5 +7,5 @@ FactoryGirl.define do
       a.upload File.new(File.join(Ddr::Models::Engine.root.to_s, 'spec', 'fixtures', 'sample.docx'))
     end
   end
-  
+
 end

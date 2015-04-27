@@ -27,7 +27,7 @@ module Ddr
 
       def gated_discovery_filters
         [resource_role_filters, policy_role_filters]
-      end      
+      end
 
     end
   end

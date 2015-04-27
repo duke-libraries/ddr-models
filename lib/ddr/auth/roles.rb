@@ -7,7 +7,7 @@ module Ddr
       autoload :RoleSet
       autoload :RoleType
       autoload :RoleTypes
-      autoload :Query      
+      autoload :Query
 
       include RoleTypes
 

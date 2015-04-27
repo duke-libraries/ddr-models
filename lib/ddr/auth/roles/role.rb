@@ -23,7 +23,7 @@ module Ddr
         validates_inclusion_of :scope, in: Roles::SCOPES
 
         def self.build(args={})
-          new.tap do |role| 
+          new.tap do |role|
             role.agent     = args.fetch(:agent).to_s
             role.scope     = args.fetch(:scope, DEFAULT_SCOPE).to_s
             role.role_type = args.fetch(:type).to_s
@@ -54,7 +54,7 @@ module Ddr
             agent: agent.first }
         end
         alias_method :to_hash, :to_h
-        
+
         def permissions
           Roles.type_map[role_type.first].permissions
         end

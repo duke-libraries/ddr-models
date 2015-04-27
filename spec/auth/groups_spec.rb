@@ -1,6 +1,6 @@
 module Ddr
   module Auth
-    RSpec.describe Groups do 
+    RSpec.describe Groups do
 
       describe "instance methods" do
         subject { described_class.new(groups) }
@@ -41,7 +41,7 @@ module Ddr
               let(:env) { nil }
               it "should use Grouper to get remote groups" do
                 expect_any_instance_of(Ddr::Auth.grouper_gateway).to receive(:user_group_names).with(user) do
-                  ["duke:library:repository:ddr:foo", "duke:library:repository:ddr:bar"] 
+                  ["duke:library:repository:ddr:foo", "duke:library:repository:ddr:bar"]
                 end
                 expect(subject).to include(Group.new("duke:library:repository:ddr:foo"), Group.new("duke:library:repository:ddr:bar"))
               end
@@ -52,13 +52,13 @@ module Ddr
               describe "and the user has a Duke principal name" do
                 it "should include the Duke EPPN group" do
                   expect(user).to receive(:principal_name).at_least(:once) { "foobar@duke.edu" }
-                  expect(subject).to include(Groups::DUKE_EPPN) 
+                  expect(subject).to include(Groups::DUKE_EPPN)
                 end
               end
               describe "and the user does not have a Duke principal name" do
                 it "should not include the Duke EPPN group" do
                   expect(user).to receive(:principal_name).at_least(:once) { "foobar@unc.edu" }
-                  expect(subject).not_to include(Groups::DUKE_EPPN) 
+                  expect(subject).not_to include(Groups::DUKE_EPPN)
                 end
               end
             end
@@ -67,7 +67,7 @@ module Ddr
               let(:env) { {} }
               it "should use Grouper to get remote groups" do
                 expect_any_instance_of(Ddr::Auth.grouper_gateway).to receive(:user_group_names).with(user) do
-                  ["duke:library:repository:ddr:foo", "duke:library:repository:ddr:bar"] 
+                  ["duke:library:repository:ddr:foo", "duke:library:repository:ddr:bar"]
                 end
                 expect(subject).to include(Group.new("duke:library:repository:ddr:foo"), Group.new("duke:library:repository:ddr:bar"))
               end
@@ -78,13 +78,13 @@ module Ddr
               describe "and the user has a Duke principal name" do
                 it "should include the Duke EPPN group" do
                   expect(user).to receive(:principal_name).at_least(:once) { "foobar@duke.edu" }
-                  expect(subject).to include(Groups::DUKE_EPPN) 
+                  expect(subject).to include(Groups::DUKE_EPPN)
                 end
               end
               describe "and the user does not have a Duke principal name" do
                 it "should not include the Duke EPPN group" do
                   expect(user).to receive(:principal_name).at_least(:once) { "foobar@unc.edu" }
-                  expect(subject).not_to include(Groups::DUKE_EPPN) 
+                  expect(subject).not_to include(Groups::DUKE_EPPN)
                 end
               end
             end
@@ -94,7 +94,7 @@ module Ddr
                 {
                   "ismemberof" => "urn:mace:duke.edu:groups:library:repository:ddr:foo;urn:mace:duke.edu:groups:library:repository:ddr:bar",
                   "affiliation" => "faculty@duke.edu;staff@duke.edu"
-                } 
+                }
               end
               it "should use the env to get remote groups" do
                 expect_any_instance_of(Ddr::Auth.grouper_gateway).not_to receive(:user_group_names)
@@ -108,14 +108,14 @@ module Ddr
                 before { env["eppn"] = "foobar@duke.edu" }
                 it "should include the Duke EPPN group" do
                   expect(user).not_to receive(:principal_name)
-                  expect(subject).to include(Groups::DUKE_EPPN) 
+                  expect(subject).to include(Groups::DUKE_EPPN)
                 end
               end
               describe "and the user does not have a Duke principal name" do
                 before { env["eppn"] = "foobar@unc.edu" }
                 it "should not include the Duke EPPN group" do
                   expect(user).not_to receive(:principal_name)
-                  expect(subject).not_to include(Groups::DUKE_EPPN) 
+                  expect(subject).not_to include(Groups::DUKE_EPPN)
                 end
               end
             end

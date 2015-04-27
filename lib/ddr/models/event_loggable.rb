@@ -20,7 +20,7 @@ module Ddr
         events.count > 0
       end
 
-      private 
+      private
 
       def event_class_name(token=nil)
         type = token ? "#{token.to_s.camelize}Event" : "Event"
