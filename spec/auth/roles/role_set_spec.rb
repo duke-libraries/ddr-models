@@ -19,7 +19,7 @@ module Ddr::Auth
       describe "#grant" do
         let(:role1) { Role.build(type: "Editor", agent: "bob@example.com", scope: "resource") }
         let(:role2) { Role.build(type: "Curator", agent: "sue@example.com", scope: "policy") }
-        describe "by attributes" do        
+        describe "by attributes" do
           it "should be able to grant a role by type, agent name and (optionally) scope" do
             subject.grant type: "Editor", agent: "bob@example.com", scope: "resource"
             expect(subject.first).to eq(role1)
@@ -109,12 +109,12 @@ module Ddr::Auth
         end
         it "should revoke all roles" do
           expect { subject.revoke_all }.to change(subject, :size).from(2).to(0)
-        end        
+        end
       end
 
       describe "#to_a" do
         let(:role1) { Role.build(type: "Editor", agent: "bob@example.com", scope: "resource") }
-        let(:role2) { Role.build(type: "Curator", agent: "sue@example.com", scope: "policy") }        
+        let(:role2) { Role.build(type: "Curator", agent: "sue@example.com", scope: "policy") }
         before do
           subject.grant role1, role2
         end
@@ -145,6 +145,6 @@ module Ddr::Auth
         end
       end
 
-    end    
+    end
   end
 end

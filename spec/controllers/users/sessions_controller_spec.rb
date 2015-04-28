@@ -5,7 +5,7 @@ RSpec.describe Users::SessionsController, type: :controller do
   describe "#new" do
     before { request.env["HTTP_REFERER"] = "/foo/bar" }
     it "should store the location of the previous page" do
-      expect(subject).to receive(:store_location_for).with(:user, "/foo/bar")    
+      expect(subject).to receive(:store_location_for).with(:user, "/foo/bar")
       get :new
     end
     describe "when shibboleth user authentication is required" do

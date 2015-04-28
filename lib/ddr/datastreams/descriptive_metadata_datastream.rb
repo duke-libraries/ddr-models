@@ -31,7 +31,7 @@ module Ddr
           end
         end
       end
-     
+
       # Override ActiveFedora::Rdf::Indexing#apply_prefix(name) to not
       # prepend the index field name with a string based on the datastream id.
       def apply_prefix(name)

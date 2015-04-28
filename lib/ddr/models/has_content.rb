@@ -37,7 +37,7 @@ module Ddr
 
         after_add_file do
           if file_to_add.original_name && file_to_add.dsid == "content"
-            self.original_filename = file_to_add.original_name 
+            self.original_filename = file_to_add.original_name
           end
         end
 

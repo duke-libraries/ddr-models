@@ -3,7 +3,7 @@ require "resque"
 
 module Ddr
   module Managers
-    # 
+    #
     # PermanentIdManager is responsible for managing the permanent id for an object.
     #
     # @api private
@@ -27,7 +27,7 @@ module Ddr
       def assign
         raise Ddr::Models::Error, "Permanent ID already assigned." if object.permanent_id
         ActiveSupport::Notifications.instrument(Ddr::Notifications::UPDATE,
-                                                pid: object.pid, 
+                                                pid: object.pid,
                                                 software: SOFTWARE,
                                                 summary: ASSIGN_EVENT_SUMMARY
                                                 ) do |payload|
@@ -53,8 +53,8 @@ EZID Metadata:
       end
 
       def default_metadata
-        { profile: "dc", 
-          export: "no" 
+        { profile: "dc",
+          export: "no"
         }
       end
 

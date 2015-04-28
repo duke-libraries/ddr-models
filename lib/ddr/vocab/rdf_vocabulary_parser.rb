@@ -39,7 +39,7 @@ module Ddr
       def graph
         @graph ||= RDF::Graph.load(source).freeze
       end
-      
+
     end
   end
 end

@@ -1,6 +1,6 @@
 module Ddr
   module Notifications
-    
+
     FIXITY_CHECK = "fixity_check.events.ddr"
     VIRUS_CHECK = "virus_check.events.ddr"
     CREATION = "creation.events.ddr"

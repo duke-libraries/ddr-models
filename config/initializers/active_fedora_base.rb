@@ -20,7 +20,7 @@ module ActiveFedora
     def can_have_content?
       datastreams.include? "content"
     end
-    
+
     def has_content?
       can_have_content? && content.has_content?
     end

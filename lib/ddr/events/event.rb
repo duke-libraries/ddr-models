@@ -31,10 +31,10 @@ module Ddr
       DDR_SOFTWARE = "ddr-models #{Ddr::Models::VERSION}"
 
       class_attribute :description
-  
+
       validates_presence_of :event_date_time, :pid
       validates :outcome, inclusion: {in: OUTCOMES, message: "\"%{value}\" is not a valid event outcome"}
- 
+
       after_initialize :set_defaults
       before_save { failure! if exception.present? }
 
@@ -67,7 +67,7 @@ module Ddr
         # Ddr::Events::UpdateEvent => "Update"
         @display_type ||= self.class.to_s.split("::").last.sub("Event", "").titleize
       end
-  
+
       def performed_by
         user_key || SYSTEM
       end
@@ -114,7 +114,7 @@ module Ddr
 
       # Override pid setter to clear cached object instance variable
       def pid=(pid)
-        @object = nil 
+        @object = nil
         super
       end
 

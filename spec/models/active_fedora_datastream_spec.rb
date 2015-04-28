@@ -52,7 +52,7 @@ module ActiveFedora
               expect { subject.validate_checksum!(checksum, checksum_type) }.not_to raise_error
             end
           end
-          context "and the checksum type differs from the datastream checksum type" do 
+          context "and the checksum type differs from the datastream checksum type" do
             let!(:md5digest) { "273ae0f4aa60d94e89bc0e0652ae2c8f" }
             it "should generate a checksum for comparison" do
               expect(subject).not_to receive(:checksum)
@@ -112,7 +112,7 @@ module ActiveFedora
           allow(File).to receive(:size).with("/tmp/foo/bar.txt") { 42 }
           subject.dsLocation = "file:/tmp/foo/bar.txt"
           expect(subject.file_size).to eq 42
-        end        
+        end
       end
 
     end # external datastreams

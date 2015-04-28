@@ -3,14 +3,14 @@ module Ddr
     module HasAdminMetadata
       extend ActiveSupport::Concern
 
-      included do        
+      included do
         has_metadata "adminMetadata",
           type: Ddr::Datastreams::AdministrativeMetadataDatastream,
           versionable: true,
           control_group: "M"
 
         has_attributes :local_id, :permanent_id, :permanent_url, :workflow_state,
-          datastream: "adminMetadata", 
+          datastream: "adminMetadata",
           multiple: false
 
         delegate :role_based_permissions, to: :roles

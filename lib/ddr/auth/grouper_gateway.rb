@@ -30,7 +30,7 @@ module Ddr
         subject_id = user.principal_name.scan(SUBJECT_ID_RE).first
         return groups unless subject_id
         begin
-          request_body = { 
+          request_body = {
             "WsRestGetGroupsRequest" => {
               "subjectLookups" => [{"subjectIdentifier" => subject_id}]
             }
@@ -53,7 +53,7 @@ module Ddr
       def user_group_names(user)
         user_groups(user).collect { |g| g["name"] }
       end
-      
+
     end
   end
 end

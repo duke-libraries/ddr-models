@@ -4,7 +4,7 @@
 # Examples: Page of a book, track of a recording, etc.
 #
 class Component < Ddr::Models::Base
- 
+
   include Ddr::Models::HasContent
   include Ddr::Models::HasMultiresImage
   include Ddr::Models::HasStructMetadata

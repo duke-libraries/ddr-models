@@ -6,9 +6,9 @@ module Ddr
     # The agent (person or group) to whom a role is granted.
     #
     class Agent < ActiveTriples::Resource
-      
+
       TYPES = {
-        person: RDF::FOAF.Person, 
+        person: RDF::FOAF.Person,
         group: RDF::FOAF.Group
       }
 
@@ -32,7 +32,7 @@ module Ddr
       class << self
 
         def build(opts={})
-          new.tap do |agent| 
+          new.tap do |agent|
             agent.type = TYPES.fetch(opts[:type])
             agent.name = opts[:name].to_s
             if agent.invalid?

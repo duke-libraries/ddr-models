@@ -8,7 +8,7 @@ module Ddr
       def published?
         object.workflow_state == PUBLISHED
       end
-      
+
       def publish
         object.workflow_state = PUBLISHED
       end
@@ -17,7 +17,7 @@ module Ddr
         publish
         object.save
       end
-      
+
       def unpublish
         object.workflow_state = UNPUBLISHED
       end
@@ -30,4 +30,4 @@ module Ddr
     end
   end
 end
-      
+

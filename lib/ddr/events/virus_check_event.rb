@@ -22,7 +22,7 @@ module Ddr
                outcome: result.ok? ? SUCCESS : FAILURE,
                software: result.version,
                detail: result.to_s
-               )    
+               )
       end
 
     end

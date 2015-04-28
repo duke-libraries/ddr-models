@@ -1,6 +1,6 @@
 module Ddr
   module Events
-    class DeletionEvent < Event 
+    class DeletionEvent < Event
 
       include PreservationEventBehavior
 

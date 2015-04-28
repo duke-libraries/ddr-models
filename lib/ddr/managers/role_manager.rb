@@ -8,7 +8,7 @@ module Ddr
       def granted
         @granted ||= Ddr::Auth::Roles::RoleSet.new(access_role)
       end
-      
+
       # Revoke all roles in policy scope
       def revoke_policy_roles
         revoke *(where(scope: "policy"))

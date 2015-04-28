@@ -44,14 +44,14 @@ module Ddr::Managers
     end
 
     describe "permissions" do
-      let(:contributor_role) { Ddr::Auth::Roles::Role.build(type: "Contributor", 
-                                                            agent: "Contributors", 
+      let(:contributor_role) { Ddr::Auth::Roles::Role.build(type: "Contributor",
+                                                            agent: "Contributors",
                                                             scope: "resource") }
-      let(:downloader_role) { Ddr::Auth::Roles::Role.build(type: "Downloader", 
-                                                           agent: "Downloaders", 
+      let(:downloader_role) { Ddr::Auth::Roles::Role.build(type: "Downloader",
+                                                           agent: "Downloaders",
                                                            scope: "resource") }
-      let(:curator_role) { Ddr::Auth::Roles::Role.build(type: "Curator", 
-                                                        agent: "bob@example.com", 
+      let(:curator_role) { Ddr::Auth::Roles::Role.build(type: "Curator",
+                                                        agent: "bob@example.com",
                                                         scope: "policy") }
       let(:agents) { [contributor_role.agent.first, downloader_role.agent.first, curator_role.agent.first] }
       before do
@@ -64,6 +64,6 @@ module Ddr::Managers
         end
       end
     end
-    
+
   end
 end

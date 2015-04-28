@@ -1,12 +1,12 @@
 module Ddr::Auth
   module Roles
     RSpec.describe Role do
-      
+
       let(:agent) { "bob@example.com" }
 
       describe "default scope" do
         it "should be 'resource'" do
-          expect(described_class.build(type: "Curator", agent: agent).scope.first).to eq("resource")          
+          expect(described_class.build(type: "Curator", agent: agent).scope.first).to eq("resource")
         end
       end
 

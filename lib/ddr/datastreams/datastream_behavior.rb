@@ -13,7 +13,7 @@ module Ddr
         algorithm = checksum_type || self.checksumType
         ds_checksum = if algorithm == self.checksumType
                         self.checksum
-                      else 
+                      else
                         content_digest(algorithm)
                       end
         if checksum == ds_checksum
@@ -32,7 +32,7 @@ module Ddr
         # E.g., info:fedora/duke:1/content/content.0 [2013-09-26T20:00:03.357Z]
         "#{version_uri} [#{Ddr::Utils.ds_as_of_date_time(self)}]" unless new?
       end
-    
+
       def create_date_string
         dsCreateDate.strftime(STRFTIME_FORMAT) if dsCreateDate
       end
