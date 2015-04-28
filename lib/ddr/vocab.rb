@@ -1,4 +1,4 @@
-require "rdf-vocab"
+require "rdf/vocab"
 
 module Ddr
   module Vocab
