@@ -40,10 +40,9 @@ module Ddr
             describe "when env is nil" do
               let(:env) { nil }
               it "should use Grouper to get remote groups" do
-                expect_any_instance_of(Ddr::Auth.grouper_gateway).to receive(:user_group_names).with(user) do
-                  ["duke:library:repository:ddr:foo", "duke:library:repository:ddr:bar"]
-                end
-                expect(subject).to include(Group.new("duke:library:repository:ddr:foo"), Group.new("duke:library:repository:ddr:bar"))
+                groups = [Group.new("duke:library:repository:ddr:foo"), Group.new("duke:library:repository:ddr:bar")]
+                expect_any_instance_of(Ddr::Auth.grouper_gateway).to receive(:user_groups).with(user) { groups }
+                expect(subject).to include(*groups)
               end
               it "should use LDAP to get affiliations" do
                 expect_any_instance_of(Ddr::Auth.ldap_gateway).to receive(:affiliations).with(user.principal_name) { ["faculty", "staff"] }
@@ -66,10 +65,9 @@ module Ddr
             describe "when env lacks ismemberof, affiliation and eppn keys" do
               let(:env) { {} }
               it "should use Grouper to get remote groups" do
-                expect_any_instance_of(Ddr::Auth.grouper_gateway).to receive(:user_group_names).with(user) do
-                  ["duke:library:repository:ddr:foo", "duke:library:repository:ddr:bar"]
-                end
-                expect(subject).to include(Group.new("duke:library:repository:ddr:foo"), Group.new("duke:library:repository:ddr:bar"))
+                groups = [Group.new("duke:library:repository:ddr:foo"), Group.new("duke:library:repository:ddr:bar")]
+                expect_any_instance_of(Ddr::Auth.grouper_gateway).to receive(:user_groups).with(user) { groups }
+                expect(subject).to include(*groups)
               end
               it "should use LDAP to get affiliations" do
                 expect_any_instance_of(Ddr::Auth.ldap_gateway).to receive(:affiliations).with(user.principal_name) { ["faculty", "staff"] }
