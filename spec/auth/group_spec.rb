@@ -1,9 +1,22 @@
 module Ddr::Auth
   RSpec.describe Group do
 
-    subject { described_class.new("admins") }
+    subject { described_class.new("admins", label: "Administrators") }
 
     its(:agent) { is_expected.to eq("admins") }
+    its(:label) { is_expected.to eq("Administrators") }
+    its(:to_s) { is_expected.to eq("admins") }
+    it { is_expected.to be_frozen }
+
+    describe "default label" do
+      subject { described_class.new("admins") }
+      its(:label) { is_expected.to eq("admins") }
+    end
+
+    describe "equality" do
+      it { is_expected.to eq(described_class.new("admins")) }
+      it { is_expected.not_to eq(described_class.new("administrators", label: "Administrators")) }
+    end
 
     describe "#has_member?" do
       let!(:user) { FactoryGirl.build(:user) }

@@ -5,18 +5,26 @@ module Ddr
 
       private_class_method :new
 
-      VALUES = [:faculty, :staff, :student, :emeritus, :affiliate, :alumni]
+      VALUES = %w( faculty staff student emeritus affiliate alumni ).freeze
 
       VALUES.each do |value|
-        const_set(value.to_s.capitalize, new(value))
+        const_set(value.capitalize, new(value).freeze)
       end
 
       def group
-        Group.new("duke.#{self}")
+        Group.new(group_name, label: label)
+      end
+
+      def label
+        "Duke #{capitalize}"
+      end
+
+      def group_name
+        "duke.#{self}"
       end
 
       def inspect
-        "#<#{self.class.name}(#{self})>"
+        "#<#{self.class.name}(#{__getobj__.inspect})>"
       end
 
       class << self
@@ -25,7 +33,7 @@ module Ddr
         end
 
         def get(affiliation)
-          const_get(affiliation.to_s.capitalize)
+          const_get(affiliation.capitalize)
         end
 
         def group(affiliation)

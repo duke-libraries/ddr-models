@@ -7,11 +7,11 @@ module Ddr::Auth
         it { is_expected.to eq([described_class::Faculty, described_class::Staff, described_class::Student, described_class::Emeritus, described_class::Affiliate, described_class::Alumni]) }
       end
       describe ".get" do
-        subject { described_class.get(:faculty) }
+        subject { described_class.get("faculty") }
         it { is_expected.to eq(described_class::Faculty) }
       end
       describe ".group" do
-        subject { described_class.group(:faculty) }
+        subject { described_class.group("faculty") }
         it { is_expected.to eq(described_class::Faculty.group) }
       end
       describe ".groups" do
@@ -21,35 +21,42 @@ module Ddr::Auth
     end
 
     describe "constants" do
+      shared_examples "an affiliation constant" do |name|
+        it { is_expected.to eq(described_class.get(name)) }
+        it { is_expected.to eq(name) }
+        it { is_expected.to be_frozen }
+        describe "group" do
+          it "should be named \"duke.#{name}\"" do
+            expect(subject.group).to eq("duke.#{name}")
+          end
+          it "should have a label" do
+            expect(subject.group.label).to eq("Duke #{name.capitalize}")
+          end
+        end
+      end
       describe "Faculty" do
         subject { described_class::Faculty }
-        it { is_expected.to eq(described_class.get(:faculty)) }
-        it { is_expected.to eq(:faculty) }
+        it_behaves_like "an affiliation constant", "faculty"
       end
       describe "Staff" do
         subject { described_class::Staff }
-        it { is_expected.to eq(described_class.get(:staff)) }
-        it { is_expected.to eq(:staff) }
+        it_behaves_like "an affiliation constant", "staff"
       end
       describe "Student" do
         subject { described_class::Student }
-        it { is_expected.to eq(described_class.get(:student)) }
-        it { is_expected.to eq(:student) }
+        it_behaves_like "an affiliation constant", "student"
       end
       describe "Affiliate" do
         subject { described_class::Affiliate }
-        it { is_expected.to eq(described_class.get(:affiliate)) }
-        it { is_expected.to eq(:affiliate) }
+        it_behaves_like "an affiliation constant", "affiliate"
       end
       describe "Emeritus" do
         subject { described_class::Emeritus }
-        it { is_expected.to eq(described_class.get(:emeritus)) }
-        it { is_expected.to eq(:emeritus) }
+        it_behaves_like "an affiliation constant", "emeritus"
       end
       describe "Alumni" do
         subject { described_class::Alumni }
-        it { is_expected.to eq(described_class.get(:alumni)) }
-        it { is_expected.to eq(:alumni) }
+        it_behaves_like "an affiliation constant", "alumni"
       end
     end
 
