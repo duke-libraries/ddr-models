@@ -2,7 +2,7 @@ module Ddr
   module Models
     module HasMultiresImage
       extend ActiveSupport::Concern
-  
+
       included do
         has_file_datastream name: Ddr::Datastreams::MULTIRES_IMAGE,
                             label: "Multi-resolution image derivative for this object",

@@ -7,30 +7,41 @@ module Ddr
 
       REPOSITORY_GROUP_FILTER = "duke:library:repository:ddr:"
       SUBJECT_ID_RE = Regexp.new('[^@]+(?=@duke\.edu)')
+      DEFAULT_TIMEOUT = 5
 
       def initialize
         super Grouper::Rest::Client::Resource.new(ENV["GROUPER_URL"],
                                                   user: ENV["GROUPER_USER"],
                                                   password: ENV["GROUPER_PASSWORD"],
-                                                  timeout: 5)
+                                                  timeout: ENV.fetch("GROUPER_TIMEOUT", DEFAULT_TIMEOUT).to_i)
       end
 
       # List of all grouper groups for the repository
-      def repository_groups
+      def repository_groups(raw = false)
         repo_groups = groups(REPOSITORY_GROUP_FILTER)
-        ok? ? repo_groups : []
+        if ok?
+          return repo_groups if raw
+          repo_groups.map do |g|
+            Group.new(g["name"], label: g["displayExtension"])
+          end
+        else
+          []
+        end
       end
 
+      # @deprecated Use {#repository_groups} instead.
       def repository_group_names
-        repository_groups.collect { |g| g["name"] }
+        warn "[DEPRECATION] `Ddr::Auth::GrouperGateway#repository_group_names` is deprecated." \
+             " Use `#repository_groups` instead."
+        repository_groups
       end
 
-      def user_groups(user)
+      def user_groups(user, raw = false)
         groups = []
         subject_id = user.principal_name.scan(SUBJECT_ID_RE).first
         return groups unless subject_id
         begin
-          request_body = { 
+          request_body = {
             "WsRestGetGroupsRequest" => {
               "subjectLookups" => [{"subjectIdentifier" => subject_id}]
             }
@@ -45,15 +56,22 @@ module Ddr
             end
           end
         rescue StandardError => e
+          # XXX Should we raise a custom exception?
           Rails.logger.error e
         end
-        groups
+        return groups if raw
+        groups.map do |g|
+          Group.new(g["name"], label: g["displayExtension"])
+        end
       end
 
+      # @deprecated Use {#user_groups} instead.
       def user_group_names(user)
-        user_groups(user).collect { |g| g["name"] }
+        warn "[DEPRECATION] `Ddr::Auth::GrouperGateway#user_group_names` is deprecated." \
+             " Use `#user_groups` instead."
+        user_groups(user)
       end
-      
+
     end
   end
 end

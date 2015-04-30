@@ -14,6 +14,7 @@ module Ddr
     DEFAULT_LICENSE_DESCRIPTION = solr_name :default_license_description, type: :string
     DEFAULT_LICENSE_TITLE       = solr_name :default_license_title, type: :string
     DEFAULT_LICENSE_URL         = solr_name :default_license_url, type: :string
+    EXTRACTED_TEXT              = solr_name :extracted_text, :searchable, type: :text
     FILE_GROUP                  = solr_name :struct_metadata__file_group, :stored_sortable
     FILE_USE                    = solr_name :struct_metadata__file_use, :stored_sortable
     HAS_MODEL                   = solr_name :has_model, :symbol

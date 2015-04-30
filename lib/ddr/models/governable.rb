@@ -15,8 +15,8 @@ module Ddr
         admin_policy.datastreams[Ddr::Datastreams::DEFAULT_RIGHTS] if admin_policy
       end
 
-      # Creates convenience methods: 
-      # inherited_discover_users, inherited_discover_groups, 
+      # Creates convenience methods:
+      # inherited_discover_users, inherited_discover_groups,
       # inherited_read_users, inherited_read_groups,
       # inherited_edit_user, inherited_edit_groups
       ["discover", "read", "edit"].each do |access|

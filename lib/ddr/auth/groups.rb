@@ -1,16 +1,16 @@
 require "delegate"
+require "yaml"
 
 module Ddr
   module Auth
     # Wraps an Array of Group objects
     class Groups < SimpleDelegator
 
-      PUBLIC     = Group.new("public").freeze
-      REGISTERED = Group.new("registered").freeze
-      DUKE_EPPN   = Group.new("duke.all").freeze
-      
-      Superusers = Group.new("superusers").freeze
-      CollectionCreators = Group.new("collection_creators").freeze
+      PUBLIC = Group.new "public", label: "Public"
+      REGISTERED = Group.new "registered", label: "Registered Users"
+      DUKE_EPPN = Group.new "duke.all", label: "Duke NetIDs"
+      Superusers = Group.new "superusers", label: "Superusers"
+      CollectionCreators = Group.new "collection_creators", label: "Collection Creators"
 
       ISMEMBEROF_RE = Regexp.new('urn:mace:duke\.edu:groups:library:repository:ddr:[\w:]+')
       DUKE_EPPN_RE = Regexp.new('(?=@duke\.edu)')
@@ -26,9 +26,9 @@ module Ddr
 
         # Build a Groups instance for the user and env context (if any)
         def build(user, env=nil)
-          groups = [ PUBLIC ] # everybody 
+          groups = [ PUBLIC ] # everybody
           if user.persisted?
-            groups << REGISTERED 
+            groups << REGISTERED
             groups << DUKE_EPPN if duke_eppn?(user, env)
             groups.concat remote(user, env)
             groups.concat affiliation(user, env)
@@ -40,16 +40,16 @@ module Ddr
 
         def remote(*args)
           if args.empty?
-            grouper.repository_group_names.map { |name| Group.new(name) }
+            grouper.repository_groups
           else
             user, env = args
-            names = 
-              if env && env["ismemberof"]
-                env["ismemberof"].scan(ISMEMBEROF_RE).map { |name|  name.sub(/^urn:mace:duke.edu:groups/, "duke") }
-              else
-                grouper.user_group_names(user)
+            if env && env["ismemberof"]
+              env["ismemberof"].scan(ISMEMBEROF_RE).map do |name|
+                Group.new(name.sub(/^urn:mace:duke.edu:groups/, "duke"))
               end
-            names.map { |name| Group.new(name) }
+            else
+              grouper.user_groups(user)
+            end
           end
         end
 
@@ -58,7 +58,7 @@ module Ddr
             Affiliation.groups
           else
             user, env = args
-            affiliations = 
+            affiliations =
               if env && env["affiliation"]
                 env["affiliation"].scan(AFFILIATION_RE).flatten
               else
@@ -69,11 +69,11 @@ module Ddr
         end
 
         def duke_eppn?(user, env)
-          eppn = 
+          eppn =
             if env && env["eppn"]
               env["eppn"]
             else
-              user.principal_name 
+              user.principal_name
             end
           !!(eppn =~ DUKE_EPPN_RE)
         end

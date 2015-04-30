@@ -9,6 +9,7 @@ module Ddr
     DC = "DC"
     DEFAULT_RIGHTS = "defaultRights"
     DESC_METADATA = "descMetadata"
+    EXTRACTED_TEXT = "extractedText"
     MULTIRES_IMAGE = "multiresImage"
     PROPERTIES = "properties"
     RELS_EXT = "RELS-EXT"
@@ -24,12 +25,13 @@ module Ddr
 
     CHECKSUM_TYPES = [ CHECKSUM_TYPE_MD5, CHECKSUM_TYPE_SHA1, CHECKSUM_TYPE_SHA256, CHECKSUM_TYPE_SHA384, CHECKSUM_TYPE_SHA512 ]
 
-    autoload :MetadataDatastream
     autoload :AdministrativeMetadataDatastream
+    autoload :DatastreamBehavior
     autoload :DescriptiveMetadataDatastream
+    autoload :MetadataDatastream
+    autoload :PlainTextDatastream
     autoload :PropertiesDatastream
     autoload :StructuralMetadataDatastream
-    autoload :DatastreamBehavior
 
   end
 end

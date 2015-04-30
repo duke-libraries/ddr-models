@@ -4,14 +4,13 @@ module Ddr
 
     autoload :Ability
     autoload :Affiliation
-    autoload :Agent
     autoload :FailureApp
     autoload :Group
     autoload :GrouperGateway
     autoload :Groups
     autoload :LdapGateway
     autoload :LegacyPermissions
-    autoload :LegacyRoles    
+    autoload :LegacyRoles
     autoload :Permission
     autoload :RoleBasedAccessControlsEnforcement
     autoload :Roles
@@ -36,7 +35,7 @@ module Ddr
       Groups::REGISTERED
     end
 
-    # Whether to require Shibboleth authentication 
+    # Whether to require Shibboleth authentication
     mattr_accessor :require_shib_user_authn do
       false
     end

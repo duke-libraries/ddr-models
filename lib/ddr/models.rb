@@ -15,6 +15,7 @@ require 'ddr/datastreams'
 require 'ddr/derivatives'
 require 'ddr/events'
 require 'ddr/index_fields'
+require 'ddr/jobs'
 require 'ddr/managers'
 require 'ddr/metadata'
 require 'ddr/notifications'
@@ -32,6 +33,7 @@ module Ddr
     autoload :Error
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
+    autoload :ContentModelError, 'ddr/models/error'
     autoload :FixityCheckable
     autoload :Governable
     autoload :HasAdminMetadata

@@ -33,6 +33,18 @@ module Ddr
         [self.class.to_s, pid].join(" ")
       end
 
+      # @override ActiveFedora::Core
+      # See ActiveFedora overrides in engine initializers
+      def adapt_to_cmodel
+        super
+      rescue ::TypeError
+        raise ContentModelError, "Cannot adapt to nil content model."
+      end
+
+      def has_extracted_text?
+        false
+      end
+
     end
   end
 end

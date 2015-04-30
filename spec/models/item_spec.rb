@@ -16,5 +16,5 @@ RSpec.describe Item, :type => :model do
       expect(results['reference']).to eq([ comp2 ])
     end
   end
-  
+
 end

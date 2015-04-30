@@ -15,7 +15,7 @@ module Ddr
 
         after_save :notify_virus_scan_results
 
-        # Deleting the datastream external files on destroying the object can't 
+        # Deleting the datastream external files on destroying the object can't
         # be handled with a datastream around_destroy callback.
         # See https://groups.google.com/d/msg/hydra-tech/xJaZr2wVhbg/4iafvso98w8J
         around_destroy :cleanup_external_files_on_destroy
@@ -30,8 +30,8 @@ module Ddr
       #   :mime_type - Explicit mime type to set (otherwise discerned from file path or name)
       #
       #   :original_name - A String value will be understood as the original name of the file.
-      #                    `false` or `nil` indicate that the file basename is not the original 
-      #                    name. Default processing will take the file basename as the original 
+      #                    `false` or `nil` indicate that the file basename is not the original
+      #                    name. Default processing will take the file basename as the original
       #                    name.
       #
       #   :external - Add to file to external datastream. Not required for datastream specs
@@ -52,7 +52,7 @@ module Ddr
           else
             file = File.new(file, "rb") if Ddr::Utils.file_path?(file)
             # ActiveFedora method accepts file-like objects, not paths
-            add_file_datastream(file, dsid: dsid, mimeType: opts[:mime_type]) 
+            add_file_datastream(file, dsid: dsid, mimeType: opts[:mime_type])
           end
         end
 
@@ -60,7 +60,7 @@ module Ddr
         self.file_to_add = nil
       end
 
-      # Normally this method should not be called directly. Call `add_file` with dsid for 
+      # Normally this method should not be called directly. Call `add_file` with dsid for
       # external datastream id, or with `:external=>true` option if no spec for dsid.
       def add_external_file file, dsid, opts={}
         file_path = Ddr::Utils.file_path(file) # raises ArgumentError
@@ -69,7 +69,7 @@ module Ddr
         ds = datastreams.include?(dsid) ? datastreams[dsid] : add_external_datastream(dsid)
 
         unless ds.external?
-          raise ArgumentError, "Cannot add external file to datastream with controlGroup \"#{ds.controlGroup}\"" 
+          raise ArgumentError, "Cannot add external file to datastream with controlGroup \"#{ds.controlGroup}\""
         end
 
         if ds.dsLocation_changed?
@@ -123,7 +123,7 @@ module Ddr
       def external_datastream_file_paths
         external_datastreams.map(&:file_paths).flatten
       end
-    
+
       def add_external_datastream dsid, opts={}
         klass = self.class.datastream_class_for_name(dsid)
         datastream = create_datastream(klass, dsid, controlGroup: "E")

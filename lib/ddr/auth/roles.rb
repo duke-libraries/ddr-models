@@ -7,14 +7,13 @@ module Ddr
       autoload :RoleSet
       autoload :RoleType
       autoload :RoleTypes
-      autoload :Query      
-      autoload :Scopes
+      autoload :Query
 
       include RoleTypes
 
       RESOURCE_SCOPE = "resource"
       POLICY_SCOPE = "policy"
-      SCOPES = [RESOURCE_SCOPE, POLICY_SCOPE]
+      SCOPES = [RESOURCE_SCOPE, POLICY_SCOPE].freeze
 
       class << self
         def type_map

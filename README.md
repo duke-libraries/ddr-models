@@ -12,7 +12,7 @@ A Rails engine providing Hydra and ActiveRecord models and common services for t
 Add to your application's Gemfile:
 
     gem 'ddr-models'
-    
+
 and
 
     bundle install
@@ -87,10 +87,10 @@ end
 
 #### SolrDocument model
 
-Include `Ddr::Models::SolrDocument` in `app/models/solr_document.rb` 
+Include `Ddr::Models::SolrDocument` in `app/models/solr_document.rb`
 
 ```ruby
-class SolrDocument 
+class SolrDocument
 
   include Blacklight::Solr::Document
   include Ddr::Models::SolrDocument
@@ -105,8 +105,8 @@ end
 Install the ddr-models migrations:
 
     rake ddr_models:install:migrations
-    
+
 then
 
     rake db:migrate db:test:prepare
-    
+

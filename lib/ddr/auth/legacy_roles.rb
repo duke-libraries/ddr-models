@@ -10,7 +10,7 @@ module Ddr
           agent_type = (name =~ /@/ ? :person : :group)
           Roles::Role.build(:type=>:downloader, agent_type=>name, :scope=>:resource)
         end
-      end      
+      end
 
       def principal_has_role?(principal, role)
         ( principals(role) & Array(principal) ).any?

@@ -3,20 +3,21 @@ module Ddr
     module HasAdminMetadata
       extend ActiveSupport::Concern
 
-      included do        
+      included do
         has_metadata "adminMetadata",
           type: Ddr::Datastreams::AdministrativeMetadataDatastream,
           versionable: true,
           control_group: "M"
 
         has_attributes :local_id, :permanent_id, :permanent_url, :workflow_state,
-          datastream: "adminMetadata", 
+          datastream: "adminMetadata",
           multiple: false
 
         delegate :role_based_permissions, to: :roles
         delegate :publish, :publish!, :unpublish, :unpublish!, :published?, to: :workflow
 
         after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
+        around_destroy :update_permanent_id_on_destroy, if: "permanent_id.present?"
       end
 
       include Ddr::Auth::LegacyRoles
@@ -38,6 +39,12 @@ module Ddr
       end
 
       private
+
+      def update_permanent_id_on_destroy
+        @permanent_id = permanent_id
+        yield
+        Resque.enqueue(Ddr::Jobs::PermanentId::MakeUnavailable, @permanent_id, "deleted")
+      end
 
       def legacy_permissions
         Ddr::Auth::LegacyPermissions.new(permissions)

@@ -2,11 +2,11 @@ module Ddr
   module Models
     module HasThumbnail
       extend ActiveSupport::Concern
-  
+
       included do
-        has_file_datastream name: Ddr::Datastreams::THUMBNAIL, 
-                            versionable: true, 
-                            label: "Thumbnail for this object", 
+        has_file_datastream name: Ddr::Datastreams::THUMBNAIL,
+                            versionable: true,
+                            label: "Thumbnail for this object",
                             control_group: 'M'
       end
 

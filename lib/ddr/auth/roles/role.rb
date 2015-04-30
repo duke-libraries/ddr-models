@@ -10,33 +10,6 @@ module Ddr
 
         DEFAULT_SCOPE = Roles::RESOURCE_SCOPE
 
-        # TYPES = {
-        #   "Curator" => {
-        #     permissions: [:read, :download, :add_children, :edit, :replace, :arrange, :grant].freeze
-        #     }.freeze,
-
-        #   "Editor" => {
-        #     permissions: [:read, :download, :add_children, :edit, :replace, :arrange].freeze
-        #     }.freeze,
-
-        #   "MetadataEditor" => {
-        #     permissions: [:read, :download, :edit].freeze
-        #     }.freeze,
-
-        #   "Contributor" => {
-        #     permissions: [:read, :add_children].freeze
-        #     }.freeze,
-
-        #   "Downloader" => {
-        #     permissions: [:read, :download].freeze
-        #     }.freeze,
-
-        #   "Viewer" => {
-        #     permissions: [:read].freeze
-        #     }.freeze
-
-        # }.freeze
-
         include RDF::Isomorphic
         include Hydra::Validations
 
@@ -50,7 +23,7 @@ module Ddr
         validates_inclusion_of :scope, in: Roles::SCOPES
 
         def self.build(args={})
-          new.tap do |role| 
+          new.tap do |role|
             role.agent     = args.fetch(:agent).to_s
             role.scope     = args.fetch(:scope, DEFAULT_SCOPE).to_s
             role.role_type = args.fetch(:type).to_s
@@ -81,7 +54,7 @@ module Ddr
             agent: agent.first }
         end
         alias_method :to_hash, :to_h
-        
+
         def permissions
           Roles.type_map[role_type.first].permissions
         end

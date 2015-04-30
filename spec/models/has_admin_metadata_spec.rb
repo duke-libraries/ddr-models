@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'support/ezid_mock_identifier'
 
 module Ddr
   module Models
@@ -10,7 +11,7 @@ module Ddr
           it "should set the value" do
             expect { subject.local_id = "foo" }.to change(subject, :local_id).from(nil).to("foo")
           end
-        end        
+        end
         describe "re-setting" do
           before { subject.local_id = "foo" }
           it "should change the value" do
@@ -35,80 +36,72 @@ module Ddr
       end
 
       describe "permanent id and permanent url" do
-
-        before(:all) do
-          class PermanentlyIdentifiable < ActiveFedora::Base
-            include Describable
-            include Indexing
-            include AccessControllable
-            include HasAdminMetadata
-            include EventLoggable
-          end
-        end
-
-        after(:all) do
-          Ddr::Models.send(:remove_const, :PermanentlyIdentifiable)
-        end
-
-        subject { PermanentlyIdentifiable.new }
-
-        describe "permanent_id" do
-          describe "when a permanent id has not been assigned" do
-            it "should be nil" do
-              expect(subject.permanent_id).to be_nil
-            end
-          end
-        end
-
-        describe "object lifecycle" do
-          context "when created" do
-            context "and auto-assignment is enabled" do
-              before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
-              it "should assign a permanent id" do
-                expect_any_instance_of(PermanentlyIdentifiable).to receive(:assign_permanent_id!) { nil }
-                PermanentlyIdentifiable.create
-              end
-            end
-            context "and auto-assignment is disabled" do
-              before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false } }
-              it "should not assign a permanent id" do
-                expect_any_instance_of(PermanentlyIdentifiable).not_to receive(:assign_permanent_id!)
-                PermanentlyIdentifiable.create
-              end
-            end
-          end        
-          context "when saved" do
-            context "and auto-assignment is enabled" do
-              before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
-              it "should assign a permanent id once" do
-                expect(subject).to receive(:assign_permanent_id!).once { nil }
-                subject.save
-                subject.title = ["New Title"]
-                subject.save
-              end
-            end
-            context "and auto-assignment is disabled" do
-              before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false } }
-              it "should not assign a permanent id" do
-                expect(subject).not_to receive(:assign_permanent_id!)
-                subject.save
-              end
-            end
-          end
-        end
+        subject { FactoryGirl.build(:item) }
 
         describe "#assign_permanent_id!" do
           it "should assign the permanent id later" do
             expect(subject.permanent_id_manager).to receive(:assign_later) { nil }
             subject.assign_permanent_id!
           end
+          context "when the object is created (first saved)" do
+            context "and auto-assignment is enabled" do
+              before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
+              it "should assign a permanent id" do
+                expect(subject).to receive(:assign_permanent_id!) { nil }
+                subject.save!
+              end
+            end
+            context "and auto-assignment is disabled" do
+              before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false } }
+              it "should not assign a permanent id" do
+                expect(subject).not_to receive(:assign_permanent_id!)
+                subject.save!
+              end
+            end
+          end
+          context "when saved" do
+            context "and auto-assignment is enabled" do
+              before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
+              it "should assign a permanent id once" do
+                expect(subject).to receive(:assign_permanent_id!).once { nil }
+                subject.save!
+                subject.title = ["New Title"]
+                subject.save!
+              end
+            end
+            context "and auto-assignment is disabled" do
+              before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false } }
+              it "should not assign a permanent id" do
+                expect(subject).not_to receive(:assign_permanent_id!)
+                subject.save!
+              end
+            end
+          end
+        end
+
+        describe "lifecycle" do
+          let!(:identifier) { Ezid::MockIdentifier.new(id: "ark:/99999/fk4zzz", status: "public") }
+          before do
+            allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false }
+            allow(Ezid::Identifier).to receive(:find).with("ark:/99999/fk4zzz") { identifier }
+            subject.permanent_id = "ark:/99999/fk4zzz"
+            subject.save!
+          end
+          it "should update the status of the identifier when the object is destroyed" do
+            expect { subject.destroy }.to change(identifier, :status).from("public").to("unavailable | deleted")
+          end
         end
 
         describe "events" do
-          before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }  
+          before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
           context "when the operation succeeds" do
-            let(:stub_identifier) { double(id: "ark:/99999/fk4zzz", metadata: "_target: http://example.com") }
-            before { allow_any_instance_of(Ddr::Managers::PermanentIdManager).to receive(:mint) { stub_identifier } }
+            let!(:mock_identifier) { Ezid::MockIdentifier.new(id: "ark:/99999/fk4zzz",
+                                                              metadata: "_target: http://example.com") }
+            before do
+              allow(Ezid::Identifier).to receive(:create) { mock_identifier }
+              allow(Ezid::Identifier).to receive(:find) { mock_identifier }
+              allow(subject.permanent_id_manager).to receive(:record) { mock_identifier }
+            end
             it "should create a success event" do
               expect { subject.save }.to change { subject.update_events.count }.by(1)
             end
@@ -143,18 +136,8 @@ module Ddr
       end
 
       describe "workflow" do
-        before(:all) do
-          class Workflowable < ActiveFedora::Base
-            include AccessControllable
-            include HasAdminMetadata
-          end
-        end
 
-        after(:all) do
-          Ddr::Models.send(:remove_const, :Workflowable)
-        end
-
-        subject { Workflowable.new }
+        subject { FactoryGirl.build(:item) }
 
         describe "#published?" do
           context "object is published" do
@@ -184,7 +167,7 @@ module Ddr
             expect(subject.reload).to be_published
           end
         end
-        
+
         describe "#unpublish" do
           before { subject.publish }
           it "should unpublish the object" do
@@ -198,7 +181,7 @@ module Ddr
           it "should unpublish and persist the object" do
             subject.unpublish!
             expect(subject.reload).not_to be_published
-          end          
+          end
         end
       end
 
@@ -230,7 +213,7 @@ module Ddr
           end
         end
 
-      end    
+      end
     end
   end
 end
