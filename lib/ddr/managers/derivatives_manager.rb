@@ -51,7 +51,7 @@ module Ddr
       def generate_derivative!(derivative)
         Dir.mktmpdir do |tempdir|
           generator_source = create_source_file(tempdir)
-          generator_output = File.new(File.join(tempdir, "output"), 'wb')
+          generator_output = File.new(File.join(tempdir, "output.out"), 'wb')
           results = derivative.generator.new(generator_source.path, generator_output.path, derivative.options).generate
           generator_source.close unless generator_source.closed?
           if results.status.success?

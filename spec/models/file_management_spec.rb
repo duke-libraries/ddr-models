@@ -23,7 +23,7 @@ module Ddr
     RSpec.describe FileManagement, :type => :model do
 
       let(:object) { FileManageable.new(pid: 'test:543') }
-      let(:file) { fixture_file_upload("library-devil.tiff", "image/tiff") }
+      let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
 
       before(:all) do
         class FileManageable < ActiveFedora::Base
@@ -178,9 +178,9 @@ module Ddr
       end
 
       describe "#external_datastream_file_paths" do
-        let(:file1) { fixture_file_upload("image1.tiff", "image/tiff") }
-        let(:file2) { fixture_file_upload("image2.tiff", "image/tiff") }
-        let(:file3) { fixture_file_upload("image3.tiff", "image/tiff") }
+        let(:file1) { fixture_file_upload("imageA.tif", "image/tiff") }
+        let(:file2) { fixture_file_upload("imageB.tif", "image/tiff") }
+        let(:file3) { fixture_file_upload("imageC.tif", "image/tiff") }
         before do
           object.add_file(file1, "e_content")
           object.save
@@ -199,9 +199,9 @@ module Ddr
       end
 
       describe "cleanup on destroy" do
-        let(:file1) { fixture_file_upload("image1.tiff", "image/tiff") }
-        let(:file2) { fixture_file_upload("image2.tiff", "image/tiff") }
-        let(:file3) { fixture_file_upload("image3.tiff", "image/tiff") }
+        let(:file1) { fixture_file_upload("imageA.tif", "image/tiff") }
+        let(:file2) { fixture_file_upload("imageB.tif", "image/tiff") }
+        let(:file3) { fixture_file_upload("imageC.tif", "image/tiff") }
         before do
           object.add_file(file1, "e_content")
           object.save
