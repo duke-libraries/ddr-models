@@ -9,7 +9,11 @@ module Ddr
           versionable: true,
           control_group: "M"
 
-        has_attributes :local_id, :permanent_id, :permanent_url, :workflow_state,
+        has_attributes :admin_set,
+                       :local_id,
+                       :permanent_id,
+                       :permanent_url,
+                       :workflow_state,
           datastream: "adminMetadata",
           multiple: false
 
