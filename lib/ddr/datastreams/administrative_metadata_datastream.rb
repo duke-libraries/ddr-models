@@ -24,6 +24,8 @@ module Ddr
 
       property :local_id, predicate: RDF::Vocab::Identifiers.local
 
+      property :admin_set, predicate: Ddr::Vocab::Asset.adminSet
+
     end
   end
 end
