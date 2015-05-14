@@ -58,6 +58,9 @@ module Ddr
     # Regexp for building external file subpath from hex digest
     mattr_accessor :external_file_subpath_regexp
 
+    # Image server URL
+    mattr_accessor :image_server_url
+
     # Whether permanent IDs should be automatically assigned on create
     mattr_accessor :auto_assign_permanent_ids
 
