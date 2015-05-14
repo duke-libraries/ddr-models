@@ -18,6 +18,10 @@ module Ddr
         id.sub(/:/, "-")
       end
 
+      def admin_set
+        get(Ddr::IndexFields::ADMIN_SET)
+      end
+
       def local_id
         get(Ddr::IndexFields::LOCAL_ID)
       end
