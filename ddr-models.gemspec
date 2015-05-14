@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   s.description = %q{Models used in the Duke Digital Repository}
   s.license     = "BSD-3-Clause"
 
-  s.files = Dir["{app,config,db,lib}/**/*", "LICENSE.txt", "Rakefile", "README.md"]
-  s.test_files = Dir["spec/**/*"]
+  s.files       = `git ls-files -z`.split("\x0")
+  s.test_files  = s.files.grep(%r{^spec/})
 
   s.require_paths = ["lib", "app/models"]
 
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency "resque", "~> 1.25"
   s.add_dependency "rdf-vocab", "~> 0.8"
   s.add_dependency "net-ldap", "~> 0.11"
+  s.add_dependency "cancancan", "~> 1.12"
 
   s.add_development_dependency "bundler", "~> 1.7"
   s.add_development_dependency "rake"

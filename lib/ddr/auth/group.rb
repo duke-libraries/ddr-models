@@ -7,16 +7,16 @@ module Ddr
 
       attr_reader :rule
 
-      def initialize(id, opts={}, &block)
+      def initialize(id, opts={}, &rule)
         super(id)
         @label = opts[:label]
-        @rule = block
+        @rule = rule
         freeze
       end
 
-      # @param user [Ddr::Auth::User]      
-      def has_member?(user)
-        rule ? instance_exec(user, &rule) : user.member_of?(self)
+      # @param user [Ddr::Auth::AuthContext]
+      def has_member?(auth_context)
+        rule ? instance_exec(auth_context, &rule) : auth_context.member_of?(self)
       end
 
       def id

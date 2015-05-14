@@ -5,18 +5,22 @@ module Ddr
 
       LEGACY_ROLES = [:administrator, :editor, :downloader, :contributor]
 
+      # @return [Ddr::Auth::Roles::RoleSet]
       def legacy_downloader_to_resource_roles
-        principals(:downloader).map do |name|
-          agent_type = (name =~ /@/ ? :person : :group)
-          Roles::Role.build(:type=>:downloader, agent_type=>name, :scope=>:resource)
+        roles = adminMetadata.downloader.map do |name|
+          Roles::Role.build type: Roles::DOWNLOADER, agent: name, scope: Roles::RESOURCE_SCOPE
         end
+        Roles::DetachedRoleSet.new(roles)
       end
 
       def principal_has_role?(principal, role)
+        warn "[DEPRECATION] `principal_has_role?` is deprecated and should not be used with role-based access control."
         ( principals(role) & Array(principal) ).any?
       end
 
       def principals(role)
+        warn "[DEPRECATION] `principals(role)` is deprecated and should not be used with role-based access control." \
+             " If need be, access the legacy role directly on `adminMetadata` by property name."
         if LEGACY_ROLES.include?(role)
           adminMetadata.send(role)
         else

@@ -1,9 +1,6 @@
 #
 # A Collection is a conceptual and administrative entity containing a set of items.
 #
-# Provides default permissions (Hydra admin policy) for objects associated with the collection
-# via an isGovernedBy relation.
-#
 class Collection < Ddr::Models::Base
 
   include Hydra::AdminPolicyBehavior
@@ -32,7 +29,6 @@ class Collection < Ddr::Models::Base
   alias_method :items, :children
   alias_method :item_ids, :child_ids
 
-  before_save :set_policy_roles, if: :default_permissions_changed?
   after_create :set_admin_policy
 
   validates_presence_of :title
@@ -41,7 +37,7 @@ class Collection < Ddr::Models::Base
   #
   # @return A lazy enumerator of SolrDocuments.
   def components_from_solr
-    query = "#{Ddr::IndexFields::COLLECTION_URI}:#{RSolr.escape(internal_uri)}"
+    query = "#{Ddr::IndexFields::COLLECTION_URI}:#{RSolr.solr_escape(internal_uri)}"
     filter = ActiveFedora::SolrService.construct_query_for_rel(:has_model => Component.to_class_uri)
     results = ActiveFedora::SolrService.query(query, fq: filter, rows: 100000)
     results.lazy.map {|doc| SolrDocument.new(doc)}
@@ -82,14 +78,19 @@ class Collection < Ddr::Models::Base
     end
   end
 
-  # Sets policy roles based on default permissions
-  def set_policy_roles
-    roles.revoke_policy_roles
+  def set_policy_roles_from_legacy_data
+    roles.revoke *(roles.in_policy_scope)
     roles.grant *(legacy_default_permissions.to_policy_roles)
   end
+  alias_method :set_policy_roles, :set_policy_roles_from_legacy_data
 
   def legacy_default_permissions
     Ddr::Auth::LegacyPermissions.new(default_permissions)
+  end
+
+  def grant_roles_to_creator(creator)
+    roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::RESOURCE_SCOPE
+    roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::POLICY_SCOPE
   end
 
   private
@@ -97,11 +98,6 @@ class Collection < Ddr::Models::Base
   def set_admin_policy
     self.admin_policy = self
     self.save
-  end
-
-  def default_permissions_changed?
-    # XXX This is not strictly accurate, but close enough
-    defaultRights.changed?
   end
 
 end

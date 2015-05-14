@@ -7,7 +7,6 @@ module Ddr
 
       included do
         alias_method :pid, :id
-        delegate :role_based_permissions, to: :roles
       end
 
       def to_partial_path
@@ -206,11 +205,11 @@ module Ddr
       end
 
       def roles
-        @roles ||= Ddr::Managers::SolrDocumentRoleManager.new(self)
+        @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
       end
 
       def access_role
-         get("access_role_ssi")
+         get(Ddr::IndexFields::ACCESS_ROLE)
       end
 
       private
