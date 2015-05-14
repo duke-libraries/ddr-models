@@ -48,6 +48,10 @@ module Ddr
         Ddr::Models.external_file_subpath_pattern = ENV["EXTERNAL_FILE_SUBPATH_PATTERN"] || "--"
       end
 
+      initializer "ddr_models.image_server" do
+        Ddr::Models.image_server_url = ENV["IMAGE_SERVER_URL"]
+      end
+
       # Add custom predicates to ActiveFedora
       initializer "ddr_models.predicates" do
         ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
