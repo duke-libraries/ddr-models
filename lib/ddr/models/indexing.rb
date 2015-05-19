@@ -11,17 +11,15 @@ module Ddr
 
       def index_fields
         fields = {
-          TITLE => title_display,
-          INTERNAL_URI => internal_uri,
-          IDENTIFIER => identifier_sort,
-          WORKFLOW_STATE => workflow_state
+          TITLE          => title_display,
+          INTERNAL_URI   => internal_uri,
+          IDENTIFIER     => identifier_sort,
+          WORKFLOW_STATE => workflow_state,
+          LOCAL_ID       => local_id,
+          ADMIN_SET      => admin_set,
+          PERMANENT_ID   => permanent_id,
+          PERMANENT_URL  => permanent_url,
         }
-        if permanent_id.present?
-          fields[PERMANENT_ID] = permanent_id
-        end
-        if permanent_url.present?
-          fields[PERMANENT_URL] = permanent_url
-        end
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last
           fields.merge!(last_fixity_check.to_solr) if last_fixity_check
@@ -59,9 +57,6 @@ module Ddr
         end
         if respond_to? :roles
           fields.merge!(roles.index_fields)
-        end
-        if local_id.present?
-          fields[LOCAL_ID] = local_id
         end
         fields
       end
