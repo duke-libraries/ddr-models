@@ -95,6 +95,18 @@ module Ddr
         Ddr::Events::VirusCheckEvent.for_object(self)
       end
 
+      def last_virus_check
+        virus_checks.last
+      end
+
+      def last_virus_check_on
+        last_virus_check && last_virus_check.event_date_time
+      end
+
+      def last_virus_check_outcome
+        last_virus_check && last_virus_check.outcome
+      end
+
       def content_changed?
         content.external? ? content.dsLocation_changed? : content.content_changed?
       end
