@@ -14,6 +14,13 @@ RSpec.shared_examples "a DDR model" do
         expect { subject.destroy }.to change { Ddr::Events::DeletionEvent.for_object(subject).count }.from(0).to(1)
       end
     end
+
+    describe "last virus check" do
+      let!(:fixity_check) { Ddr::Events::FixityCheckEvent.new }
+      before { allow(subject).to receive(:last_fixity_check) { fixity_check } }
+      its(:last_fixity_check_on) { should eq(fixity_check.event_date_time) }
+      its(:last_fixity_check_outcome) { should eq(fixity_check.outcome) }
+    end
   end
 
 end
