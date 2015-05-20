@@ -90,7 +90,7 @@ module Ddr
       def admin_policy
         if admin_policy_pid
           query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
-          self.class.new(ActiveFedora::SolrService.query(query))
+          self.class.new(ActiveFedora::SolrService.query(query).first)
         end
       end
 

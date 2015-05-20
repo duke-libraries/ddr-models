@@ -36,14 +36,12 @@ RSpec.describe SolrDocument, type: :model do
 
   describe "#admin_policy" do
     describe "when there is not admin policy relationship" do
-      its(:admin_policy) { is_expected.to be_nil }
+      its(:admin_policy) { should be_nil }
     end
     describe "where there is an admin policy relationship" do
-      let!(:query) { ActiveFedora::SolrService.construct_query_for_pids(["test:1"]) }
-      let!(:admin_policy) { described_class.new({"id"=>"test:1"}) }
+      let(:admin_policy) { FactoryGirl.create(:collection) }
       before do
-        subject[Ddr::IndexFields::IS_GOVERNED_BY] = ["info:fedora/test:1"]
-        allow(ActiveFedora::SolrService).to receive(:query).with(query) { admin_policy }
+        subject[Ddr::IndexFields::IS_GOVERNED_BY] = [ admin_policy.internal_uri ]
       end
       it "should get the admin policy document" do
         expect(subject.admin_policy.id).to eq(admin_policy.id)
