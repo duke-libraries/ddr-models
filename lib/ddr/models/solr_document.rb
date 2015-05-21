@@ -228,7 +228,7 @@ module Ddr
       end
 
       def get_json(field)
-        JSON.parse(self[field].first)
+        JSON.parse Array(self[field]).first
       end
 
       def parse_date(date)
