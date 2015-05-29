@@ -14,13 +14,15 @@ module Ddr
       def update_derivatives(schedule=SCHEDULE_LATER)
         raise ArgumentError, "Must be one of #{SCHEDULES}" unless SCHEDULES.include?(schedule)
         Ddr::Derivatives::DERIVATIVES.values.each do |derivative|
-          # Need to update derivative if object has a datastream for this type of derivative and
-          # either (or both) of the following conditions are true:
-          # - object already has content in the derivative's datastream (need to delete or replace it)
-          # - the derivative can be generated for this object
-          if object.datastreams.include?(derivative.datastream) &&
-                (object.datastreams[derivative.datastream].has_content? || generatable?(derivative))
-            schedule == SCHEDULE_NOW ? update_derivative(derivative) : Resque.enqueue(DerivativeJob, object.pid, derivative.name)
+          if Ddr::Derivatives.update_derivatives.include?(derivative.name)
+            # Need to update derivative if object has a datastream for this type of derivative and
+            # either (or both) of the following conditions are true:
+            # - object already has content in the derivative's datastream (need to delete or replace it)
+            # - the derivative can be generated for this object
+            if object.datastreams.include?(derivative.datastream) &&
+                  (object.datastreams[derivative.datastream].has_content? || generatable?(derivative))
+              schedule == SCHEDULE_NOW ? update_derivative(derivative) : Resque.enqueue(DerivativeJob, object.pid, derivative.name)
+            end
           end
         end
       end
