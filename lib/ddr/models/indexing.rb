@@ -11,14 +11,16 @@ module Ddr
 
       def index_fields
         fields = {
-          TITLE          => title_display,
-          INTERNAL_URI   => internal_uri,
-          IDENTIFIER     => identifier_sort,
-          WORKFLOW_STATE => workflow_state,
-          LOCAL_ID       => local_id,
-          ADMIN_SET      => admin_set,
-          PERMANENT_ID   => permanent_id,
-          PERMANENT_URL  => permanent_url,
+          TITLE             => title_display,
+          INTERNAL_URI      => internal_uri,
+          IDENTIFIER        => identifier_sort,
+          WORKFLOW_STATE    => workflow_state,
+          LOCAL_ID          => local_id,
+          ADMIN_SET         => admin_set,
+          ADMIN_SET_FACET   => admin_set_facet,
+          COLLECTION_FACET  => collection_facet,
+          PERMANENT_ID      => permanent_id,
+          PERMANENT_URL     => permanent_url,
         }
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last
@@ -70,6 +72,22 @@ module Ddr
 
       def identifier_sort
         identifier.first
+      end
+
+      def associated_collection
+        admin_policy
+      end
+
+      def admin_set_facet
+        if admin_set.present?
+          admin_set
+        elsif associated_collection.present?
+          associated_collection.admin_set
+        end
+      end
+
+      def collection_facet
+        associated_collection.internal_uri if associated_collection.present?
       end
 
     end

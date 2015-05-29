@@ -8,6 +8,8 @@ module Ddr
     ACCESS_ROLE                 = solr_name :access_role, :stored_sortable
     ACTIVE_FEDORA_MODEL         = solr_name :active_fedora_model, :stored_sortable
     ADMIN_SET                   = solr_name :admin_set, :stored_sortable
+    ADMIN_SET_FACET             = solr_name :admin_set_facet, :facetable
+    COLLECTION_FACET            = solr_name :collection_facet, :facetable
     COLLECTION_URI              = solr_name :collection_uri, :symbol
     CONTENT_CONTROL_GROUP       = solr_name :content_control_group, :searchable, type: :string
     CONTENT_SIZE                = solr_name :content_size, :stored_sortable, type: :integer
