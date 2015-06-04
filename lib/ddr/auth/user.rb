@@ -10,7 +10,7 @@ module Ddr
 
         attr_writer :groups
 
-        delegate :can?, :cannot?, to: :ability
+        delegate :can, :can?, :cannot, :cannot?, to: :ability
 
         validates_uniqueness_of :username, :case_sensitive => false
         validates_format_of :email, with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/

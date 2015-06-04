@@ -11,6 +11,13 @@ RSpec.shared_examples "an object that can have content" do
     subject.validate_checksum!(checksum, "SHA-256")
   end
 
+  describe "last virus check" do
+    let!(:virus_check) { Ddr::Events::VirusCheckEvent.new }
+    before { allow(subject).to receive(:last_virus_check) { virus_check } }
+    its(:last_virus_check_on) { should eq(virus_check.event_date_time) }
+    its(:last_virus_check_outcome) { should eq(virus_check.outcome) }
+  end
+
   describe "indexing" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
     before { subject.upload file }
@@ -21,14 +28,12 @@ RSpec.shared_examples "an object that can have content" do
 
   describe "extracted text" do
     describe "when it is not present" do
-      its(:has_extracted_text?) { is_expected.to be false }
-      it "should not be indexed" do
-        expect(subject.to_solr).not_to include(Ddr::IndexFields::EXTRACTED_TEXT)
-      end
+      its(:has_extracted_text?) { should be false }
+      its(:to_solr) { should_not include(Ddr::IndexFields::EXTRACTED_TEXT) }
     end
     describe "when it is present" do
       before { subject.extractedText.content = "This is my text. See Spot run." }
-      its(:has_extracted_text?) { is_expected.to be true }
+      its(:has_extracted_text?) { should be true }
       it "should be indexed" do
         expect(subject.to_solr[Ddr::IndexFields::EXTRACTED_TEXT]).to eq("This is my text. See Spot run.")
       end
@@ -39,27 +44,19 @@ RSpec.shared_examples "an object that can have content" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
     context "defaults" do
       before { subject.add_file file, "content" }
-      it "should have an original_filename" do
-        expect(subject.original_filename).to eq("imageA.tif")
-      end
-      it "should have a content_type" do
-        expect(subject.content_type).to eq("image/tiff")
-      end
+      its(:original_filename) { should eq("imageA.tif") }
+      its(:content_type) { should eq("image/tiff") }
       it "should create a 'virus check' event for the object" do
         expect { subject.save }.to change { subject.virus_checks.count }
       end
     end
     context "with option `:original_name=>false`" do
       before { subject.add_file file, "content", original_name: false }
-      it "should not have an original_filename" do
-        expect(subject.original_filename).to be_nil
-      end
+      its(:original_filename) { should be_nil }
     end
     context "with `:original_name` option set to a string" do
       before { subject.add_file file, "content", original_name: "another-name.tiff" }
-      it "should have an original_filename" do
-        expect(subject.original_filename).to eq("another-name.tiff")
-      end
+      its(:original_filename) { should eq("another-name.tiff") }
     end
   end
 

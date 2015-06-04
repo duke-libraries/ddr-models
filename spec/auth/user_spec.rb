@@ -6,6 +6,25 @@ module Ddr
 
       subject { FactoryGirl.build(:user) }
 
+      describe "delegation to ability" do
+        it "should delegate `can`" do
+          expect(subject.ability).to receive(:can).with(:edit, "foo")
+          subject.can :edit, "foo"
+        end
+        it "should delegate `cannot`" do
+          expect(subject.ability).to receive(:cannot).with(:edit, "foo")
+          subject.cannot :edit, "foo"
+        end
+        it "should delegate `can?`" do
+          expect(subject.ability).to receive(:can?).with(:edit, "foo")
+          subject.can? :edit, "foo"
+        end
+        it "should delegate `cannot?`" do
+          expect(subject.ability).to receive(:cannot?).with(:edit, "foo")
+          subject.cannot? :edit, "foo"
+        end
+      end
+
       describe "#member_of?" do
         before do
           allow(subject).to receive(:groups) { [Group.new("foo"), Group.new("bar")] }

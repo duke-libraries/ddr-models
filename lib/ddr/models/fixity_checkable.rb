@@ -15,6 +15,18 @@ module Ddr
         Ddr::Actions::FixityCheck.execute(self)
       end
 
+      def last_fixity_check
+        fixity_checks.last
+      end
+
+      def last_fixity_check_on
+        last_fixity_check && last_fixity_check.event_date_time
+      end
+
+      def last_fixity_check_outcome
+        last_fixity_check && last_fixity_check.outcome
+      end
+
     end
   end
 end

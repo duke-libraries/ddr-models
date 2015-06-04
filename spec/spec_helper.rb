@@ -110,6 +110,9 @@ RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.clean
     ActiveFedora::Base.destroy_all
+    Ddr::Derivatives.configure do |config|
+      config.update_derivatives = [ :multires_image, :thumbnail ]
+    end
     Ddr::Models.configure do |config|
       config.external_file_store = Dir.mktmpdir
       config.multires_image_external_file_store = Dir.mktmpdir
