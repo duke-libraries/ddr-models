@@ -65,7 +65,7 @@ module Ddr
 
       initializer "ddr_auth.groups" do
         Warden::Manager.after_set_user do |user, auth, opts|
-          user.groups = Ddr::Auth::Groups.build(user, auth.env)
+          user.context = auth.env
         end
       end
 

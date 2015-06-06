@@ -1,105 +1,62 @@
-require "delegate"
-require "yaml"
-
 module Ddr
   module Auth
-    # Wraps an Array of Group objects
-    class Groups < SimpleDelegator
+    module Groups
 
-      PUBLIC = Group.new "public", label: "Public"
-      REGISTERED = Group.new "registered", label: "Registered Users"
-      DUKE_EPPN = Group.new "duke.all", label: "Duke NetIDs"
-      Superusers = Group.new "superusers", label: "Superusers"
-      CollectionCreators = Group.new "collection_creators", label: "Collection Creators"
-
-      ISMEMBEROF_RE = Regexp.new('urn:mace:duke\.edu:groups:library:repository:ddr:[\w:]+')
-      DUKE_EPPN_RE = Regexp.new('(?=@duke\.edu)')
-      AFFILIATION_RE = Regexp.new('(%{a})(?=@duke\.edu)' % {a: Affiliation::VALUES.join("|")})
+      PUBLIC = Group.new "public", label: "Public" do |user|
+        true
+      end
+      
+      REGISTERED = Group.new "registered", label: "Registered Users" do |user|
+        user.persisted?
+      end
+      
+      DUKE_ALL = Group.new "duke.all", label: "Duke NetIDs" do |user|
+        !!(user.to_s =~ /@duke\.edu\z/)
+      end
+      
+      SUPERUSERS = Group.new "ddr.superusers", label: "Superusers" do |user|
+        user.context.ismemberof.include? Ddr::Auth.superuser_group
+      end
+      
+      COLLECTION_CREATORS = Group.new "ddr.collection_creators",
+                                      label: "Collection Creators" do |user|
+        user.context.ismemberof.include? Ddr::Auth.collection_creators_group
+      end
 
       class << self
 
-        # Return the list of all groups available for use in the repository
+        def const_missing(name)
+          case name
+          when :Superusers
+            warn "[DEPRECATION] `Ddr::Auth::Groups::Superusers` is deprecated. " \
+                 "Use `Ddr::Auth::Groups::SUPERUSERS` instead."
+            SUPERUSERS
+          when :CollectionCreators
+            warn "[DEPRECATION] `Ddr::Auth::Groups::CollectionCreators` is deprecated. " \
+                 "Use `Ddr::Auth::Groups::COLLECTION_CREATORS` instead."
+            COLLECTION_CREATORS
+          when :DUKE_EPPN
+            warn "[DEPRECATION] `Ddr::Auth::Groups::DUKE_EPPN` is deprecated. " \
+                 "Use `Ddr::Auth::Groups::DUKE_ALL` instead."
+            DUKE_ALL
+          else
+            super
+          end
+        end
+
+        # Return the list of all groups available for use in the repository,
+        #   i.e., that can be used to assert access controls.
         # @return [Array<Group>] the groups
         def all
-          affiliation + remote + builtin
+          [ PUBLIC, REGISTERED, DUKE_ALL, Affiliation.groups, Ddr::Auth.grouper_gateway.repository_groups ].flatten
         end
 
-        # Build a Groups instance for the user and env context (if any)
-        def build(user, env=nil)
-          groups = [ PUBLIC ] # everybody
-          if user.persisted?
-            groups << REGISTERED
-            groups << DUKE_EPPN if duke_eppn?(user, env)
-            groups.concat remote(user, env)
-            groups.concat affiliation(user, env)
-          end
-          groups << Superusers if groups.include?(Ddr::Auth.superuser_group)
-          groups << CollectionCreators if groups.include?(Ddr::Auth.collection_creators_group)
-          new(groups)
+        # The list of dynamically assigned groups.
+        # @return [Array<Group>] the groups
+        def dynamic
+          [ PUBLIC, REGISTERED, DUKE_ALL, SUPERUSERS, COLLECTION_CREATORS ]
         end
 
-        def remote(*args)
-          if args.empty?
-            grouper.repository_groups
-          else
-            user, env = args
-            if env && env["ismemberof"]
-              env["ismemberof"].scan(ISMEMBEROF_RE).map do |name|
-                Group.new(name.sub(/^urn:mace:duke.edu:groups/, "duke"))
-              end
-            else
-              grouper.user_groups(user)
-            end
-          end
-        end
-
-        def affiliation(*args)
-          if args.empty?
-            Affiliation.groups
-          else
-            user, env = args
-            affiliations =
-              if env && env["affiliation"]
-                env["affiliation"].scan(AFFILIATION_RE).flatten
-              else
-                ldap.affiliations(user.principal_name)
-              end
-            affiliations.map { |a| Affiliation.group(a) }
-          end
-        end
-
-        def duke_eppn?(user, env)
-          eppn =
-            if env && env["eppn"]
-              env["eppn"]
-            else
-              user.principal_name
-            end
-          !!(eppn =~ DUKE_EPPN_RE)
-        end
-
-        def builtin
-          [PUBLIC, REGISTERED, DUKE_EPPN]
-        end
-
-        def grouper
-          Ddr::Auth.grouper_gateway.new
-        end
-
-        def ldap
-          Ddr::Auth.ldap_gateway.new
-        end
-
-      end
-
-      private_class_method :ldap, :grouper, :remote, :affiliation, :builtin, :duke_eppn?
-
-      def inspect
-        "#<#{self.class.name} (#{self})>"
-      end
-
-      def agents
-        map(&:agent)
       end
 
     end
