@@ -9,7 +9,7 @@ RSpec.describe ApplicationController, type: :controller do
 
   before do
     sign_in user
-    allow(controller.current_user).to receive(:groups) { Ddr::Auth::Groups.new([Ddr::Auth::Group.new("foo"), Ddr::Auth::Group.new("bar")]) }
+    allow(controller.current_user).to receive(:groups) { [ Ddr::Auth::Group.new("foo"), Ddr::Auth::Group.new("bar") ] }
   end
 
   describe "#resource_role_filters" do

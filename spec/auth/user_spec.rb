@@ -6,6 +6,16 @@ module Ddr
 
       subject { FactoryGirl.build(:user) }
 
+      describe "context" do
+        let(:env) do
+          { "affiliation"=>"staff@duke.edu;student@duke.edu",
+            "ismemberof"=>"group1;group2;group3"
+          }
+        end
+        before { subject.context = env }
+        its(:affiliations) { should contain_exactly(Affiliation::STAFF, Affiliation::STUDENT) }
+      end
+
       describe "delegation to ability" do
         it "should delegate `can`" do
           expect(subject.ability).to receive(:can).with(:edit, "foo")
@@ -27,7 +37,7 @@ module Ddr
 
       describe "#member_of?" do
         before do
-          allow(subject).to receive(:groups) { [Group.new("foo"), Group.new("bar")] }
+          allow(subject).to receive(:groups) { [ Group.new("foo"), Group.new("bar") ] }
         end
         it "should return true if the user is a member of the group" do
           expect(subject).to be_member_of("foo")
@@ -49,7 +59,7 @@ module Ddr
           expect(subject).not_to be_authorized_to_act_as_superuser
         end
         it "should return true if the user is a member of the superuser group" do
-          allow(subject).to receive(:groups) { [ Groups::Superusers ] }
+          allow(subject).to receive(:groups) { [ Groups::SUPERUSERS ] }
           expect(subject).to be_authorized_to_act_as_superuser
         end
       end
@@ -62,7 +72,7 @@ module Ddr
 
       describe "#agents" do
         it "should be a array of the user's groups and the user's person agent" do
-          allow(subject).to receive(:groups) { Groups.new([Group.new("foo"), Group.new("bar")]) }
+          allow(subject).to receive(:groups) { [ Group.new("foo"), Group.new("bar") ] }
           expect(subject.agents).to contain_exactly("foo", "bar", subject.agent)
         end
       end

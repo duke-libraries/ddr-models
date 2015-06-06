@@ -56,16 +56,25 @@ module Ddr
         @ability ||= ::Ability.new(self)
       end
 
+      def affiliations
+        context.affiliation.map { |a| Affiliation.get(a.sub(/@duke\.edu\z/, "")) }.flatten
+      end
+
+      def context
+        @context ||= Context.new
+      end
+
+      def context=(env)
+        @context = env.is_a?(Context) ? env : Context.new(env)
+        reset!
+      end
+
       def groups
-        @groups ||= Groups.build(self)
+        @groups ||= calculate_groups
       end
 
       def member_of?(group)
-        if group.is_a? Group
-          groups.include?(group)
-        else
-          member_of?(Group.new(group))
-        end
+        groups.include?(group.is_a?(Group) ? group : Group.new(group))
       end
       alias_method :is_member_of?, :member_of?
 
@@ -80,7 +89,7 @@ module Ddr
       alias_method :eppn, :principal_name
 
       def agents
-        groups.agents + [agent]
+        groups.map(&:agent) << agent
       end
 
       def principals
@@ -89,6 +98,25 @@ module Ddr
 
       def has_role?(obj, role)
         obj.principal_has_role?(principals, role)
+      end
+
+      private
+
+      def calculate_groups
+        groups = []
+        groups.concat affiliations.map(&:group)
+        groups.concat context.groups
+        groups.concat dynamic_groups
+        groups
+      end
+
+      def dynamic_groups
+        Groups.dynamic.select { |group| group.has_member?(self) }
+      end
+
+      def reset!
+        @ability = nil
+        @groups = nil
       end
 
     end

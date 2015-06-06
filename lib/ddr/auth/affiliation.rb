@@ -1,50 +1,70 @@
 module Ddr
   module Auth
-    # @abstract
     class Affiliation < SimpleDelegator
 
       private_class_method :new
 
       VALUES = %w( faculty staff student emeritus affiliate alumni ).freeze
 
-      VALUES.each do |value|
-        const_set(value.capitalize, new(value).freeze)
-      end
-
-      def group
-        Group.new(group_name, label: label)
-      end
-
-      def label
-        "Duke #{capitalize}"
-      end
-
-      def group_name
-        "duke.#{self}"
-      end
-
-      def inspect
-        "#<#{self.class.name}(#{__getobj__.inspect})>"
-      end
-
       class << self
+
+        def const_missing(name)
+          case name
+          when :Faculty, :Staff, :Student, :Emeritus, :Affiliate, :Alumni
+            warn "[DEPRECATION] `Ddr::Auth::Affiliation::#{name}` is deprecated. " \
+                 "Use `Ddr::Auth::Affiliation::#{name.to_s.upcase}` instead."
+            const_get(name.to_s.upcase)
+          else
+            super
+          end
+        end
+
         def all
           @all ||= VALUES.map { |value| get(value) }
         end
 
-        def get(affiliation)
-          const_get(affiliation.capitalize)
+        # @param affiliation [String, Symbol]
+        # @return [Ddr::Auth::Affiliation] or nil
+        def get(affiliation_value)
+          if VALUES.include?(affiliation_value)
+            const_get(affiliation_value.upcase)
+          end
         end
 
-        def group(affiliation)
-          get(affiliation).group
+        # @param affiliation [String, Symbol]
+        # @return [Ddr::Auth::Group] or nil
+        def group(affiliation_value)
+          if affiliation = get(affiliation_value)
+            affiliation.group
+          end
         end
 
         def groups
           @groups ||= all.map(&:group)
         end
+        
       end
 
+      attr_reader :group
+      
+      def initialize(affiliation)
+        super
+        @group = Group.new "duke.#{self}", label: "Duke #{capitalize}"
+        freeze
+      end
+
+      def value
+        __getobj__
+      end
+
+      def inspect
+        "#<#{self.class.name} #{value.inspect}>"
+      end
+
+      VALUES.each do |value|
+        const_set value.upcase, new(value)
+      end
+      
     end
   end
 end

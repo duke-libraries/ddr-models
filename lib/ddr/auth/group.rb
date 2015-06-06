@@ -5,26 +5,39 @@ module Ddr
     # Wraps a String
     class Group < SimpleDelegator
 
-      attr_reader :label
+      attr_reader :rule
 
-      def initialize(name, opts={})
-        super(name)
-        @label = opts.fetch(:label, name)
+      def initialize(id, opts={}, &block)
+        super(id)
+        @label = opts[:label]
+        @rule = block
         freeze
       end
 
-      # The inverse of `Ddr::Auth::User#member_of?(group)`
+      # @param user [Ddr::Auth::User]      
       def has_member?(user)
-        user.groups.include?(self)
+        rule ? instance_exec(user, &rule) : user.member_of?(self)
+      end
+
+      def id
+        __getobj__
+      end
+
+      def label
+        @label || id
+      end
+
+      def agent
+        to_s
       end
 
       def to_agent
-        to_s
+        warn "[DEPRECATION] `#{self.class.name}#to_agent` is deprecated. Use `#{self.class.name}#agent instead."
+        agent
       end
-      alias_method :agent, :to_agent
 
       def inspect
-        "#<#{self.class.name}(#{__getobj__.inspect}, label=#{label.inspect})>"
+        "#<#{self.class.name} id=#{id.inspect}, label=#{label.inspect}>"
       end
 
     end

@@ -4,19 +4,33 @@ module Ddr::Auth
     describe "class methods" do
       describe ".all" do
         subject { described_class.all }
-        it { is_expected.to eq([described_class::Faculty, described_class::Staff, described_class::Student, described_class::Emeritus, described_class::Affiliate, described_class::Alumni]) }
+        it { is_expected.to eq([described_class::FACULTY, described_class::STAFF, described_class::STUDENT, described_class::EMERITUS, described_class::AFFILIATE, described_class::ALUMNI]) }
       end
       describe ".get" do
-        subject { described_class.get("faculty") }
-        it { is_expected.to eq(described_class::Faculty) }
+        subject { described_class.get(value) }
+        describe "with a valid value" do
+          let(:value) { "faculty" }
+          it { should eq(described_class::FACULTY) }
+        end
+        describe "with an invalid value" do
+          let(:value) { "foo" }
+          it { should be_nil }
+        end        
       end
       describe ".group" do
-        subject { described_class.group("faculty") }
-        it { is_expected.to eq(described_class::Faculty.group) }
+        subject { described_class.group(value) }
+        describe "with a valid value" do
+          let(:value) { "faculty" }
+          it { should eq(described_class::FACULTY.group) }
+        end
+        describe "with an invalid value" do
+          let(:value) { "foo" }
+          it { should be_nil }
+        end
       end
       describe ".groups" do
         subject { described_class.groups }
-        it { is_expected.to eq([described_class::Faculty.group, described_class::Staff.group, described_class::Student.group, described_class::Emeritus.group, described_class::Affiliate.group, described_class::Alumni.group]) }
+        it { is_expected.to eq([described_class::FACULTY.group, described_class::STAFF.group, described_class::STUDENT.group, described_class::EMERITUS.group, described_class::AFFILIATE.group, described_class::ALUMNI.group]) }
       end
     end
 
@@ -29,42 +43,42 @@ module Ddr::Auth
           it "should be named \"duke.#{name}\"" do
             expect(subject.group).to eq("duke.#{name}")
           end
-          it "should have a label" do
+          it "should have the label \"Duke #{name.capitalize}\"" do
             expect(subject.group.label).to eq("Duke #{name.capitalize}")
           end
         end
       end
-      describe "Faculty" do
-        subject { described_class::Faculty }
+      describe "FACULTY" do
+        subject { described_class::FACULTY }
         it_behaves_like "an affiliation constant", "faculty"
       end
-      describe "Staff" do
-        subject { described_class::Staff }
+      describe "STAFF" do
+        subject { described_class::STAFF }
         it_behaves_like "an affiliation constant", "staff"
       end
-      describe "Student" do
-        subject { described_class::Student }
+      describe "STUDENT" do
+        subject { described_class::STUDENT }
         it_behaves_like "an affiliation constant", "student"
       end
-      describe "Affiliate" do
-        subject { described_class::Affiliate }
+      describe "AFFILIATE" do
+        subject { described_class::AFFILIATE }
         it_behaves_like "an affiliation constant", "affiliate"
       end
-      describe "Emeritus" do
-        subject { described_class::Emeritus }
+      describe "EMERITUS" do
+        subject { described_class::EMERITUS }
         it_behaves_like "an affiliation constant", "emeritus"
       end
-      describe "Alumni" do
-        subject { described_class::Alumni }
+      describe "ALUMNI" do
+        subject { described_class::ALUMNI }
         it_behaves_like "an affiliation constant", "alumni"
       end
     end
 
     describe "instance methods" do
       describe "#group" do
-        subject { described_class::Faculty }
+        subject { described_class::FACULTY }
         it "should return the group for the affiliation" do
-          expect(subject.group).to eq(Group.new("duke.faculty"))
+          expect(subject.group).to be_a(Group)
         end
       end
     end

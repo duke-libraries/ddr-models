@@ -4,6 +4,7 @@ module Ddr
 
     autoload :Ability
     autoload :Affiliation
+    autoload :Context
     autoload :FailureApp
     autoload :Group
     autoload :GrouperGateway
