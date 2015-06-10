@@ -14,8 +14,6 @@ module Ddr
 
         has_attributes :file_group, :file_use, :order,
                        datastream: "structMetadata", multiple: false
-
-        after_create :assign_struct_metadata!
       end
 
       def assign_struct_metadata!
