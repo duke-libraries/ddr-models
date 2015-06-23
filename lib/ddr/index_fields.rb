@@ -21,7 +21,7 @@ module Ddr
     FILE_GROUP                  = solr_name :struct_metadata__file_group, :stored_sortable
     FILE_USE                    = solr_name :struct_metadata__file_use, :stored_sortable
     HAS_MODEL                   = solr_name :has_model, :symbol
-    IDENTIFIER                  = solr_name :identifier, :stored_sortable
+    IDENTIFIER_ALL              = solr_name :identifier_all, :symbol
     INTERNAL_URI                = solr_name :internal_uri, :stored_sortable
     IS_ATTACHED_TO              = solr_name :is_attached_to, :symbol
     IS_EXTERNAL_TARGET_FOR      = solr_name :is_external_target_for, :symbol

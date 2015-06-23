@@ -13,7 +13,7 @@ module Ddr
         fields = {
           TITLE             => title_display,
           INTERNAL_URI      => internal_uri,
-          IDENTIFIER        => identifier_sort,
+          IDENTIFIER_ALL    => all_identifiers,
           WORKFLOW_STATE    => workflow_state,
           LOCAL_ID          => local_id,
           ADMIN_SET         => admin_set,
@@ -70,8 +70,8 @@ module Ddr
         "[#{pid}]"
       end
 
-      def identifier_sort
-        identifier.first
+      def all_identifiers
+        identifier + [local_id, permanent_id, pid].compact
       end
 
       def associated_collection
