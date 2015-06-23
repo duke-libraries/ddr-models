@@ -34,3 +34,26 @@ RSpec.shared_examples "an object that has a display title" do
     end
   end
 end
+
+RSpec.shared_examples "an object that has identifiers" do
+  describe "#all_identifiers" do
+    let(:object) { described_class.new(pid: 'test:3') }
+    subject { object.all_identifiers }
+    context "has descriptive identifiers, local ID, permanent ID, and PID" do
+      before do
+        object.identifier = [ 'ID001', 'ID002' ]
+        object.local_id = 'LOCAL_ID_A'
+        object.permanent_id = 'ark:/999999/cd3'
+      end
+      it "should return all the identifiers" do
+        expect(subject).to match_array([ 'ID001', 'ID002', 'LOCAL_ID_A', 'ark:/999999/cd3', 'test:3' ])
+      end
+    end
+    context "no descriptive identifiers or local ID" do
+      before { object.permanent_id = 'ark:/999999/cd3' }
+      it "should return the permanent ID and PID" do
+        expect(subject).to match_array([ 'ark:/999999/cd3', 'test:3' ])
+      end
+    end
+  end
+end

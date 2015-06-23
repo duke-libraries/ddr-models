@@ -13,15 +13,15 @@ module Ddr::Models
         let(:child1) { FactoryGirl.create(:item) }
         let(:child2) { FactoryGirl.create(:item) }
         before do
-          child1.identifier = ["test002"]
+          child1.local_id = "test002"
           child1.save
-          child2.identifier = ["test001"]
+          child2.local_id = "test001"
           child2.save
           subject.children << child1
           subject.children << child2
           subject.save
         end
-        it "should return the first child as sorted by identifiers" do
+        it "should return the first child as sorted by local ID" do
           expect(subject.first_child).to eq(child2)
         end
       end
