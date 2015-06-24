@@ -20,16 +20,4 @@ class Item < Ddr::Models::Base
   alias_method :collection_id, :parent_id
   alias_method :collection=, :parent=
 
-  def children_by_file_use
-    file_uses = {}
-    sort_key = "#{Ddr::IndexFields::FILE_USE} ASC, #{Ddr::IndexFields::ORDER} ASC"
-    results = ActiveFedora::SolrService.query(association_query(:children), rows: 999999, sort: sort_key)
-    objs = ActiveFedora::SolrService.lazy_reify_solr_results(results)
-    objs.each do |obj|
-      file_uses[obj.file_use] ||= []
-      file_uses[obj.file_use] << obj
-    end
-    file_uses
-  end
-
 end
