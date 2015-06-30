@@ -5,9 +5,9 @@ module Ddr
       attr_reader :permissions
 
       LEGACY_PERMISSION_ROLE_MAP = {
-        "discover" => "Viewer",
-        "read" => "Viewer",
-        "edit" => "Editor"
+        "discover" => Roles::VIEWER,
+        "read"     => Roles::VIEWER,
+        "edit"     => Roles::EDITOR
       }
 
       def initialize(permissions)
@@ -15,27 +15,23 @@ module Ddr
       end
 
       def to_resource_roles
-        to_roles(:resource)
+        to_roles(Roles::RESOURCE_SCOPE)
       end
 
       def to_policy_roles
-        to_roles(:policy)
+        to_roles(Roles::POLICY_SCOPE)
       end
 
+      # @param scope [String] the scope to assign to each role
+      # @return [Ddr::Auth::Roles::RoleSet]
       def to_roles(scope)
-        permissions.map do |perm|
-          Roles::Role.build(type: role_type(perm), agent: perm[:name], scope: scope)
+        roles = permissions.map do |perm|
+          access, agent = perm[:access], perm[:name]
+          Roles::Role.build type: LEGACY_PERMISSION_ROLE_MAP[access],
+                            agent: agent,
+                            scope: scope
         end
-      end
-
-      private
-
-      def role_type(perm)
-        LEGACY_PERMISSION_ROLE_MAP[perm[:access]]
-      end
-
-      def agent_type(perm)
-        perm[:type] == "group" ? :group : :person
+        Roles::DetachedRoleSet.new(roles)
       end
 
     end

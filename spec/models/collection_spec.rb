@@ -3,9 +3,7 @@ require 'spec_helper'
 RSpec.describe Collection, type: :model do
 
   it_behaves_like "a DDR model"
-
   it_behaves_like "it has an association", :has_many, :children, :is_member_of_collection, "Item"
-
   it_behaves_like "it has an association", :has_many, :targets, :is_external_target_for, "Target"
 
   describe "terms delegated to defaultRights" do
@@ -53,26 +51,11 @@ RSpec.describe Collection, type: :model do
     end
   end
 
-  describe "policy roles" do
-    subject { FactoryGirl.build(:collection) }
-    describe "when the default permissions change" do
-      it "should update the policy roles" do
-        subject.default_permissions = [{access: "edit", type: "group", name: "Editors"},
-                                       {access: "discover", type: "group", name: "public"},
-                                       {access: "read", type: "person", name: "bob@example.com"}]
-        expect { subject.save }.to change { subject.roles.where(scope: "policy") }
-          .from([])
-          .to(include(Ddr::Auth::Roles::Role.build(type: "Viewer", agent: "bob@example.com", scope: "policy"),
-                      Ddr::Auth::Roles::Role.build(type: "Editor", agent: "Editors", scope: "policy"),
-                      Ddr::Auth::Roles::Role.build(type: "Viewer", agent: "public", scope: "policy")))
-      end
-    end
-
-    describe "when default permissions haven't changed" do
-      it "shouldn't change the policy roles" do
-        subject.title = ["Changed Title"]
-        expect { subject.save }.not_to change { subject.roles.where(scope: "Policy") }
-      end
+  describe "roles granted to creator" do
+    let(:user) { FactoryGirl.build(:user) }
+    before { subject.grant_roles_to_creator(user) }
+    it "should include Curator roles in both resource abd policy scopes" do
+      expect(subject.roles.to_a).to eq([Ddr::Auth::Roles::Role.build(type: "Curator", agent: user.agent, scope: "resource"), Ddr::Auth::Roles::Role.build(type: "Curator", agent: user.agent, scope: "policy")])
     end
   end
 

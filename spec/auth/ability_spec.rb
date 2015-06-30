@@ -1,332 +1,200 @@
-require 'spec_helper'
-require 'cancan/matchers'
+module Ddr::Auth
+  RSpec.describe Ability, type: :model, abilities: true do
 
-module Ddr
-  module Auth
-    RSpec.describe Ability, type: :model, abilities: true do
+    subject { described_class.new(auth_context) }
+    
+    let(:auth_context) { FactoryGirl.build(:auth_context) }
 
-      subject { described_class.new(user) }
-      let(:user) { FactoryGirl.create(:user) }
-
-      describe "collection permissions" do
-        context "user is a collection creator" do
-          before { allow(user).to receive(:groups) { [Groups::CollectionCreators] } }
-          it { is_expected.to be_able_to(:create, Collection) }
-        end
-
-        context "user is not a collection creator" do
-          it { is_expected.not_to be_able_to(:create, Collection) }
-        end
+    describe "aliases" do
+      it "should have :replace aliases" do
+        expect(subject.aliased_actions[:replace]).to contain_exactly(:upload)
       end
-
-      describe "#upload_permissions", uploads: true do
-        let(:resource) { FactoryGirl.build(:component) }
-
-        context "user has edit permission" do
-          before { subject.can(:edit, resource) }
-          it { is_expected.to be_able_to(:upload, resource) }
-        end
-
-        context "user does not have edit permission" do
-          before { subject.cannot(:edit, resource) }
-          it { is_expected.not_to be_able_to(:upload, resource) }
-        end
+      it "should have :add_children aliases" do
+        expect(subject.aliased_actions[:add_children]).to contain_exactly(:add_attachment)
       end
-
-      describe "#download_permissions", downloads: true do
-
-        context "on an object" do
-
-          context "which is a Component", components: true do
-            let(:resource) { Component.new(pid: "test:1") }
-
-            context "and user does NOT have the downloader role" do
-              before do
-                allow(subject.current_user).to receive(:has_role?).with(resource, :downloader) { false }
-              end
-
-              context "and user has edit permission" do
-                before { subject.can :edit, resource }
-                it { is_expected.to be_able_to(:download, resource) }
-              end
-
-              context "and user has read permission" do
-                before do
-                  subject.cannot :edit, resource
-                  subject.can :read, resource
-                end
-                it { is_expected.not_to be_able_to(:download, resource) }
-              end
-
-              context "and user lacks read permission" do
-                before do
-                  subject.cannot :edit, resource
-                  subject.cannot :read, resource
-                end
-                it { is_expected.not_to be_able_to(:download, resource) }
-              end
-            end
-
-            # Component
-            context "and user has the downloader role", roles: true do
-              before do
-                allow(subject.current_user).to receive(:has_role?).with(resource, :downloader) { true }
-              end
-
-              context "and user has edit permission" do
-                before { subject.can :edit, resource }
-                it { is_expected.to be_able_to(:download, resource) }
-              end
-
-              context "and user has read permission" do
-                before do
-                  subject.cannot :edit, resource
-                  subject.can :read, resource
-                end
-                it { is_expected.to be_able_to(:download, resource) }
-              end
-
-              context "and user lacks read permission" do
-                before do
-                  subject.cannot :edit, resource
-                  subject.cannot :read, resource
-                end
-                it { is_expected.not_to be_able_to(:download, resource) }
-              end
-            end
-          end
-
-          context "which is not a Component" do
-            let(:resource) { FactoryGirl.build(:test_content) }
-
-            context "and user has read permission" do
-              before do
-                subject.cannot :edit, resource
-                subject.can :read, resource
-              end
-              it { is_expected.to be_able_to(:download, resource) }
-            end
-
-            context "and user lacks read permission" do
-              before do
-                subject.cannot :edit, resource
-                subject.cannot :read, resource
-              end
-              it { is_expected.not_to be_able_to(:download, resource) }
-            end
-          end
-        end
-
-        context "on a Solr document" do
-          let(:resource) { SolrDocument.new(doc) }
-
-          context "for a Component" do
-            let(:doc) { {'id'=>'test:1', 'active_fedora_model_ssi'=>'Component'} }
-
-            context "on which the user has the downloader role" do
-              before { doc.merge!('admin_metadata__downloader_ssim'=>[user.to_s]) }
-
-              context "but does not have read permission" do
-                it { is_expected.not_to be_able_to(:download, resource) }
-              end
-
-              context "and has read permission" do
-                before { doc.merge!('read_access_person_ssim'=>[user.to_s]) }
-                it { is_expected.to be_able_to(:download, resource) }
-              end
-
-              context "and has edit permission" do
-                before { doc.merge!('edit_access_person_ssim'=>[user.to_s]) }
-                it { is_expected.to be_able_to(:download, resource) }
-              end
-            end
-
-            context "on which the user does NOT have the downloader role" do
-
-              context "and does not have read permission" do
-                it { is_expected.not_to be_able_to(:download, resource) }
-              end
-
-              context "but has read permission" do
-                before { doc.merge!('read_access_person_ssim'=>[user.to_s]) }
-                it { is_expected.not_to be_able_to(:download, resource) }
-              end
-
-              context "but has edit permission" do
-                before { doc.merge!('edit_access_person_ssim'=>[user.to_s]) }
-                it { is_expected.to be_able_to(:download, resource) }
-              end
-            end
-          end
-
-          context "for a non-Component" do
-            let(:doc) { {'id'=>'test:1', 'active_fedora_model_ssi'=>'Attachment'} }
-
-            context "on which the user does NOT have read permission" do
-              it { is_expected.not_to be_able_to(:download, resource) }
-            end
-
-            context "on which the user has read permission" do
-              before { doc.merge!('read_access_person_ssim'=>[user.to_s]) }
-              it { is_expected.to be_able_to(:download, resource) }
-            end
-
-            context "on which the user has edit permission" do
-              before { doc.merge!('edit_access_person_ssim'=>[user.to_s]) }
-              it { is_expected.to be_able_to(:download, resource) }
-            end
-          end
-        end
-
-        context "on a datastream", datastreams: true do
-
-          context "named 'content'", content: true do
-            let(:resource) { obj.content }
-            let(:solr_doc) { SolrDocument.new({id: obj.pid}) }
-            before do
-              allow(subject).to receive(:solr_doc).with(obj.pid) { solr_doc }
-              subject.cannot :edit, obj.pid
-            end
-
-            context "and object is a Component", components: true do
-              let(:obj) { Component.new(pid: "test:1") }
-
-              context "and user does not have the downloader role" do
-                before do
-                  allow(subject.current_user).to receive(:has_role?).with(solr_doc, :downloader) { false }
-                end
-
-                context "and user has read permission on the object" do
-                  before { subject.can :read, obj.pid }
-                  it { is_expected.not_to be_able_to(:download, resource) }
-                end
-
-                context "and user lacks read permission on the object" do
-                  before { subject.cannot :read, obj.pid }
-                  it { is_expected.not_to be_able_to(:download, resource) }
-                end
-              end
-
-              # Component content datastream
-              context "and user has the downloader role", roles: true do
-                before do
-                  allow(subject.current_user).to receive(:has_role?).with(solr_doc, :downloader) { true }
-                end
-
-                context "and user has read permission on the object" do
-                  before { subject.can :read, obj.pid }
-                  it { is_expected.to be_able_to(:download, resource) }
-                end
-
-                context "and user lacks read permission on the object" do
-                  before { subject.cannot :read, obj.pid }
-                  it { is_expected.not_to be_able_to(:download, resource) }
-                end
-              end
-            end
-
-            # non-Component content datastream
-            context "and object is not a Component" do
-              let(:obj) { TestContent.new(pid: "test:1") }
-
-              context "and user has read permission on the object" do
-                before { subject.can :read, obj.pid }
-                it { is_expected.to be_able_to(:download, resource) }
-              end
-
-              context "and user lacks read permission on the object" do
-                before { subject.cannot :read, obj.pid }
-                it { is_expected.not_to be_able_to(:download, resource) }
-              end
-            end
-
-          end
-          # datastream - not "content"
-          context "not named 'content'" do
-            let(:obj) { FactoryGirl.build(:test_model) }
-            let(:resource) { obj.descMetadata }
-
-            context "and user has read permission on the object" do
-              before do
-                subject.cannot :edit, obj.pid
-                subject.can :read, obj.pid
-              end
-              it { is_expected.to be_able_to(:download, resource) }
-            end
-
-            context "and user lacks read permission on the object" do
-              before do
-                subject.cannot :edit, obj.pid
-                subject.cannot :read, obj.pid
-              end
-              it { is_expected.not_to be_able_to(:download, resource) }
-            end
-          end
-
-        end
-
-      end # download_permissions
-
-      describe "#events_permissions", events: true do
-        let(:resource) { Ddr::Events::Event.new(pid: "test:1") }
-
-        context "when the user can read the object" do
-          before { subject.can :read, "test:1" }
-          it { is_expected.to be_able_to(:read, resource) }
-        end
-
-        context "when the user cannot read the object" do
-          before { subject.cannot :read, "test:1" }
-          it { is_expected.not_to be_able_to(:read, resource) }
-        end
-      end
-
-      describe "#attachment_permissions", attachments: true do
-
-        context "object can have attachments" do
-          let(:resource) { FactoryGirl.build(:test_model_omnibus) }
-
-          context "and user lacks edit rights" do
-            before { subject.cannot(:edit, resource) }
-            it { is_expected.not_to be_able_to(:add_attachment, resource) }
-          end
-
-          context "and user has edit rights" do
-            before { subject.can(:edit, resource) }
-            it { is_expected.to be_able_to(:add_attachment, resource) }
-          end
-        end
-
-        context "object cannot have attachments" do
-          let(:resource) { FactoryGirl.build(:test_model) }
-          before { subject.can(:edit, resource) }
-          it { is_expected.not_to be_able_to(:add_attachment, resource) }
-        end
-      end
-
-      describe "#children_permissions", children: true do
-
-        context "user has edit rights on object" do
-          before { subject.can(:edit, resource) }
-
-          context "and object can have children" do
-            let(:resource) { FactoryGirl.build(:collection) }
-            it { is_expected.to be_able_to(:add_children, resource) }
-          end
-
-          context "but object cannot have children" do
-            let(:resource) { FactoryGirl.build(:component) }
-            it { is_expected.not_to be_able_to(:add_children, resource) }
-          end
-        end
-
-        context "user lacks edit rights on attached_to object" do
-          let(:resource) { FactoryGirl.build(:collection) }
-          before { subject.cannot(:edit, resource) }
-          it { is_expected.not_to be_able_to(:add_children, resource) }
-        end
-      end
-
     end
+
+    describe "Datastream abilities" do
+      let(:obj) { FactoryGirl.build(:component) }
+
+      DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.each do |dsid, permission|
+        describe "\"#{dsid}\"" do
+          let(:ds) { obj.datastreams[dsid] }
+          describe "can #{permission.inspect} object" do
+            before { subject.can permission, obj.pid }
+            it { should be_able_to(:download, ds) }
+          end
+          describe "cannot #{permission.inspect} object" do
+            before { subject.cannot permission, obj.pid }
+            it { should_not be_able_to(:download, ds) }
+          end
+        end
+      end
+
+      describe "non-downloadable datastreams" do
+        (Component.ds_specs.keys - DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.keys).each do |dsid|
+          describe "\"#{dsid}\"" do
+            let(:ds) { obj.datastreams[dsid] }
+            before { subject.can :download, obj.pid }
+            it { should_not be_able_to(:download, ds) }
+          end
+        end
+      end
+    end
+
+    describe "Event abilities" do
+      let(:event) { FactoryGirl.build(:event) }
+
+      describe "can read object of the event" do
+        before { subject.can :read, event.pid }
+        it { should be_able_to(:read, event) }
+      end
+
+      describe "cannot read object of the event" do
+        before { subject.cannot :read, event.pid }
+        it { should_not be_able_to(:read, event) }
+      end
+    end
+
+    describe "Collection abilities" do
+      describe "when the user is a collection creator" do
+        before do
+          allow(auth_context).to receive(:member_of?).with(Groups::COLLECTION_CREATORS) { true }
+        end
+        it { should be_able_to(:create, Collection) }
+      end
+
+      describe "when the user is not a collection creator" do
+        before do
+          allow(auth_context).to receive(:member_of?).with(Groups::COLLECTION_CREATORS) { false }
+        end
+        it { should_not be_able_to(:create, Collection) }
+      end
+    end
+
+    describe "Item abilities" do
+      let(:item) { FactoryGirl.build(:item) }
+
+      describe "when the item has a parent" do
+        let(:parent) { FactoryGirl.create(:collection) }
+        before { item.parent = parent }
+
+        describe "and can add children to the parent" do
+          before { subject.can :add_children, parent }
+          it { should be_able_to(:create, item) }
+        end
+
+        describe "and cannot add children to the parent" do
+          before { subject.cannot :add_children, parent }
+          it { should_not be_able_to(:create, item) }
+        end
+      end
+
+      describe "when the item does not have a parent" do
+        it { should_not be_able_to(:create, item) }
+      end
+    end
+
+    describe "Component abilities" do
+      let(:component) { FactoryGirl.build(:component) }
+
+      describe "when the component has a parent" do
+        let(:parent) { FactoryGirl.create(:item) }
+        before { component.parent = parent }
+
+        describe "and can add children to the parent" do
+          before { subject.can :add_children, parent }
+          it { should be_able_to(:create, component) }
+        end
+
+        describe "and cannot add children to the parent" do
+          before { subject.cannot :add_children, parent }
+          it { should_not be_able_to(:create, component) }
+        end
+      end
+
+      describe "when the component does not have a parent" do
+        it { should_not be_able_to(:create, component) }
+      end
+    end
+
+    describe "Attachment abilities" do
+      let(:attachment) { FactoryGirl.build(:attachment) }
+
+      describe "when the attachment is attached" do
+        let(:attached_to) { FactoryGirl.create(:collection) }
+        before { attachment.attached_to = attached_to }
+
+        describe "and can add attachment to the attached" do
+          before { subject.can :add_attachment, attached_to }
+          it { should be_able_to(:create, attachment) }
+        end
+
+        describe "and cannot add attachment to the attached" do
+          before { subject.cannot :add_attachment, attached_to }
+          it { should_not be_able_to(:create, attachment) }
+        end
+      end
+
+      describe "when the attachment is not attached" do
+        it { should_not be_able_to(:create, attachment) }
+      end
+    end
+
+    describe "role based abilities" do
+      shared_examples "it has role based abilities" do
+        describe "when permissions are cached" do
+          before { subject.cache[cache_key] = [ Permissions::READ ] }
+          it "should use the cached permissions" do
+            expect_any_instance_of(RoleBasedAbilityDefinitions).not_to receive(:effective_permissions)
+            expect(subject).to be_able_to(:read, obj)
+            expect(subject).not_to be_able_to(:edit, obj)
+          end
+        end
+        describe "when permissions are not cached" do
+          describe "and user context has role based permission" do
+            before do
+              allow_any_instance_of(RoleBasedAbilityDefinitions).to receive(:effective_permissions).with(perm_obj) do
+                [ Permissions::UPDATE ]
+              end
+            end
+            it { should be_able_to(:edit, obj) }
+          end
+          describe "and user context does not have role based permission" do
+            before do
+              allow_any_instance_of(RoleBasedAbilityDefinitions).to receive(:effective_permissions).with(perm_obj) do
+                [ Permissions::READ ]
+              end
+            end
+            it { should_not be_able_to(:edit, obj) }
+          end
+        end
+      end
+
+      describe "with a Ddr model instance" do
+        let(:obj) { Collection.new(pid: "test:1") }
+        let(:cache_key) { obj.pid }
+        let(:perm_obj) { obj }
+        it_behaves_like "it has role based abilities"
+      end
+
+      describe "with a Solr document" do
+        let(:obj) { SolrDocument.new({"id"=>"test:1"}) }
+        let(:cache_key) { obj.pid }
+        let(:perm_obj) { obj }
+        it_behaves_like "it has role based abilities"
+      end
+
+      describe "with a String" do
+        let(:obj) { "test:1" }
+        let(:cache_key) { obj }
+        let(:perm_obj) { SolrDocument.new({"id"=>"test:1"}) }
+        before do
+          allow_any_instance_of(RoleBasedAbilityDefinitions).to receive(:permissions_doc).with(obj) { perm_obj }
+        end
+        it_behaves_like "it has role based abilities"
+      end
+    end
+
   end
 end

@@ -59,29 +59,13 @@ RSpec.describe SolrDocument, type: :model do
     its(:admin_set) { should eq("foobar") }
   end
 
-  describe "roles" do
-    before do
-      subject[Ddr::IndexFields::ACCESS_ROLE] = "[{\"type\":\"Editor\",\"scope\":\"policy\",\"agent\":\"Editors\"},{\"type\":\"Contributor\",\"scope\":\"resource\",\"agent\":\"bob@example.com\"}]"
-    end
-    its(:roles) { is_expected.to be_a(Ddr::Managers::SolrDocumentRoleManager) }
-    describe "granted roles" do
-      it "should be a role set" do
-        expect(subject.roles.granted).to be_a(Ddr::Auth::Roles::RoleSet)
-      end
-      it "should deserialize the role data" do
-        expect(subject.roles.granted).to include(Ddr::Auth::Roles::Role.build(type: "Editor", agent: "Editors", scope: "policy"))
-        expect(subject.roles.granted).to include(Ddr::Auth::Roles::Role.build(type: "Contributor", agent: "bob@example.com", scope: "resource"))
-      end
-    end
-    describe "permissions" do
-      let(:admin_policy) { described_class.new({Ddr::IndexFields::ACCESS_ROLE=>"[{\"type\":\"MetadataEditor\",\"scope\":\"policy\",\"agent\":\"bob@example.com\"},{\"type\":\"Viewer\",\"scope\":\"policy\",\"agent\":\"public\"}]"}) }
-      let(:user) { FactoryGirl.build(:user, username: "bob@example.com") }
-      before do
-        allow(subject).to receive(:admin_policy) { admin_policy }
-      end
-      it "should calculate the right permissions" do
-        expect(subject.role_based_permissions(user)).to contain_exactly(:read, :add_children, :download, :edit)
-      end
+  describe "#roles" do
+    let(:json) { "[{\"role_type\":[\"Editor\"],\"agent\":[\"Editors\"],\"scope\":[\"policy\"]},{\"role_type\":[\"Contributor\"],\"agent\":[\"bob@example.com\"],\"scope\":[\"resource\"]}]" }
+    before { subject[Ddr::IndexFields::ACCESS_ROLE] = json }
+    it "should deserialize the roles from JSON" do
+      expect(subject.roles.to_a)
+        .to eq([Ddr::Auth::Roles::Role.build(type: "Editor", agent: "Editors", scope: "policy"),
+                Ddr::Auth::Roles::Role.build(type: "Contributor", agent: "bob@example.com", scope: "resource")])
     end
   end
 

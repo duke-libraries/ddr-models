@@ -17,7 +17,6 @@ module Ddr
           datastream: "adminMetadata",
           multiple: false
 
-        delegate :role_based_permissions, to: :roles
         delegate :publish, :publish!, :unpublish, :unpublish!, :published?, to: :workflow
 
         after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
@@ -31,7 +30,7 @@ module Ddr
       end
 
       def roles
-        @roles ||= Ddr::Managers::RoleManager.new(self)
+        @roles ||= Ddr::Auth::Roles::PropertyRoleSet.new(adminMetadata.access_role)
       end
 
       def workflow
@@ -40,6 +39,24 @@ module Ddr
 
       def assign_permanent_id!
         permanent_id_manager.assign_later
+      end
+
+      def grant_roles_to_creator(creator)
+        roles.grant type: Ddr::Auth::Roles::EDITOR,
+                    agent: creator,
+                    scope: Ddr::Auth::Roles::RESOURCE_SCOPE
+      end
+
+      def copy_resource_roles_from(other)
+        roles.grant *(other.roles.in_resource_scope)
+      end
+
+      def inherited_roles
+        Ddr::Auth::InheritedRoles.call(self)
+      end
+
+      def effective_roles
+        Ddr::Auth::EffectiveRoles.call(self)
       end
 
       private
@@ -52,12 +69,6 @@ module Ddr
 
       def legacy_permissions
         Ddr::Auth::LegacyPermissions.new(permissions)
-      end
-
-      def set_resource_roles_from_legacy_data
-        roles.revoke_resource_roles
-        roles.grant *(legacy_permissions.to_resource_roles)
-        roles.grant *legacy_downloader_to_resource_roles
       end
 
     end

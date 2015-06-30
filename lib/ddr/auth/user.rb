@@ -8,8 +8,6 @@ module Ddr
 
         has_many :events, inverse_of: :user, class_name: "Ddr::Events::Event"
 
-        attr_writer :groups
-
         delegate :can, :can?, :cannot, :cannot?, to: :ability
 
         validates_uniqueness_of :username, :case_sensitive => false
@@ -47,78 +45,18 @@ module Ddr
         user_key
       end
 
-      def to_agent
-        principal_name
-      end
-      alias_method :agent, :to_agent
-
-      def ability
-        @ability ||= ::Ability.new(self)
-      end
-
-      def affiliations
-        context.affiliation.map { |a| Affiliation.get(a.sub(/@duke\.edu\z/, "")) }.flatten
-      end
-
-      def context
-        @context ||= Context.new
-      end
-
-      def context=(env)
-        @context = env.is_a?(Context) ? env : Context.new(env)
-        reset!
-      end
-
-      def groups
-        @groups ||= calculate_groups
-      end
-
-      def member_of?(group)
-        groups.include?(group.is_a?(Group) ? group : Group.new(group))
-      end
-      alias_method :is_member_of?, :member_of?
-
-      def authorized_to_act_as_superuser?
-        member_of?(Groups::Superusers)
-      end
-
-      def principal_name
+      def agent
         user_key
       end
-      alias_method :name, :principal_name
-      alias_method :eppn, :principal_name
 
-      def agents
-        groups.map(&:agent) << agent
+      def ability
+        # warn "[DEPRECATION] `Ddr::Auth::User#ability` is deprecated." \
+        #      " In a web context, please use the `current_ability` helper." \
+        #      " Otherwise, please use `Ddr::Auth::AbilityFactory.call(user)`" \
+        #      " to create an ability instance for the user."
+        @ability ||= AbilityFactory.call(self)
       end
-
-      def principals
-        groups.map(&:to_s) + [principal_name]
-      end
-
-      def has_role?(obj, role)
-        obj.principal_has_role?(principals, role)
-      end
-
-      private
-
-      def calculate_groups
-        groups = []
-        groups.concat affiliations.map(&:group)
-        groups.concat context.groups
-        groups.concat dynamic_groups
-        groups
-      end
-
-      def dynamic_groups
-        Groups.dynamic.select { |group| group.has_member?(self) }
-      end
-
-      def reset!
-        @ability = nil
-        @groups = nil
-      end
-
+      
     end
   end
 end

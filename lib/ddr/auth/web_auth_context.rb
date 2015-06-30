@@ -1,11 +1,5 @@
 module Ddr::Auth
-  class Context
-
-    attr_reader :env
-
-    def initialize(env={})
-      @env = env
-    end
+  class WebAuthContext < AuthContext
 
     # @return [String] the IP address, or nil
     # @see ActionDispatch::RemoteIp
@@ -17,7 +11,7 @@ module Ddr::Auth
 
     # @return [Array<String>]
     def affiliation
-      split_env("affiliation")
+      split_env("affiliation").map { |a| a.sub(/@duke\.edu\z/, "") }
     end
 
     # @return [Array<String>]
@@ -25,16 +19,11 @@ module Ddr::Auth
       split_env("ismemberof")
     end
 
-    # @return [Array<Ddr::Auth::Group>]
-    def groups
-      ismemberof.map { |value| Group.new(value.sub(/\Aurn:mace:duke\.edu:groups/, "duke")) }
-    end
-
     private
 
     def split_env(attr, delim = ";")
       env.fetch(attr, "").split(delim)
     end
-    
+
   end
 end

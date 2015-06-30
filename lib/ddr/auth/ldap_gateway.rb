@@ -1,43 +1,74 @@
 require "net-ldap"
-require "delegate"
 
-module Ddr
-  module Auth
-    class LdapGateway < SimpleDelegator
+module Ddr::Auth
+  class LdapGateway
 
-      SCOPE = Net::LDAP::SearchScope_SingleLevel
+    SCOPE = Net::LDAP::SearchScope_SingleLevel
 
-      def initialize
-        super Net::LDAP.new(config)
-      end
+    class_attribute :attributes
+    self.attributes = [ "edupersonaffiliation", "ismemberof" ]
 
-      # Returns a list of affiliations for a principal (person)
-      # @param eppn [String] the eduPersonPrincipalName value
-      # @return [Array] the list of affiliations for the principal
-      def affiliations(eppn)
-        filter = Net::LDAP::Filter.eq("eduPersonPrincipalName", eppn)
-        result_set = search(scope: SCOPE,
-                        filter: filter,
-                        size: 1,
-                        attributes: ["eduPersonAffiliation"])
-        if result_set
-          result = result_set.first
-          result ? result[:edupersonaffiliation] : []
-        else # error
-          Rails.logger.error get_operation_result.message
-          []
-        end
-      end
+    attr_reader :ldap
 
-      private
-
-      def config
-        { host: ENV["LDAP_HOST"],
-          port: ENV["LDAP_PORT"],
-          base: ENV["LDAP_BASE"]
-        }
-      end
-
+    def self.find(user_key)
+      new.find(user_key)
     end
+
+    def initialize
+      @ldap = Net::LDAP.new(config)
+    end
+
+    def find(user_key)
+      result_set = ldap.search find_params(user_key)
+      if result_set
+        Result.new result_set.first
+      else
+        raise ldap.get_operation_result.message
+      end
+    end
+
+    class Result
+      attr_reader :result
+
+      def initialize(result)
+        @result = result
+      end
+
+      def affiliation
+        result ? result[:edupersonaffiliation] : []
+      end
+
+      def ismemberof
+        result ? result[:ismemberof] : []
+      end
+    end
+
+    private
+
+    def find_params(user_key)
+      { scope: SCOPE,
+        filter: filter(user_key),
+        size: 1,
+        attributes: attributes
+      }
+    end
+
+    def filter(user_key)
+      Net::LDAP::Filter.eq("eduPersonPrincipalName", user_key)
+    end
+
+    def config
+      { host: ENV["LDAP_HOST"],
+        port: ENV["LDAP_PORT"],
+        base: ENV["LDAP_BASE"],
+        auth:
+          { method: :simple,
+            username: ENV["LDAP_USER"],
+            password: ENV["LDAP_PASSWORD"]
+          },
+        encryption: { method: :simple_tls }
+      }
+    end
+
   end
 end

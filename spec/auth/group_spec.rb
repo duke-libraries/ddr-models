@@ -21,18 +21,18 @@ module Ddr::Auth
     end
 
     describe "#has_member?" do
-      let!(:user) { FactoryGirl.build(:user) }
+      let(:auth_context) { FactoryGirl.build(:auth_context) }
       describe "when the group doesn't have a rule" do
         describe "and the group is in the user's groups" do
-          before { allow(user).to receive(:groups) { [ subject ] } }
+          before { allow(auth_context).to receive(:groups) { [ subject ] } }
           it "should be true" do
-            expect(subject.has_member?(user)).to be true
+            expect(subject.has_member?(auth_context)).to be true
           end
         end
         describe "and the group is not in the user's groups" do
-          before { allow(user).to receive(:groups) { [ ] } }
+          before { allow(auth_context).to receive(:groups) { [ ] } }
           it "should be false" do
-            expect(subject.has_member?(user)).to be false
+            expect(subject.has_member?(auth_context)).to be false
           end
         end
       end
@@ -44,7 +44,7 @@ module Ddr::Auth
             end
           end
           it "should be true" do
-            expect(subject.has_member?(user)).to be true
+            expect(subject.has_member?(auth_context)).to be true
           end
         end
         describe "and the user fails the rule" do
@@ -54,7 +54,7 @@ module Ddr::Auth
             end
           end
           it "should be false" do
-            expect(subject.has_member?(user)).to be false
+            expect(subject.has_member?(auth_context)).to be false
           end
         end
       end

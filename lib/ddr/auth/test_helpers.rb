@@ -3,14 +3,15 @@ module Ddr
     module TestHelpers
 
       class MockLdapGateway
-        def affiliations(eppn); []; end
+        def self.find(*args); new.find(*args); end
+        def find(user_key); Ddr::Auth::LdapGateway::Result.new(nil); end
       end
 
       class MockGrouperGateway
-        def repository_groups; []; end
-        def repository_group_names; []; end
-        def user_groups(user); []; end
-        def user_group_names(user); []; end
+        def self.repository_groups(*args); new.repository_groups(*args); end
+        def repository_groups(raw = false); []; end
+        def self.user_groups(*args); new.user_groups(*args); end
+        def user_groups(user, raw = false); []; end
       end
 
     end
