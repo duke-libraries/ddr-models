@@ -78,16 +78,6 @@ class Collection < Ddr::Models::Base
     end
   end
 
-  def set_policy_roles_from_legacy_data
-    roles.revoke *(roles.in_policy_scope)
-    roles.grant *(legacy_default_permissions.to_policy_roles)
-  end
-  alias_method :set_policy_roles, :set_policy_roles_from_legacy_data
-
-  def legacy_default_permissions
-    Ddr::Auth::LegacyPermissions.new(default_permissions)
-  end
-
   def grant_roles_to_creator(creator)
     roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::RESOURCE_SCOPE
     roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::POLICY_SCOPE

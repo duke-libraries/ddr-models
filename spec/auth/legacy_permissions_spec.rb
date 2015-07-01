@@ -1,7 +1,7 @@
 module Ddr::Auth
   RSpec.describe LegacyPermissions do
 
-    subject { described_class.new(obj.permissions) }
+    subject { described_class.new(obj) }
 
     let(:obj) { FactoryGirl.build(:item) }
 
@@ -17,19 +17,15 @@ module Ddr::Auth
       Deprecation.default_deprecation_behavior = @deprecation_behavior
     end
 
-    it "should be able to convert the permissions to policy roles" do
-      expect(subject.to_policy_roles)
-        .to eq(Roles::DetachedRoleSet.new([Roles::Role.build(type: "Editor", agent: "Editors", scope: "policy"),
-                                           Roles::Role.build(type: "Viewer", agent: "public", scope: "policy"),
-                                           Roles::Role.build(type: "Viewer", agent: "bob@example.com", scope: "policy")]))
+    it "should convert the permissions to resource roles" do
+      expect(subject.to_roles)
+        .to eq(Roles::DetachedRoleSet.new(
+                [ Roles::Role.build(type: "Editor", agent: "Editors", scope: "resource"),
+                  Roles::Role.build(type: "Viewer", agent: "public", scope: "resource"),
+                  Roles::Role.build(type: "Viewer", agent: "bob@example.com", scope: "resource")
+                ]
+              ))
     end
 
-    it "should be able to convert the permissions to resource roles" do
-      expect(subject.to_resource_roles)
-        .to eq(Roles::DetachedRoleSet.new([Roles::Role.build(type: "Editor", agent: "Editors", scope: "resource"),
-                                           Roles::Role.build(type: "Viewer", agent: "public", scope: "resource"),
-                                           Roles::Role.build(type: "Viewer", agent: "bob@example.com", scope: "resource")]))
-    end
-    
   end
 end

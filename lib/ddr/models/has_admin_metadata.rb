@@ -23,8 +23,6 @@ module Ddr
         around_destroy :update_permanent_id_on_destroy, if: "permanent_id.present?"
       end
 
-      include Ddr::Auth::LegacyRoles
-
       def permanent_id_manager
         @permanent_id_manager ||= Ddr::Managers::PermanentIdManager.new(self)
       end
@@ -65,10 +63,6 @@ module Ddr
         @permanent_id = permanent_id
         yield
         Resque.enqueue(Ddr::Jobs::PermanentId::MakeUnavailable, @permanent_id, "deleted")
-      end
-
-      def legacy_permissions
-        Ddr::Auth::LegacyPermissions.new(permissions)
       end
 
     end
