@@ -2,7 +2,7 @@ module Ddr::Auth
   class LegacyDefaultPermissions < AbstractLegacyPermissions
 
     def source
-      respond_to?(:default_permissions) ? default_permissions : []
+      default_permissions
     end
 
     def role_type(access)
@@ -18,6 +18,15 @@ module Ddr::Auth
 
     def scope
       Roles::POLICY_SCOPE
+    end
+
+    def clear
+      defaultRights.clear_permissions!
+      defaultRights.content = defaultRights.to_xml
+    end
+
+    def inspect
+      "DEFAULT PERMISSIONS: #{source.inspect}"
     end
 
   end

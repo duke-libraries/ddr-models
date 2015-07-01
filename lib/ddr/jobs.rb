@@ -3,6 +3,7 @@ module Ddr
     extend ActiveSupport::Autoload
 
     autoload :PermanentId
+    autoload :MigrateLegacyAuthorization
 
     autoload_at 'ddr/jobs/permanent_id' do
       autoload :MakeUnavailable

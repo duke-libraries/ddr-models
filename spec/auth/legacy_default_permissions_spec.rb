@@ -27,5 +27,11 @@ module Ddr::Auth
               ))
     end
 
+    it "should clear the legacy default permissions" do
+      expect(obj.default_permissions).not_to be_empty
+      subject.clear
+      expect(obj.default_permissions).to be_empty
+    end
+
   end
 end
