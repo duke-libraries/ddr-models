@@ -17,7 +17,6 @@ module Ddr
       end
 
       def copy_permissions_from(other)
-        # XXX active-fedora < 7.0
         warn "[DEPRECATION] `copy_permissions_from` is deprecated" \
              " and should not be used with role-based access control" \
              " (#{caller.first})."

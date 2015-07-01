@@ -56,6 +56,10 @@ module Ddr
         false
       end
 
+      def legacy_authorization
+        Ddr::Auth::LegacyAuthorization.new(self)
+      end
+
     end
   end
 end
