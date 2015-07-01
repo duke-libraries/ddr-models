@@ -77,7 +77,7 @@ module Ddr::Auth
       end
 
       def ==(other)
-        if self.class == other.class
+        if other.is_a? RoleSet
           self.to_set == other.to_set
         else
           super

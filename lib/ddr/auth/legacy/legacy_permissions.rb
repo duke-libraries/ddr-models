@@ -20,5 +20,14 @@ module Ddr::Auth
       Roles::RESOURCE_SCOPE
     end
 
+    def clear
+      rightsMetadata.clear_permissions!
+      rightsMetadata.content = rightsMetadata.to_xml
+    end
+
+    def inspect
+      "PERMISSIONS: #{source.map(&:to_hash).inspect}"
+    end
+
   end
 end

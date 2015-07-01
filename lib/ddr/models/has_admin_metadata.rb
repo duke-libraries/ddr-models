@@ -28,7 +28,7 @@ module Ddr
       end
 
       def roles
-        @roles ||= Ddr::Auth::Roles::PropertyRoleSet.new(adminMetadata.access_role)
+        Ddr::Auth::Roles::PropertyRoleSet.new(adminMetadata.access_role)
       end
 
       def workflow

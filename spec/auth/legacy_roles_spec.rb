@@ -24,5 +24,9 @@ module Ddr::Auth
               ))
     end
 
+    it "should clear the legacy roles" do
+      expect { subject.clear }.to change(obj.adminMetadata.downloader, :empty?).from(false).to(true)
+    end
+
   end
 end
