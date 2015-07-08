@@ -13,6 +13,7 @@ require "database_cleaner"
 require "tempfile"
 require "resque"
 require "cancan/matchers"
+require 'equivalent-xml/rspec_matchers'
 
 Resque.inline = true
 

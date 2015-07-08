@@ -3,51 +3,54 @@ module Ddr
     module HasStructMetadata
       extend ActiveSupport::Concern
 
-      FILE_USE_MASTER = 'master'
-      FILE_USE_REFERENCE = 'reference'
-
       included do
-        has_metadata "structMetadata",
-                     type: Ddr::Datastreams::StructuralMetadataDatastream,
-                     versionable: true,
-                     control_group: "M"
-
-        has_attributes :file_group, :file_use, :order,
-                       datastream: "structMetadata", multiple: false
+        has_file_datastream name: Ddr::Datastreams::STRUCT_METADATA,
+                            type: Ddr::Datastreams::StructuralMetadataDatastream
       end
 
-      def assign_struct_metadata!
-        self.file_use = default_file_use if file_use.blank?
-        self.order = default_order if order.nil?
-        self.file_group = default_file_group if file_group.blank?
-        save! if changed?
+      def structure
+        unless @structure
+          if datastreams[Ddr::Datastreams::STRUCT_METADATA].content
+            @structure = Ddr::Models::Structure.new(Nokogiri::XML(datastreams[Ddr::Datastreams::STRUCT_METADATA].content))
+          end
+        end
+        @structure
+      end
+
+      def build_default_structure
+        structure = Ddr::Models::Structure.new(Ddr::Models::Structure.template)
+        children = find_children
+        children.each do |child|
+          add_to_struct_map(structure, child)
+        end
+        structure
       end
 
       private
 
-      def default_file_use
-        if has_content?
-          master_file? ? FILE_USE_MASTER : FILE_USE_REFERENCE
-        end
+      def find_children
+        query = association_query(:children)
+        sort = "#{Ddr::IndexFields::LOCAL_ID} ASC, #{Ddr::IndexFields::OBJECT_CREATE_DATE} ASC"
+        ActiveFedora::SolrService.query(query, sort: sort, rows: 999999)
       end
 
-      def default_order
-        siblings.size + 1
+      def add_to_struct_map(stru, child)
+        div = create_div(stru)
+        create_fptr(stru, div, child['id'])
       end
 
-      def default_file_group
-        identifier.first if has_content?
+      def create_div(stru)
+        div_count = stru.structMap('default').xpath('xmlns:div').size
+        div = Nokogiri::XML::Node.new('div', stru.as_xml_document)
+        div['ORDER'] = div_count + 1
+        stru.structMap('default').add_child(div)
+        div
       end
 
-      def siblings
-        if respond_to?(:parent) && parent.present?
-          if file_use && parent.respond_to?(:children_by_file_use)
-            sibs = parent.children_by_file_use[file_use]
-          else
-            sibs = parent.children
-          end
-        end
-        sibs || []
+      def create_fptr(stru, div, pid)
+        fptr = Nokogiri::XML::Node.new('fptr', stru.as_xml_document)
+        fptr['CONTENTIDS'] = "info:fedora/#{pid}"
+        div.add_child(fptr)
       end
 
     end
