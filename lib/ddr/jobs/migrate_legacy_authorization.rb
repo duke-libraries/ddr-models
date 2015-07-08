@@ -7,13 +7,16 @@ module Ddr::Jobs
 
     def self.perform(pid)
       obj = ActiveFedora::Base.find(pid)
-      detail = obj.legacy_authorization.migrate
-      obj.save!
-      Ddr::Notifications.notify_event(:update,
-                                      pid: pid,
-                                      summary: SUMMARY,
-                                      detail: detail
-                                     )
+      event_args = { pid: pid, summary: SUMMARY }
+      begin
+        event_args[:detail] = obj.legacy_authorization.migrate
+        obj.save!
+      rescue Exception => e
+        event_args[:exception] = e
+        raise e
+      ensure
+        Ddr::Events::UpdateEvent.create(event_args)
+      end
     end
 
   end
