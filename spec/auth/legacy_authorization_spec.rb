@@ -35,6 +35,7 @@ module Ddr::Auth
 
       it "should clear the legacy authorization data" do
         subject.clear
+        expect(subject).to be_clear
         expect(obj.permissions).to be_empty
         expect(obj.default_permissions).to be_empty
         expect(obj.adminMetadata.downloader).to be_empty
@@ -72,6 +73,7 @@ module Ddr::Auth
 
       it "should clear the legacy authorization data" do
         subject.clear
+        expect(subject).to be_clear
         expect(obj.permissions).to be_empty
         expect(obj.adminMetadata.downloader).to be_empty
       end
