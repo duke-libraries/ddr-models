@@ -26,6 +26,8 @@ module Ddr
 
       property :admin_set, predicate: Ddr::Vocab::Asset.adminSet
 
+      property :display_format, predicate: Ddr::Vocab::Display.format
+
     end
   end
 end

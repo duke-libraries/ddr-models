@@ -10,6 +10,7 @@ module Ddr
           control_group: "M"
 
         has_attributes :admin_set,
+                       :display_format,
                        :local_id,
                        :permanent_id,
                        :permanent_url,

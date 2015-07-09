@@ -212,6 +212,10 @@ module Ddr
          get(Ddr::IndexFields::ACCESS_ROLE)
       end
 
+      def display_format
+        get(Ddr::IndexFields::DISPLAY_FORMAT)
+      end
+
       private
 
       def targets_query
