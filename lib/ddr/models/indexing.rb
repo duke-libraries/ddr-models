@@ -19,6 +19,7 @@ module Ddr
           ADMIN_SET         => admin_set,
           ADMIN_SET_FACET   => admin_set_facet,
           COLLECTION_FACET  => collection_facet,
+          DISPLAY_FORMAT    => display_format,
           PERMANENT_ID   => permanent_id,
           PERMANENT_URL  => permanent_url,
           ACCESS_ROLE    => roles.to_json,
