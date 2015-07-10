@@ -26,6 +26,12 @@ module Ddr
         objs
       end
 
+      def object_docs
+        query = ActiveFedora::SolrService.construct_query_for_pids(object_pids)
+        results = ActiveFedora::SolrService.query(query, rows: 999999)
+        results.map { |r| ::SolrDocument.new(r) }
+      end
+
       def objects
         objs.map { |pid| ActiveFedora::Base.find(pid) }
       end
