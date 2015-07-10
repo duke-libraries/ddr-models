@@ -19,8 +19,6 @@ module Ddr
     DEFAULT_LICENSE_URL         = solr_name :default_license_url, type: :string
     DISPLAY_FORMAT              = solr_name :display_format, :stored_sortable
     EXTRACTED_TEXT              = solr_name :extracted_text, :searchable, type: :text
-    FILE_GROUP                  = solr_name :struct_metadata__file_group, :stored_sortable
-    FILE_USE                    = solr_name :struct_metadata__file_use, :stored_sortable
     HAS_MODEL                   = solr_name :has_model, :symbol
     IDENTIFIER_ALL              = solr_name :identifier_all, :symbol
     INTERNAL_URI                = solr_name :internal_uri, :stored_sortable
@@ -46,7 +44,6 @@ module Ddr
     OBJECT_STATE                = solr_name :object_state, :stored_sortable
     OBJECT_CREATE_DATE          = solr_name :system_create, :stored_sortable, type: :date
     OBJECT_MODIFIED_DATE        = solr_name :system_modified, :stored_sortable, type: :date
-    ORDER                       = solr_name :struct_metadata__order, :stored_sortable, type: :integer
     PERMANENT_ID                = solr_name :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = solr_name :permanent_url, :stored_sortable, type: :string
     POLICY_ROLE                 = solr_name :policy_role, :facetable, type: :string
