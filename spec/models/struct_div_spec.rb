@@ -13,62 +13,55 @@ module Ddr
           expect(struct_div.divs.size).to eq(2)
           expect(struct_div.divs.first.label).to eq("Front")
           expect(struct_div.divs.first.divs).to be_empty
-          expect(struct_div.divs.first.objs).to eq([ "test:5" ])
+          expect(struct_div.divs.first.fptrs).to eq([ "test:5" ])
           expect(struct_div.divs.last.label).to eq("Back")
           expect(struct_div.divs.last.divs.size).to eq(2)
-          expect(struct_div.divs.last.objs).to be_empty
+          expect(struct_div.divs.last.fptrs).to be_empty
           expect(struct_div.divs.last.divs.first.label).to eq("Top")
           expect(struct_div.divs.last.divs.first.divs).to be_empty
-          expect(struct_div.divs.last.divs.first.objs).to eq([ "test:7" ])
+          expect(struct_div.divs.last.divs.first.fptrs).to eq([ "test:7" ])
           expect(struct_div.divs.last.divs.last.label).to eq("Bottom")
           expect(struct_div.divs.last.divs.last.divs).to be_empty
-          expect(struct_div.divs.last.divs.last.objs).to eq([ "test:6" ])
+          expect(struct_div.divs.last.divs.last.fptrs).to eq([ "test:6" ])
         end
       end
 
-      describe "#objects?" do
-        context "objects" do
-          it "should be true" do
-            expect(struct_div.divs[0].objects?).to be_truthy
+      describe "#pids" do
+        context "top level" do
+          it "should return all pids in the structMap" do
+            expect(struct_div.pids).to match_array([ 'test:5', 'test:6', 'test:7' ])
           end
-        end
-        context "no objects" do
-          it "should be false" do
-            expect(struct_div.objects?).to_not be_truthy
-          end
-        end
-      end
-      
-      describe "#object_pids" do
-        it "should return the object pids in order" do
-          expect(struct_div.divs.last.divs.first.object_pids).to eq([ 'test:7' ])
-          expect(struct_div.divs.last.divs.last.object_pids).to eq([ 'test:6' ])
         end
       end
 
-      describe "#object_docs" do
-        let(:solr_responses) { [ [ { 'id'=>'test:6' } ], [ { 'id'=>'test:7'} ] ] }
+      describe "#docs" do
+        let(:solr_response) { [ { 'id'=>'test:5' }, { 'id'=>'test:6' }, { 'id'=>'test:7'} ] }
         before do
-          allow(ActiveFedora::SolrService).to receive(:query).with("_query_:\"{!raw f=id}test:6\"", {:rows=>999999}) { solr_responses.first }
-          allow(ActiveFedora::SolrService).to receive(:query).with("_query_:\"{!raw f=id}test:7\"", {:rows=>999999}) { solr_responses.last }
+          allow(ActiveFedora::SolrService).to receive(:query) { solr_response }
         end
-        it "should return the Solr documents in order" do
-          expect(struct_div.divs.last.divs.first.object_docs.first).to be_a(SolrDocument)
-          expect(struct_div.divs.last.divs.last.object_docs.first).to be_a(SolrDocument)
-          expect(struct_div.divs.last.divs.first.object_docs.first.id).to eq( 'test:7' )
-          expect(struct_div.divs.last.divs.last.object_docs.first.id).to eq( 'test:6' )
+        it "should return a hash of Solr documents" do
+          results = struct_div.docs
+          expect(results.keys).to match_array([ 'test:5', 'test:6', 'test:7' ])
+          results.keys.each do |key|
+            expect(results[key]).to be_a(SolrDocument)
+            expect(results[key].id).to eq(key)
+          end
         end
       end
 
       describe "#objects" do
-        let(:repo_objects) { [ Component.new(pid: 'test:6'), Component.new(pid: 'test:7') ] }
+        let(:repo_objects) { [ Component.new(pid: 'test:5'), Component.new(pid: 'test:6'), Component.new(pid: 'test:7') ] }
         before do
-          allow(ActiveFedora::Base).to receive(:find).with('test:6') { repo_objects.first }
-          allow(ActiveFedora::Base).to receive(:find).with('test:7') { repo_objects.last }
+          allow(ActiveFedora::Base).to receive(:find).with('test:5') { repo_objects[0] }
+          allow(ActiveFedora::Base).to receive(:find).with('test:6') { repo_objects[1] }
+          allow(ActiveFedora::Base).to receive(:find).with('test:7') { repo_objects[2] }
         end
-        it "should return the Active Fedora objects in order" do
-          expect(struct_div.divs.last.divs.first.objects).to eq([ repo_objects.last ])
-          expect(struct_div.divs.last.divs.last.objects).to eq([ repo_objects.first ])
+        it "should return a hash of Active Fedora objects" do
+          results = struct_div.objects
+          expect(results.keys).to match_array([ 'test:5', 'test:6', 'test:7' ])
+          expect(results['test:5']).to eq(repo_objects[0])
+          expect(results['test:6']).to eq(repo_objects[1])
+          expect(results['test:7']).to eq(repo_objects[2])
         end
       end
 
