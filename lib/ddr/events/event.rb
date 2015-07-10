@@ -2,8 +2,6 @@ module Ddr
   module Events
     class Event < ActiveRecord::Base
 
-      belongs_to :user, inverse_of: :events
-
       # ActiveSupport::Notifications::Instrumenter sets payload[:exception]
       #   to an array of [<exception class name>, <exception message>]
       #   and we want to store this data in a string field.
@@ -95,15 +93,8 @@ module Ddr
       end
 
       # Object getter and setter
-
       def object
         @object ||= ActiveFedora::Base.find(pid) if pid
-      end
-
-      # Sets user_key to user.user_key
-      # For compatibility with ddr-models <= 1.9.0
-      def user=(user)
-        self.user_key = user.user_key
       end
 
       def object=(obj)
@@ -123,6 +114,10 @@ module Ddr
       # Force to UTC.
       def event_date_time_s
         event_date_time.utc.strftime DATE_TIME_FORMAT
+      end
+
+      def user=(user)
+        self.user_key = user.user_key
       end
 
       protected

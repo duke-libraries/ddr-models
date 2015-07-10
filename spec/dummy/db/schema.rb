@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150130134416) do
+ActiveRecord::Schema.define(version: 20150713171838) do
 
   create_table "events", force: true do |t|
     t.datetime "event_date_time"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 20150130134416) do
     t.string   "summary"
     t.string   "outcome"
     t.text     "detail"
-    t.string   "exception"
+    t.text     "exception",       limit: 65535
     t.string   "user_key"
   end
 
