@@ -5,8 +5,6 @@ module Ddr
   module Models
     RSpec.describe StructDiv, type: :model, structural_metadata: true do
 
-      # let(:structure) { FactoryGirl.build(:simple_structure) }
-      # let(:structDiv) { structure.struct_div_map['default'] }
       let(:structmap_node) { nested_structure_document.xpath('//xmlns:structMap').first }
       let(:struct_div) { described_class.new(structmap_node) }
 
@@ -45,6 +43,20 @@ module Ddr
         it "should return the object pids in order" do
           expect(struct_div.divs.last.divs.first.object_pids).to eq([ 'test:7' ])
           expect(struct_div.divs.last.divs.last.object_pids).to eq([ 'test:6' ])
+        end
+      end
+
+      describe "#object_docs" do
+        let(:solr_responses) { [ [ { 'id'=>'test:6' } ], [ { 'id'=>'test:7'} ] ] }
+        before do
+          allow(ActiveFedora::SolrService).to receive(:query).with("_query_:\"{!raw f=id}test:6\"", {:rows=>999999}) { solr_responses.first }
+          allow(ActiveFedora::SolrService).to receive(:query).with("_query_:\"{!raw f=id}test:7\"", {:rows=>999999}) { solr_responses.last }
+        end
+        it "should return the Solr documents in order" do
+          expect(struct_div.divs.last.divs.first.object_docs.first).to be_a(SolrDocument)
+          expect(struct_div.divs.last.divs.last.object_docs.first).to be_a(SolrDocument)
+          expect(struct_div.divs.last.divs.first.object_docs.first.id).to eq( 'test:7' )
+          expect(struct_div.divs.last.divs.last.object_docs.first.id).to eq( 'test:6' )
         end
       end
 
