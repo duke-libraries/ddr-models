@@ -50,6 +50,9 @@ module Ddr
         if has_multires_image?
           fields[MULTIRES_IMAGE_FILE_PATH] = multires_image_file_path
         end
+        if has_struct_metadata?
+          fields[STRUCT_MAPS] = structure.struct_maps.to_json
+        end
         if has_extracted_text?
           fields[EXTRACTED_TEXT] = extractedText.content
         end

@@ -40,10 +40,10 @@ module Ddr
       end
 
       def create_div(stru)
-        div_count = stru.structMap('default').xpath('xmlns:div').size
+        div_count = stru.structMap_node('default').xpath('xmlns:div').size
         div = Nokogiri::XML::Node.new('div', stru.as_xml_document)
         div['ORDER'] = div_count + 1
-        stru.structMap('default').add_child(div)
+        stru.structMap_node('default').add_child(div)
         div
       end
 

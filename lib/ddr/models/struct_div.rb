@@ -36,6 +36,10 @@ module Ddr
         end
       end
 
+      def as_json(options={})
+        super.compact
+      end
+
       private
 
       def fptr_pids(div_node)

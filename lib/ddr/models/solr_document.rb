@@ -216,6 +216,16 @@ module Ddr
         get(Ddr::IndexFields::DISPLAY_FORMAT)
       end
 
+      def struct_maps
+        JSON.parse(fetch(Ddr::IndexFields::STRUCT_MAPS))
+      rescue
+        {}
+      end
+
+      def struct_map(type='default')
+        struct_maps.present? ? struct_maps.fetch(type) : nil
+      end
+
       private
 
       def targets_query
