@@ -9,11 +9,11 @@ module Ddr
         super
       end
 
-      def struct_divs
-        @struct_divs ||= build_struct_divs(structMaps)
+      def struct_maps
+        @struct_maps ||= build_struct_maps(structMap_nodes)
       end
 
-      def structMap(type='default')
+      def structMap_node(type='default')
         xpath("//xmlns:structMap[@TYPE='#{type}']").first
       end
 
@@ -23,18 +23,18 @@ module Ddr
 
       private
 
-      def structMaps
+      def structMap_nodes
         xpath("//xmlns:structMap")
       end
 
-      def build_struct_divs(structMaps)
-        sdivs = {}
-        structMaps.each do |structMap|
-          type = structMap['TYPE'] || 'default'
-          raise StandardError, "Multiple '#{type}' structMaps" if sdivs[type].present?
-          sdivs[type] = Ddr::Models::StructDiv.new(structMap)
+      def build_struct_maps(structMap_nodes)
+        smaps = {}
+        structMap_nodes.each do |structMap_node|
+          type = structMap_node['TYPE'] || 'default'
+          raise StandardError, "Multiple '#{type}' structMaps" if smaps[type].present?
+          smaps[type] = Ddr::Models::StructDiv.new(structMap_node)
         end
-        sdivs
+        smaps
       end
 
       def self.template

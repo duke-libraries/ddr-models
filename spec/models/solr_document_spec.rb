@@ -74,4 +74,39 @@ RSpec.describe SolrDocument, type: :model do
     its(:display_format) { should eq("Image") }
   end
 
+  describe "#struct_maps" do
+    context "no indexed struct maps" do
+      it "should return an empty hash" do
+        expect(subject.struct_maps).to be_empty
+      end
+    end
+    context "indexed struct maps" do
+      before { subject[Ddr::IndexFields::STRUCT_MAPS] = multiple_struct_maps_structure_to_json }
+      it "should return a hash of the struct maps" do
+        expect(subject.struct_maps).to eq(JSON.parse(multiple_struct_maps_structure_to_json))
+      end
+    end
+  end
+
+  describe "#struct_map" do
+    context "no indexed struct maps" do
+      it "should return nil" do
+        expect(subject.struct_map('default')).to be_nil
+      end
+    end
+    context "indexed struct maps" do
+      before { subject[Ddr::IndexFields::STRUCT_MAPS] = multiple_struct_maps_structure_to_json }
+      context "requested struct map is indexed" do
+        it "should return the struct map" do
+          expect(subject.struct_map('default')).to eq(JSON.parse(multiple_struct_maps_structure_to_json)["default"])
+        end
+      end
+      context "requested struct map is not indexed" do
+        it "should raise a KeyError" do
+          expect { subject.struct_map('foo') }.to raise_error(KeyError)
+        end
+      end
+    end
+  end
+
 end
