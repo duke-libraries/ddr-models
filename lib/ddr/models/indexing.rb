@@ -63,6 +63,12 @@ module Ddr
           fields[DEFAULT_LICENSE_DESCRIPTION] = default_license_description
           fields[DEFAULT_LICENSE_TITLE] = default_license_title
           fields[DEFAULT_LICENSE_URL] = default_license_url
+          fields[ADMIN_SET_FACET] = admin_set_facet
+          fields[COLLECTION_FACET] = collection_facet
+        end
+        if is_a? Item
+          fields[ADMIN_SET_FACET] = admin_set_facet
+          fields[COLLECTION_FACET] = collection_facet
         end
         fields
       end
