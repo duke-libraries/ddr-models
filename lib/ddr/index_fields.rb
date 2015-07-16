@@ -14,6 +14,9 @@ module Ddr
     CONTENT_CONTROL_GROUP       = solr_name :content_control_group, :searchable, type: :string
     CONTENT_SIZE                = solr_name :content_size, :stored_sortable, type: :integer
     CONTENT_SIZE_HUMAN          = solr_name :content_size_human, :symbol
+    CREATOR_FACET               = solr_name :creator_facet, :facetable
+    DATE_FACET                  = solr_name :date_facet, :facetable
+    DATE_SORT                   = solr_name :date_sort, :sortable
     DEFAULT_LICENSE_DESCRIPTION = solr_name :default_license_description, type: :string
     DEFAULT_LICENSE_TITLE       = solr_name :default_license_title, type: :string
     DEFAULT_LICENSE_URL         = solr_name :default_license_url, type: :string

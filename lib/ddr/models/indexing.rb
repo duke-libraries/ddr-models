@@ -17,14 +17,15 @@ module Ddr
           WORKFLOW_STATE    => workflow_state,
           LOCAL_ID          => local_id,
           ADMIN_SET         => admin_set,
-          ADMIN_SET_FACET   => admin_set_facet,
-          COLLECTION_FACET  => collection_facet,
           DISPLAY_FORMAT    => display_format,
-          PERMANENT_ID   => permanent_id,
-          PERMANENT_URL  => permanent_url,
-          ACCESS_ROLE    => roles.to_json,
-          RESOURCE_ROLE  => roles.in_resource_scope.agents,
-          POLICY_ROLE    => roles.in_policy_scope.agents,
+          PERMANENT_ID      => permanent_id,
+          PERMANENT_URL     => permanent_url,
+          ACCESS_ROLE       => roles.to_json,
+          RESOURCE_ROLE     => roles.in_resource_scope.agents,
+          POLICY_ROLE       => roles.in_policy_scope.agents,
+          CREATOR_FACET     => creator,
+          DATE_FACET        => date,
+          DATE_SORT         => date_sort
         }
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last
@@ -98,6 +99,10 @@ module Ddr
 
       def collection_facet
         associated_collection.internal_uri if associated_collection.present?
+      end
+
+      def date_sort
+        date.first
       end
 
     end
