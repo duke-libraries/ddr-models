@@ -213,6 +213,10 @@ module Ddr
          get("access_role_ssi")
       end
 
+      def display_format
+        get(Ddr::IndexFields::DISPLAY_FORMAT)
+      end
+
       private
 
       def targets_query
