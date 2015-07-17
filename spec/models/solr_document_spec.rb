@@ -85,4 +85,9 @@ RSpec.describe SolrDocument, type: :model do
     end
   end
 
+  describe "#display_format" do
+    before { subject[Ddr::IndexFields::DISPLAY_FORMAT] = "Image" }
+    its(:display_format) { should eq("Image") }
+  end
+
 end

@@ -17,6 +17,7 @@ module Ddr
           WORKFLOW_STATE    => workflow_state,
           LOCAL_ID          => local_id,
           ADMIN_SET         => admin_set,
+          DISPLAY_FORMAT    => display_format,
           PERMANENT_ID      => permanent_id,
           PERMANENT_URL     => permanent_url,
           CREATOR_FACET     => creator,
