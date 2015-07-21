@@ -3,7 +3,7 @@ require 'support/ezid_mock_identifier'
 
 module Ddr
   module Models
-    RSpec.describe HasAdminMetadata, type: :model do
+    RSpec.describe HasAdminMetadata, type: :model, contacts: true do
 
       describe "local id" do
         subject { FactoryGirl.build(:item) }
@@ -215,6 +215,20 @@ module Ddr
           end
           it "should return the list of permissions granted to the user's agents on the subject in resource scope, plust the permissions granted to the user's agents on the subject's policy in policy scope" do
             expect(subject.role_based_permissions(user)).to match_array([:read, :download, :add_children])
+          end
+        end
+
+        describe "contacts" do
+          before do
+            allow(YAML).to receive(:load_file) { { 'a' => { 'name' => 'Contact A', 'short_name' => 'A' },
+                                                   'b' => { 'name' => 'Contact B', 'short_name' => 'B' } } }
+            Ddr::Contacts.load_contacts
+          end
+          describe "#research_help" do
+            before { subject.research_help_contact = 'b' }
+            it "should return the appropriate contact" do
+              expect(subject.research_help.slug).to eq('b')
+            end
           end
         end
 

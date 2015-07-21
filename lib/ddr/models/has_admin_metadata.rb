@@ -14,6 +14,7 @@ module Ddr
                        :local_id,
                        :permanent_id,
                        :permanent_url,
+                       :research_help_contact,
                        :workflow_state,
           datastream: "adminMetadata",
           multiple: false
@@ -41,6 +42,10 @@ module Ddr
 
       def assign_permanent_id!
         permanent_id_manager.assign_later
+      end
+
+      def research_help
+        Ddr::Contacts.get(research_help_contact) if research_help_contact
       end
 
       private

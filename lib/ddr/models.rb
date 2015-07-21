@@ -11,6 +11,7 @@ require 'hydra/validations'
 
 require 'ddr/actions'
 require 'ddr/auth'
+require 'ddr/contacts'
 require 'ddr/datastreams'
 require 'ddr/derivatives'
 require 'ddr/events'
