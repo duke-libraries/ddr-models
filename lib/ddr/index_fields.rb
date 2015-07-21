@@ -53,6 +53,7 @@ module Ddr
     PERMANENT_ID                = solr_name :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = solr_name :permanent_url, :stored_sortable, type: :string
     POLICY_ROLE                 = solr_name :policy_role, :facetable, type: :string
+    RESEARCH_HELP_CONTACT       = solr_name :research_help_contact, :stored_sortable
     RESOURCE_ROLE               = solr_name :resource_role, :facetable, type: :string
     TITLE                       = solr_name :title, :stored_sortable
     WORKFLOW_STATE              = solr_name :workflow_state, :stored_sortable

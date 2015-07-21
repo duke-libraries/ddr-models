@@ -28,6 +28,8 @@ module Ddr
 
       property :display_format, predicate: Ddr::Vocab::Display.format
 
+      property :research_help_contact, predicate: Ddr::Vocab::Contact.assistance
+
     end
   end
 end

@@ -13,6 +13,7 @@ module Ddr
              end
 
     autoload :Asset
+    autoload :Contact
     autoload :Display
     autoload :DukeTerms
     autoload :RDFVocabularyParser
