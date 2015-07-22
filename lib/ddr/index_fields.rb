@@ -5,6 +5,10 @@ module Ddr
       ActiveFedora::SolrService.solr_name(*args)
     end
 
+    def self.get(name)
+      const_get(name.to_s.upcase, false)
+    end
+
     ACCESS_ROLE                 = solr_name :access_role, :stored_sortable
     ACTIVE_FEDORA_MODEL         = solr_name :active_fedora_model, :stored_sortable
     ADMIN_SET                   = solr_name :admin_set, :stored_sortable
