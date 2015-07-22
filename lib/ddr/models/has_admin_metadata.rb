@@ -55,6 +55,7 @@ module Ddr
 
       def effective_permissions(agents)
         Ddr::Auth::EffectivePermissions.call(self, agents)
+      end
 
       def research_help
         Ddr::Contacts.get(research_help_contact) if research_help_contact
