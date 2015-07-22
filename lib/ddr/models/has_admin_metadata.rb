@@ -1,3 +1,5 @@
+require "resque"
+
 module Ddr
   module Models
     module HasAdminMetadata
@@ -50,12 +52,8 @@ module Ddr
         roles.grant *(other.roles.in_resource_scope)
       end
 
-      def inherited_roles
-        Ddr::Auth::InheritedRoles.call(self)
-      end
-
-      def effective_roles
-        Ddr::Auth::EffectiveRoles.call(self)
+      def effective_permissions(agents)
+        Ddr::Auth::EffectivePermissions.call(self, agents)
       end
 
       private

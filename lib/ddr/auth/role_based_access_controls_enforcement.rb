@@ -46,6 +46,11 @@ module Ddr
         [resource_role_filters, policy_role_filters].compact
       end
 
+      # Overrides Hydra::AccessControlsEnforcement
+      def enforce_show_permissions
+        authorize! :read, params[:id]
+      end
+
     end
   end
 end

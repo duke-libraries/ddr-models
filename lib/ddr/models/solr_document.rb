@@ -106,10 +106,6 @@ module Ddr
       end
       alias_method :title_display, :title # duck-type Ddr::Models::Base
 
-      def principal_has_role?(principal, role)
-        (Array(self["admin_metadata__#{role}_ssim"]) & Array(principal)).any?
-      end
-
       def identifier
         # We want the multivalued version here
         get(ActiveFedora::SolrService.solr_name(:identifier, :stored_searchable, type: :text))
@@ -224,6 +220,10 @@ module Ddr
 
       def struct_map(type='default')
         struct_maps.present? ? struct_maps.fetch(type) : nil
+      end
+
+      def effective_permissions(agents)
+        Ddr::Auth::EffectivePermissions.call(self, agents)
       end
 
       private

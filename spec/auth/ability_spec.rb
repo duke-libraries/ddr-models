@@ -146,7 +146,7 @@ module Ddr::Auth
         describe "when permissions are cached" do
           before { subject.cache[cache_key] = [ Permissions::READ ] }
           it "should use the cached permissions" do
-            expect_any_instance_of(RoleBasedAbilityDefinitions).not_to receive(:effective_permissions)
+            expect(perm_obj).not_to receive(:effective_permissions)
             expect(subject).to be_able_to(:read, obj)
             expect(subject).not_to be_able_to(:edit, obj)
           end
@@ -154,7 +154,7 @@ module Ddr::Auth
         describe "when permissions are not cached" do
           describe "and user context has role based permission" do
             before do
-              allow_any_instance_of(RoleBasedAbilityDefinitions).to receive(:effective_permissions).with(perm_obj) do
+              allow(perm_obj).to receive(:effective_permissions) do
                 [ Permissions::UPDATE ]
               end
             end
@@ -162,7 +162,7 @@ module Ddr::Auth
           end
           describe "and user context does not have role based permission" do
             before do
-              allow_any_instance_of(RoleBasedAbilityDefinitions).to receive(:effective_permissions).with(perm_obj) do
+              allow(perm_obj).to receive(:effective_permissions) do
                 [ Permissions::READ ]
               end
             end
