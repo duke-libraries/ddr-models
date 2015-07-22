@@ -20,17 +20,13 @@ module Ddr
         case obj
         when Ddr::Models::Base, SolrDocument
           cached_permissions obj.pid do
-            effective_permissions obj
+            obj.effective_permissions(agents)
           end
         when String
           cached_permissions obj do
-            effective_permissions permissions_doc(obj)
+            permissions_doc(obj).effective_permissions(agents)
           end
         end
-      end
-
-      def effective_permissions(obj)
-        EffectivePermissions.call(obj, agents)
       end
 
       def cached_permissions(pid, &block)

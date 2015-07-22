@@ -15,20 +15,6 @@ RSpec.describe SolrDocument, type: :model do
     end
   end
 
-  describe "#principal_has_role?" do
-    before { subject["admin_metadata__role_ssim"] = [ "inst.faculty", "inst.staff", "inst.student" ] }
-    context "user does not have role" do
-      it "should return false" do
-        expect(subject.principal_has_role?([ "registered" ], "role")).to be false
-      end
-    end
-    context "user does have role" do
-      it "should return true" do
-        expect(subject.principal_has_role?([ "inst.staff" ], "role")).to be true
-      end
-    end
-  end
-
   describe "#permanent_id" do
     before { subject[Ddr::IndexFields::PERMANENT_ID] = "foo" }
     its(:permanent_id) { is_expected.to eq("foo") }
