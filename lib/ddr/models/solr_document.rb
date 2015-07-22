@@ -226,6 +226,15 @@ module Ddr
         Ddr::Auth::EffectivePermissions.call(self, agents)
       end
 
+      def display_format
+        get(Ddr::IndexFields::DISPLAY_FORMAT)
+      end
+
+      def research_help
+        research_help_contact = self[Ddr::IndexFields::RESEARCH_HELP_CONTACT] || inherited_research_help_contact
+        Ddr::Contacts.get(research_help_contact) if research_help_contact
+      end
+
       private
 
       def targets_query
@@ -250,6 +259,15 @@ module Ddr
 
       def get_pid(field)
         ActiveFedora::Base.pid_from_uri(get(field)) rescue nil
+      end
+
+      def inherited_research_help_contact
+        if admin_policy_pid
+          query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
+          results = ActiveFedora::SolrService.query(query)
+          doc = results.map { |result| ::SolrDocument.new(result) }.first
+          doc[Ddr::IndexFields::RESEARCH_HELP_CONTACT].first
+        end
       end
 
     end

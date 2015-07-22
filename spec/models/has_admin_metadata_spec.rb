@@ -3,7 +3,7 @@ require 'support/ezid_mock_identifier'
 
 module Ddr
   module Models
-    RSpec.describe HasAdminMetadata, type: :model do
+    RSpec.describe HasAdminMetadata, type: :model, contacts: true do
 
       describe "local id" do
         subject { FactoryGirl.build(:item) }
@@ -223,6 +223,20 @@ module Ddr
           end
           it "should index the agents having roles in resource scope" do
             expect(indexed[Ddr::IndexFields::RESOURCE_ROLE]).to contain_exactly(role1.agent.first)
+          end
+        end
+
+        describe "contacts" do
+          before do
+            allow(YAML).to receive(:load_file) { { 'a' => { 'name' => 'Contact A', 'short_name' => 'A' },
+                                                   'b' => { 'name' => 'Contact B', 'short_name' => 'B' } } }
+            Ddr::Contacts.load_contacts
+          end
+          describe "#research_help" do
+            before { subject.research_help_contact = 'b' }
+            it "should return the appropriate contact" do
+              expect(subject.research_help.slug).to eq('b')
+            end
           end
         end
 

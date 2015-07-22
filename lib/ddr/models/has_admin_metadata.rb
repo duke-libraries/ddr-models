@@ -16,6 +16,7 @@ module Ddr
                        :local_id,
                        :permanent_id,
                        :permanent_url,
+                       :research_help_contact,
                        :workflow_state,
           datastream: "adminMetadata",
           multiple: false
@@ -54,6 +55,9 @@ module Ddr
 
       def effective_permissions(agents)
         Ddr::Auth::EffectivePermissions.call(self, agents)
+
+      def research_help
+        Ddr::Contacts.get(research_help_contact) if research_help_contact
       end
 
       private

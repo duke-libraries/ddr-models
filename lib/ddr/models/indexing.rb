@@ -11,21 +11,22 @@ module Ddr
 
       def index_fields
         fields = {
-          TITLE             => title_display,
-          INTERNAL_URI      => internal_uri,
-          IDENTIFIER_ALL    => all_identifiers,
-          WORKFLOW_STATE    => workflow_state,
-          LOCAL_ID          => local_id,
-          ADMIN_SET         => admin_set,
-          DISPLAY_FORMAT    => display_format,
-          PERMANENT_ID      => permanent_id,
-          PERMANENT_URL     => permanent_url,
-          ACCESS_ROLE       => roles.to_json,
-          RESOURCE_ROLE     => roles.in_resource_scope.agents,
-          POLICY_ROLE       => roles.in_policy_scope.agents,
-          CREATOR_FACET     => creator,
-          DATE_FACET        => date,
-          DATE_SORT         => date_sort
+          TITLE                 => title_display,
+          INTERNAL_URI          => internal_uri,
+          IDENTIFIER_ALL        => all_identifiers,
+          WORKFLOW_STATE        => workflow_state,
+          LOCAL_ID              => local_id,
+          ADMIN_SET             => admin_set,
+          DISPLAY_FORMAT        => display_format,
+          PERMANENT_ID          => permanent_id,
+          PERMANENT_URL         => permanent_url,
+          ACCESS_ROLE           => roles.to_json,
+          RESOURCE_ROLE         => roles.in_resource_scope.agents,
+          POLICY_ROLE           => roles.in_policy_scope.agents,
+          CREATOR_FACET         => creator,
+          DATE_FACET            => date,
+          DATE_SORT             => date_sort,
+          RESEARCH_HELP_CONTACT => research_help_contact
         }
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last
