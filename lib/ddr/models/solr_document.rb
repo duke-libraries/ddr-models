@@ -9,28 +9,29 @@ module Ddr
         alias_method :pid, :id
       end
 
+      def method_missing(name, *args, &block)
+        if args.empty? && !block
+          begin
+            field = Ddr::IndexFields.get(name)
+          rescue NameError
+            # pass
+          else
+            # Preserves the default behavior of the deprecated method
+            # Blacklight::Solr::Document#get, which this procedure
+            # effectively replaces.
+            val = self[field]
+            return val.is_a?(Array) ? val.join(", ") : val
+          end
+        end
+        super
+      end
+
       def to_partial_path
         'document'
       end
 
       def safe_id
         id.sub(/:/, "-")
-      end
-
-      def admin_set
-        get(Ddr::IndexFields::ADMIN_SET)
-      end
-
-      def local_id
-        get(Ddr::IndexFields::LOCAL_ID)
-      end
-
-      def active_fedora_model
-        get(Ddr::IndexFields::ACTIVE_FEDORA_MODEL)
-      end
-
-      def internal_uri
-        get(Ddr::IndexFields::INTERNAL_URI)
       end
 
       def object_profile
@@ -53,16 +54,8 @@ module Ddr
         get_date(Ddr::IndexFields::LAST_FIXITY_CHECK_ON)
       end
 
-      def last_fixity_check_outcome
-        get(Ddr::IndexFields::LAST_FIXITY_CHECK_OUTCOME)
-      end
-
       def last_virus_check_on
         get_date(Ddr::IndexFields::LAST_VIRUS_CHECK_ON)
-      end
-
-      def last_virus_check_outcome
-        get(Ddr::IndexFields::LAST_VIRUS_CHECK_OUTCOME)
       end
 
       def datastreams
@@ -78,7 +71,7 @@ module Ddr
       end
 
       def admin_policy_uri
-        get(Ddr::IndexFields::IS_GOVERNED_BY)
+        is_governed_by
       end
 
       def admin_policy_pid
@@ -89,7 +82,8 @@ module Ddr
       def admin_policy
         if admin_policy_pid
           query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
-          self.class.new(ActiveFedora::SolrService.query(query).first)
+          docs = ActiveFedora::SolrService.query(query)
+          self.class.new(docs.first)
         end
       end
 
@@ -101,18 +95,17 @@ module Ddr
         object_profile["objLabel"]
       end
 
-      def title
-        get(Ddr::IndexFields::TITLE)
+      def title_display
+        title
       end
-      alias_method :title_display, :title # duck-type Ddr::Models::Base
 
       def identifier
         # We want the multivalued version here
-        get(ActiveFedora::SolrService.solr_name(:identifier, :stored_searchable, type: :text))
+        self[ActiveFedora::SolrService.solr_name(:identifier, :stored_searchable, type: :text)]
       end
 
       def source
-        get(ActiveFedora::SolrService.solr_name(:source, :stored_searchable, type: :text))
+        self[ActiveFedora::SolrService.solr_name(:source, :stored_searchable, type: :text)]
       end
 
       def has_thumbnail?
@@ -133,14 +126,6 @@ module Ddr
       # For duck-typing with Ddr::Models::HasContent
       alias_method :content_type, :content_mime_type
 
-      def content_size
-        get(Ddr::IndexFields::CONTENT_SIZE)
-      end
-
-      def content_size_human
-        get(Ddr::IndexFields::CONTENT_SIZE_HUMAN)
-      end
-
       def content_checksum
         content_ds["dsChecksum"] rescue nil
       end
@@ -157,10 +142,6 @@ module Ddr
         targets_count > 0
       end
 
-      def has_default_rights?
-        has_datastream?(Ddr::Datastreams::DEFAULT_RIGHTS)
-      end
-
       def association(name)
         get_pid(ActiveFedora::SolrService.solr_name(name, :symbol))
       end
@@ -170,21 +151,18 @@ module Ddr
       end
 
       def inherited_license
-        if admin_policy_pid
-          query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
-          results = ActiveFedora::SolrService.query(query)
-          doc = results.map { |result| ::SolrDocument.new(result) }.first
-          { title: doc.get(Ddr::IndexFields::DEFAULT_LICENSE_TITLE),
-            description: doc.get(Ddr::IndexFields::DEFAULT_LICENSE_DESCRIPTION),
-            url: doc.get(Ddr::IndexFields::DEFAULT_LICENSE_URL) }
+        if doc = admin_policy
+          { title: doc.default_license_title,
+            description: doc.default_license_description,
+            url: doc.default_license_url }
         end
       end
 
       def license
-        if get(Ddr::IndexFields::LICENSE_TITLE) || get(Ddr::IndexFields::LICENSE_DESCRIPTION) || get(Ddr::IndexFields::LICENSE_URL)
-          { title: get(Ddr::IndexFields::LICENSE_TITLE),
-            description: get(Ddr::IndexFields::LICENSE_DESCRIPTION),
-            url: get(Ddr::IndexFields::LICENSE_URL) }
+        if license_title || license_description || license_url
+          { title: license_title,
+            description: license_description,
+            url: license_url }
         end
       end
 
@@ -192,24 +170,8 @@ module Ddr
         @effective_license ||= license || inherited_license || {}
       end
 
-      def permanent_id
-        get(Ddr::IndexFields::PERMANENT_ID)
-      end
-
-      def multires_image_file_path
-        get(Ddr::IndexFields::MULTIRES_IMAGE_FILE_PATH)
-      end
-
       def roles
         @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
-      end
-
-      def access_role
-         get(Ddr::IndexFields::ACCESS_ROLE)
-      end
-
-      def display_format
-        get(Ddr::IndexFields::DISPLAY_FORMAT)
       end
 
       def struct_maps
@@ -224,10 +186,6 @@ module Ddr
 
       def effective_permissions(agents)
         Ddr::Auth::EffectivePermissions.call(self, agents)
-      end
-
-      def display_format
-        get(Ddr::IndexFields::DISPLAY_FORMAT)
       end
 
       def research_help
@@ -246,7 +204,7 @@ module Ddr
       end
 
       def get_date(field)
-        parse_date(get(field))
+        parse_date(self[field])
       end
 
       def get_json(field)
@@ -258,15 +216,12 @@ module Ddr
       end
 
       def get_pid(field)
-        ActiveFedora::Base.pid_from_uri(get(field)) rescue nil
+        ActiveFedora::Base.pid_from_uri(self[field]) rescue nil
       end
 
       def inherited_research_help_contact
-        if admin_policy_pid
-          query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
-          results = ActiveFedora::SolrService.query(query)
-          doc = results.map { |result| ::SolrDocument.new(result) }.first
-          doc[Ddr::IndexFields::RESEARCH_HELP_CONTACT].first
+        if doc = admin_policy
+          doc.research_help_contact
         end
       end
 
