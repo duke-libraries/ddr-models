@@ -61,18 +61,26 @@ module Ddr::Auth
           expect(subject.member_of?(group2)).to be false
         end
       end
+      describe "when given nil" do
+        it "should be false" do
+          expect(subject.member_of?(nil)).to be false
+        end
+      end
     end
 
     describe "#authorized_to_act_as_superuser?" do
+      before do
+        allow(Ddr::Auth).to receive(:superuser_group) { "superusers" }
+      end
       describe "when a member of the superusers group" do
         before do
-          allow(subject).to receive(:groups) { [ Groups::SUPERUSERS ] }
+          allow(subject).to receive(:member_of?).with("superusers") { true }
         end
         its(:authorized_to_act_as_superuser?) { should be true }
       end
       describe "when not a member of the superusers group" do
         before do
-          allow(subject).to receive(:groups) { [ Groups::PUBLIC ] }
+          allow(subject).to receive(:member_of?).with("superusers") { false }
         end
         its(:authorized_to_act_as_superuser?) { should be false }
       end
