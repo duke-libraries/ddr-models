@@ -253,7 +253,7 @@ module Ddr
           query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
           results = ActiveFedora::SolrService.query(query)
           doc = results.map { |result| ::SolrDocument.new(result) }.first
-          doc[Ddr::IndexFields::RESEARCH_HELP_CONTACT].first
+          doc[Ddr::IndexFields::RESEARCH_HELP_CONTACT]
         end
       end
 
