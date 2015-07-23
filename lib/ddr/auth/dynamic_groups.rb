@@ -1,13 +1,7 @@
 module Ddr::Auth
   class DynamicGroups
 
-    ALL = [ Groups::PUBLIC,
-            Groups::REGISTERED,
-            Groups::DUKE_ALL,
-            Groups::SUPERUSERS,
-            Groups::COLLECTION_CREATORS ] +
-          AffiliationGroups::ALL
-    ALL.freeze
+    ALL = ([Groups::PUBLIC, Groups::REGISTERED, Groups::DUKE_ALL] + AffiliationGroups::ALL).freeze
 
     # @param auth_context [AuthContext]
     # @return [Array<Group>]

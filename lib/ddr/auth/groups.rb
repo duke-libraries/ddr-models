@@ -13,25 +13,12 @@ module Ddr
       DUKE_ALL = Group.new "duke.all", label: "Duke NetIDs" do |auth_context|
         auth_context.duke_agent?
       end
-      
-      SUPERUSERS = Group.new "ddr.superusers", label: "Superusers" do |auth_context|
-        auth_context.ismemberof.include? Ddr::Auth.superuser_group
-      end
-      
-      COLLECTION_CREATORS = Group.new "ddr.collection_creators",
-                                      label: "Collection Creators" do |auth_context|
-        auth_context.ismemberof.include? Ddr::Auth.collection_creators_group
-      end
 
       # Return the list of all groups available for use in the repository,
       #   i.e., that can be used to assert access controls.
       # @return [Array<Group>] the groups
       def self.all
-        [ PUBLIC,
-          REGISTERED,
-          DUKE_ALL ] +
-          AffiliationGroups::ALL +
-          Ddr::Auth.grouper_gateway.repository_groups
+        DynamicGroups::ALL + Ddr::Auth.grouper_gateway.repository_groups
       end
 
       # @param auth_context [AuthContext]

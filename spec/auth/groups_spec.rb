@@ -9,8 +9,6 @@ module Ddr::Auth
         it { should include(Groups::PUBLIC) }
         it { should_not include(Groups::REGISTERED) }
         it { should_not include(Groups::DUKE_ALL) }
-        it { should_not include(Groups::SUPERUSERS) }
-        it { should_not include(Groups::COLLECTION_CREATORS) }
         it "should not include affiliation groups" do
           expect(subject.any? { |g| AffiliationGroups::ALL.include?(g) }).to be false
         end
@@ -21,8 +19,6 @@ module Ddr::Auth
         it { should include(Groups::PUBLIC) }
         it { should include(Groups::REGISTERED) }
         it { should_not include(Groups::DUKE_ALL) }
-        it { should_not include(Groups::SUPERUSERS) }
-        it { should_not include(Groups::COLLECTION_CREATORS) }
         it "should not include affiliation groups" do
           expect(subject.any? { |g| AffiliationGroups::ALL.include?(g) }).to be false
         end
@@ -33,8 +29,6 @@ module Ddr::Auth
         it { should include(Groups::PUBLIC) }
         it { should include(Groups::REGISTERED) }
         it { should include(Groups::DUKE_ALL) }
-        it { should_not include(Groups::SUPERUSERS) }
-        it { should_not include(Groups::COLLECTION_CREATORS) }
 
         describe "with affiliations" do
           before do
@@ -61,26 +55,7 @@ module Ddr::Auth
         end
       end
 
-      describe "superusers" do
-        let(:auth_context) { FactoryGirl.build(:auth_context) }
-        before do
-          allow(Ddr::Auth).to receive(:superuser_group) { "superusers" }
-          allow(auth_context).to receive(:ismemberof) { [ Ddr::Auth.superuser_group ] }
-        end
-        it { should include(Groups::SUPERUSERS) }
-      end
-
-      describe "collection creators" do
-        let(:auth_context) { FactoryGirl.build(:auth_context) }
-        before do
-          allow(Ddr::Auth).to receive(:collection_creators_group) { "collection_creators" }
-          allow(auth_context).to receive(:ismemberof) { [ Ddr::Auth.collection_creators_group ] }
-        end
-        it { should include(Groups::COLLECTION_CREATORS) }
-      end
-
     end
-
 
   end
 end
