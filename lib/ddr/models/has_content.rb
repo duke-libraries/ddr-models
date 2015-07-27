@@ -29,6 +29,13 @@ module Ddr
           label: "Text extracted from the content file",
           control_group: "M"
 
+        has_metadata \
+          name: Ddr::Datastreams::FITS,
+          type: Ddr::Datastreams::FitsDatastream,
+          versionable: true,
+          label: "FITS Output for content file",
+          control_group: "M"
+
         has_attributes :original_filename, datastream: "adminMetadata", multiple: false
 
         include FileManagement
