@@ -35,6 +35,10 @@ module Ddr
         Ddr::Auth::Roles::PropertyRoleSet.new(adminMetadata.access_role)
       end
 
+      def inherited_roles
+        Ddr::Auth::InheritedRoles.call(self)
+      end
+
       def workflow
         @workflow ||= Ddr::Managers::WorkflowManager.new(self)
       end
