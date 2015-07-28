@@ -5,6 +5,7 @@ module Ddr
     autoload :Manager
     autoload :DerivativesManager
     autoload :PermanentIdManager
+    autoload :TechnicalMetadataManager
     autoload :WorkflowManager
 
   end

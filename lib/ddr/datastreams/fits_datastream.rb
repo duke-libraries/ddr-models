@@ -8,17 +8,19 @@ module Ddr::Datastreams
       t.root(path: "fits",
              xmlns: FITS_XMLNS,
              schema: FITS_SCHEMA)
+      t.version(path: {attribute: "version"})
+      t.timestamp(path: {attribute: "timestamp"})
       t.identification {
         t.identity {
           t.mimetype(path: {attribute: "mimetype"})
           t.format_label(path: {attribute: "format"})
-          t.version
+          t.format_version(path: "version")
           t.pronom_identifier(path: "externalIdentifier", attributes: {type: "puid"})
         }
       }
       t.fileinfo {
-        t.size
-        t.creatingApplicationName
+        t.file_size(path: "size")
+        t.creating_application(path: "creatingApplicationName")
         t.created
         t.lastmodified
       }
@@ -28,14 +30,17 @@ module Ddr::Datastreams
       }
       t.metadata {
         t.image {
-          t.imageWidth
-          t.imageHeight
-          t.colorSpace
+          t.image_width(path: "imageWidth")
+          t.image_height(path: "imageHeight")
+          t.color_space(path: "colorSpace")
         }
         t.document {
           # TODO - configure to get from Tika?
           # t.encoding
         }
+        t.text
+        t.audio
+        t.video
       }
     end
 

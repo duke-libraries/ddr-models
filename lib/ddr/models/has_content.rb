@@ -66,6 +66,10 @@ module Ddr
         @derivatives ||= Ddr::Managers::DerivativesManager.new(self)
       end
 
+      def techmd
+        @techmd ||= Ddr::Managers::TechnicalMetadataManager.new(self)
+      end
+
       def content_size
         content.external? ? content.file_size : content.dsSize
       end
