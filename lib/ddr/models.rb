@@ -71,6 +71,9 @@ module Ddr
       "https://repository.lib.duke.edu/id/"
     end
 
+    # Home directory for FITS
+    mattr_accessor :fits_home
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self

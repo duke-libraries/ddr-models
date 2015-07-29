@@ -4,6 +4,7 @@ module Ddr
 
     autoload :PermanentId
     autoload :MigrateLegacyAuthorization
+    autoload :FitsFileCharacterization
 
     autoload_at 'ddr/jobs/permanent_id' do
       autoload :MakeUnavailable

@@ -42,6 +42,8 @@ module Ddr
 
         around_save :update_derivatives, if: :content_changed?
 
+        around_save :characterize_file, if: :content_changed?
+
         after_add_file do
           if file_to_add.original_name && file_to_add.dsid == "content"
             self.original_filename = file_to_add.original_name
@@ -131,6 +133,11 @@ module Ddr
       def update_derivatives
         yield
         derivatives.update_derivatives(:later)
+      end
+
+      def characterize_file
+        yield
+        Resque.enqueue(Ddr::Jobs::FitsFileCharacterization, pid)
       end
 
       def default_content_type
