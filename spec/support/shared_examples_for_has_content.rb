@@ -5,6 +5,8 @@ RSpec.shared_examples "an object that can have content" do
 
   subject { described_class.new(title: [ "I Have Content!" ]) }
 
+  before { allow(Resque).to receive(:enqueue) }
+
   it "should delegate :validate_checksum! to :content" do
     checksum = "dea56f15b309e47b74fa24797f85245dda0ca3d274644a96804438bbd659555a"
     expect(subject.content).to receive(:validate_checksum!).with(checksum, "SHA-256")
@@ -71,6 +73,10 @@ RSpec.shared_examples "an object that can have content" do
           expect(subject.derivatives).to receive(:update_derivatives)
           subject.save
         end
+        it "should enqueue a FITS file characterization job" do
+          expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
+          subject.save
+        end
       end
 
       context "and it's an existing object with content" do
@@ -78,6 +84,10 @@ RSpec.shared_examples "an object that can have content" do
         let(:file) { fixture_file_upload("imageB.tif", "image/tiff") }
         it "should generate derivatives" do
           expect(subject.derivatives).to receive(:update_derivatives)
+          subject.upload! file
+        end
+        it "should enqueue a FITS file characterization job" do
+          expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
           subject.upload! file
         end
       end

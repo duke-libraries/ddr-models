@@ -79,6 +79,10 @@ module Ddr
         end
       end
 
+      initializer "fits_home" do
+        Ddr::Models.fits_home = ENV["FITS_HOME"]
+      end
+
     end
   end
 end
