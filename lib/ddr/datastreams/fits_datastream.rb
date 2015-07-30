@@ -19,10 +19,10 @@ module Ddr::Datastreams
         }
       }
       t.fileinfo {
-        t.file_size(path: "size")
+        t.size
         t.creating_application(path: "creatingApplicationName")
         t.created
-        t.lastmodified
+        t.last_modified(path: "lastmodified")
       }
       t.filestatus {
         t.valid
