@@ -12,17 +12,18 @@ module Ddr::Datastreams
       t.timestamp(path: {attribute: "timestamp"})
       t.identification {
         t.identity {
-          t.media_type(path: {attribute: "mimetype"})
+          t.mimetype(path: {attribute: "mimetype"})
           t.format_label(path: {attribute: "format"})
-          t.format_version(path: "version")
+          t.version
+          t.externalIdentifier
           t.pronom_identifier(path: "externalIdentifier", attributes: {type: "puid"})
         }
       }
       t.fileinfo {
         t.size
-        t.creating_application(path: "creatingApplicationName")
+        t.creatingApplicationName
         t.created
-        t.last_modified(path: "lastmodified")
+        t.lastmodified
       }
       t.filestatus {
         t.valid
@@ -30,9 +31,9 @@ module Ddr::Datastreams
       }
       t.metadata {
         t.image {
-          t.image_width(path: "imageWidth")
-          t.image_height(path: "imageHeight")
-          t.color_space(path: "colorSpace")
+          t.imageWidth
+          t.imageHeight
+          t.colorSpace
         }
         t.document {
           # TODO - configure to get from Tika?
@@ -42,6 +43,25 @@ module Ddr::Datastreams
         t.audio
         t.video
       }
+
+      ## proxy terms
+      # identification / identity
+      t.media_type        proxy: [:identification, :identity, :mimetype]
+      t.format_label      proxy: [:identification, :identity, :format_label]
+      t.format_version    proxy: [:identification, :identity, :version]
+      t.pronom_identifier proxy: [:identification, :identity, :pronom_identifier]
+      # filestatus
+      t.valid             proxy: [:filestatus, :valid]
+      t.well_formed       proxy: [:filestatus, :well_formed]
+      # fileinfo
+      t.created              proxy: [:fileinfo, :created]
+      t.modified             proxy: [:fileinfo, :lastmodified]
+      t.creating_application proxy: [:fileinfo, :creatingApplicationName]
+      t.extent               proxy: [:fileinfo, :size]
+      # image metadata
+      t.image_width          proxy: [:metadata, :image, :imageWidth]
+      t.image_height         proxy: [:metadata, :image, :imageHeight]
+      t.color_space          proxy: [:metadata, :image, :colorSpace]
     end
 
     def self.xml_template
