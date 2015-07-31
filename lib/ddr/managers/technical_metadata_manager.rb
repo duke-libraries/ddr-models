@@ -15,7 +15,7 @@ module Ddr::Managers
     delegate :identity, to: :identification
 
     # FITS identity data points
-    delegate :mimetype, :format_label, :format_version, :pronom_identifier, to: :identity
+    delegate :media_type, :format_label, :format_version, :pronom_identifier, to: :identity
 
     # FITS fileinfo elements
     delegate :created, :last_modified, :creating_application, :size, to: :fileinfo
@@ -41,12 +41,8 @@ module Ddr::Managers
       end
     end
 
-    def media_type
-      mimetype.push(object.content_type).compact.uniq
-    end
-
     def file_size
-      size.map(&:to_i).push(object.content_size).compact.uniq
+      size.map(&:to_i)
     end
 
     def file_human_size
