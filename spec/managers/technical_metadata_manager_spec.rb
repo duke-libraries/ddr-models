@@ -17,6 +17,7 @@ module Ddr::Managers
       its(:created) { is_expected.to be_empty }
       its(:pronom_identifier) { is_expected.to be_empty }
       its(:creating_application) { is_expected.to be_empty }
+      its(:file_size) { is_expected.to be_empty }
       its(:fits_version) { is_expected.to be_nil }
       its(:fits_datetime) { is_expected.to be_nil }
       its(:fits?) { is_expected.to be false }
@@ -42,7 +43,7 @@ module Ddr::Managers
       its(:pronom_identifier) { is_expected.to eq(["fmt/20"]) }
       its(:creating_application) { is_expected.to contain_exactly("Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/PREMIS Editorial Committee", "Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/Acrobat PDFMaker 11 for Word") }
       its(:fits_version) { is_expected.to eq("0.8.5") }
-      its(:file_size) { is_expected.to eq([3786205]) }
+      its(:file_size) { is_expected.to eq(["3786205"]) }
       its(:media_type) { is_expected.to eq(["application/pdf"]) }
     end
 

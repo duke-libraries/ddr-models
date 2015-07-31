@@ -5,26 +5,14 @@ module Ddr::Managers
 
     delegate :content, :fits, to: :object
 
-    # FITS output sections
-    delegate :filestatus, :fileinfo, :identification, :metadata, to: :fits
+    delegate :valid, :well_formed,
+             :media_type, :format_label, :format_version, :pronom_identifier,
+             :created, :modified, :creating_application, :extent,
+             :image_width, :image_height, :color_space,
+             to: :fits
 
-    # FITS filestatus section
-    delegate :valid, :well_formed, to: :filestatus
-
-    # FITS identification section
-    delegate :identity, to: :identification
-
-    # FITS identity data points
-    delegate :media_type, :format_label, :format_version, :pronom_identifier, to: :identity
-
-    # FITS fileinfo elements
-    delegate :created, :last_modified, :creating_application, :size, to: :fileinfo
-
-    # FITS format-specific metadata elements
-    delegate :image, :document, :text, :audio, :video, to: :metadata
-
-    # FITS image metadata elements
-    delegate :image_width, :image_height, :color_space, to: :image
+    alias_method :file_size, :extent
+    alias_method :last_modified, :modified
 
     def fits?
       !fits_version.nil?
@@ -41,14 +29,11 @@ module Ddr::Managers
       end
     end
 
-    def file_size
-      size.map(&:to_i)
-    end
-
     def file_human_size
-      file_size.map do |s|
-        "%s (%s bytes)" % [ ActiveSupport::NumberHelper.number_to_human_size(s),
-                            ActiveSupport::NumberHelper.number_to_delimited(s) ]
+      file_size.map do |fs|
+        num = fs.to_i
+        "%s (%s bytes)" % [ ActiveSupport::NumberHelper.number_to_human_size(n),
+                            ActiveSupport::NumberHelper.number_to_delimited(n) ]
       end
     end
 
