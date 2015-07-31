@@ -12,7 +12,7 @@ module Ddr::Datastreams
       t.timestamp(path: {attribute: "timestamp"})
       t.identification {
         t.identity {
-          t.mimetype(path: {attribute: "mimetype"})
+          t.media_type(path: {attribute: "mimetype"})
           t.format_label(path: {attribute: "format"})
           t.format_version(path: "version")
           t.pronom_identifier(path: "externalIdentifier", attributes: {type: "puid"})

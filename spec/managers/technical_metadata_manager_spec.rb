@@ -11,7 +11,7 @@ module Ddr::Managers
       its(:valid) { is_expected.to be_empty }
       its(:well_formed) { is_expected.to be_empty }
       its(:format_label) { is_expected.to be_empty }
-      its(:mimetype) { is_expected.to be_empty }
+      its(:media_type) { is_expected.to be_empty }
       its(:format_version) { is_expected.to be_empty }
       its(:last_modified) { is_expected.to be_empty }
       its(:created) { is_expected.to be_empty }
@@ -35,7 +35,7 @@ module Ddr::Managers
       its(:valid) { is_expected.to eq(["false"]) }
       its(:well_formed) { is_expected.to eq(["true"]) }
       its(:format_label) { is_expected.to eq(["Portable Document Format"]) }
-      its(:mimetype) { is_expected.to eq(["application/pdf"]) }
+      its(:media_type) { is_expected.to eq(["application/pdf"]) }
       its(:format_version) { is_expected.to eq(["1.6"]) }
       its(:last_modified) { is_expected.to contain_exactly("2015:06:25 21:45:24-04:00", "2015-06-08T21:22:35Z") }
       its(:created) { is_expected.to eq(["2015:06:05 15:16:23-04:00"]) }
