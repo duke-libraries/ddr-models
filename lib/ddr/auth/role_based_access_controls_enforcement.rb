@@ -17,15 +17,15 @@ module Ddr
         @current_ability ||= AbilityFactory.call(current_user, request.env)
       end
 
-      # List of PIDs for policies on which any of the current user's agent has a role in policy scope
+      # List of URIs for policies on which any of the current user's agent has a role in policy scope
       def policy_role_policies
-        @policy_role_policies ||= Array.new.tap do |pids|
+        @policy_role_policies ||= Array.new.tap do |uris|
           filters = current_ability.agents.map do |agent|
             "#{Ddr::IndexFields::POLICY_ROLE}:\"#{agent}\""
           end.join(" OR ")
           query = "#{Ddr::IndexFields::ACTIVE_FEDORA_MODEL}:Collection AND (#{filters})"
-          results = ActiveFedora::SolrService.query(query, rows: Collection.count, fl: "id")
-          results.each_with_object(pids) { |r, memo| memo << r["id"] }
+          results = ActiveFedora::SolrService.query(query, rows: Collection.count, fl: Ddr::IndexFields::INTERNAL_URI)
+          results.each_with_object(uris) { |r, memo| memo << r[Ddr::IndexFields::INTERNAL_URI] }
         end
       end
 

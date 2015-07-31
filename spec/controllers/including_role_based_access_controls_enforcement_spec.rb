@@ -31,17 +31,17 @@ RSpec.describe ApplicationController, type: :controller do
       collections[2].roles.grant type: "Viewer", agent: "foo:bar", scope: "policy"
       collections[2].save
     end
-    it "should return a list of PIDs for collections on which the current ability has a role" do
-      expect(subject.policy_role_policies).to match_array([collections[0].pid, collections[1].pid])
+    it "should return a list of internal URIs for collections on which the current ability has a role" do
+      expect(subject.policy_role_policies).to match_array([collections[0].internal_uri, collections[1].internal_uri])
     end
   end
 
   describe "#policy_role_filters" do
     before do
-      allow(subject).to receive(:policy_role_policies) { ["test:13", "test:45"] }
+      allow(subject).to receive(:policy_role_policies) { ["info:fedora/test:13", "info:fedora/test:45"] }
     end
-    it "should include clauses for is_governed_by relationships to the #policy_role_policies PIDs" do
-      expect(subject.policy_role_filters).to eq("_query_:\"{!raw f=#{Ddr::IndexFields::IS_GOVERNED_BY}}test:13\" OR _query_:\"{!raw f=#{Ddr::IndexFields::IS_GOVERNED_BY}}test:45\"")
+    it "should include clauses for is_governed_by relationships to the #policy_role_policies" do
+      expect(subject.policy_role_filters).to eq("_query_:\"{!raw f=#{Ddr::IndexFields::IS_GOVERNED_BY}}info:fedora/test:13\" OR _query_:\"{!raw f=#{Ddr::IndexFields::IS_GOVERNED_BY}}info:fedora/test:45\"")
     end
   end
 
