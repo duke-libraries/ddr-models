@@ -48,6 +48,10 @@ module Ddr
           fields[MEDIA_TYPE] = content_type
           fields[MEDIA_MAJOR_TYPE] = content_major_type
           fields[MEDIA_SUB_TYPE] = content_sub_type
+          if techmd.fits?
+            fields[FITS_VERSION] = techmd.fits_version
+            fields[FITS_DATETIME] = techmd.fits_datetime.to_time.utc.iso8601
+          end
         end
         if has_multires_image?
           fields[MULTIRES_IMAGE_FILE_PATH] = multires_image_file_path

@@ -26,6 +26,8 @@ module Ddr
     DEFAULT_LICENSE_URL         = solr_name :default_license_url, type: :string
     DISPLAY_FORMAT              = solr_name :display_format, :stored_sortable
     EXTRACTED_TEXT              = solr_name :extracted_text, :searchable, type: :text
+    FITS_VERSION                = solr_name :fits_version, :stored_sortable
+    FITS_DATETIME               = solr_name :fits_datetime, :stored_sortable, type: :date
     HAS_MODEL                   = solr_name :has_model, :symbol
     IDENTIFIER_ALL              = solr_name :identifier_all, :symbol
     INTERNAL_URI                = solr_name :internal_uri, :stored_sortable
