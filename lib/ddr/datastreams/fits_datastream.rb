@@ -46,13 +46,13 @@ module Ddr::Datastreams
 
       ## proxy terms
       # identification / identity
-      t.media_type        proxy: [:identification, :identity, :mimetype]
-      t.format_label      proxy: [:identification, :identity, :format_label]
-      t.format_version    proxy: [:identification, :identity, :version]
-      t.pronom_identifier proxy: [:identification, :identity, :pronom_identifier]
+      t.media_type           proxy: [:identification, :identity, :mimetype]
+      t.format_label         proxy: [:identification, :identity, :format_label]
+      t.format_version       proxy: [:identification, :identity, :version]
+      t.pronom_identifier    proxy: [:identification, :identity, :pronom_identifier]
       # filestatus
-      t.valid             proxy: [:filestatus, :valid]
-      t.well_formed       proxy: [:filestatus, :well_formed]
+      t.valid                proxy: [:filestatus, :valid]
+      t.well_formed          proxy: [:filestatus, :well_formed]
       # fileinfo
       t.created              proxy: [:fileinfo, :created]
       t.modified             proxy: [:fileinfo, :lastmodified]
@@ -71,6 +71,10 @@ module Ddr::Datastreams
                  "xsi:schemaLocation"=>"http://hul.harvard.edu/ois/xml/ns/fits/fits_output http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd")
       end
       builder.doc
+    end
+
+    def prefix
+      "fits__"
     end
 
   end

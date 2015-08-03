@@ -14,7 +14,9 @@ module Ddr::Managers
       its(:media_type) { is_expected.to be_empty }
       its(:format_version) { is_expected.to be_empty }
       its(:last_modified) { is_expected.to be_empty }
+      its(:modification_time) { is_expected.to be_empty }
       its(:created) { is_expected.to be_empty }
+      its(:creation_time) { is_expected.to be_empty }
       its(:pronom_identifier) { is_expected.to be_empty }
       its(:creating_application) { is_expected.to be_empty }
       its(:file_size) { is_expected.to be_empty }
@@ -43,8 +45,14 @@ module Ddr::Managers
       its(:pronom_identifier) { is_expected.to eq(["fmt/20"]) }
       its(:creating_application) { is_expected.to contain_exactly("Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/PREMIS Editorial Committee", "Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/Acrobat PDFMaker 11 for Word") }
       its(:fits_version) { is_expected.to eq("0.8.5") }
-      its(:file_size) { is_expected.to eq(["3786205"]) }
+      its(:extent) { is_expected.to eq(["3786205"]) }
+      its(:file_size) { is_expected.to eq([3786205]) }
       its(:media_type) { is_expected.to eq(["application/pdf"]) }
+
+      describe "datetime fields" do
+        its(:creation_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-05 15:16:23-04:00").to_time.utc) }
+        its(:modification_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-25 21:45:24-04:00").to_time.utc, DateTime.parse("2015-06-08T21:22:35Z").to_time.utc) }
+      end
     end
 
     describe "checksum fields" do

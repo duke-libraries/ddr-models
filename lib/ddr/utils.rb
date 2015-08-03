@@ -157,4 +157,16 @@ module Ddr::Utils
     return klass
   end
 
+  # Returns a string suitable to index as a Solr date
+  # @param dt [Date, DateTime, Time] the date/time
+  # @return [String]
+  def self.solr_date(dt)
+    return if dt.nil?
+    dt.to_time.utc.iso8601
+  end
+
+  def self.solr_dates(dts)
+    dts.map { |dt| solr_date(dt) }
+  end
+
 end

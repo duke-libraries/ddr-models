@@ -29,11 +29,14 @@ module Ddr::Managers
       end
     end
 
+    def file_size
+      extent.map(&:to_i)
+    end
+
     def file_human_size
       file_size.map do |fs|
-        num = fs.to_i
-        "%s (%s bytes)" % [ ActiveSupport::NumberHelper.number_to_human_size(n),
-                            ActiveSupport::NumberHelper.number_to_delimited(n) ]
+        "%s (%s bytes)" % [ ActiveSupport::NumberHelper.number_to_human_size(fs),
+                            ActiveSupport::NumberHelper.number_to_delimited(fs) ]
       end
     end
 
@@ -59,6 +62,42 @@ module Ddr::Managers
 
     def well_formed?
       !ill_formed?
+    end
+
+    def creation_time
+      created.map { |datestr| coerce_to_time(datestr) }.compact
+    end
+
+    def modification_time
+      modified.map { |datestr| coerce_to_time(datestr) }.compact
+    end
+
+    def index_fields
+      { Ddr::IndexFields::TECHMD_FITS_VERSION      => fits_version,
+        Ddr::IndexFields::TECHMD_FITS_DATETIME     => Ddr::Utils.solr_date(fits_datetime),
+        Ddr::IndexFields::TECHMD_CREATION_TIME     => Ddr::Utils.solr_dates(creation_time),
+        Ddr::IndexFields::TECHMD_MODIFICATION_TIME => Ddr::Utils.solr_dates(modification_time),
+        Ddr::IndexFields::TECHMD_COLOR_SPACE       => color_space,
+        Ddr::IndexFields::TECHMD_CREATING_APPLICATION => creating_application,
+        Ddr::IndexFields::TECHMD_FILE_SIZE         => file_size,
+        Ddr::IndexFields::TECHMD_FORMAT_LABEL      => format_label,
+        Ddr::IndexFields::TECHMD_FORMAT_VERSION    => format_version,
+        Ddr::IndexFields::TECHMD_IMAGE_HEIGHT      => image_height,
+        Ddr::IndexFields::TECHMD_IMAGE_WIDTH       => image_width,
+        Ddr::IndexFields::TECHMD_MEDIA_TYPE        => media_type,
+        Ddr::IndexFields::TECHMD_PRONOM_IDENTIFIER => pronom_identifier,
+        Ddr::IndexFields::TECHMD_VALID             => valid,
+        Ddr::IndexFields::TECHMD_WELL_FORMED       => well_formed,
+      }
+    end
+
+    private
+
+    def coerce_to_time(datestr)
+      datestr.sub! /\A(\d+):(\d+):(\d+)/, '\1-\2-\3'
+      DateTime.parse(datestr).to_time
+    rescue ArgumentError
+      nil
     end
 
   end
