@@ -26,8 +26,6 @@ module Ddr
     DEFAULT_LICENSE_URL         = solr_name :default_license_url, type: :string
     DISPLAY_FORMAT              = solr_name :display_format, :stored_sortable
     EXTRACTED_TEXT              = solr_name :extracted_text, :searchable, type: :text
-    FITS_VERSION                = solr_name :fits_version, :stored_sortable
-    FITS_DATETIME               = solr_name :fits_datetime, :stored_sortable, type: :date
     HAS_MODEL                   = solr_name :has_model, :symbol
     IDENTIFIER_ALL              = solr_name :identifier_all, :symbol
     INTERNAL_URI                = solr_name :internal_uri, :stored_sortable
@@ -59,6 +57,21 @@ module Ddr
     RESEARCH_HELP_CONTACT       = solr_name :research_help_contact, :stored_sortable
     RESOURCE_ROLE               = solr_name :resource_role, :facetable, type: :string
     STRUCT_MAPS                 = solr_name :struct_maps, :stored_sortable
+    TECHMD_COLOR_SPACE          = solr_name :techmd_color_space, :symbol
+    TECHMD_CREATING_APPLICATION = solr_name :techmd_creating_application, :symbol
+    TECHMD_CREATION_TIME        = solr_name :techmd_creation_time, :stored_searchable, type: :date
+    TECHMD_FILE_SIZE            = solr_name :techmd_file_size, :stored_searchable, type: :integer
+    TECHMD_FITS_VERSION         = solr_name :techmd_fits_version, :stored_sortable
+    TECHMD_FITS_DATETIME        = solr_name :techmd_fits_datetime, :stored_sortable, type: :date
+    TECHMD_FORMAT_LABEL         = solr_name :techmd_format_label, :symbol
+    TECHMD_FORMAT_VERSION       = solr_name :techmd_format_version, :symbol
+    TECHMD_IMAGE_HEIGHT         = solr_name :techmd_image_height, :stored_searchable, type: :integer
+    TECHMD_IMAGE_WIDTH          = solr_name :techmd_image_width, :stored_searchable, type: :integer
+    TECHMD_MEDIA_TYPE           = solr_name :techmd_media_type, :symbol
+    TECHMD_MODIFICATION_TIME    = solr_name :techmd_modification_time, :stored_searchable, type: :date
+    TECHMD_PRONOM_IDENTIFIER    = solr_name :techmd_pronom_identifier, :symbol
+    TECHMD_VALID                = solr_name :techmd_valid, :symbol
+    TECHMD_WELL_FORMED          = solr_name :techmd_well_formed, :symbol
     TITLE                       = solr_name :title, :stored_sortable
     WORKFLOW_STATE              = solr_name :workflow_state, :stored_sortable
 
