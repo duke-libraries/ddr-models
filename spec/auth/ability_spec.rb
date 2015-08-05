@@ -57,16 +57,19 @@ module Ddr::Auth
     end
 
     describe "Collection abilities" do
+      before do
+        allow(Ddr::Auth).to receive(:collection_creators_group) { "collection_creators" }
+      end
       describe "when the user is a collection creator" do
         before do
-          allow(auth_context).to receive(:member_of?).with(Groups::COLLECTION_CREATORS) { true }
+          allow(auth_context).to receive(:member_of?).with("collection_creators") { true }
         end
         it { should be_able_to(:create, Collection) }
       end
 
       describe "when the user is not a collection creator" do
         before do
-          allow(auth_context).to receive(:member_of?).with(Groups::COLLECTION_CREATORS) { false }
+          allow(auth_context).to receive(:member_of?).with("collection_creators") { false }
         end
         it { should_not be_able_to(:create, Collection) }
       end

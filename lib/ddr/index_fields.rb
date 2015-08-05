@@ -53,9 +53,9 @@ module Ddr
     OBJECT_MODIFIED_DATE        = solr_name :system_modified, :stored_sortable, type: :date
     PERMANENT_ID                = solr_name :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = solr_name :permanent_url, :stored_sortable, type: :string
-    POLICY_ROLE                 = solr_name :policy_role, :facetable, type: :string
+    POLICY_ROLE                 = solr_name :policy_role, :symbol
     RESEARCH_HELP_CONTACT       = solr_name :research_help_contact, :stored_sortable
-    RESOURCE_ROLE               = solr_name :resource_role, :facetable, type: :string
+    RESOURCE_ROLE               = solr_name :resource_role, :symbol
     STRUCT_MAPS                 = solr_name :struct_maps, :stored_sortable
     TECHMD_COLOR_SPACE          = solr_name :techmd_color_space, :symbol
     TECHMD_CREATING_APPLICATION = solr_name :techmd_creating_application, :symbol

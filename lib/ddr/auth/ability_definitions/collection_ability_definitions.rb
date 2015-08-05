@@ -3,7 +3,7 @@ module Ddr
     class CollectionAbilityDefinitions < AbilityDefinitions
 
       def call
-        if member_of? Groups::COLLECTION_CREATORS
+        if member_of? Ddr::Auth.collection_creators_group
           can :create, ::Collection
         end
       end

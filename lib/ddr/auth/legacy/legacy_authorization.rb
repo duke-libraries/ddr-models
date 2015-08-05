@@ -17,7 +17,7 @@ module Ddr::Auth
 
     def migrate
       migrated = inspect
-      roles.grant *to_roles
+      roles.replace *to_roles
       clear
       ["LEGACY AUTHORIZATION DATA", migrated, "ROLES", roles.serialize.inspect].join("\n\n")
     end

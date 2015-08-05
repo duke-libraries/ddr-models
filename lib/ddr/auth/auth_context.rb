@@ -60,7 +60,7 @@ module Ddr::Auth
     #   This is separate from whether the context is authenticated in superuser scope.
     # @return [Boolean]
     def authorized_to_act_as_superuser?
-      member_of? Groups::SUPERUSERS
+      member_of? Ddr::Auth.superuser_group
     end
 
     # Return the combined user and group agents for this context.
