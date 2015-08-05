@@ -14,9 +14,9 @@ RSpec.describe ApplicationController, type: :controller do
   describe "#resource_role_filters" do
     it "should include clauses for each agent for the current ability" do
       expect(subject.resource_role_filters.split(" OR "))
-        .to contain_exactly("_query_:\"{!raw f=resource_role_sim}foo\"",
-                            "_query_:\"{!raw f=resource_role_sim}bar\"",
-                            "_query_:\"{!raw f=resource_role_sim}#{user.agent}\"")
+        .to contain_exactly("_query_:\"{!raw f=#{Ddr::IndexFields::RESOURCE_ROLE}}foo\"",
+                            "_query_:\"{!raw f=#{Ddr::IndexFields::RESOURCE_ROLE}}bar\"",
+                            "_query_:\"{!raw f=#{Ddr::IndexFields::RESOURCE_ROLE}}#{user.agent}\"")
     end
   end
 
