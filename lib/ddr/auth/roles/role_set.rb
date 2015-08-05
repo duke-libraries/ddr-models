@@ -1,112 +1,108 @@
-require "delegate"
+module Ddr::Auth
+  module Roles
+    #
+    # Wraps a set of Roles
+    #
+    # @abstract
+    #
+    class RoleSet
+      include Enumerable
 
-module Ddr
-  module Auth
-    module Roles
-      #
-      # Wraps a set of Roles (ActiveTriples::Term)
-      #
-      class RoleSet < SimpleDelegator
+      attr_reader :role_set
 
-        def self.deserialize(serialized, fmt = :ruby)
-          if fmt == :json
-            deserialize JSON.parse(serialized)
-          else # :ruby
-            role_set = serialized.map do |role_data|
-              Role.build(role_data.with_indifferent_access)
-            end
-            new(role_set)
-          end
-        end
+      delegate :where, :agent, :scope, :role_type, :type, :agents, :permissions,
+               :in_policy_scope, :in_resource_scope,
+               to: :query
 
-        # Grants roles - i.e., adds them to the role set
-        #   Note that we reject roles that are included because
-        #   ActiveTriples::Term#<< does not support isomorphism.
-        #   https://github.com/ActiveTriples/ActiveTriples/issues/42
-        # @example - default scope ("resource")
-        #   grant type: "Curator", agent: "bob"
-        # @example - explicit scope
-        #   grant type: "Curator", agent: "sue", scope: "policy"
-        # @param roles [Array<Ddr::Auth::Roles::Role, Hash>] the roles to grant
-        def grant(*roles)
-          self << coerce(roles).reject { |r| include?(r) }
-        end
+      delegate :empty?, :clear, to: :role_set
 
-        # Return true/false depending on whether the role has been granted
-        # @param role [Ddr::Auth::Roles::Role, Hash] the role
-        # @return [Boolean] whether the role has been granted
-        def granted?(role)
-          include? coerce(role)
-        end
-
-        # Revokes roles - i.e., removes them from the role set
-        #   Note that we have to destroy resources on the
-        #   ActiveTriples::Term because Term#delete does not
-        #   support isomorphism.
-        #   https://github.com/ActiveTriples/ActiveTriples/issues/42
-        # @example
-        #   revoke type: :curator, agent: "bob", scope: :resource
-        # @param role [Ddr::Auth::Roles::Role, Hash] the role to revoke
-        def revoke(*roles)
-          coerce(roles).each do |role|
-            if role_index = find_index(role)
-              self[role_index].destroy
-            end
-          end
-        end
-
-        # Replace the current roles in the role set with new roles
-        # @param roles [Array<Ddr::Auth::Roles::Role, Hash>] the roles to grant
-        def replace(*roles)
-          revoke_all
-          grant(*roles)
-        end
-
-        # Remove all roles from the role set
-        def revoke_all
-          each(&:destroy)
-          self
-        end
-
-        def to_a
-          map.to_a
-        end
-
-        def to_json
-          serialize(:json)
-        end
-
-        def serialize(fmt = :ruby)
-          case fmt
-          when :json
-            serialize(:ruby).to_json
-          else # :ruby
-            to_a.map(&:to_h)
-          end
-        end
-
-        def where(criteria)
-          query.where(criteria)
-        end
-
-        private
-
-        def query
-          Query.new(self)
-        end
-
-        def coerce(role)
-          case role
-          when Array
-            role.map { |r| coerce(r) }
-          when Role
-            role
-          else
-            Role.build(role)
-          end
-        end
-
+      def initialize(role_set)
+        @role_set = role_set
       end
+
+      def granted
+        warn "[DEPRECATION] `granted` is deprecated." \
+             " Use the RoleSet object directly (#{caller.first})."
+        self
+      end
+
+      # Grants roles - i.e., adds them to the role set
+      # @example - default scope ("resource")
+      #   grant type: "Curator", agent: "bob"
+      # @example - explicit scope
+      #   grant type: "Curator", agent: "sue", scope: "policy"
+      # @param roles [Role, Hash, RoleSet, Array] the role(s) to grant
+      def grant(*roles)
+        raise NotImplementedError, "Subclasses must implement `grant`."
+      end
+
+      # Return true/false depending on whether the role has been granted
+      # @param role [Ddr::Auth::Roles::Role, Hash] the role
+      # @return [Boolean] whether the role has been granted
+      def granted?(role)
+        include? coerce(role)
+      end
+
+      # Revokes roles - i.e., removes them from the role set
+      # @example
+      #   revoke type: "Curator", agent: "bob", scope: "resource"
+      # @param roles [Role, Hash, RoleSet, Array] the role(s) to revoke
+      def revoke(*roles)
+        raise NotImplementedError, "Subclasses must implement `revoke`."
+      end
+
+      # Replace the current roles in the role set with new roles
+      # @param roles [Role, Hash, RoleSet, Array] the role(s) to grant
+      def replace(*roles)
+        revoke_all
+        grant(*roles)
+      end
+
+      # Remove all roles from the role set
+      # @return [RoleSet] self
+      def revoke_all
+        raise NotImplementedError, "Subclasses must implement `revoke_all`."
+      end
+
+      # Return the RoleSet serialized as JSON
+      # @return [String] the JSON string
+      def to_json
+        serialize.to_json
+      end
+
+      # Return the RoleSet serialized as an Array of serialized Roles
+      # @return [Array<Hash>]
+      def serialize
+        to_a.map(&:serialize)
+      end
+
+      def ==(other)
+        if other.is_a? RoleSet
+          self.to_set == other.to_set
+        else
+          super
+        end
+      end
+
+      private
+
+      def query
+        RoleSetQuery.new(self)
+      end
+
+      def coerce(obj)
+        case obj
+        when RoleSet
+          coerce(obj.role_set)
+        when Array, Set
+          obj.map { |r| coerce(r) }.flatten
+        when Role
+          obj
+        else
+          Role.build(obj)
+        end
+      end
+
     end
   end
 end

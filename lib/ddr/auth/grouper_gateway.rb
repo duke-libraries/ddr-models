@@ -9,6 +9,14 @@ module Ddr
       SUBJECT_ID_RE = Regexp.new('[^@]+(?=@duke\.edu)')
       DEFAULT_TIMEOUT = 5
 
+      def self.repository_groups(*args)
+        new.repository_groups(*args)
+      end
+
+      def self.user_groups(*args)
+        new.user_groups(*args)
+      end
+      
       def initialize
         super Grouper::Rest::Client::Resource.new(ENV["GROUPER_URL"],
                                                   user: ENV["GROUPER_USER"],

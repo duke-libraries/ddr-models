@@ -1,3 +1,5 @@
+require "resque"
+
 module Ddr
   module Models
     module HasAdminMetadata
@@ -19,21 +21,22 @@ module Ddr
           datastream: "adminMetadata",
           multiple: false
 
-        delegate :role_based_permissions, to: :roles
         delegate :publish, :publish!, :unpublish, :unpublish!, :published?, to: :workflow
 
         after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
         around_destroy :update_permanent_id_on_destroy, if: "permanent_id.present?"
       end
 
-      include Ddr::Auth::LegacyRoles
-
       def permanent_id_manager
         @permanent_id_manager ||= Ddr::Managers::PermanentIdManager.new(self)
       end
 
       def roles
-        @roles ||= Ddr::Managers::RoleManager.new(self)
+        Ddr::Auth::Roles::PropertyRoleSet.new(adminMetadata.access_role)
+      end
+
+      def inherited_roles
+        Ddr::Auth::InheritedRoles.call(self)
       end
 
       def workflow
@@ -42,6 +45,20 @@ module Ddr
 
       def assign_permanent_id!
         permanent_id_manager.assign_later
+      end
+
+      def grant_roles_to_creator(creator)
+        roles.grant type: Ddr::Auth::Roles::EDITOR,
+                    agent: creator,
+                    scope: Ddr::Auth::Roles::RESOURCE_SCOPE
+      end
+
+      def copy_resource_roles_from(other)
+        roles.grant *(other.roles.in_resource_scope)
+      end
+
+      def effective_permissions(agents)
+        Ddr::Auth::EffectivePermissions.call(self, agents)
       end
 
       def research_help
@@ -54,16 +71,6 @@ module Ddr
         @permanent_id = permanent_id
         yield
         Resque.enqueue(Ddr::Jobs::PermanentId::MakeUnavailable, @permanent_id, "deleted")
-      end
-
-      def legacy_permissions
-        Ddr::Auth::LegacyPermissions.new(permissions)
-      end
-
-      def set_resource_roles_from_legacy_data
-        roles.revoke_resource_roles
-        roles.grant *(legacy_permissions.to_resource_roles)
-        roles.grant *legacy_downloader_to_resource_roles
       end
 
     end

@@ -129,11 +129,12 @@ RSpec.shared_examples "an event" do
 
   describe "rendering who/what performed the action" do
     context "when performed by a user" do
+      let(:user) { FactoryGirl.build(:user) }
       before do
-        subject.user_key = "bob"
+        subject.user = user
       end
       it "should render the user" do
-        expect(subject.performed_by).to eq "bob"
+        expect(subject.performed_by).to eq(user.user_key)
       end
     end
     context "when not performed by a user" do

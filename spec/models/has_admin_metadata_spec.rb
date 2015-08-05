@@ -7,30 +7,10 @@ module Ddr
 
       describe "local id" do
         subject { FactoryGirl.build(:item) }
-        describe "setting" do
-          it "should set the value" do
-            expect { subject.local_id = "foo" }.to change(subject, :local_id).from(nil).to("foo")
-          end
-        end
-        describe "re-setting" do
-          before { subject.local_id = "foo" }
-          it "should change the value" do
-            expect { subject.local_id = "bar" }.to change(subject, :local_id).from("foo").to("bar")
-          end
-        end
         describe "indexing" do
           before { subject.local_id = "foo" }
           it "should index the local id value" do
             expect(subject.to_solr).to include(Ddr::IndexFields::LOCAL_ID => "foo")
-          end
-        end
-        describe "finding" do
-          before do
-            subject.local_id = "foo"
-            subject.save!
-          end
-          it "should be able to find by the local id" do
-            expect(ActiveFedora::Base.where(Ddr::IndexFields::LOCAL_ID => "foo").first).to eq(subject)
           end
         end
       end
@@ -191,30 +171,58 @@ module Ddr
       end
 
       describe "roles" do
+
         subject { FactoryGirl.build(:item) }
 
-        describe "persistence" do
+        describe "#copy_resource_roles_from" do
+          let(:other) { FactoryGirl.build(:collection) }
+          let(:resource_roles) do
+            [ FactoryGirl.build(:role, :viewer, :public, :resource),
+              FactoryGirl.build(:role, :editor, :group, :resource) ]
+          end
+          let(:policy_roles) do
+            [ FactoryGirl.build(:role, :curator, :person, :policy) ]
+          end
           before do
-            subject.roles.grant type: "Downloader", agent: Ddr::Auth::Groups::PUBLIC
+            other.roles.grant *resource_roles
+            other.roles.grant *policy_roles
+            subject.copy_resource_roles_from(other)
+          end
+          its(:roles) { should include(*resource_roles) }
+          its(:roles) { should_not include(*policy_roles) }
+        end
+
+        describe "#grant_roles_to_creator" do
+          let(:user) { FactoryGirl.build(:user) }
+          before { subject.grant_roles_to_creator(user) }
+          its(:roles) { should include(Ddr::Auth::Roles::Role.build(type: "Editor", agent: user.agent, scope: "resource")) }
+        end
+
+        describe "persistence" do
+          let(:role) { FactoryGirl.build(:role, :downloader, :public) }
+          it "should persist the role information" do
+            subject.roles.grant role
             subject.save!
             subject.reload
-          end
-          it "should persist the role information" do
-            expect(subject.roles.granted).to eq([Ddr::Auth::Roles::Role.build(type: "Downloader", agent: Ddr::Auth::Groups::PUBLIC)])
+            expect(subject.roles).to contain_exactly(role)
           end
         end
 
-        describe "#role_based_permissions" do
-          let(:policy) { Collection.new(pid: "coll:1") }
-          let(:user) { FactoryGirl.build(:user) }
-          before do
-            subject.admin_policy = policy
-            allow(user).to receive(:persisted?) { true }
-            subject.roles.grant type: "Downloader", agent: Ddr::Auth::Groups::PUBLIC, scope: "resource"
-            policy.roles.grant type: "Contributor", agent: user.agent, scope: "policy"
+        describe "indexing" do
+          let(:role1) { FactoryGirl.build(:role, :curator, :person, :resource) }
+          let(:role2) { FactoryGirl.build(:role, :curator, :person, :policy) }
+          let(:role3) { FactoryGirl.build(:role, :editor, :group, :policy) }
+          let(:role4) { FactoryGirl.build(:role, :editor, :person, :policy) }
+          let(:indexed) { subject.to_solr }
+          before { subject.roles.grant role1, role2, role3, role4 }
+          it "should index the role data serialized as JSON" do
+            expect(indexed[Ddr::IndexFields::ACCESS_ROLE]).to eq(subject.roles.to_json)
           end
-          it "should return the list of permissions granted to the user's agents on the subject in resource scope, plust the permissions granted to the user's agents on the subject's policy in policy scope" do
-            expect(subject.role_based_permissions(user)).to match_array([:read, :download, :add_children])
+          it "should index the agents having roles in policy scope" do
+            expect(indexed[Ddr::IndexFields::POLICY_ROLE]).to contain_exactly(role2.agent.first, role3.agent.first, role4.agent.first)
+          end
+          it "should index the agents having roles in resource scope" do
+            expect(indexed[Ddr::IndexFields::RESOURCE_ROLE]).to contain_exactly(role1.agent.first)
           end
         end
 

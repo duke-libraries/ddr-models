@@ -3,6 +3,6 @@ Gemfile.lock
 jetty
 pkg
 spec/dummy/db/*.sqlite3
+spec/dummy/db/*.sqlite3-journal
 spec/dummy/log/*
 tmp
-

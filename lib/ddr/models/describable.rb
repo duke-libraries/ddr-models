@@ -72,7 +72,7 @@ module Ddr
 
     module ClassMethods
       def find_by_identifier(identifier)
-        find(Ddr::IndexFields::IDENTIFIER => identifier)
+        find(Ddr::IndexFields::IDENTIFIER_ALL => identifier)
       end
     end
 

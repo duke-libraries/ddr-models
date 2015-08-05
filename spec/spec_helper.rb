@@ -1,8 +1,5 @@
 ENV['RAILS_ENV'] ||= "test"
 
-require "coveralls"
-Coveralls.wear!("rails")
-
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 
 require "ddr-models"
@@ -15,6 +12,8 @@ require "factory_girl_rails"
 require "database_cleaner"
 require "tempfile"
 require "resque"
+require "cancan/matchers"
+require 'equivalent-xml/rspec_matchers'
 
 Resque.inline = true
 
@@ -91,7 +90,7 @@ RSpec.configure do |config|
   # Print the 10 slowest examples and example groups at the
   # end of the spec run, to help surface which specs are running
   # particularly slow.
-  # config.profile_examples = 10
+  config.profile_examples = 10
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing

@@ -13,13 +13,16 @@ module Ddr
         fields = {
           TITLE                 => title_display,
           INTERNAL_URI          => internal_uri,
-          IDENTIFIER            => identifier_sort,
+          IDENTIFIER_ALL        => all_identifiers,
           WORKFLOW_STATE        => workflow_state,
           LOCAL_ID              => local_id,
           ADMIN_SET             => admin_set,
           DISPLAY_FORMAT        => display_format,
           PERMANENT_ID          => permanent_id,
           PERMANENT_URL         => permanent_url,
+          ACCESS_ROLE           => roles.to_json,
+          RESOURCE_ROLE         => roles.in_resource_scope.agents,
+          POLICY_ROLE           => roles.in_policy_scope.agents,
           CREATOR_FACET         => creator,
           DATE_FACET            => date,
           DATE_SORT             => date_sort,
@@ -49,6 +52,9 @@ module Ddr
         if has_multires_image?
           fields[MULTIRES_IMAGE_FILE_PATH] = multires_image_file_path
         end
+        if has_struct_metadata?
+          fields[STRUCT_MAPS] = structure.struct_maps.to_json
+        end
         if has_extracted_text?
           fields[EXTRACTED_TEXT] = extractedText.content
         end
@@ -66,9 +72,6 @@ module Ddr
           fields[ADMIN_SET_FACET] = admin_set_facet
           fields[COLLECTION_FACET] = collection_facet
         end
-        if respond_to? :roles
-          fields.merge!(roles.index_fields)
-        end
         fields
       end
 
@@ -79,8 +82,8 @@ module Ddr
         "[#{pid}]"
       end
 
-      def identifier_sort
-        identifier.first
+      def all_identifiers
+        identifier + [local_id, permanent_id, pid].compact
       end
 
       def associated_collection

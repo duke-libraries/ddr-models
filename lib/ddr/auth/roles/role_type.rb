@@ -7,8 +7,9 @@ module Ddr
         alias_method :label, :title
 
         def initialize(title, description, permissions)
-          @title, @description, @permissions = title, description, permissions
-          @permissions.freeze
+          @title = title.freeze
+          @description = description.freeze
+          @permissions = permissions.freeze
           freeze
         end
 

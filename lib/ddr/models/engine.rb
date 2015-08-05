@@ -44,8 +44,8 @@ module Ddr
 
       initializer "ddr_models.derivatives" do
         Ddr::Derivatives.update_derivatives = ENV['DERIVATIVES'] ?
-                                                  ENV['DERIVATIVES'].split(';').map { |deriv| deriv.strip.to_sym } :
-                                                  [ :thumbnail ]
+                                                ENV['DERIVATIVES'].split(';').map { |deriv| deriv.strip.to_sym } :
+                                                [ :thumbnail ]
       end
 
       initializer "ddr_models.external_files" do
@@ -61,12 +61,6 @@ module Ddr
       # Add custom predicates to ActiveFedora
       initializer "ddr_models.predicates" do
         ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
-      end
-
-      initializer "ddr_auth.groups" do
-        Warden::Manager.after_set_user do |user, auth, opts|
-          user.groups = Ddr::Auth::Groups.build(user, auth.env)
-        end
       end
 
       # Set superuser group
