@@ -36,23 +36,18 @@ ddr-models configuration options:
 
 #### User model
 
-Include `Ddr::Auth::User` in `app/models/user.rb` and remove content inserted by Hydra, Blacklight and Devise generators:
+Include `Ddr::Auth::User` in `app/models/user.rb` and remove content inserted by Hydra and Devise generators:
 
 ```ruby
 class User
   include Ddr::Auth::User
   #
-  # Remove content inserted by Hydra, Blacklight, or Devise generators --
-  # it's provided by Ddr::Auth::User.
-  #
-  # include Blacklight::User
+  # REMOVE:
   # include Hydra::User
   # devise :database_authenticatable [...]
   #
-  # ... as well as any methods.
-  #
-  # You can add custom methods for the app as needed.
-  #
+  # DO NOT REMOVE:
+  # Blacklight::User
 end
 ```
 
@@ -71,16 +66,12 @@ Change the class like so:
 ```ruby
 class Ability < Ddr::Auth::Ability
   #
-  # Ddr::Auth::Ability includes Hydra::PolicyAwareAbility
+  # REMOVE:
   # include Hydra::Ability
   #
-  # Add custom methods here as needed to Ability.ability_logic:
+  # Add "ability definitions" -- i.e., subclasses of Ddr::Auth::AbilityDefinitions.
   #
-  # self.ability_logic += [:my_ability]
-  #
-  # def my_ability
-  #   # whatever
-  # end
+  # self.ability_definitions += [ ... ]
   #
 end
 ```
