@@ -14,7 +14,8 @@ module Ddr
           "Editor",
           "The Editor role conveys reponsibility for managing the content, " \
           "description and structural arrangement of a resource.",
-          Permissions::ALL - [ Permissions::GRANT ]
+          [ Permissions::READ, Permissions::DOWNLOAD, Permissions::ADD_CHILDREN,
+            Permissions::UPDATE, Permissions::REPLACE, Permissions::ARRANGE ]
         )
 
         METADATA_EDITOR = RoleType.new(

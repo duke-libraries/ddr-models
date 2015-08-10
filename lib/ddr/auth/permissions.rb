@@ -7,9 +7,10 @@ module Ddr::Auth
     UPDATE       = :update
     REPLACE      = :replace
     ARRANGE      = :arrange
+    AUDIT        = :audit
     GRANT        = :grant
 
-    ALL = [ READ, DOWNLOAD, ADD_CHILDREN, UPDATE, REPLACE, ARRANGE, GRANT ]
+    ALL = [ READ, DOWNLOAD, ADD_CHILDREN, UPDATE, REPLACE, ARRANGE, AUDIT, GRANT ]
 
     def self.const_missing(name)
       if name == :EDIT
