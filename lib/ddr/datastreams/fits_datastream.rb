@@ -4,6 +4,8 @@ module Ddr::Datastreams
     FITS_XMLNS = "http://hul.harvard.edu/ois/xml/ns/fits/fits_output".freeze
     FITS_SCHEMA = "http://hul.harvard.edu/ois/xml/xsd/fits/fits_output.xsd".freeze
 
+    EXIFTOOL = "Exiftool"
+
     set_terminology do |t|
       t.root(path: "fits",
              xmlns: FITS_XMLNS,
@@ -55,7 +57,6 @@ module Ddr::Datastreams
       t.well_formed          proxy: [:filestatus, :well_formed]
       # fileinfo
       t.created              proxy: [:fileinfo, :created]
-      t.modified             proxy: [:fileinfo, :lastmodified]
       t.creating_application proxy: [:fileinfo, :creatingApplicationName]
       t.extent               proxy: [:fileinfo, :size]
       # image metadata
@@ -75,6 +76,12 @@ module Ddr::Datastreams
 
     def prefix
       "fits__"
+    end
+
+    def modified
+      ng_xml
+        .xpath("//fits:fileinfo/fits:lastmodified[@toolname != '#{EXIFTOOL}']", fits: FITS_XMLNS)
+        .map(&:text)
     end
 
   end
