@@ -3,6 +3,50 @@ require 'spec_helper'
 module ActiveFedora
   RSpec.describe Datastream do
 
+    describe "#tempfile" do
+      subject { described_class.new(nil, nil, controlGroup: "M") }
+      describe "when the datastream has no content" do
+        it "should raise an exception" do
+          expect { subject.tempfile { |f| puts f.path } }.to raise_error(Ddr::Models::Error)
+        end
+      end
+      describe "when the datastream has content" do
+        let(:file) { fixture_file_upload("sample.pdf", "application/pdf") }
+        before do
+          subject.content = file.read
+          subject.mimeType = file.content_type
+          allow(subject).to receive(:pid) { "test:1" }
+        end
+        describe "the yielded file" do
+          it "should by default have an extension for the datastream media type" do
+            subject.tempfile do |f|
+              expect(f.path.end_with?(".pdf")).to be true
+            end
+          end
+          it "should use the prefix provided" do
+            subject.tempfile(prefix: "foo") do |f|
+              expect(f.basename.start_with?("foo")).to be true
+            end
+          end
+          it "should use the sufffix provided" do
+            subject.tempfile(suffix: "bar") do |f|
+              expect(f.path.end_with?("bar")).to be true
+            end
+          end
+          it "should by default have a prefix based on the PID" do
+            subject.tempfile do |f|
+              expect(f.basename.start_with?("test_1--")).to be true
+            end
+          end
+          it "should have the same size as the datastream content" do
+            subject.tempfile do |f|
+              expect(f.size).to eq(subject.content.length)
+            end
+          end
+        end
+      end
+    end
+
     describe "#validate_checksum!" do
       subject { described_class.new(nil, nil, controlGroup: "M") }
       let!(:checksum) { "dea56f15b309e47b74fa24797f85245dda0ca3d274644a96804438bbd659555a" }
