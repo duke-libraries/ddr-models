@@ -1,230 +1,232 @@
 require 'json'
 
-module Ddr
-  module Models
-    module SolrDocument
-      extend ActiveSupport::Concern
+module Ddr::Models
+  module SolrDocument
+    extend ActiveSupport::Concern
 
-      included do
-        alias_method :pid, :id
-      end
-
-      def method_missing(name, *args, &block)
-        if args.empty? && !block
-          begin
-            field = Ddr::IndexFields.get(name)
-          rescue NameError
-            # pass
-          else
-            # Preserves the default behavior of the deprecated method
-            # Blacklight::Solr::Document#get, which this procedure
-            # effectively replaces.
-            val = self[field]
-            return val.is_a?(Array) ? val.join(", ") : val
-          end
-        end
-        super
-      end
-
-      def to_partial_path
-        'document'
-      end
-
-      def safe_id
-        id.sub(/:/, "-")
-      end
-
-      def object_profile
-        @object_profile ||= get_json(Ddr::IndexFields::OBJECT_PROFILE)
-      end
-
-      def object_state
-        object_profile["objState"]
-      end
-
-      def object_create_date
-        parse_date(object_profile["objCreateDate"])
-      end
-
-      def object_modified_date
-        parse_date(object_profile["objLastModDate"])
-      end
-
-      def last_fixity_check_on
-        get_date(Ddr::IndexFields::LAST_FIXITY_CHECK_ON)
-      end
-
-      def last_virus_check_on
-        get_date(Ddr::IndexFields::LAST_VIRUS_CHECK_ON)
-      end
-
-      def datastreams
-        object_profile["datastreams"]
-      end
-
-      def has_datastream?(dsID)
-        datastreams[dsID].present?
-      end
-
-      def has_admin_policy?
-        admin_policy_uri.present?
-      end
-
-      def admin_policy_uri
-        is_governed_by
-      end
-
-      def admin_policy_pid
-        uri = admin_policy_uri
-        uri &&= ActiveFedora::Base.pid_from_uri(uri)
-      end
-
-      def admin_policy
-        if admin_policy_pid
-          query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
-          docs = ActiveFedora::SolrService.query(query)
-          self.class.new(docs.first)
-        end
-      end
-
-      def has_children?
-        ActiveFedora::SolrService.class_from_solr_document(self).reflect_on_association(:children).present?
-      end
-
-      def label
-        object_profile["objLabel"]
-      end
-
-      def title_display
-        title
-      end
-
-      def identifier
-        # We want the multivalued version here
-        self[ActiveFedora::SolrService.solr_name(:identifier, :stored_searchable, type: :text)]
-      end
-
-      def source
-        self[ActiveFedora::SolrService.solr_name(:source, :stored_searchable, type: :text)]
-      end
-
-      def has_thumbnail?
-        has_datastream?(Ddr::Datastreams::THUMBNAIL)
-      end
-
-      def has_content?
-        has_datastream?(Ddr::Datastreams::CONTENT)
-      end
-
-      def content_ds
-        datastreams[Ddr::Datastreams::CONTENT]
-      end
-
-      def content_mime_type
-        content_ds["dsMIME"] rescue nil
-      end
-      # For duck-typing with Ddr::Models::HasContent
-      alias_method :content_type, :content_mime_type
-
-      def content_checksum
-        content_ds["dsChecksum"] rescue nil
-      end
-
-      def targets
-        @targets ||= ActiveFedora::SolrService.query(targets_query)
-      end
-
-      def targets_count
-        @targets_count ||= ActiveFedora::SolrService.count(targets_query)
-      end
-
-      def has_target?
-        targets_count > 0
-      end
-
-      def association(name)
-        get_pid(ActiveFedora::SolrService.solr_name(name, :symbol))
-      end
-
-      def controller_name
-        active_fedora_model.tableize
-      end
-
-      def inherited_license
-        if doc = admin_policy
-          { title: doc.default_license_title,
-            description: doc.default_license_description,
-            url: doc.default_license_url }
-        end
-      end
-
-      def license
-        if license_title || license_description || license_url
-          { title: license_title,
-            description: license_description,
-            url: license_url }
-        end
-      end
-
-      def effective_license
-        @effective_license ||= license || inherited_license || {}
-      end
-
-      def roles
-        @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
-      end
-
-      def struct_maps
-        JSON.parse(fetch(Ddr::IndexFields::STRUCT_MAPS))
-      rescue
-        {}
-      end
-
-      def struct_map(type='default')
-        struct_maps.present? ? struct_maps.fetch(type) : nil
-      end
-
-      def effective_permissions(agents)
-        Ddr::Auth::EffectivePermissions.call(self, agents)
-      end
-
-      def research_help
-        research_help_contact = self[Ddr::IndexFields::RESEARCH_HELP_CONTACT] || inherited_research_help_contact
-        Ddr::Contacts.get(research_help_contact) if research_help_contact
-      end
-
-      private
-
-      def targets_query
-        "#{Ddr::IndexFields::IS_EXTERNAL_TARGET_FOR}:#{internal_uri_for_query}"
-      end
-
-      def internal_uri_for_query
-        ActiveFedora::SolrService.escape_uri_for_query(internal_uri)
-      end
-
-      def get_date(field)
-        parse_date(self[field])
-      end
-
-      def get_json(field)
-        JSON.parse Array(self[field]).first
-      end
-
-      def parse_date(date)
-        Time.parse(date).localtime if date
-      end
-
-      def get_pid(field)
-        ActiveFedora::Base.pid_from_uri(self[field]) rescue nil
-      end
-
-      def inherited_research_help_contact
-        if doc = admin_policy
-          doc.research_help_contact
-        end
-      end
-
+    included do
+      alias_method :pid, :id
     end
+
+    def inspect
+      "#<#{self.class.name} id=#{id.inspect}>"
+    end
+
+    def method_missing(name, *args, &block)
+      if args.empty? && !block
+        begin
+          field = Ddr::Index::Fields.get(name)
+        rescue NameError
+        # pass
+        else
+          # Preserves the default behavior of the deprecated method
+          # Blacklight::Solr::Document#get, which this procedure
+          # effectively replaces.
+          val = self[field]
+          return val.is_a?(Array) ? val.join(", ") : val
+        end
+      end
+      super
+    end
+
+    def to_partial_path
+      'document'
+    end
+
+    def safe_id
+      id.sub(/:/, "-")
+    end
+
+    def object_profile
+      @object_profile ||= get_json(Ddr::Index::Fields::OBJECT_PROFILE)
+    end
+
+    def object_state
+      object_profile["objState"]
+    end
+
+    def object_create_date
+      parse_date(object_profile["objCreateDate"])
+    end
+
+    def object_modified_date
+      parse_date(object_profile["objLastModDate"])
+    end
+
+    def last_fixity_check_on
+      get_date(Ddr::Index::Fields::LAST_FIXITY_CHECK_ON)
+    end
+
+    def last_virus_check_on
+      get_date(Ddr::Index::Fields::LAST_VIRUS_CHECK_ON)
+    end
+
+    def datastreams
+      object_profile["datastreams"]
+    end
+
+    def has_datastream?(dsID)
+      datastreams[dsID].present?
+    end
+
+    def has_admin_policy?
+      admin_policy_uri.present?
+    end
+
+    def admin_policy_uri
+      is_governed_by
+    end
+
+    def admin_policy_pid
+      uri = admin_policy_uri
+      uri &&= ActiveFedora::Base.pid_from_uri(uri)
+    end
+
+    def admin_policy
+      if admin_policy_pid
+        query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
+        docs = ActiveFedora::SolrService.query(query)
+        self.class.new(docs.first)
+      end
+    end
+
+    def has_children?
+      ActiveFedora::SolrService.class_from_solr_document(self).reflect_on_association(:children).present?
+    end
+
+    def label
+      object_profile["objLabel"]
+    end
+
+    def title_display
+      title
+    end
+
+    def identifier
+      # We want the multivalued version here
+      self[ActiveFedora::SolrService.solr_name(:identifier, :stored_searchable, type: :text)]
+    end
+
+    def source
+      self[ActiveFedora::SolrService.solr_name(:source, :stored_searchable, type: :text)]
+    end
+
+    def has_thumbnail?
+      has_datastream?(Ddr::Datastreams::THUMBNAIL)
+    end
+
+    def has_content?
+      has_datastream?(Ddr::Datastreams::CONTENT)
+    end
+
+    def content_ds
+      datastreams[Ddr::Datastreams::CONTENT]
+    end
+
+    def content_mime_type
+      content_ds["dsMIME"] rescue nil
+    end
+    # For duck-typing with Ddr::Models::HasContent
+    alias_method :content_type, :content_mime_type
+
+    def content_checksum
+      content_ds["dsChecksum"] rescue nil
+    end
+
+    def targets
+      @targets ||= ActiveFedora::SolrService.query(targets_query)
+    end
+
+    def targets_count
+      @targets_count ||= ActiveFedora::SolrService.count(targets_query)
+    end
+
+    def has_target?
+      targets_count > 0
+    end
+
+    def association(name)
+      get_pid(ActiveFedora::SolrService.solr_name(name, :symbol))
+    end
+
+    def controller_name
+      active_fedora_model.tableize
+    end
+
+    def inherited_license
+      if doc = admin_policy
+        { title: doc.default_license_title,
+          description: doc.default_license_description,
+          url: doc.default_license_url }
+      end
+    end
+
+    def license
+      if license_title || license_description || license_url
+        { title: license_title,
+          description: license_description,
+          url: license_url }
+      end
+    end
+
+    def effective_license
+      @effective_license ||= license || inherited_license || {}
+    end
+
+    def roles
+      @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
+    end
+
+    def struct_maps
+      JSON.parse(fetch(Ddr::Index::Fields::STRUCT_MAPS))
+    rescue
+      {}
+    end
+
+    def struct_map(type='default')
+      struct_maps.present? ? struct_maps.fetch(type) : nil
+    end
+
+    def effective_permissions(agents)
+      Ddr::Auth::EffectivePermissions.call(self, agents)
+    end
+
+    def research_help
+      research_help_contact = self[Ddr::Index::Fields::RESEARCH_HELP_CONTACT] || inherited_research_help_contact
+      Ddr::Contacts.get(research_help_contact) if research_help_contact
+    end
+
+    private
+
+    def targets_query
+      "#{Ddr::Index::Fields::IS_EXTERNAL_TARGET_FOR}:#{internal_uri_for_query}"
+    end
+
+    def internal_uri_for_query
+      ActiveFedora::SolrService.escape_uri_for_query(internal_uri)
+    end
+
+    def get_date(field)
+      parse_date(self[field])
+    end
+
+    def get_json(field)
+      JSON.parse Array(self[field]).first
+    end
+
+    def parse_date(date)
+      Time.parse(date).localtime if date
+    end
+
+    def get_pid(field)
+      ActiveFedora::Base.pid_from_uri(self[field]) rescue nil
+    end
+
+    def inherited_research_help_contact
+      if doc = admin_policy
+        doc.research_help_contact
+      end
+    end
+
   end
 end
