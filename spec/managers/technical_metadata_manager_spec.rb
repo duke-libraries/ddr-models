@@ -40,7 +40,7 @@ module Ddr::Managers
       its(:format_label) { is_expected.to eq(["Portable Document Format"]) }
       its(:media_type) { is_expected.to eq(["application/pdf"]) }
       its(:format_version) { is_expected.to eq(["1.6"]) }
-      its(:last_modified) { is_expected.to contain_exactly("2015:06:25 21:45:24-04:00", "2015-06-08T21:22:35Z") }
+      its(:last_modified) { is_expected.to eq(["2015-06-08T21:22:35Z"]) }
       its(:created) { is_expected.to eq(["2015:06:05 15:16:23-04:00"]) }
       its(:pronom_identifier) { is_expected.to eq(["fmt/20"]) }
       its(:creating_application) { is_expected.to contain_exactly("Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/PREMIS Editorial Committee", "Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/Acrobat PDFMaker 11 for Word") }
@@ -51,7 +51,7 @@ module Ddr::Managers
 
       describe "datetime fields" do
         its(:creation_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-05 15:16:23-04:00").to_time.utc) }
-        its(:modification_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-25 21:45:24-04:00").to_time.utc, DateTime.parse("2015-06-08T21:22:35Z").to_time.utc) }
+        its(:modification_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-08T21:22:35Z").to_time.utc) }
       end
     end
 
