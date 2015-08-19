@@ -51,6 +51,7 @@ module Ddr
     autoload :SolrDocument
     autoload :Structure
     autoload :StructDiv
+    autoload :YearFacet
 
     # Base directory of default external file store
     mattr_accessor :external_file_store

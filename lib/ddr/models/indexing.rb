@@ -26,7 +26,8 @@ module Ddr
           CREATOR_FACET         => creator,
           DATE_FACET            => date,
           DATE_SORT             => date_sort,
-          RESEARCH_HELP_CONTACT => research_help_contact
+          YEAR_FACET            => year_facet,
+          RESEARCH_HELP_CONTACT => research_help_contact,
         }
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last
@@ -105,6 +106,10 @@ module Ddr
 
       def date_sort
         date.first
+      end
+
+      def year_facet
+        YearFacet.call(self)
       end
 
     end
