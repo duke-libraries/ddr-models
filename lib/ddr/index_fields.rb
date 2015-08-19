@@ -74,6 +74,7 @@ module Ddr
     TECHMD_WELL_FORMED          = solr_name :techmd_well_formed, :symbol
     TITLE                       = solr_name :title, :stored_sortable
     WORKFLOW_STATE              = solr_name :workflow_state, :stored_sortable
+    YEAR_FACET                  = "year_facet_iim"
 
   end
 end
