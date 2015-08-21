@@ -60,6 +60,51 @@ module Ddr
         Ddr::Auth::LegacyAuthorization.new(self)
       end
 
+      # Moves the first (descriptive metadata) identifier into
+      # (administrative metadata) local_id according to the following
+      # rubric:
+      #
+      # No existing local_id:
+      #   - Set local_id to first identifier value
+      #   - Remove first identifier value
+      #
+      # Existing local_id:
+      #   Same as first identifier value
+      #     - Remove first identifier value
+      #   Not same as first identifier value
+      #     :replace option is true
+      #       - Set local_id to first identifier value
+      #       - Remove first identifier value
+      #     :replace option is false
+      #       - Do nothing
+      #
+      # Returns true or false depending on whether the object was
+      # changed by this method
+      def move_first_identifier_to_local_id(replace: true)
+        moved = false
+        identifiers = identifier.to_a
+        first_id = identifiers.shift
+        if first_id
+          if local_id.blank?
+            self.local_id = first_id
+            self.identifier = identifiers
+            moved = true
+          else
+            if local_id == first_id
+              self.identifier = identifiers
+              moved = true
+            else
+              if replace
+                self.local_id = first_id
+                self.identifier = identifiers
+                moved = true
+              end
+            end
+          end
+        end
+        moved
+      end
+
     end
   end
 end
