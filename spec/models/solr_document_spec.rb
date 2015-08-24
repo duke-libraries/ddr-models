@@ -4,17 +4,17 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
 
   describe "index field method access" do
     describe "when there is an index field" do
-      before { Ddr::IndexFields.const_set(:FOO_BAR, "foo_bar_ssim") }
-      after { Ddr::IndexFields.send(:remove_const, :FOO_BAR) }
+      before { Ddr::Index::Fields.const_set(:FOO_BAR, "foo_bar_ssim") }
+      after { Ddr::Index::Fields.send(:remove_const, :FOO_BAR) }
       describe "and the field is not present" do
         its(:foo_bar) { is_expected.to be_nil }
       end
       describe "and the field is a single value (not an array)" do
-        before { subject[Ddr::IndexFields::FOO_BAR] = "foo" }
+        before { subject[Ddr::Index::Fields::FOO_BAR] = "foo" }
         its(:foo_bar) { is_expected.to eq("foo") }
       end
       describe "and the field value is an array" do
-        before { subject[Ddr::IndexFields::FOO_BAR] = ["foo", "bar"] }
+        before { subject[Ddr::Index::Fields::FOO_BAR] = ["foo", "bar"] }
         its(:foo_bar) { is_expected.to eq("foo, bar") }
       end
     end
@@ -42,7 +42,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
       its(:admin_policy_pid) { is_expected.to be_nil }
     end
     describe "when is_governed_by is set" do
-      before { subject[Ddr::IndexFields::IS_GOVERNED_BY] = "info:fedora/test:1" }
+      before { subject[Ddr::Index::Fields::IS_GOVERNED_BY] = "info:fedora/test:1" }
       its(:admin_policy_pid) { should eq("test:1") }
     end
   end
@@ -52,7 +52,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
       its(:admin_policy_uri) { is_expected.to be_nil }
     end
     describe "when is_governed_by is set" do
-      before { subject[Ddr::IndexFields::IS_GOVERNED_BY] = "info:fedora/test:1" }
+      before { subject[Ddr::Index::Fields::IS_GOVERNED_BY] = "info:fedora/test:1" }
       its(:admin_policy_uri) { should eq("info:fedora/test:1") }
     end
   end
@@ -65,7 +65,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     describe "where there is an admin policy relationship" do
       let(:admin_policy) { FactoryGirl.create(:collection) }
       before do
-        subject[Ddr::IndexFields::IS_GOVERNED_BY] = [ admin_policy.internal_uri ]
+        subject[Ddr::Index::Fields::IS_GOVERNED_BY] = [ admin_policy.internal_uri ]
       end
       it "should get the admin policy document" do
         expect(subject.admin_policy.id).to eq(admin_policy.id)
@@ -75,7 +75,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
 
   describe "#roles" do
     let(:json) { "[{\"role_type\":[\"Editor\"],\"agent\":[\"Editors\"],\"scope\":[\"policy\"]},{\"role_type\":[\"Contributor\"],\"agent\":[\"bob@example.com\"],\"scope\":[\"resource\"]}]" }
-    before { subject[Ddr::IndexFields::ACCESS_ROLE] = json }
+    before { subject[Ddr::Index::Fields::ACCESS_ROLE] = json }
     it "should deserialize the roles from JSON" do
       expect(subject.roles.to_a)
         .to eq([Ddr::Auth::Roles::Role.build(type: "Editor", agent: "Editors", scope: "policy"),
@@ -90,7 +90,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
       end
     end
     context "indexed struct maps" do
-      before { subject[Ddr::IndexFields::STRUCT_MAPS] = multiple_struct_maps_structure_to_json }
+      before { subject[Ddr::Index::Fields::STRUCT_MAPS] = multiple_struct_maps_structure_to_json }
       it "should return a hash of the struct maps" do
         expect(subject.struct_maps).to eq(JSON.parse(multiple_struct_maps_structure_to_json))
       end
@@ -104,7 +104,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
       end
     end
     context "indexed struct maps" do
-      before { subject[Ddr::IndexFields::STRUCT_MAPS] = multiple_struct_maps_structure_to_json }
+      before { subject[Ddr::Index::Fields::STRUCT_MAPS] = multiple_struct_maps_structure_to_json }
       context "requested struct map is indexed" do
         it "should return the struct map" do
           expect(subject.struct_map('default')).to eq(JSON.parse(multiple_struct_maps_structure_to_json)["default"])
@@ -126,14 +126,14 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     end
     describe "#research_help" do
       context "object has research help contact" do
-        before { subject[Ddr::IndexFields::RESEARCH_HELP_CONTACT] = 'yb' }
+        before { subject[Ddr::Index::Fields::RESEARCH_HELP_CONTACT] = 'yb' }
         it "should return the object's research help contact" do
           expect(subject.research_help.slug).to eq('yb')
         end
       end
       context "object does not have research help contact" do
         context "collection has research help contact" do
-          let(:admin_policy) { described_class.new({Ddr::IndexFields::RESEARCH_HELP_CONTACT=>["xa"]}) }
+          let(:admin_policy) { described_class.new({Ddr::Index::Fields::RESEARCH_HELP_CONTACT=>["xa"]}) }
           before do
             allow(subject).to receive(:admin_policy) { admin_policy }
           end

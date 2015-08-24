@@ -9,32 +9,36 @@ require 'active_record'
 require 'hydra-core'
 require 'hydra/validations'
 
-require 'ddr/actions'
-require 'ddr/auth'
-require 'ddr/contacts'
-require 'ddr/datastreams'
-require 'ddr/derivatives'
-require 'ddr/events'
-require 'ddr/index_fields'
-require 'ddr/jobs'
-require 'ddr/managers'
-require 'ddr/metadata'
-require 'ddr/notifications'
-require 'ddr/utils'
-require 'ddr/vocab'
-
 module Ddr
+  extend ActiveSupport::Autoload
+
+  autoload :Actions
+  autoload :Auth
+  autoload :Contacts
+  autoload :Datastreams
+  autoload :Derivatives
+  autoload :Events
+  autoload :Index
+  autoload :IndexFields
+  autoload :Jobs
+  autoload :Managers
+  autoload :Metadata
+  autoload :Notifications
+  autoload :Utils
+  autoload :Vocab
+
   module Models
     extend ActiveSupport::Autoload
 
-    autoload :Base
     autoload :AccessControllable
-    autoload :Describable
-    autoload :EventLoggable
-    autoload :Error
+    autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
-    autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :ContentModelError, 'ddr/models/error'
+    autoload :DerivativeGenerationFailure, 'ddr/models/error'
+    autoload :Describable
+    autoload :Error
+    autoload :EventLoggable
+    autoload :FileManagement
     autoload :FixityCheckable
     autoload :Governable
     autoload :HasAdminMetadata
@@ -46,11 +50,10 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
-    autoload :FileManagement
     autoload :Licensable
     autoload :SolrDocument
-    autoload :Structure
     autoload :StructDiv
+    autoload :Structure
     autoload :YearFacet
 
     # Base directory of default external file store
