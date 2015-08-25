@@ -96,7 +96,7 @@ module Ddr
         end
         prefix ||= default_file_prefix + "--"
         suffix ||= "." + default_file_extension
-        Tempfile.new [prefix, suffix], encoding: Encoding::ASCII_8BIT do |f|
+        Tempfile.open [prefix, suffix], encoding: Encoding::ASCII_8BIT do |f|
           f.write(content)
           f.close
           yield f
