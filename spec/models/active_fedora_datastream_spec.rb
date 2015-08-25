@@ -4,7 +4,7 @@ module ActiveFedora
   RSpec.describe Datastream do
 
     describe "#tempfile" do
-      subject { described_class.new(nil, nil, controlGroup: "M") }
+      subject { described_class.new(nil, "DS1", controlGroup: "M") }
       describe "when the datastream has no content" do
         it "should raise an exception" do
           expect { subject.tempfile { |f| puts f.path } }.to raise_error(Ddr::Models::Error)
@@ -25,7 +25,7 @@ module ActiveFedora
           end
           it "should use the prefix provided" do
             subject.tempfile(prefix: "foo") do |f|
-              expect(f.basename.start_with?("foo")).to be true
+              expect(File.basename(f.path).start_with?("foo")).to be true
             end
           end
           it "should use the sufffix provided" do
@@ -35,7 +35,7 @@ module ActiveFedora
           end
           it "should by default have a prefix based on the PID" do
             subject.tempfile do |f|
-              expect(f.basename.start_with?("test_1--")).to be true
+              expect(File.basename(f.path).start_with?("test_1_DS1--")).to be true
             end
           end
           it "should have the same size as the datastream content" do
