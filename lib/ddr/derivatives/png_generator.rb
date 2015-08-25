@@ -1,3 +1,5 @@
+require 'open3'
+
 module Ddr
   module Derivatives
     class PngGenerator < Generator

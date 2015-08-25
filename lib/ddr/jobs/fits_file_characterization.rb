@@ -1,3 +1,5 @@
+require 'open3'
+
 module Ddr::Jobs
   class FitsFileCharacterization
 
