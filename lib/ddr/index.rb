@@ -16,5 +16,11 @@ module Ddr
     autoload :RubyQueryResult
     autoload :UniqueKeyField
 
+    def self.pids(&block)
+      builder = QueryBuilder.new
+      query = builder.query
+      query.pids(&block)
+    end
+
   end
 end

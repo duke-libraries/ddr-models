@@ -24,6 +24,12 @@ module Ddr::Index
       end
     end
 
+    def pids
+      each do |doc|
+        yield doc[Fields::PID]
+      end
+    end
+
     def docs
       each do |doc|
         yield DocumentBuilder.build(doc)

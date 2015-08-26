@@ -3,7 +3,7 @@ module Ddr::Index
 
     attr_reader :q, :fields, :filters, :sort, :limit
 
-    delegate :count, :docs, :all, to: :result
+    delegate :count, :docs, :pids, :all, to: :result
 
     def inspect
       "#<#{self.class.name} q=#{q.inspect}, filters=#{filters.inspect}," \

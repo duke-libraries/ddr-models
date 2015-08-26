@@ -2,6 +2,7 @@ module Ddr::Index
   class QueryResult
 
     MAX_ROWS = 10**7
+    PAGE_SIZE = 1000
 
     attr_reader :query, :conn
     delegate :params, to: :query
