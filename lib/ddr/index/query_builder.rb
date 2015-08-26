@@ -12,9 +12,9 @@ module Ddr::Index
     end
 
     def query
-      Query.new.tap do |q|
+      Query.new.tap do |qry|
         instance_variables.each do |var|
-          q.instance_variable_set(var, instance_variable_get(var))
+          qry.instance_variable_set(var, instance_variable_get(var))
         end
       end
     end
