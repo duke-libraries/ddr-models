@@ -12,6 +12,7 @@ module Ddr::Index
     ACTIVE_FEDORA_MODEL         = Field.new :active_fedora_model, :stored_sortable
     ADMIN_SET                   = Field.new :admin_set, :stored_sortable
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
+    BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
     CONTENT_CONTROL_GROUP       = Field.new :content_control_group, :searchable, type: :string
@@ -53,8 +54,11 @@ module Ddr::Index
     PERMANENT_ID                = Field.new :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = Field.new :permanent_url, :stored_sortable, type: :string
     POLICY_ROLE                 = Field.new :policy_role, :symbol
+    PUBLISHER_FACET             = Field.new :publisher_facet, :facetable
     RESEARCH_HELP_CONTACT       = Field.new :research_help_contact, :stored_sortable
     RESOURCE_ROLE               = Field.new :resource_role, :symbol
+    SERIES_FACET                = Field.new :series_facet, :facetable
+    SPATIAL_FACET               = Field.new :spatial_facet, :facetable
     STRUCT_MAPS                 = Field.new :struct_maps, :stored_sortable
     TECHMD_COLOR_SPACE          = Field.new :techmd_color_space, :symbol
     TECHMD_CREATING_APPLICATION = Field.new :techmd_creating_application, :symbol
@@ -72,6 +76,7 @@ module Ddr::Index
     TECHMD_VALID                = Field.new :techmd_valid, :symbol
     TECHMD_WELL_FORMED          = Field.new :techmd_well_formed, :symbol
     TITLE                       = Field.new :title, :stored_sortable
+    TYPE_FACET                  = Field.new :type_facet, :facetable
     WORKFLOW_STATE              = Field.new :workflow_state, :stored_sortable
     YEAR_FACET                  = Field.new :year_facet, solr_name: "year_facet_iim"
 
