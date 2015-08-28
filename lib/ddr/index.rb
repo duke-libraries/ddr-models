@@ -2,6 +2,7 @@ module Ddr
   module Index
     extend ActiveSupport::Autoload
 
+    autoload :AbstractQueryResult
     autoload :Connection
     autoload :CSVQueryResult
     autoload :DocumentBuilder
@@ -11,15 +12,16 @@ module Ddr
     autoload :Filters
     autoload :Query
     autoload :QueryBuilder
+    autoload :QueryClause
     autoload :QueryResult
+    autoload :QueryValue
     autoload :Response
-    autoload :RubyQueryResult
     autoload :UniqueKeyField
 
-    def self.pids(&block)
+    def self.pids
       builder = QueryBuilder.new
       query = builder.query
-      query.pids(&block)
+      query.pids
     end
 
   end
