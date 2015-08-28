@@ -2,13 +2,7 @@ module Ddr::Index
   class Filter
 
     class << self
-      def where(conditions)
-        new.where(conditions)
-      end
-
-      def raw(*clauses)
-        new.raw(*clauses)
-      end
+      delegate :where, :raw, :before_days, :before, :present, :absent, to: :new
     end
 
     attr_accessor :clauses
@@ -18,20 +12,36 @@ module Ddr::Index
     end
 
     def where(conditions)
-      clauses = conditions.map { |field, value| raw_query(field, value) }
-      raw(*clauses)
+      clauses = conditions.map do |field, value|
+        if value.respond_to?(:each)
+          QueryClause.or_values(field, *value)
+        else
+          QueryClause.term(field, value)
+        end
+      end
+      raw *clauses
     end
 
+    # Adds clause (String) w/o escaping
     def raw(*clauses)
       self.clauses += clauses
       self
     end
 
-    private
+    def present(field)
+      raw QueryClause.present(field)
+    end
 
-    # Copied from ActiveFedora::SolrService
-    def raw_query(key, value)
-      "_query_:\"{!raw f=#{key}}#{value.gsub('"', '\"')}\""
+    def absent(field)
+      raw QueryClause.absent(field)
+    end
+
+    def before(field, date_time)
+      raw QueryClause.before(field, date_time)
+    end
+
+    def before_days(field, days)
+      raw QueryClause.before_days(field, days)
     end
 
   end

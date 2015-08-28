@@ -1,40 +1,60 @@
 require "csv"
 
 module Ddr::Index
-  class CSVQueryResult < QueryResult
+  class CSVQueryResult < AbstractQueryResult
 
-    COL_SEP    = CSV::DEFAULT_OPTIONS[:col_sep]
-    QUOTE_CHAR = CSV::DEFAULT_OPTIONS[:quote_char]
+    MAX_ROWS = 10**8
+
+    COL_SEP    = CSV::DEFAULT_OPTIONS[:col_sep].freeze
+    QUOTE_CHAR = CSV::DEFAULT_OPTIONS[:quote_char].freeze
 
     SOLR_CSV_OPTS = {
       "csv.header"       => "false",
-      "csv.separator"    => COL_SEP,
       "csv.mv.separator" => "|",
-      "csv.encapsulator" => QUOTE_CHAR,
       "wt"               => "csv",
-    }
+    }.freeze
+
+    CSV_OPTS = {
+      return_headers: true,
+      write_headers:  true,
+    }.freeze
+
+    attr_reader :csv_opts, :solr_csv_opts
+
+    def initialize(query, **opts)
+      super(query)
+
+      @solr_csv_opts = SOLR_CSV_OPTS.dup
+      @solr_csv_opts[:rows] ||= MAX_ROWS
+
+      @csv_opts = CSV_OPTS.dup
+      @csv_opts[:headers] = query.fields.map(&:label)
+
+      # Set column separator and quote character consistently
+      @csv_opts[:col_sep]    = @solr_csv_opts["csv.separator"]    = opts.fetch(:col_sep, COL_SEP)
+      @csv_opts[:quote_char] = @solr_csv_opts["csv.encapsulator"] = opts.fetch(:quote_char, QUOTE_CHAR)
+    end
 
     def csv
-      CSV.new(data,
-              headers: headers,
-              return_headers: true,
-              write_headers: true,
-              col_sep: COL_SEP,
-              quote_char: QUOTE_CHAR)
+      CSV.new(data, csv_opts)
+    end
+
+    def each
+      csv.each
     end
 
     def to_s
-      csv.read
+      csv.string
+    end
+
+    private
+
+    def csv_params
+      params.merge(solr_csv_opts)
     end
 
     def data
-      csv_params = params.merge(SOLR_CSV_OPTS)
-      csv_params[:rows] ||= MAX_ROWS
       conn.get "select", params: csv_params
-    end
-
-    def headers
-      query.fields.map(&:label)
     end
 
   end

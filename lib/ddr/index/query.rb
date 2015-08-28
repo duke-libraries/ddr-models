@@ -1,13 +1,13 @@
 module Ddr::Index
   class Query
 
-    attr_reader :q, :fields, :filters, :sort, :limit
+    attr_reader :q, :fields, :filters, :sort, :rows
 
-    delegate :count, :docs, :pids, :all, to: :result
+    delegate :count, :docs, :pids, :each_pid, :all, to: :result
 
     def inspect
       "#<#{self.class.name} q=#{q.inspect}, filters=#{filters.inspect}," \
-      " sort=#{sort.inspect}, limit=#{limit.inspect}, fields=#{fields.inspect}>"
+      " sort=#{sort.inspect}, rows=#{rows.inspect}, fields=#{fields.inspect}>"
     end
 
     def to_s
@@ -15,31 +15,20 @@ module Ddr::Index
     end
 
     def params
-      base_params.tap do |p|
-        if filters.present?
-          p[:fq] = filters.map(&:clauses).flatten
-        end
-        if sort.present?
-          p[:sort] = sort.join(",")
-        end
-        if limit
-          p[:rows] = limit
-        end
-      end
+      { q:    q,
+        fq:   filters.map(&:clauses).flatten,
+        fl:   fields.join(","),
+        sort: sort.join(","),
+        rows: rows,
+      }.select { |k, v| v.present? }
     end
 
     def result
-      RubyQueryResult.new(self)
+      QueryResult.new(self)
     end
 
-    def csv
-      CSVQueryResult.new(self)
-    end
-
-    private
-
-    def base_params
-      { q: q, fl: fields }
+    def csv(**opts)
+      CSVQueryResult.new(self, **opts)
     end
 
   end

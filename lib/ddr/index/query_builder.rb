@@ -1,14 +1,18 @@
 module Ddr::Index
   class QueryBuilder
 
-    attr_accessor :q, :fields, :filters, :sort, :limit
+    def self.build
+      builder = new
+      yield builder
+      builder.query
+    end
 
     def initialize
-      @q       = "*:*"
+      @q       = nil
       @fields  = [ Fields::PID ]
       @filters = [ ]
       @sort    = [ ]
-      @limit   = nil
+      @rows    = nil
     end
 
     def query
@@ -19,40 +23,46 @@ module Ddr::Index
       end
     end
 
-    def filter(*filters)
-      self.filters += filters
+    def filter(*fltrs)
+      @filters.push *fltrs
       self
     end
 
-    def fields(*fields)
-      self.fields += fields
+    def fields(*flds)
+      @fields.push *flds
       self
     end
-    alias_method :field, :fields
 
     def limit(num)
-      self.limit = num
+      @rows = num
       self
     end
 
-    def sort(*orderings)
-      self.sort += orderings
+    def order_by(field, order)
+      @sort << [field, order].join(" ")
       self
     end
 
-    # @param conditions [Hash]
-    def where(conditions)
-      filter Filter.where(conditions)
+    def asc(field)
+      order_by field, "asc"
     end
 
-    # for adding raw string filters
-    def raw(*clauses)
-      filter Filter.raw(*clauses)
+    def desc(field)
+      order_by field, "desc"
     end
 
     def q(q)
-      self.q = q
+      @q = q
       self
+    end
+
+    protected
+
+    def method_missing(name, *args, &block)
+      if Filter.respond_to? name
+        return filter Filter.send(name, *args, &block)
+      end
+      super
     end
 
   end
