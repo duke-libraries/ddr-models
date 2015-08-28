@@ -33,6 +33,7 @@ module Ddr
           SERIES_FACET          => desc_metadata_values('series'),
           SPATIAL_FACET         => desc_metadata_values('spatial'),
           BOX_NUMBER_FACET      => desc_metadata_values('box_number'),
+          DOI                   => adminMetadata.doi,
         }
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last

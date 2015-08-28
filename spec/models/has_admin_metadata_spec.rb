@@ -10,7 +10,17 @@ module Ddr
         describe "indexing" do
           before { subject.local_id = "foo" }
           it "should index the local id value" do
-            expect(subject.to_solr).to include(Ddr::IndexFields::LOCAL_ID => "foo")
+            expect(subject.to_solr).to include(Ddr::Index::Fields::LOCAL_ID => "foo")
+          end
+        end
+      end
+
+      describe "doi" do
+        subject { FactoryGirl.build(:item) }
+        describe "indexing" do
+          before { subject.adminMetadata.doi << "http://doi.org/10.1000/182" }
+          it "should index the doi values" do
+            expect(subject.to_solr).to include(Ddr::Index::Fields::DOI => ["http://doi.org/10.1000/182"])
           end
         end
       end
@@ -108,13 +118,13 @@ module Ddr
             subject.display_format = display_format
           end
           it "should index the permanent id value" do
-            expect(subject.to_solr[Ddr::IndexFields::PERMANENT_ID]).to eq(permanent_id)
+            expect(subject.to_solr[Ddr::Index::Fields::PERMANENT_ID]).to eq(permanent_id)
           end
           it "should index the permanent url" do
-            expect(subject.to_solr[Ddr::IndexFields::PERMANENT_URL]).to eq(permanent_url)
+            expect(subject.to_solr[Ddr::Index::Fields::PERMANENT_URL]).to eq(permanent_url)
           end
           it "should index the display format" do
-            expect(subject.to_solr[Ddr::IndexFields::DISPLAY_FORMAT]).to eq(display_format)
+            expect(subject.to_solr[Ddr::Index::Fields::DISPLAY_FORMAT]).to eq(display_format)
           end
         end
 
@@ -216,13 +226,13 @@ module Ddr
           let(:indexed) { subject.to_solr }
           before { subject.roles.grant role1, role2, role3, role4 }
           it "should index the role data serialized as JSON" do
-            expect(indexed[Ddr::IndexFields::ACCESS_ROLE]).to eq(subject.roles.to_json)
+            expect(indexed[Ddr::Index::Fields::ACCESS_ROLE]).to eq(subject.roles.to_json)
           end
           it "should index the agents having roles in policy scope" do
-            expect(indexed[Ddr::IndexFields::POLICY_ROLE]).to contain_exactly(role2.agent.first, role3.agent.first, role4.agent.first)
+            expect(indexed[Ddr::Index::Fields::POLICY_ROLE]).to contain_exactly(role2.agent.first, role3.agent.first, role4.agent.first)
           end
           it "should index the agents having roles in resource scope" do
-            expect(indexed[Ddr::IndexFields::RESOURCE_ROLE]).to contain_exactly(role1.agent.first)
+            expect(indexed[Ddr::Index::Fields::RESOURCE_ROLE]).to contain_exactly(role1.agent.first)
           end
         end
 

@@ -30,6 +30,8 @@ module Ddr
 
       property :research_help_contact, predicate: Ddr::Vocab::Contact.assistance
 
+      property :doi, predicate: RDF::Vocab::Identifiers.doi
+
     end
   end
 end
