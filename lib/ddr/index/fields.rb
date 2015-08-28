@@ -25,6 +25,7 @@ module Ddr::Index
     DEFAULT_LICENSE_TITLE       = Field.new :default_license_title, type: :string
     DEFAULT_LICENSE_URL         = Field.new :default_license_url, type: :string
     DISPLAY_FORMAT              = Field.new :display_format, :stored_sortable
+    DOI                         = Field.new :doi, :symbol
     EXTRACTED_TEXT              = Field.new :extracted_text, :searchable, type: :text
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
