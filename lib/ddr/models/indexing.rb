@@ -28,6 +28,11 @@ module Ddr
           DATE_SORT             => date_sort,
           YEAR_FACET            => year_facet,
           RESEARCH_HELP_CONTACT => research_help_contact,
+          TYPE_FACET            => type,
+          PUBLISHER_FACET       => publisher,
+          SERIES_FACET          => desc_metadata_values('series'),
+          SPATIAL_FACET         => desc_metadata_values('spatial'),
+          BOX_NUMBER_FACET      => desc_metadata_values('box_number'),
         }
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last
