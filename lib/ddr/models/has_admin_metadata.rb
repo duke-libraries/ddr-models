@@ -13,6 +13,7 @@ module Ddr::Models
       has_attributes :admin_set,
                      :depositor,
                      :display_format,
+                     :license,
                      :local_id,
                      :permanent_id,
                      :permanent_url,

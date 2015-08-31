@@ -6,21 +6,16 @@ RSpec.describe Collection, type: :model do
   it_behaves_like "it has an association", :has_many, :children, :is_member_of_collection, "Item"
   it_behaves_like "it has an association", :has_many, :targets, :is_external_target_for, "Target"
 
-  describe "terms delegated to defaultRights" do
+  describe "legacy license information" do
     before do
-      subject.default_license_title = "License Title"
-      subject.default_license_description = "License Description"
-      subject.default_license_url = "http://library.duke.edu"
-    end
-    it "should set the terms correctly" do
-      expect(subject.defaultRights.license.title.first).to eq("License Title")
-      expect(subject.defaultRights.license.description.first).to eq("License Description")
-      expect(subject.defaultRights.license.url.first).to eq("http://library.duke.edu")
+      subject.defaultRights.license.title = ["License Title"]
+      subject.defaultRights.license.description = ["License Description"]
+      subject.defaultRights.license.url = ["http://library.duke.edu"]
     end
     it "should index the terms" do
-      expect(subject.to_solr[Ddr::IndexFields::DEFAULT_LICENSE_TITLE]).to eq("License Title")
-      expect(subject.to_solr[Ddr::IndexFields::DEFAULT_LICENSE_DESCRIPTION]).to eq("License Description")
-      expect(subject.to_solr[Ddr::IndexFields::DEFAULT_LICENSE_URL]).to eq("http://library.duke.edu")
+      expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_TITLE]).to eq("License Title")
+      expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_DESCRIPTION]).to eq("License Description")
+      expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_URL]).to eq("http://library.duke.edu")
     end
   end
 

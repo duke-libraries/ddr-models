@@ -28,7 +28,7 @@ module Ddr
       end
 
       def inherited_license
-        admin_policy.default_license if admin_policy
+        admin_policy.license if admin_policy
       end
 
       def copy_admin_policy_from(other)

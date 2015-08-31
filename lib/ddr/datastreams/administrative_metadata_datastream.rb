@@ -44,7 +44,11 @@ module Ddr
       property :depositor,
                predicate: RDF::Vocab::MARCRelators.dpt
 
-      property :doi, predicate: RDF::Vocab::Identifiers.doi
+      property :doi,
+               predicate: RDF::Vocab::Identifiers.doi
+
+      property :license,
+               predicate: RDF::DC.license
 
     end
   end

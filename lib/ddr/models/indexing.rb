@@ -2,7 +2,7 @@ module Ddr
   module Models
     module Indexing
 
-      include Ddr::IndexFields
+      include Ddr::Index::Fields
 
       def to_solr(solr_doc=Hash.new, opts={})
         solr_doc = super(solr_doc, opts)
@@ -22,6 +22,10 @@ module Ddr
           DOI                   => adminMetadata.doi,
           IDENTIFIER_ALL        => all_identifiers,
           INTERNAL_URI          => internal_uri,
+          LICENSE               => license,
+          LICENSE_DESCRIPTION   => rightsMetadata.license.description.first,
+          LICENSE_TITLE         => rightsMetadata.license.title.first,
+          LICENSE_URL           => rightsMetadata.license.url.first,
           LOCAL_ID              => local_id,
           PERMANENT_ID          => permanent_id,
           PERMANENT_URL         => permanent_url,
@@ -43,11 +47,6 @@ module Ddr
         if respond_to? :virus_checks
           last_virus_check = virus_checks.last
           fields.merge!(last_virus_check.to_solr) if last_virus_check
-        end
-        if respond_to? :license
-          fields[LICENSE_DESCRIPTION] = license_description
-          fields[LICENSE_TITLE] = license_title
-          fields[LICENSE_URL] = license_url
         end
         if has_content?
           fields[CONTENT_CONTROL_GROUP] = content.controlGroup
@@ -71,9 +70,9 @@ module Ddr
           fields[COLLECTION_URI] = collection_uri
         end
         if is_a? Collection
-          fields[DEFAULT_LICENSE_DESCRIPTION] = default_license_description
-          fields[DEFAULT_LICENSE_TITLE] = default_license_title
-          fields[DEFAULT_LICENSE_URL] = default_license_url
+          fields[DEFAULT_LICENSE_DESCRIPTION] = defaultRights.license.description.first
+          fields[DEFAULT_LICENSE_TITLE] = defaultRights.license.title.first
+          fields[DEFAULT_LICENSE_URL] = defaultRights.license.url.first
           fields[ADMIN_SET_FACET] = admin_set_facet
           fields[COLLECTION_FACET] = collection_facet
         end
