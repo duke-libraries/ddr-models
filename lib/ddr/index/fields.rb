@@ -1,6 +1,8 @@
 module Ddr::Index
   module Fields
 
+    include LegacyLicenseFields
+
     def self.get(name)
       const_get(name.to_s.upcase, false)
     end
@@ -21,9 +23,6 @@ module Ddr::Index
     CREATOR_FACET               = Field.new :creator_facet, :facetable
     DATE_FACET                  = Field.new :date_facet, :facetable
     DATE_SORT                   = Field.new :date_sort, :sortable
-    DEFAULT_LICENSE_DESCRIPTION = Field.new :default_license_description, type: :string
-    DEFAULT_LICENSE_TITLE       = Field.new :default_license_title, type: :string
-    DEFAULT_LICENSE_URL         = Field.new :default_license_url, type: :string
     DEPOSITOR                   = Field.new :depositor, :stored_sortable
     DISPLAY_FORMAT              = Field.new :display_format, :stored_sortable
     DOI                         = Field.new :doi, :symbol
@@ -41,9 +40,7 @@ module Ddr::Index
     LAST_FIXITY_CHECK_OUTCOME   = Field.new :last_fixity_check_outcome, :symbol
     LAST_VIRUS_CHECK_ON         = Field.new :last_virus_check_on, :stored_sortable, type: :date
     LAST_VIRUS_CHECK_OUTCOME    = Field.new :last_virus_check_outcome, :symbol
-    LICENSE_DESCRIPTION         = Field.new :license_description, type: :string
-    LICENSE_TITLE               = Field.new :license_title, type: :string
-    LICENSE_URL                 = Field.new :license_url, type: :string
+    LICENSE                     = Field.new :license, :stored_sortable
     LOCAL_ID                    = Field.new :local_id, :stored_sortable
     MEDIA_SUB_TYPE              = Field.new :content_media_sub_type, :facetable
     MEDIA_MAJOR_TYPE            = Field.new :content_media_major_type, :facetable

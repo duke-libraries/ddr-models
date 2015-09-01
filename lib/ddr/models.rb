@@ -50,7 +50,6 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
-    autoload :Licensable
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure

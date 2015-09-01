@@ -155,22 +155,12 @@ module Ddr::Models
 
     def inherited_license
       if doc = admin_policy
-        { title: doc.default_license_title,
-          description: doc.default_license_description,
-          url: doc.default_license_url }
-      end
-    end
-
-    def license
-      if license_title || license_description || license_url
-        { title: license_title,
-          description: license_description,
-          url: license_url }
+        doc.license
       end
     end
 
     def effective_license
-      @effective_license ||= license || inherited_license || {}
+      @effective_license ||= license || inherited_license
     end
 
     def roles
