@@ -8,6 +8,19 @@ module Ddr::Models
       alias_method :pid, :id
     end
 
+    class NotFound < Error; end
+
+    module ClassMethods
+      def find(pid_or_uri)
+        pid = pid_or_uri.sub(/\Ainfo:fedora\//, "")
+        query = Ddr::Index::QueryBuilder.build { |q| q.id(pid) }
+        if doc = query.docs.first
+          return doc
+        end
+        raise NotFound, "SolrDocument not found for \"#{pid_or_uri}\"."
+      end
+    end
+
     def inspect
       "#<#{self.class.name} id=#{id.inspect}>"
     end
@@ -83,10 +96,8 @@ module Ddr::Models
     end
 
     def admin_policy
-      if admin_policy_pid
-        query = ActiveFedora::SolrService.construct_query_for_pids([admin_policy_pid])
-        docs = ActiveFedora::SolrService.query(query)
-        self.class.new(docs.first)
+      if has_admin_policy?
+        self.class.find(admin_policy_uri)
       end
     end
 
@@ -154,13 +165,12 @@ module Ddr::Models
     end
 
     def inherited_license
-      if doc = admin_policy
-        doc.license
-      end
+      warn "[DEPRECATION] `inherited_licensed` is deprecated and will be removed from ddr-models 3.0." \
+           " Use `effective_license` instead."
     end
 
     def effective_license
-      @effective_license ||= license || inherited_license
+      @effective_license ||= EffectiveLicense.call(self)
     end
 
     def roles
@@ -184,6 +194,20 @@ module Ddr::Models
     def research_help
       research_help_contact = self[Ddr::Index::Fields::RESEARCH_HELP_CONTACT] || inherited_research_help_contact
       Ddr::Contacts.get(research_help_contact) if research_help_contact
+    end
+
+    def parent_uri
+      is_part_of || is_member_of_collection
+    end
+
+    def has_parent?
+      parent_uri.present?
+    end
+
+    def parent
+      if has_parent?
+        self.class.find(parent_uri)
+      end
     end
 
     private

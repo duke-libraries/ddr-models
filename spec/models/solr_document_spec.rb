@@ -25,26 +25,6 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     end
   end
 
-  describe "#inherited_license" do
-    let(:admin_policy) { described_class.new({"active_fedora_model_ssi"=>"Collection", "id"=>"changeme:224", "title_tesim"=>["Test Collection"], "is_governed_by_ssim"=>["info:fedora/changeme:224"], "has_model_ssim"=>["info:fedora/afmodel:Collection"], "title_ssi"=>"Test Collection", "internal_uri_ssi"=>"info:fedora/changeme:224", "license_ssi"=>"https://creativecommons.org/licenses/by-nc-nd/4.0/"}) }
-    before do
-      allow(subject).to receive(:admin_policy) { admin_policy }
-    end
-    it "should return a hash of the default license attributes of the governing object" do
-      expect(subject.inherited_license).to eq("https://creativecommons.org/licenses/by-nc-nd/4.0/")
-    end
-  end
-
-  describe "#admin_policy_pid" do
-    describe "when is_governed_by is not set" do
-      its(:admin_policy_pid) { is_expected.to be_nil }
-    end
-    describe "when is_governed_by is set" do
-      before { subject[Ddr::Index::Fields::IS_GOVERNED_BY] = "info:fedora/test:1" }
-      its(:admin_policy_pid) { should eq("test:1") }
-    end
-  end
-
   describe "#admin_policy_uri" do
     describe "when is_governed_by is not set" do
       its(:admin_policy_uri) { is_expected.to be_nil }
@@ -56,7 +36,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
   end
 
   describe "#admin_policy" do
-    describe "when there is not admin policy relationship" do
+    describe "when there is not an admin policy relationship" do
       before { allow(subject).to receive(:admin_policy_pid) { nil } }
       its(:admin_policy) { should be_nil }
     end
@@ -68,6 +48,36 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
       it "should get the admin policy document" do
         expect(subject.admin_policy.id).to eq(admin_policy.id)
       end
+    end
+  end
+
+  describe "#parent_uri" do
+    describe "when is_part_of is present" do
+      before { subject[Ddr::Index::Fields::IS_PART_OF] = "info:fedora/test:1" }
+      its(:parent_uri) { is_expected.to eq("info:fedora/test:1") }
+    end
+    describe "when is_part_of is not present" do
+      describe "when is_member_of_collection is present" do
+        before { subject[Ddr::Index::Fields::IS_MEMBER_OF_COLLECTION] = "info:fedora/test:1" }
+        its(:parent_uri) { is_expected.to eq("info:fedora/test:1") }
+      end
+      describe "when is_member_of_collection is not present" do
+        its(:parent_uri) { is_expected.to be_nil }
+      end
+    end
+  end
+
+  describe "#parent" do
+    describe "when there is a parent URI" do
+      let(:doc) { described_class.new({"id"=>"test:1"}) }
+      before do
+        allow(subject).to receive(:parent_uri) { "info:fedora/test:1" }
+        allow(described_class).to receive(:find).with("info:fedora/test:1") { doc }
+      end
+      its(:parent) { is_expected.to eq(doc) }
+    end
+    describe "when there is no parent URI" do
+      its(:parent) { is_expected.to be_nil }
     end
   end
 

@@ -66,6 +66,10 @@ module Ddr::Models
       Ddr::Contacts.get(research_help_contact) if research_help_contact
     end
 
+    def effective_license
+      EffectiveLicense.call(self)
+    end
+
     private
 
     def update_permanent_id_on_destroy

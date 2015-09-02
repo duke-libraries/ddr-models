@@ -9,7 +9,7 @@ module Ddr::Index
 
     def initialize
       @q       = nil
-      @fields  = [ Fields::PID ]
+      @fields  = [ ]
       @filters = [ ]
       @sort    = [ ]
       @rows    = nil
@@ -21,6 +21,11 @@ module Ddr::Index
           qry.instance_variable_set(var, instance_variable_get(var))
         end
       end
+    end
+
+    def id(pid)
+      q QueryClause.id(pid)
+      limit 1
     end
 
     def filter(*fltrs)
