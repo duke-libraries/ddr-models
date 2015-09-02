@@ -77,7 +77,7 @@ end
 
 ### Controller
 
-`Ddr::Auth::RoleBasedAccessControlsEnforcement` overrides `current_ability`, `gated_discovery_filters` and `enforce_show_permissions`, so most likely it should be include in `ApplicationController`.
+`Ddr::Auth::RoleBasedAccessControlsEnforcement` overrides `current_ability`, `gated_discovery_filters` and `enforce_show_permissions`, so most likely it should be included in `ApplicationController`.
 
 ```ruby
 class ApplicationController < ActionController::Base
