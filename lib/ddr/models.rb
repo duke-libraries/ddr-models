@@ -36,6 +36,7 @@ module Ddr
     autoload :ContentModelError, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :Describable
+    autoload :EffectiveLicense
     autoload :Error
     autoload :EventLoggable
     autoload :FileManagement
@@ -50,6 +51,7 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
+    autoload :License
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure

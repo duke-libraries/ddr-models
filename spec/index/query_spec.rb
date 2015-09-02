@@ -6,7 +6,7 @@ module Ddr::Index
         query
           .q("foo:bar")
           .where("spam"=>"eggs")
-          .fields("foo", "spam")
+          .fields("id", "foo", "spam")
           .limit(50)
       end
     end

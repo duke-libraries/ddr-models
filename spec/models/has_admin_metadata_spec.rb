@@ -4,36 +4,6 @@ require 'support/ezid_mock_identifier'
 module Ddr::Models
   RSpec.describe HasAdminMetadata, type: :model, contacts: true do
 
-    describe "license" do
-      subject { FactoryGirl.build(:item) }
-      describe "indexing" do
-        before { subject.license = "https://creativecommons.org/licenses/by-nc-nd/4.0/" }
-        it "should index the license value" do
-          expect(subject.to_solr).to include(Ddr::Index::Fields::LICENSE => "https://creativecommons.org/licenses/by-nc-nd/4.0/")
-        end
-      end
-    end
-
-    describe "local id" do
-      subject { FactoryGirl.build(:item) }
-      describe "indexing" do
-        before { subject.local_id = "foo" }
-        it "should index the local id value" do
-          expect(subject.to_solr).to include(Ddr::Index::Fields::LOCAL_ID => "foo")
-        end
-      end
-    end
-
-    describe "doi" do
-      subject { FactoryGirl.build(:item) }
-      describe "indexing" do
-        before { subject.adminMetadata.doi << "http://doi.org/10.1000/182" }
-        it "should index the doi values" do
-          expect(subject.to_solr).to include(Ddr::Index::Fields::DOI => ["http://doi.org/10.1000/182"])
-        end
-      end
-    end
-
     describe "permanent id and permanent url" do
       subject { FactoryGirl.build(:item) }
 
@@ -116,27 +86,6 @@ module Ddr::Models
           end
         end
       end
-
-      describe "indexing" do
-        let(:permanent_id) { "ark:/99999/fk4zzz" }
-        let(:permanent_url) { "http://id.library.duke.edu/ark:/99999/fk4zzz" }
-        let(:display_format) { "Image" }
-        before do
-          subject.permanent_id = permanent_id
-          subject.permanent_url = permanent_url
-          subject.display_format = display_format
-        end
-        it "should index the permanent id value" do
-          expect(subject.to_solr[Ddr::Index::Fields::PERMANENT_ID]).to eq(permanent_id)
-        end
-        it "should index the permanent url" do
-          expect(subject.to_solr[Ddr::Index::Fields::PERMANENT_URL]).to eq(permanent_url)
-        end
-        it "should index the display format" do
-          expect(subject.to_solr[Ddr::Index::Fields::DISPLAY_FORMAT]).to eq(display_format)
-        end
-      end
-
     end
 
     describe "workflow" do
@@ -224,24 +173,6 @@ module Ddr::Models
           subject.save!
           subject.reload
           expect(subject.roles).to contain_exactly(role)
-        end
-      end
-
-      describe "indexing" do
-        let(:role1) { FactoryGirl.build(:role, :curator, :person, :resource) }
-        let(:role2) { FactoryGirl.build(:role, :curator, :person, :policy) }
-        let(:role3) { FactoryGirl.build(:role, :editor, :group, :policy) }
-        let(:role4) { FactoryGirl.build(:role, :editor, :person, :policy) }
-        let(:indexed) { subject.to_solr }
-        before { subject.roles.grant role1, role2, role3, role4 }
-        it "should index the role data serialized as JSON" do
-          expect(indexed[Ddr::Index::Fields::ACCESS_ROLE]).to eq(subject.roles.to_json)
-        end
-        it "should index the agents having roles in policy scope" do
-          expect(indexed[Ddr::Index::Fields::POLICY_ROLE]).to contain_exactly(role2.agent.first, role3.agent.first, role4.agent.first)
-        end
-        it "should index the agents having roles in resource scope" do
-          expect(indexed[Ddr::Index::Fields::RESOURCE_ROLE]).to contain_exactly(role1.agent.first)
         end
       end
 

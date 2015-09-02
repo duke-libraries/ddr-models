@@ -11,7 +11,12 @@ module Ddr::Index
         [field, value].join(":")
       end
 
-      #
+      def unique_key(value)
+        term(UniqueKeyField.instance, value)
+      end
+      alias_method :id, :unique_key
+      alias_method :pid, :unique_key
+
       def negative(field, value)
         build "-#{field}", value
       end
