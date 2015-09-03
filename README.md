@@ -75,7 +75,7 @@ class Ability < Ddr::Auth::Ability
 end
 ```
 
-### Controller
+#### Controller
 
 `Ddr::Auth::RoleBasedAccessControlsEnforcement` overrides `current_ability`, `gated_discovery_filters` and `enforce_show_permissions`, so most likely it should be included in `ApplicationController`.
 
@@ -86,7 +86,6 @@ class ApplicationController < ActionController::Base
 
 end
 ```
-
 
 #### SolrDocument model
 
@@ -102,6 +101,10 @@ class SolrDocument
 
 end
 ```
+
+#### Auxiliary Web Services
+
+In order to use the auxiliary web services, set the `DDR_AUX_API_URL` environment variable.
 
 #### Migrations
 
