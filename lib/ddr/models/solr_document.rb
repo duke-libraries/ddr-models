@@ -164,11 +164,6 @@ module Ddr::Models
       active_fedora_model.tableize
     end
 
-    def inherited_license
-      warn "[DEPRECATION] `inherited_licensed` is deprecated and will be removed from ddr-models 3.0." \
-           " Use `effective_license` instead."
-    end
-
     def effective_license
       @effective_license ||= EffectiveLicense.call(self)
     end
