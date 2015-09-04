@@ -104,7 +104,11 @@ end
 
 #### Auxiliary Web Services
 
-In order to use the auxiliary web services, set the `DDR_AUX_API_URL` environment variable.
+In order to use the auxiliary web services, set the `DDR_AUX_API_URL` environment variable.  The default URL is `http://localhost:3030`.  You may wish to install the [ddr-aux](https://github.com/duke-libraries/ddr-aux) app locally and run it:
+
+```sh
+> rails server -p 3030
+```
 
 #### Migrations
 
