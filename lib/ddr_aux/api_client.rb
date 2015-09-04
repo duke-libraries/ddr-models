@@ -29,9 +29,5 @@ module DdrAux
       JSON.parse(res.body)
     end
 
-    def connection(*args)
-      Net::HTTP.new(*args)
-    end
-
   end
 end
