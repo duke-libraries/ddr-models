@@ -1,19 +1,30 @@
 require "ostruct"
-require "ddr_aux/api_client"
+require "ddr_aux/client"
 
 module Ddr::Models
   class License < SimpleDelegator
 
-    def self.get(code)
-      new DdrAux::ApiClient.license(code)
+    class << self
+      def get(url)
+        licenses = DdrAux::Client.licenses(url: url)
+        licenses.first && new(licenses.first)
+      end
+
+      def all
+        DdrAux::Client.licenses.map { |l| new(l) }
+      end
+
+      def call(obj)
+        if obj.license
+          l = get obj.license
+          l[:licensed] = obj.pid
+          l
+        end
+      end
     end
 
     def initialize(args={})
       super OpenStruct.new(args)
-    end
-
-    def description
-      terms
     end
 
     def to_json

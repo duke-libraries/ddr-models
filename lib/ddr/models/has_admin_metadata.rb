@@ -70,6 +70,10 @@ module Ddr::Models
       EffectiveLicense.call(self)
     end
 
+    def inherited_license
+      InheritedLicense.call(self)
+    end
+
     private
 
     def update_permanent_id_on_destroy
