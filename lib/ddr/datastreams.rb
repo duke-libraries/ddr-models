@@ -12,7 +12,6 @@ module Ddr
     EXTRACTED_TEXT = "extractedText"
     FITS = "fits".freeze
     MULTIRES_IMAGE = "multiresImage"
-    PROPERTIES = "properties"
     RELS_EXT = "RELS-EXT"
     RIGHTS_METADATA = "rightsMetadata"
     STRUCT_METADATA = "structMetadata"
@@ -32,7 +31,6 @@ module Ddr
     autoload :FitsDatastream
     autoload :MetadataDatastream
     autoload :PlainTextDatastream
-    autoload :PropertiesDatastream
     autoload :StructuralMetadataDatastream
 
   end
