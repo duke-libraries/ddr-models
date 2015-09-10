@@ -6,8 +6,7 @@ module Ddr::Models
 
     class << self
       def get(url)
-        licenses = DdrAux::Client.licenses(url: url)
-        licenses.first && new(licenses.first)
+        new DdrAux::Client.find_license(url: url)
       end
 
       def all
