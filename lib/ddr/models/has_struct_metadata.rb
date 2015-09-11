@@ -26,6 +26,10 @@ module Ddr
         structure
       end
 
+      def multires_image_file_paths(type='default')
+        ::SolrDocument.find(pid).multires_image_file_paths(type)
+      end
+
       private
 
       def find_children

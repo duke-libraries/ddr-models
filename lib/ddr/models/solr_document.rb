@@ -205,6 +205,10 @@ module Ddr::Models
       end
     end
 
+    def multires_image_file_paths(type='default')
+      struct_map_docs(type).map { |doc| doc.multires_image_file_path }.compact
+    end
+
     private
 
     def targets_query
@@ -235,6 +239,20 @@ module Ddr::Models
       if doc = admin_policy
         doc.research_help_contact
       end
+    end
+
+    def struct_map_docs(type='default')
+      struct_map_pids(type).map { |pid| self.class.find(pid) }.compact
+    end
+
+    # For simplicity, initial implementation returns PID's only from top-level
+    # (i.e., not nested) div's.  This is done since we have not clarified what
+    # an _ordered_ list of PID's should look like if struct map contains nested
+    # div's.
+    def struct_map_pids(type='default')
+      struct_map(type)['divs'].map { |d| d['fptrs'].present? ? d['fptrs'].first : nil}.compact
+    rescue
+      []
     end
 
   end
