@@ -8,12 +8,13 @@ module Ddr
       # Datastreams not listed cannot be downloaded, except of
       # course by the :manage ability.
       DATASTREAM_DOWNLOAD_ABILITIES = {
-        Ddr::Datastreams::CONTENT        => :download,
-        Ddr::Datastreams::DESC_METADATA  => :read,
-        Ddr::Datastreams::EXTRACTED_TEXT => :download,
-        Ddr::Datastreams::FITS           => :read,
-        Ddr::Datastreams::MULTIRES_IMAGE => :read,
-        Ddr::Datastreams::THUMBNAIL      => :read,
+        Ddr::Datastreams::CONTENT         => :download,
+        Ddr::Datastreams::DESC_METADATA   => :read,
+        Ddr::Datastreams::EXTRACTED_TEXT  => :download,
+        Ddr::Datastreams::FITS            => :read,
+        Ddr::Datastreams::MULTIRES_IMAGE  => :read,
+        Ddr::Datastreams::STRUCT_METADATA => :read,
+        Ddr::Datastreams::THUMBNAIL       => :read,
       }.freeze
 
       def call
