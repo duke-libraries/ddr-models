@@ -83,6 +83,15 @@ module Ddr
         Ddr::Models.fits_home = ENV["FITS_HOME"]
       end
 
+      initializer "ddr_antivirus" do
+        require "ddr-antivirus"
+        if Rails.env.test?
+          Ddr::Antivirus.test_mode!
+        else
+          Ddr::Antivirus.scanner_adapter = :clamd
+        end
+      end
+
     end
   end
 end
