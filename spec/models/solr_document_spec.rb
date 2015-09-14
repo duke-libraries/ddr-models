@@ -158,4 +158,38 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     end
   end
 
+  describe "structural metadata" do
+    describe "#multires_image_file_paths" do
+      context "no structural metadata" do
+        its(:multires_image_file_paths) { is_expected.to match([]) }
+      end
+      context "structural metadata" do
+        let(:struct_map) do
+          {"type"=>"default", "divs"=>
+            [{"id"=>"viccb010010010", "label"=>"1", "order"=>"1", "type"=>"Image", "fptrs"=>["test:5"], "divs"=>[]},
+             {"id"=>"viccb010020010", "label"=>"2", "order"=>"2", "type"=>"Image", "fptrs"=>["test:6"], "divs"=>[]},
+             {"id"=>"viccb010030010", "label"=>"3", "order"=>"3", "type"=>"Image", "fptrs"=>["test:7"], "divs"=>[]}]
+          }
+        end
+        before { allow(subject).to receive(:struct_map) { struct_map } }
+        context "no structural objects with multi-res images" do
+          before do
+            allow(SolrDocument).to receive(:find).with('test:5') { double(multires_image_file_path: nil) }
+            allow(SolrDocument).to receive(:find).with('test:6') { double(multires_image_file_path: nil) }
+            allow(SolrDocument).to receive(:find).with('test:7') { double(multires_image_file_path: nil) }
+          end
+          its(:multires_image_file_paths) { is_expected.to match([]) }
+        end
+        context "structural objects with multi-res images" do
+          let(:expected_result) { [ "/path/file1.ptif", "/path/file2.ptif" ] }
+          before do
+            allow(SolrDocument).to receive(:find).with('test:5') { double(multires_image_file_path: "/path/file1.ptif") }
+            allow(SolrDocument).to receive(:find).with('test:6') { double(multires_image_file_path: nil) }
+            allow(SolrDocument).to receive(:find).with('test:7') { double(multires_image_file_path: "/path/file2.ptif") }
+          end
+          its(:multires_image_file_paths) { is_expected.to match(expected_result) }
+        end
+      end
+    end
+  end
 end
