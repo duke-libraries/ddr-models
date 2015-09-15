@@ -3,7 +3,7 @@ module Ddr
     module HasChildren
 
       def first_child
-        ActiveFedora::Base.where(association_query(:children)).order("#{Ddr::IndexFields::LOCAL_ID} ASC").first
+        ActiveFedora::Base.where(association_query(:children)).order("#{Ddr::Index::Fields::LOCAL_ID} ASC").first
       end
 
     end

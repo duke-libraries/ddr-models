@@ -38,8 +38,8 @@ module Ddr
         before { item.datastreams[Ddr::Datastreams::STRUCT_METADATA].content = multiple_struct_maps_structure }
         it "should index the JSON representation of the structure" do
           indexing = item.to_solr
-          expect(indexing.keys).to include(Ddr::IndexFields::STRUCT_MAPS)
-          expect(indexing[Ddr::IndexFields::STRUCT_MAPS]).to eq(expected_json)
+          expect(indexing.keys).to include(Ddr::Index::Fields::STRUCT_MAPS)
+          expect(indexing[Ddr::Index::Fields::STRUCT_MAPS]).to eq(expected_json)
         end
       end
 
