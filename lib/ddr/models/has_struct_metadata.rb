@@ -34,7 +34,7 @@ module Ddr
 
       def find_children
         query = association_query(:children)
-        sort = "#{Ddr::IndexFields::LOCAL_ID} ASC, #{Ddr::IndexFields::OBJECT_CREATE_DATE} ASC"
+        sort = "#{Ddr::Index::Fields::LOCAL_ID} ASC, #{Ddr::Index::Fields::OBJECT_CREATE_DATE} ASC"
         ActiveFedora::SolrService.query(query, sort: sort, rows: 999999)
       end
 

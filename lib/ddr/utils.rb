@@ -93,7 +93,7 @@ module Ddr::Utils
     model = opts.fetch(:model, nil)
     collection = opts.fetch(:collection, nil)
     objs = []
-    ActiveFedora::Base.find_each( { Ddr::IndexFields::IDENTIFIER_ALL => identifier }, { :cast => true } ) { |o| objs << o }
+    ActiveFedora::Base.find_each( { Ddr::Index::Fields::IDENTIFIER_ALL => identifier }, { :cast => true } ) { |o| objs << o }
     pids = []
     objs.each { |obj| pids << obj.pid }
     if model.present?

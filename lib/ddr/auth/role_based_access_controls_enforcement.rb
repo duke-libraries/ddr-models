@@ -21,11 +21,11 @@ module Ddr
       def policy_role_policies
         @policy_role_policies ||= Array.new.tap do |uris|
           filters = current_ability.agents.map do |agent|
-            "#{Ddr::IndexFields::POLICY_ROLE}:\"#{agent}\""
+            "#{Ddr::Index::Fields::POLICY_ROLE}:\"#{agent}\""
           end.join(" OR ")
-          query = "#{Ddr::IndexFields::ACTIVE_FEDORA_MODEL}:Collection AND (#{filters})"
-          results = ActiveFedora::SolrService.query(query, rows: Collection.count, fl: Ddr::IndexFields::INTERNAL_URI)
-          results.each_with_object(uris) { |r, memo| memo << r[Ddr::IndexFields::INTERNAL_URI] }
+          query = "#{Ddr::Index::Fields::ACTIVE_FEDORA_MODEL}:Collection AND (#{filters})"
+          results = ActiveFedora::SolrService.query(query, rows: Collection.count, fl: Ddr::Index::Fields::INTERNAL_URI)
+          results.each_with_object(uris) { |r, memo| memo << r[Ddr::Index::Fields::INTERNAL_URI] }
         end
       end
 
@@ -38,7 +38,7 @@ module Ddr
 
       def resource_role_filters
         current_ability.agents.map do |agent|
-          ActiveFedora::SolrService.raw_query(Ddr::IndexFields::RESOURCE_ROLE, agent)
+          ActiveFedora::SolrService.raw_query(Ddr::Index::Fields::RESOURCE_ROLE, agent)
         end.join(" OR ")
       end
 

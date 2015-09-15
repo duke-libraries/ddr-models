@@ -9,8 +9,8 @@ module Ddr
       self.description = "Content file scanned for viruses"
 
       def to_solr
-        { Ddr::IndexFields::LAST_VIRUS_CHECK_ON => event_date_time_s,
-          Ddr::IndexFields::LAST_VIRUS_CHECK_OUTCOME => outcome }
+        { Ddr::Index::Fields::LAST_VIRUS_CHECK_ON => event_date_time_s,
+          Ddr::Index::Fields::LAST_VIRUS_CHECK_OUTCOME => outcome }
       end
 
     end

@@ -13,7 +13,7 @@ RSpec.describe Component, type: :model, components: true do
     before do
       allow(subject).to receive(:collection) { Collection.new(pid: "test:1") }
     end
-    its(:index_fields) { is_expected.to include(Ddr::IndexFields::COLLECTION_URI => "info:fedora/test:1") }
+    its(:index_fields) { is_expected.to include(Ddr::Index::Fields::COLLECTION_URI => "info:fedora/test:1") }
   end
 
 end
