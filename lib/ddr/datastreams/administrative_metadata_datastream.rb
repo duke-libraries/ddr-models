@@ -18,13 +18,6 @@ module Ddr
       property :workflow_state,
                predicate: Ddr::Vocab::Asset.workflowState
 
-      Ddr::Vocab::Roles::LEGACY_ROLES.each do |legacy_role|
-        property legacy_role,
-                 predicate: Ddr::Vocab::Roles.send(legacy_role) do |index|
-          index.as :symbol
-        end
-      end
-
       property :access_role,
                predicate: Ddr::Vocab::Roles.hasRole,
                class_name: Ddr::Auth::Roles::Role

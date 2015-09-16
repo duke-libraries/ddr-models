@@ -3,7 +3,6 @@ module Ddr
     extend ActiveSupport::Autoload
 
     autoload :PermanentId
-    autoload :MigrateLegacyAuthorization
     autoload :FitsFileCharacterization
 
     autoload_at 'ddr/jobs/permanent_id' do
