@@ -41,7 +41,8 @@ module Ddr::Jobs
     end
 
     def self.notify_event(pid, err, status)
-      event_args = { pid: pid, summary: EVENT_SUMMARY, software:  "fits #{fits_version}", detail: err }
+      details = status.success? ? nil : err
+      event_args = { pid: pid, summary: EVENT_SUMMARY, software:  "fits #{fits_version}", detail: details }
       event_args[:outcome] = status.success? ? Ddr::Events::Event::SUCCESS : Ddr::Events::Event::FAILURE
       Ddr::Notifications.notify_event(:update, event_args)
     end
