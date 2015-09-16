@@ -7,7 +7,7 @@ module Ddr::Jobs
       let(:event) { object.update_events.last }
       it "should have the correct event attributes" do
         expect(event.outcome).to eq(expected_outcome)
-        expect(event.detail).to eq(stderr_msg)
+        expect(event.detail).to eq(expected_detail)
         expect(event.software).to eq("fits #{fits_version}")
       end
     end
@@ -20,6 +20,7 @@ module Ddr::Jobs
       before { allow(Ddr::Jobs::FitsFileCharacterization).to receive(:fits_version) { fits_version } }
       context "fits command is successful" do
         let(:expected_outcome) { Ddr::Events::Event::SUCCESS }
+        let(:expected_detail) { nil }
         before do
           allow(Open3).to receive(:capture3) { [ stdout_msg, stderr_msg,  $? ] }
           allow_any_instance_of(Process::Status).to receive(:success?) { true }
@@ -33,6 +34,7 @@ module Ddr::Jobs
       end
       context "fits command is not successful" do
         let(:expected_outcome) { Ddr::Events::Event::FAILURE }
+        let(:expected_detail) { stderr_msg }
         before do
           allow(Open3).to receive(:capture3) { [ stdout_msg, stderr_msg,  $? ] }
           allow_any_instance_of(Process::Status).to receive(:success?) { false }
