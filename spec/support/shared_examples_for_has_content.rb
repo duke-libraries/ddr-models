@@ -73,9 +73,21 @@ RSpec.shared_examples "an object that can have content" do
           expect(subject.derivatives).to receive(:update_derivatives)
           subject.save
         end
-        it "should enqueue a FITS file characterization job" do
-          expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
-          subject.save
+        describe "file characterization" do
+          context "characterize files is false" do
+            before { allow(Ddr::Models).to receive(:characterize_files?) { false } }
+            it "should not enqueue a FITS file characterization job" do
+              expect(Resque).to_not receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
+              subject.save
+            end
+          end
+          context "characterize files is true" do
+            before { allow(Ddr::Models).to receive(:characterize_files?) { true } }
+            it "should enqueue a FITS file characterization job" do
+              expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
+              subject.save
+            end
+          end
         end
       end
 
@@ -86,9 +98,21 @@ RSpec.shared_examples "an object that can have content" do
           expect(subject.derivatives).to receive(:update_derivatives)
           subject.upload! file
         end
-        it "should enqueue a FITS file characterization job" do
-          expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
-          subject.upload! file
+        describe "file characterization" do
+          context "characterize files is false" do
+            before { allow(Ddr::Models).to receive(:characterize_files?) { false } }
+            it "should not enqueue a FITS file characterization job" do
+              expect(Resque).to_not receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
+              subject.upload! file
+            end
+          end
+          context "characterize files is true" do
+            before { allow(Ddr::Models).to receive(:characterize_files?) { true } }
+            it "should enqueue a FITS file characterization job" do
+              expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
+              subject.upload! file
+            end
+          end
         end
       end
     end

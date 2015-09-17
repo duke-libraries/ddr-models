@@ -79,6 +79,14 @@ module Ddr
     # Home directory for FITS
     mattr_accessor :fits_home
 
+    # Run file characterization or not?
+    mattr_accessor :characterize_files do
+      false
+    end
+    class << self
+      alias :characterize_files? :characterize_files
+    end
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self
