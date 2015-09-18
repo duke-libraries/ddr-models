@@ -11,7 +11,6 @@ module Ddr::Managers
              :image_width, :image_height, :color_space,
              to: :fits
 
-    alias_method :file_size, :extent
     alias_method :last_modified, :modified
 
     def fits?
