@@ -7,10 +7,11 @@ module Ddr::Models
     let(:obj) { mock.new }
 
     let(:url) { "https://creativecommons.org/licenses/by-nc-nd/4.0/" }
-    let(:license) { License.new(url: url) }
-    before { allow(License).to receive(:get).with(url) { license } }
 
-    describe "when the object has a licence" do
+    let(:license) { License.new(url: url) }
+    before { allow(License).to receive(:find).with(url: url) { license } }
+
+    describe "when the object has a license" do
       before { obj.license = url }
       it { is_expected.to eq(license) }
     end
