@@ -7,6 +7,12 @@ module Ddr::Index
       const_get(name.to_s.upcase, false)
     end
 
+    def self.techmd
+      constants(false)
+        .select { |c| c =~ /\ATECHMD_/ }
+        .map    { |c| const_get(c) }
+    end
+
     ID = UniqueKeyField.instance
     PID = UniqueKeyField.instance
 
