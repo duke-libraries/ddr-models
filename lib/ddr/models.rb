@@ -31,6 +31,7 @@ module Ddr
     extend ActiveSupport::Autoload
 
     autoload :AccessControllable
+    autoload :AdminSet
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :ContentModelError, 'ddr/models/error'
@@ -40,6 +41,7 @@ module Ddr
     autoload :Error
     autoload :EventLoggable
     autoload :FileManagement
+    autoload :FindingAid
     autoload :FixityCheckable
     autoload :Governable
     autoload :HasAdminMetadata
@@ -85,6 +87,10 @@ module Ddr
     end
     class << self
       alias :characterize_files? :characterize_files
+    end
+
+    mattr_accessor :ead_xml_base_url do
+      "http://library.duke.edu/rubenstein/findingaids/"
     end
 
     # Yields an object with module configuration accessors

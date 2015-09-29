@@ -15,6 +15,9 @@
         label: "Administrative Set",
         comment: "A name under which objects (principally collections) are grouped for administrative purposes."
 
+      property "eadId",
+        label: "EAD ID"
+
     end
   end
 end

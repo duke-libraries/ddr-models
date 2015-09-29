@@ -43,6 +43,9 @@ module Ddr
       property :license,
                predicate: RDF::DC.license
 
+      property :ead_id,
+               predicate: Ddr::Vocab::Asset.eadId
+
     end
   end
 end
