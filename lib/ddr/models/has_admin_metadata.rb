@@ -19,6 +19,7 @@ module Ddr::Models
                      :permanent_url,
                      :research_help_contact,
                      :workflow_state,
+                     :ead_id,
                      datastream: "adminMetadata",
                      multiple: false
 
@@ -72,6 +73,12 @@ module Ddr::Models
 
     def inherited_license
       InheritedLicense.call(self)
+    end
+
+    def finding_aid
+      if ead_id
+        FindingAid.new(ead_id)
+      end
     end
 
     private
