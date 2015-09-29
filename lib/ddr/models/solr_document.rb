@@ -209,6 +209,13 @@ module Ddr::Models
       struct_map_docs(type).map { |doc| doc.multires_image_file_path }.compact
     end
 
+    # DRY HasAdminMetadata
+    def finding_aid
+      if ead_id
+        FindingAid.new(ead_id)
+      end
+    end
+
     private
 
     def targets_query
