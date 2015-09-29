@@ -3,6 +3,7 @@ module Ddr
     extend ActiveSupport::Autoload
 
     autoload :FixityCheck
+    autoload :VirusCheck
 
   end
 end

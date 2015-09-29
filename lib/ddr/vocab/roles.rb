@@ -2,8 +2,6 @@ module Ddr
   module Vocab
     class Roles < RDF::StrictVocabulary("http://repository.lib.duke.edu/vocab/roles/")
 
-      LEGACY_ROLES = [:administrator, :editor, :contributor, :downloader]
-
       term :Role,
         label: "Role",
         comment: "An assertion of a role granted to an agent."
@@ -23,14 +21,6 @@ module Ddr
       property :scope,
         label: "Scope",
         comment: "The scope within which the role applies."
-
-      #
-      # Deprecated terms
-      #
-
-      LEGACY_ROLES.each do |legacy_role|
-        term legacy_role, label: legacy_role.to_s.capitalize
-      end
 
     end
   end

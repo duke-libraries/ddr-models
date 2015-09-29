@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency "active-fedora", "~> 7.0"
   s.add_dependency "hydra-core", "~> 7.2"
   s.add_dependency "hydra-validations", "~> 0.5"
-  s.add_dependency "ddr-antivirus", "~> 1.3.1"
   s.add_dependency "devise", "~> 3.4"
   s.add_dependency "omniauth-shibboleth", "~> 1.2.0"
   s.add_dependency "grouper-rest-client"
@@ -31,6 +30,8 @@ Gem::Specification.new do |s|
   s.add_dependency "rdf-vocab", "~> 0.8"
   s.add_dependency "net-ldap", "~> 0.11"
   s.add_dependency "cancancan", "~> 1.12"
+  s.add_dependency "ddr-aux-client", "~> 1.2", ">= 1.2.1"
+  s.add_dependency "ddr-antivirus", "2.0.0"
 
   s.add_development_dependency "bundler", "~> 1.7"
   s.add_development_dependency "rake"

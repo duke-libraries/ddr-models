@@ -5,8 +5,6 @@ module Ddr
       include Describable
       include Governable
       include AccessControllable
-      include Licensable
-      include HasProperties
       include HasThumbnail
       include EventLoggable
       include FixityCheckable

@@ -93,7 +93,7 @@ module Ddr::Utils
     model = opts.fetch(:model, nil)
     collection = opts.fetch(:collection, nil)
     objs = []
-    ActiveFedora::Base.find_each( { Ddr::IndexFields::IDENTIFIER_ALL => identifier }, { :cast => true } ) { |o| objs << o }
+    ActiveFedora::Base.find_each( { Ddr::Index::Fields::IDENTIFIER_ALL => identifier }, { :cast => true } ) { |o| objs << o }
     pids = []
     objs.each { |obj| pids << obj.pid }
     if model.present?
@@ -155,6 +155,18 @@ module Ddr::Utils
       end
     end
     return klass
+  end
+
+  # Returns a string suitable to index as a Solr date
+  # @param dt [Date, DateTime, Time] the date/time
+  # @return [String]
+  def self.solr_date(dt)
+    return if dt.nil?
+    dt.to_time.utc.iso8601
+  end
+
+  def self.solr_dates(dts)
+    dts.map { |dt| solr_date(dt) }
   end
 
 end

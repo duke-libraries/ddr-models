@@ -90,6 +90,19 @@ module Ddr
         [default_file_prefix, default_file_extension].join(".")
       end
 
+      def tempfile(prefix: nil, suffix: nil)
+        if empty?
+          raise Ddr::Models::Error, "Refusing to create tempfile for empty datastream!"
+        end
+        prefix ||= default_file_prefix + "--"
+        suffix ||= "." + default_file_extension
+        Tempfile.open [prefix, suffix], encoding: Encoding::ASCII_8BIT do |f|
+          f.write(content)
+          f.close
+          yield f
+        end
+      end
+
     end
   end
 end

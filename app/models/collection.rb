@@ -8,21 +8,6 @@ class Collection < Ddr::Models::Base
   include Ddr::Models::HasChildren
   include Ddr::Models::HasAttachments
 
-  has_attributes :default_license_title,
-    datastream: Ddr::Datastreams::DEFAULT_RIGHTS,
-    at: [:license, :title],
-    multiple: false
-
-  has_attributes :default_license_description,
-    datastream: Ddr::Datastreams::DEFAULT_RIGHTS,
-    at: [:license, :description],
-    multiple: false
-
-  has_attributes :default_license_url,
-    datastream: Ddr::Datastreams::DEFAULT_RIGHTS,
-    at: [:license, :url],
-    multiple: false
-
   has_many :children, property: :is_member_of_collection, class_name: 'Item'
   has_many :targets, property: :is_external_target_for, class_name: 'Target'
 
@@ -37,29 +22,10 @@ class Collection < Ddr::Models::Base
   #
   # @return A lazy enumerator of SolrDocuments.
   def components_from_solr
-    query = "#{Ddr::IndexFields::COLLECTION_URI}:#{RSolr.solr_escape(internal_uri)}"
+    query = "#{Ddr::Index::Fields::COLLECTION_URI}:#{RSolr.solr_escape(internal_uri)}"
     filter = ActiveFedora::SolrService.construct_query_for_rel(:has_model => Component.to_class_uri)
     results = ActiveFedora::SolrService.query(query, fq: filter, rows: 100000)
     results.lazy.map {|doc| SolrDocument.new(doc)}
-  end
-
-  # Returns the license attributes provided as default values for objects
-  # governed by the Collection.
-  #
-  # @return [Hash] the attributes, `:title`, `:description`, and `:url`.
-  def default_license
-    if default_license_title.present? or default_license_description.present? or default_license_url.present?
-      {title: default_license_title, description: default_license_description, url: default_license_url}
-    end
-  end
-
-  # Sets the default license attributes for objects governed by the Collection.
-  def default_license=(new_license)
-    raise ArgumentError unless new_license.is_a?(Hash) # XXX don't do this - not duck-typeable
-    l = new_license.with_indifferent_access
-    self.default_license_title = l[:title]
-    self.default_license_description = l[:description]
-    self.default_license_url = l[:url]
   end
 
   # Returns a list of entities (either users or groups) having a default access

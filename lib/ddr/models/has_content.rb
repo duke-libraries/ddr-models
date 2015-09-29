@@ -29,11 +29,20 @@ module Ddr
           label: "Text extracted from the content file",
           control_group: "M"
 
+        has_metadata \
+          name: Ddr::Datastreams::FITS,
+          type: Ddr::Datastreams::FitsDatastream,
+          versionable: true,
+          label: "FITS Output for content file",
+          control_group: "M"
+
         has_attributes :original_filename, datastream: "adminMetadata", multiple: false
 
         include FileManagement
 
         around_save :update_derivatives, if: :content_changed?
+
+        around_save :characterize_file, if: [ :content_changed?, "Ddr::Models.characterize_files?" ]
 
         after_add_file do
           if file_to_add.original_name && file_to_add.dsid == "content"
@@ -57,6 +66,10 @@ module Ddr
 
       def derivatives
         @derivatives ||= Ddr::Managers::DerivativesManager.new(self)
+      end
+
+      def techmd
+        @techmd ||= Ddr::Managers::TechnicalMetadataManager.new(self)
       end
 
       def content_size
@@ -120,6 +133,11 @@ module Ddr
       def update_derivatives
         yield
         derivatives.update_derivatives(:later)
+      end
+
+      def characterize_file
+        yield
+        Resque.enqueue(Ddr::Jobs::FitsFileCharacterization, pid)
       end
 
       def default_content_type

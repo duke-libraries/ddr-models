@@ -102,5 +102,9 @@ module Ddr
       "::Ability"
     end
 
+    mattr_accessor :repository_group_filter do
+      ENV["REPOSITORY_GROUP_FILTER"]
+    end
+
   end
 end

@@ -9,32 +9,39 @@ require 'active_record'
 require 'hydra-core'
 require 'hydra/validations'
 
-require 'ddr/actions'
-require 'ddr/auth'
-require 'ddr/contacts'
-require 'ddr/datastreams'
-require 'ddr/derivatives'
-require 'ddr/events'
-require 'ddr/index_fields'
-require 'ddr/jobs'
-require 'ddr/managers'
-require 'ddr/metadata'
-require 'ddr/notifications'
-require 'ddr/utils'
-require 'ddr/vocab'
-
 module Ddr
+  extend ActiveSupport::Autoload
+
+  autoload :Actions
+  autoload :Auth
+  autoload :Contacts
+  autoload :Datastreams
+  autoload :Derivatives
+  autoload :Events
+  autoload :Index
+  autoload :IndexFields
+  autoload :Jobs
+  autoload :Managers
+  autoload :Metadata
+  autoload :Notifications
+  autoload :Utils
+  autoload :Vocab
+
   module Models
     extend ActiveSupport::Autoload
 
-    autoload :Base
     autoload :AccessControllable
-    autoload :Describable
-    autoload :EventLoggable
-    autoload :Error
+    autoload :AdminSet
+    autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
-    autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :ContentModelError, 'ddr/models/error'
+    autoload :DerivativeGenerationFailure, 'ddr/models/error'
+    autoload :Describable
+    autoload :EffectiveLicense
+    autoload :Error
+    autoload :EventLoggable
+    autoload :FileManagement
+    autoload :FindingAid
     autoload :FixityCheckable
     autoload :Governable
     autoload :HasAdminMetadata
@@ -42,15 +49,15 @@ module Ddr
     autoload :HasChildren
     autoload :HasContent
     autoload :HasMultiresImage
-    autoload :HasProperties
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
-    autoload :FileManagement
-    autoload :Licensable
+    autoload :InheritedLicense
+    autoload :License
     autoload :SolrDocument
-    autoload :Structure
     autoload :StructDiv
+    autoload :Structure
+    autoload :YearFacet
 
     # Base directory of default external file store
     mattr_accessor :external_file_store
@@ -69,6 +76,21 @@ module Ddr
 
     mattr_accessor :permanent_id_target_url_base do
       "https://repository.lib.duke.edu/id/"
+    end
+
+    # Home directory for FITS
+    mattr_accessor :fits_home
+
+    # Run file characterization or not?
+    mattr_accessor :characterize_files do
+      false
+    end
+    class << self
+      alias :characterize_files? :characterize_files
+    end
+
+    mattr_accessor :ead_xml_base_url do
+      "http://library.duke.edu/rubenstein/findingaids/"
     end
 
     # Yields an object with module configuration accessors

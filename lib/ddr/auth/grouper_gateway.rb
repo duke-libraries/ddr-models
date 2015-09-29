@@ -5,9 +5,17 @@ module Ddr
   module Auth
     class GrouperGateway < SimpleDelegator
 
-      REPOSITORY_GROUP_FILTER = "duke:library:repository:ddr:"
       SUBJECT_ID_RE = Regexp.new('[^@]+(?=@duke\.edu)')
       DEFAULT_TIMEOUT = 5
+
+      def self.const_missing(name)
+        if name == :REPOSITORY_GROUP_FILTER
+          warn "[DEPRECATION] The constant `#{name}` is deprecated and will be removed in ddr-models 3.0." \
+               " Use `Ddr::Auth.repository_group_filter` instead."
+          return Ddr::Auth.repository_group_filter
+        end
+        super
+      end
 
       def self.repository_groups(*args)
         new.repository_groups(*args)

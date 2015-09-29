@@ -9,14 +9,11 @@ RSpec.describe Component, type: :model, components: true do
   it_behaves_like "a non-collection model"
 
   describe "indexing" do
-    let(:component) { FactoryGirl.build(:component) }
+    subject { FactoryGirl.build(:component) }
     before do
-      allow_any_instance_of(Component).to receive(:collection) { Collection.new(pid: 'test:1') }
+      allow(subject).to receive(:collection) { Collection.new(pid: "test:1") }
     end
-    it "should include the COLLECTION_URI field in its indexing" do
-      expect(component.index_fields).to have_key(Ddr::IndexFields::COLLECTION_URI)
-      expect(component.index_fields[Ddr::IndexFields::COLLECTION_URI]).to eq('info:fedora/test:1')
-    end
+    its(:index_fields) { is_expected.to include(Ddr::Index::Fields::COLLECTION_URI => "info:fedora/test:1") }
   end
 
 end

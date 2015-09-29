@@ -5,6 +5,8 @@ RSpec.shared_examples "an object that can have content" do
 
   subject { described_class.new(title: [ "I Have Content!" ]) }
 
+  before { allow(Resque).to receive(:enqueue) }
+
   it "should delegate :validate_checksum! to :content" do
     checksum = "dea56f15b309e47b74fa24797f85245dda0ca3d274644a96804438bbd659555a"
     expect(subject.content).to receive(:validate_checksum!).with(checksum, "SHA-256")
@@ -22,20 +24,20 @@ RSpec.shared_examples "an object that can have content" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
     before { subject.upload file }
     it "should index the content ds control group" do
-      expect(subject.to_solr).to include(Ddr::IndexFields::CONTENT_CONTROL_GROUP)
+      expect(subject.to_solr).to include(Ddr::Index::Fields::CONTENT_CONTROL_GROUP)
     end
   end
 
   describe "extracted text" do
     describe "when it is not present" do
       its(:has_extracted_text?) { should be false }
-      its(:to_solr) { should_not include(Ddr::IndexFields::EXTRACTED_TEXT) }
+      its(:to_solr) { should_not include(Ddr::Index::Fields::EXTRACTED_TEXT) }
     end
     describe "when it is present" do
       before { subject.extractedText.content = "This is my text. See Spot run." }
       its(:has_extracted_text?) { should be true }
       it "should be indexed" do
-        expect(subject.to_solr[Ddr::IndexFields::EXTRACTED_TEXT]).to eq("This is my text. See Spot run.")
+        expect(subject.to_solr[Ddr::Index::Fields::EXTRACTED_TEXT]).to eq("This is my text. See Spot run.")
       end
     end
   end
@@ -71,6 +73,22 @@ RSpec.shared_examples "an object that can have content" do
           expect(subject.derivatives).to receive(:update_derivatives)
           subject.save
         end
+        describe "file characterization" do
+          context "characterize files is false" do
+            before { allow(Ddr::Models).to receive(:characterize_files?) { false } }
+            it "should not enqueue a FITS file characterization job" do
+              expect(Resque).to_not receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
+              subject.save
+            end
+          end
+          context "characterize files is true" do
+            before { allow(Ddr::Models).to receive(:characterize_files?) { true } }
+            it "should enqueue a FITS file characterization job" do
+              expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
+              subject.save
+            end
+          end
+        end
       end
 
       context "and it's an existing object with content" do
@@ -79,6 +97,22 @@ RSpec.shared_examples "an object that can have content" do
         it "should generate derivatives" do
           expect(subject.derivatives).to receive(:update_derivatives)
           subject.upload! file
+        end
+        describe "file characterization" do
+          context "characterize files is false" do
+            before { allow(Ddr::Models).to receive(:characterize_files?) { false } }
+            it "should not enqueue a FITS file characterization job" do
+              expect(Resque).to_not receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
+              subject.upload! file
+            end
+          end
+          context "characterize files is true" do
+            before { allow(Ddr::Models).to receive(:characterize_files?) { true } }
+            it "should enqueue a FITS file characterization job" do
+              expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
+              subject.upload! file
+            end
+          end
         end
       end
     end

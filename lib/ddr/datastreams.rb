@@ -10,8 +10,8 @@ module Ddr
     DEFAULT_RIGHTS = "defaultRights"
     DESC_METADATA = "descMetadata"
     EXTRACTED_TEXT = "extractedText"
+    FITS = "fits".freeze
     MULTIRES_IMAGE = "multiresImage"
-    PROPERTIES = "properties"
     RELS_EXT = "RELS-EXT"
     RIGHTS_METADATA = "rightsMetadata"
     STRUCT_METADATA = "structMetadata"
@@ -28,9 +28,9 @@ module Ddr
     autoload :AdministrativeMetadataDatastream
     autoload :DatastreamBehavior
     autoload :DescriptiveMetadataDatastream
+    autoload :FitsDatastream
     autoload :MetadataDatastream
     autoload :PlainTextDatastream
-    autoload :PropertiesDatastream
     autoload :StructuralMetadataDatastream
 
   end

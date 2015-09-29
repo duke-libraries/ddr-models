@@ -23,13 +23,6 @@ Dir[File.join(File.dirname(__FILE__), "support", "*.rb")].each { |f| require f }
 
 DatabaseCleaner.strategy = :truncation
 
-require "ddr-antivirus"
-Ddr::Antivirus.configure do |config|
-  config.scanner_adapter = :null
-  require "logger"
-  config.logger = Logger.new(File::NULL)
-end
-
 RSpec.configure do |config|
 
   config.include ActionDispatch::TestProcess
@@ -116,6 +109,7 @@ RSpec.configure do |config|
       config.external_file_store = Dir.mktmpdir
       config.multires_image_external_file_store = Dir.mktmpdir
       config.external_file_subpath_pattern = "--"
+      config.fits_home = Dir.mktmpdir
     end
   end
 

@@ -23,7 +23,6 @@ ddr-models has several runtime dependencies that are independently configurable:
 
 - [active_fedora](https://github.com/projecthydra/active_fedora)
 - [hydra-head](https://github.com/projecthydra/hydra-head)
-- [ddr-antivirus](https://github.com/duke-libraries/ddr-antivirus)
 - [devise](https://github.com/plataformatec/devise)
 - [omniauth-shibboleth](https://github.com/toyokazu/omniauth-shibboleth)
 - [ezid-client](https://github.com/duke-libaries/ezid-client)
@@ -36,23 +35,18 @@ ddr-models configuration options:
 
 #### User model
 
-Include `Ddr::Auth::User` in `app/models/user.rb` and remove content inserted by Hydra, Blacklight and Devise generators:
+Include `Ddr::Auth::User` in `app/models/user.rb` and remove content inserted by Hydra and Devise generators:
 
 ```ruby
 class User
   include Ddr::Auth::User
   #
-  # Remove content inserted by Hydra, Blacklight, or Devise generators --
-  # it's provided by Ddr::Auth::User.
-  #
-  # include Blacklight::User
+  # REMOVE:
   # include Hydra::User
   # devise :database_authenticatable [...]
   #
-  # ... as well as any methods.
-  #
-  # You can add custom methods for the app as needed.
-  #
+  # DO NOT REMOVE:
+  # Blacklight::User
 end
 ```
 
@@ -71,17 +65,25 @@ Change the class like so:
 ```ruby
 class Ability < Ddr::Auth::Ability
   #
-  # Ddr::Auth::Ability includes Hydra::PolicyAwareAbility
+  # REMOVE:
   # include Hydra::Ability
   #
-  # Add custom methods here as needed to Ability.ability_logic:
+  # Add "ability definitions" -- i.e., subclasses of Ddr::Auth::AbilityDefinitions.
   #
-  # self.ability_logic += [:my_ability]
+  # self.ability_definitions += [ ... ]
   #
-  # def my_ability
-  #   # whatever
-  # end
-  #
+end
+```
+
+#### Controller
+
+`Ddr::Auth::RoleBasedAccessControlsEnforcement` overrides `current_ability`, `gated_discovery_filters` and `enforce_show_permissions`, so most likely it should be included in `ApplicationController`.
+
+```ruby
+class ApplicationController < ActionController::Base
+
+  include Ddr::Auth::RoleBasedAccessControlsEnforcement
+
 end
 ```
 
@@ -99,6 +101,10 @@ class SolrDocument
 
 end
 ```
+
+#### Auxiliary Web Services
+
+In order to use the auxiliary web services, set the `DDR_AUX_API_URL` environment variable.  You may wish to install the [ddr-aux](https://github.com/duke-libraries/ddr-aux) app locally and run it.
 
 #### Migrations
 
