@@ -37,7 +37,6 @@ module Ddr
     autoload :ContentModelError, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :Describable
-    autoload :EffectiveLicense
     autoload :Error
     autoload :EventLoggable
     autoload :FileManagement
@@ -52,12 +51,18 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
-    autoload :InheritedLicense
-    autoload :License
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
     autoload :YearFacet
+
+    autoload_under "licenses" do
+      autoload :AdminPolicyLicense
+      autoload :EffectiveLicense
+      autoload :License
+      autoload :InheritedLicense
+      autoload :ParentLicense
+    end
 
     # Base directory of default external file store
     mattr_accessor :external_file_store

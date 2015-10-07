@@ -94,6 +94,7 @@ module Ddr::Models
       uri = admin_policy_uri
       uri &&= ActiveFedora::Base.pid_from_uri(uri)
     end
+    alias_method :admin_policy_id, :admin_policy_pid
 
     def admin_policy
       if has_admin_policy?
