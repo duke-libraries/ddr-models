@@ -24,9 +24,6 @@ module Ddr
           IDENTIFIER_ALL        => all_identifiers,
           INTERNAL_URI          => internal_uri,
           LICENSE               => license,
-          LICENSE_DESCRIPTION   => rightsMetadata.license.description.first,
-          LICENSE_TITLE         => rightsMetadata.license.title.first,
-          LICENSE_URL           => rightsMetadata.license.url.first,
           LOCAL_ID              => local_id,
           PERMANENT_ID          => permanent_id,
           PERMANENT_URL         => permanent_url,
@@ -71,9 +68,6 @@ module Ddr
           fields[COLLECTION_URI] = collection_uri
         end
         if is_a? Collection
-          fields[DEFAULT_LICENSE_DESCRIPTION] = defaultRights.license.description.first
-          fields[DEFAULT_LICENSE_TITLE] = defaultRights.license.title.first
-          fields[DEFAULT_LICENSE_URL] = defaultRights.license.url.first
           fields[ADMIN_SET_FACET] = admin_set_facet
           fields[COLLECTION_FACET] = collection_facet
         end

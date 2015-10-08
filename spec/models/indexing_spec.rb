@@ -24,9 +24,6 @@ module Ddr::Models
     end
 
     its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
-    its([Indexing::LICENSE_TITLE]) { is_expected.to eq("License Title") }
-    its([Indexing::LICENSE_DESCRIPTION]) { is_expected.to eq("License Description") }
-    its([Indexing::LICENSE_URL]) { is_expected.to eq("http://library.duke.edu") }
     its([Indexing::LOCAL_ID]) { is_expected.to eq("foo") }
     its([Indexing::DOI]) { is_expected.to eq(["http://doi.org/10.1000/182"]) }
     its([Indexing::PERMANENT_ID]) { is_expected.to eq("ark:/99999/fk4zzz") }

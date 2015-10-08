@@ -3,17 +3,19 @@ module Ddr::Models
 
     class << self
       attr_accessor :properties
-      alias_method :term_names, :properties
+
+      def term_names
+        properties.keys.map(&:to_sym).sort
+      end
     end
 
-    # Returns ActiveTriplesTerm now that this is an RDF datastream
-    def values term
+    def values(term)
       term == :format ? self.format : self.send(term)
     end
 
     # Update term with values
     # Note that empty values (nil or "") are rejected from values array
-    def set_values term, values
+    def set_values(term, values)
       if values.respond_to?(:reject!)
         values.reject! { |v| v.blank? }
       else
@@ -28,7 +30,7 @@ module Ddr::Models
 
     # Add value to term
     # Note that empty value (nil or "") is not added
-    def add_value term, value
+    def add_value(term, value)
       begin
         unless value.blank?
           values = values(term).to_a << value
