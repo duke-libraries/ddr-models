@@ -29,10 +29,10 @@ module Ddr::Models
                predicate: Ddr::Vocab::Asset.eadId,
                multiple: false
 
-      property :license,
-               predicate: RDF::DC.license,
-               multiple: false
-
+      # property :license,
+      #          predicate: RDF::DC.license,
+      #          multiple: false
+      # 
       property :local_id,
                predicate: RDF::Vocab::Identifiers.local,
                multiple: false

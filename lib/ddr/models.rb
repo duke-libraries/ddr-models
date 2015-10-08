@@ -2,7 +2,7 @@ require 'ddr/models/engine'
 require 'ddr/models/version'
 
 # Awful hack to make Hydra::AccessControls::Permissions accessible
-$: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/concerns"
+# $: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/concerns"
 
 require 'active_record'
 
@@ -37,6 +37,7 @@ module Ddr
     autoload :ContentModelError, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :Describable
+    autoload :DescriptiveMetadata
     autoload :Error
     autoload :EventLoggable
     autoload :FileManagement
@@ -51,6 +52,7 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
+    autoload :Metadata
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
@@ -113,5 +115,7 @@ module Ddr
 
   end
 end
+
+ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
 
 Dir[Ddr::Models::Engine.root.to_s + "/app/models/*.rb"].each { |m| require m }

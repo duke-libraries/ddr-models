@@ -4,8 +4,7 @@ module Ddr
       extend ActiveSupport::Concern
 
       included do
-        has_file_datastream name: Ddr::Datastreams::STRUCT_METADATA,
-                            type: Ddr::Datastreams::StructuralMetadataDatastream
+        contains Ddr::Datastreams::STRUCT_METADATA, class_name: 'Ddr::Datastreams::StructuralMetadataDatastream'
       end
 
       def structure

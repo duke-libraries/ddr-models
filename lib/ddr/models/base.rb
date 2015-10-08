@@ -4,7 +4,7 @@ module Ddr
 
       include Describable
       include Governable
-      include AccessControllable
+      # include AccessControllable
       include HasThumbnail
       include EventLoggable
       include FixityCheckable
@@ -12,10 +12,6 @@ module Ddr
       include Indexing
       include Hydra::Validations
       include HasAdminMetadata
-
-      extend Deprecation
-      # Deprecate Hydra permissions-related methods
-      deprecation_deprecate *(Hydra::AccessControls::Permissions.public_instance_methods)
 
       after_destroy do
         notify_event :deletion

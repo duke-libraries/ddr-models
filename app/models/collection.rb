@@ -3,7 +3,7 @@
 #
 class Collection < Ddr::Models::Base
 
-  include Hydra::AdminPolicyBehavior
+  # include Hydra::AdminPolicyBehavior
 
   include Ddr::Models::HasChildren
   include Ddr::Models::HasAttachments

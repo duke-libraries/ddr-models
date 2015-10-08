@@ -1,8 +1,6 @@
 module Ddr::Index
   module Fields
 
-    include LegacyLicenseFields
-
     def self.get(name)
       const_get(name.to_s.upcase, false)
     end

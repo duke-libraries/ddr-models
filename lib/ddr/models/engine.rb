@@ -58,11 +58,11 @@ module Ddr
         Ddr::Models.image_server_url = ENV["IMAGE_SERVER_URL"]
       end
 
-      # Add custom predicates to ActiveFedora
-      initializer "ddr_models.predicates" do
-        ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
-      end
-
+      # # Add custom predicates to ActiveFedora
+      # initializer "ddr_models.predicates" do
+      #   ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
+      # end
+      # 
       # Set superuser group
       initializer "ddr_auth.superuser" do
         Ddr::Auth.superuser_group = ENV["SUPERUSER_GROUP"]

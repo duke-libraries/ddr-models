@@ -16,22 +16,9 @@ module Ddr
       end
 
       included do
-        has_file_datastream \
-          name: Ddr::Datastreams::CONTENT,
-          label: "Content file for this object",
-          control_group: "M"
-
-        has_file_datastream \
-          name: Ddr::Datastreams::EXTRACTED_TEXT,
-          type: Ddr::Datastreams::PlainTextDatastream,
-          label: "Text extracted from the content file",
-          control_group: "M"
-
-        has_metadata \
-          name: Ddr::Datastreams::FITS,
-          type: Ddr::Datastreams::FitsDatastream,
-          label: "FITS Output for content file",
-          control_group: "M"
+        contains Ddr::Datastreams::CONTENT
+        contains Ddr::Datastreams::EXTRACTED_TEXT, class_name: 'Ddr::Datastreams::PlainTextDatastream'
+        contains Ddr::Datastreams::FITS, class_name: 'Ddr::Datastreams::FitsDatastream'
 
         include FileManagement
 
