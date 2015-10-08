@@ -8,15 +8,6 @@ module Ddr
       SUBJECT_ID_RE = Regexp.new('[^@]+(?=@duke\.edu)')
       DEFAULT_TIMEOUT = 5
 
-      def self.const_missing(name)
-        if name == :REPOSITORY_GROUP_FILTER
-          warn "[DEPRECATION] The constant `#{name}` is deprecated and will be removed in ddr-models 3.0." \
-               " Use `Ddr::Auth.repository_group_filter` instead."
-          return Ddr::Auth.repository_group_filter
-        end
-        super
-      end
-
       def self.repository_groups(*args)
         new.repository_groups(*args)
       end
@@ -43,13 +34,6 @@ module Ddr
         else
           []
         end
-      end
-
-      # @deprecated Use {#repository_groups} instead.
-      def repository_group_names
-        warn "[DEPRECATION] `Ddr::Auth::GrouperGateway#repository_group_names` is deprecated." \
-             " Use `#repository_groups` instead."
-        repository_groups
       end
 
       def user_groups(user, raw = false)
@@ -79,13 +63,6 @@ module Ddr
         groups.map do |g|
           Group.new(g["name"], label: g["displayExtension"])
         end
-      end
-
-      # @deprecated Use {#user_groups} instead.
-      def user_group_names(user)
-        warn "[DEPRECATION] `Ddr::Auth::GrouperGateway#user_group_names` is deprecated." \
-             " Use `#user_groups` instead."
-        user_groups(user)
       end
 
     end

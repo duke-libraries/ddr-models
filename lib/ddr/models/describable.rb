@@ -4,11 +4,6 @@ module Ddr
       extend ActiveSupport::Concern
 
     included do
-      has_metadata name: Ddr::Datastreams::DESC_METADATA,
-                   type: Ddr::Datastreams::DescriptiveMetadataDatastream,
-                   versionable: true,
-                   label: "Descriptive Metadata for this object",
-                   control_group: 'M'
       has_attributes *Ddr::Vocab::Vocabulary.term_names(RDF::DC11),
                      datastream: Ddr::Datastreams::DESC_METADATA,
                      multiple: true

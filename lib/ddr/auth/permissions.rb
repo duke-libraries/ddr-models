@@ -12,13 +12,5 @@ module Ddr::Auth
 
     ALL = [ READ, DOWNLOAD, ADD_CHILDREN, UPDATE, REPLACE, ARRANGE, AUDIT, GRANT ]
 
-    def self.const_missing(name)
-      if name == :EDIT
-        warn "[DEPRECATION] `EDIT` is deprecated. Use `UPDATE` instead."
-        return UPDATE
-      end
-      super
-    end
-
   end
 end

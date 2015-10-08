@@ -20,12 +20,6 @@ module Ddr::Auth
         @role_set = role_set
       end
 
-      def granted
-        warn "[DEPRECATION] `granted` is deprecated." \
-             " Use the RoleSet object directly (#{caller.first})."
-        self
-      end
-
       # Grants roles - i.e., adds them to the role set
       # @example - default scope ("resource")
       #   grant type: "Curator", agent: "bob"

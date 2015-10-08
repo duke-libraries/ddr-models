@@ -21,13 +21,6 @@ module Ddr
         notify_event :deletion
       end
 
-      def copy_admin_policy_or_permissions_from(other)
-        warn "[DEPRECATION] `copy_admin_policy_or_permissions_from` is deprecated." \
-             " Use `copy_admin_policy_or_roles_from` instead." \
-             " (#{caller.first})."
-        copy_admin_policy_or_roles_from(other)
-      end
-
       def copy_admin_policy_or_roles_from(other)
         copy_resource_roles_from(other) unless copy_admin_policy_from(other)
       end

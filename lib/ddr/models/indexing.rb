@@ -19,7 +19,7 @@ module Ddr
           DATE_SORT             => date_sort,
           DEPOSITOR             => depositor,
           DISPLAY_FORMAT        => display_format,
-          DOI                   => adminMetadata.doi,
+          DOI                   => doi,
           EAD_ID                => ead_id,
           IDENTIFIER_ALL        => all_identifiers,
           INTERNAL_URI          => internal_uri,

@@ -18,25 +18,20 @@ module Ddr
       included do
         has_file_datastream \
           name: Ddr::Datastreams::CONTENT,
-          versionable: true,
           label: "Content file for this object",
           control_group: "M"
 
         has_file_datastream \
           name: Ddr::Datastreams::EXTRACTED_TEXT,
           type: Ddr::Datastreams::PlainTextDatastream,
-          versionable: true,
           label: "Text extracted from the content file",
           control_group: "M"
 
         has_metadata \
           name: Ddr::Datastreams::FITS,
           type: Ddr::Datastreams::FitsDatastream,
-          versionable: true,
           label: "FITS Output for content file",
           control_group: "M"
-
-        has_attributes :original_filename, datastream: "adminMetadata", multiple: false
 
         include FileManagement
 

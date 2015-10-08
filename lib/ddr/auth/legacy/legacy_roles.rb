@@ -4,7 +4,7 @@ module Ddr::Auth
   class LegacyRoles < SimpleDelegator
 
     def source
-      adminMetadata.downloader
+      downloader
     end
 
     def to_roles

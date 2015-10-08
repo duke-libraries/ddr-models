@@ -1,27 +1,64 @@
 require "resque"
+require "rdf/vocab"
 
 module Ddr::Models
   module HasAdminMetadata
     extend ActiveSupport::Concern
 
     included do
-      has_metadata "adminMetadata",
-                   type: Ddr::Datastreams::AdministrativeMetadataDatastream,
-                   versionable: true,
-                   control_group: "M"
+      property :access_role,
+               predicate: Ddr::Vocab::Roles.hasRole,
+               class_name: Ddr::Auth::Roles::Role
 
-      has_attributes :admin_set,
-                     :depositor,
-                     :display_format,
-                     :license,
-                     :local_id,
-                     :permanent_id,
-                     :permanent_url,
-                     :research_help_contact,
-                     :workflow_state,
-                     :ead_id,
-                     datastream: "adminMetadata",
-                     multiple: false
+      property :admin_set,
+               predicate: Ddr::Vocab::Asset.adminSet,
+               multiple: false
+
+      property :depositor,
+               predicate: RDF::Vocab::MARCRelators.dpt,
+               multiple: false
+
+      property :display_format,
+               predicate: Ddr::Vocab::Display.format,
+               multiple: false
+
+      property :doi,
+               predicate: RDF::Vocab::Identifiers.doi
+
+      property :ead_id,
+               predicate: Ddr::Vocab::Asset.eadId,
+               multiple: false
+
+      property :license,
+               predicate: RDF::DC.license,
+               multiple: false
+
+      property :local_id,
+               predicate: RDF::Vocab::Identifiers.local,
+               multiple: false
+
+      # XXX Is this admin metadata?
+      property :original_filename,
+               predicate: Ddr::Vocab::PREMIS.hasOriginalName,
+               multiple: false do |index|
+        index.as :stored_sortable
+      end
+
+      property :permanent_id,
+               predicate: Ddr::Vocab::Asset.permanentId,
+               multiple: false
+
+      property :permanent_url,
+               predicate: Ddr::Vocab::Asset.permanentUrl,
+               multiple: false
+
+      property :research_help_contact,
+               predicate: Ddr::Vocab::Contact.assistance,
+               multiple: false
+
+      property :workflow_state,
+               predicate: Ddr::Vocab::Asset.workflowState,
+               multiple: false
 
       delegate :publish, :publish!, :unpublish, :unpublish!, :published?, to: :workflow
 
@@ -34,7 +71,7 @@ module Ddr::Models
     end
 
     def roles
-      Ddr::Auth::Roles::PropertyRoleSet.new(adminMetadata.access_role)
+      Ddr::Auth::Roles::PropertyRoleSet.new(access_role)
     end
 
     def inherited_roles

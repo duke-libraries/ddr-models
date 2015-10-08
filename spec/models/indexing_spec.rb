@@ -16,7 +16,7 @@ module Ddr::Models
       obj.rightsMetadata.license.description = ["License Description"]
       obj.rightsMetadata.license.url = ["http://library.duke.edu"]
       obj.local_id = "foo"
-      obj.adminMetadata.doi << "http://doi.org/10.1000/182"
+      obj.doi << "http://doi.org/10.1000/182"
       obj.permanent_id = "ark:/99999/fk4zzz"
       obj.permanent_url = "http://id.library.duke.edu/ark:/99999/fk4zzz"
       obj.display_format = "Image"

@@ -31,11 +31,6 @@ module Ddr
         to_s
       end
 
-      def to_agent
-        warn "[DEPRECATION] `#{self.class.name}#to_agent` is deprecated. Use `#{self.class.name}#agent instead."
-        agent
-      end
-
       def inspect
         "#<#{self.class.name} id=#{id.inspect}, label=#{label.inspect}>"
       end

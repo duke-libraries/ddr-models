@@ -56,29 +56,6 @@ module Ddr
     # Name of group whose members are authorized to create Collections
     mattr_accessor :collection_creators_group
 
-    # Group of which everyone (including anonymous users) is a member
-    def self.everyone_group
-      warn "[DEPRECATION] `Ddr::Auth.everyone_group` is deprecated." \
-           " Use `Ddr::Auth::Groups::PUBLIC` instead."
-      Groups::PUBLIC
-    end
-
-    # Group of authenticated users
-    def self.authenticated_users_group
-      warn "[DEPRECATION] `Ddr::Auth.authenticated_users_group` is deprecated." \
-           " Use `Ddr::Auth::Groups::REGISTERED` instead."
-      Groups::REGISTERED
-    end
-
-    def self.const_missing(name)
-      if name == :Superuser
-        warn "[DEPRECATION] `Ddr::Auth::Superuser` is deprecated." \
-             " Use `Ddr::Auth::SuperuserAbility` instead."
-        return SuperuserAbility
-      end
-      super
-    end
-
     # Whether to require Shibboleth authentication
     mattr_accessor :require_shib_user_authn do
       false
