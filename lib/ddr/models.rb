@@ -37,7 +37,6 @@ module Ddr
     autoload :ContentModelError, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :Describable
-    autoload :DescriptiveMetadata
     autoload :Error
     autoload :EventLoggable
     autoload :FileManagement
@@ -52,7 +51,6 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
-    autoload :Metadata
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
@@ -64,6 +62,13 @@ module Ddr
       autoload :License
       autoload :InheritedLicense
       autoload :ParentLicense
+    end
+
+    autoload_under "metadata" do
+      autoload :DescriptiveMetadata
+      autoload :MetadataMapper
+      autoload :MetadataTerm
+      autoload :MetadataVocabulary
     end
 
     # Base directory of default external file store

@@ -1,16 +1,8 @@
 module Ddr::Models
   class Metadata
 
-    class << self
-      attr_accessor :properties
-
-      def term_names
-        properties.keys.map(&:to_sym).sort
-      end
-    end
-
     def values(term)
-      term == :format ? self.format : self.send(term)
+      self.send(term)
     end
 
     # Update term with values

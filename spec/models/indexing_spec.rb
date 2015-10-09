@@ -12,9 +12,6 @@ module Ddr::Models
 
     before do
       obj.license = "cc-by-nc-nd-40"
-      obj.rightsMetadata.license.title = ["License Title"]
-      obj.rightsMetadata.license.description = ["License Description"]
-      obj.rightsMetadata.license.url = ["http://library.duke.edu"]
       obj.local_id = "foo"
       obj.doi << "http://doi.org/10.1000/182"
       obj.permanent_id = "ark:/99999/fk4zzz"
