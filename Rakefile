@@ -10,7 +10,7 @@ APP_ROOT = File.dirname(__FILE__)
 
 JETTY_CONFIG = { 
   jetty_home: File.join(APP_ROOT, "jetty"),
-  port: 8983,
+  jetty_port: 8983,
   startup_wait: 60,
   quiet: true,
   java_opts: ["-Xmx256m", "-XX:MaxPermSize=128m"]
