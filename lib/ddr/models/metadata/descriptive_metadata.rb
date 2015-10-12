@@ -3,6 +3,7 @@ require "forwardable"
 module Ddr::Models
   class DescriptiveMetadata
     extend Forwardable
+    include Metadata
 
     class << self
       attr_accessor :rdf_vocabs
@@ -12,7 +13,7 @@ module Ddr::Models
       end
 
       def mapping
-        @mapping ||= mappers.map(&:mapping).reduce(&:merge)
+        @mapping ||= mappers.map(&:mapping).reduce(&:merge).except(:dc_license)
       end
 
       def field_names

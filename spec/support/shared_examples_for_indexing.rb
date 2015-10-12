@@ -3,13 +3,13 @@ RSpec.shared_examples "an object that has a display title" do
     let(:object) { described_class.new }
     subject { object.title_display }
     context "has title" do
-      before { object.title = [ 'Title' ] }
+      before { object.descMetadata.title = [ 'Title' ] }
       it "should return the first title" do
         expect(subject).to eq('Title')
       end
     end
     context "has no title, has identifier" do
-      before { object.identifier = [ 'id001' ] }
+      before { object.descMetadata.identifier = [ 'id001' ] }
       it "should return the first identifier" do
         expect(subject).to eq('id001')
       end
@@ -27,9 +27,9 @@ RSpec.shared_examples "an object that has a display title" do
     #   end
     # end
     context "has no title, no identifier, no original_filename" do
-      let(:object) { described_class.new(:pid => 'duke:test') }
+      let(:object) { described_class.new(:pid => 'duke-test') }
       it "should return the PID in square brackets" do
-        expect(subject).to eq "[duke:test]"
+        expect(subject).to eq "[duke-test]"
       end
     end
   end
@@ -41,7 +41,7 @@ RSpec.shared_examples "an object that has identifiers" do
     subject { object.all_identifiers }
     context "has descriptive identifiers, local ID, permanent ID, and PID" do
       before do
-        object.identifier = [ 'ID001', 'ID002' ]
+        object.descMetadata.identifier = [ 'ID001', 'ID002' ]
         object.local_id = 'LOCAL_ID_A'
         object.permanent_id = 'ark:/999999/cd3'
       end

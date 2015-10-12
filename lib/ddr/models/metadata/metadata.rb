@@ -1,5 +1,5 @@
 module Ddr::Models
-  class Metadata
+  module Metadata
 
     def values(term)
       self.send(term)

@@ -2,7 +2,6 @@ RSpec.shared_examples "a DDR model" do
 
   it_behaves_like "a describable object"
   it_behaves_like "a governable object"
-  it_behaves_like "an access controllable object"
   it_behaves_like "an object that has a display title"
   it_behaves_like "an object that has identifiers"
 
@@ -36,13 +35,13 @@ RSpec.shared_examples "a DDR model" do
       end
     end
     context "one desc metadata identifier" do
-      before { subject.identifier = Array(identifiers.first) }
+      before { subject.descMetadata.identifier = Array(identifiers.first) }
       context "local id not present" do
         it "should set the local id and remove the identifier" do
           result = subject.move_first_identifier_to_local_id
           expect(result).to be true
           expect(subject.local_id).to eq(identifiers.first)
-          expect(subject.identifier).to be_empty
+          expect(subject.descMetadata.identifier).to be_empty
         end
       end
       context "local id present" do
@@ -52,17 +51,17 @@ RSpec.shared_examples "a DDR model" do
             result = subject.move_first_identifier_to_local_id
             expect(result).to be true
             expect(subject.local_id).to eq(identifiers.first)
-            expect(subject.identifier).to be_empty
+            expect(subject.descMetadata.identifier).to be_empty
           end
         end
         context "replace option is false" do
           context "local id matches first identifier" do
-            before { subject.identifier = Array(local_id) }
+            before { subject.descMetadata.identifier = Array(local_id) }
             it "should remove the identifier" do
               result = subject.move_first_identifier_to_local_id(replace: false)
               expect(result).to be true
               expect(subject.local_id).to eq(local_id)
-              expect(subject.identifier).to be_empty
+              expect(subject.descMetadata.identifier).to be_empty
             end
           end
           context "local id does not match first identifier" do
@@ -70,20 +69,20 @@ RSpec.shared_examples "a DDR model" do
               result = subject.move_first_identifier_to_local_id(replace: false)
               expect(result).to be false
               expect(subject.local_id).to eq(local_id)
-              expect(subject.identifier).to eq(Array(identifiers.first))
+              expect(subject.descMetadata.identifier).to eq(Array(identifiers.first))
             end
           end
         end
       end
     end
     context "more than one desc metadata identifer" do
-      before { subject.identifier = identifiers }
+      before { subject.descMetadata.identifier = identifiers }
       context "local id not present" do
         it "should set the local id and remove the identifier" do
           result = subject.move_first_identifier_to_local_id
           expect(result).to be true
           expect(subject.local_id).to eq(identifiers.first)
-          expect(subject.identifier).to eq(Array(identifiers.last))
+          expect(subject.descMetadata.identifier).to eq(Array(identifiers.last))
         end
       end
       context "local id present" do
@@ -93,17 +92,17 @@ RSpec.shared_examples "a DDR model" do
             result = subject.move_first_identifier_to_local_id
             expect(result).to be true
             expect(subject.local_id).to eq(identifiers.first)
-            expect(subject.identifier).to eq(Array(identifiers.last))
+            expect(subject.descMetadata.identifier).to eq(Array(identifiers.last))
           end
         end
         context "replace option is false" do
           context "local id matches first identifier" do
-            before { subject.identifier = [ local_id, identifiers.last ] }
+            before { subject.descMetadata.identifier = [ local_id, identifiers.last ] }
             it "should remove the identifier" do
               result = subject.move_first_identifier_to_local_id(replace: false)
               expect(result).to be true
               expect(subject.local_id).to eq(local_id)
-              expect(subject.identifier).to eq(Array(identifiers.last))
+              expect(subject.descMetadata.identifier).to eq(Array(identifiers.last))
             end
           end
           context "local id does not match first identifier" do
@@ -111,7 +110,7 @@ RSpec.shared_examples "a DDR model" do
               result = subject.move_first_identifier_to_local_id(replace: false)
               expect(result).to be false
               expect(subject.local_id).to eq(local_id)
-              expect(subject.identifier).to eq(identifiers)
+              expect(subject.descMetadata.identifier).to eq(identifiers)
             end
           end
         end

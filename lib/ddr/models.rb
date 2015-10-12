@@ -66,6 +66,7 @@ module Ddr
 
     autoload_under "metadata" do
       autoload :DescriptiveMetadata
+      autoload :Metadata
       autoload :MetadataMapper
       autoload :MetadataTerm
       autoload :MetadataVocabulary

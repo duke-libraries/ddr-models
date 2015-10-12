@@ -14,27 +14,26 @@ module Ddr
           ACCESS_ROLE           => roles.to_json,
           ADMIN_SET             => admin_set,
           BOX_NUMBER_FACET      => desc_metadata_values('box_number'),
-          CREATOR_FACET         => creator,
-          DATE_FACET            => date,
+          CREATOR_FACET         => descMetadata.creator,
+          DATE_FACET            => descMetadata.date,
           DATE_SORT             => date_sort,
           DEPOSITOR             => depositor,
           DISPLAY_FORMAT        => display_format,
           DOI                   => doi,
           EAD_ID                => ead_id,
           IDENTIFIER_ALL        => all_identifiers,
-          INTERNAL_URI          => internal_uri,
           LICENSE               => license,
           LOCAL_ID              => local_id,
           PERMANENT_ID          => permanent_id,
           PERMANENT_URL         => permanent_url,
           POLICY_ROLE           => roles.in_policy_scope.agents,
-          PUBLISHER_FACET       => publisher,
+          PUBLISHER_FACET       => descMetadata.publisher,
           RESEARCH_HELP_CONTACT => research_help_contact,
           RESOURCE_ROLE         => roles.in_resource_scope.agents,
           SERIES_FACET          => desc_metadata_values('series'),
           SPATIAL_FACET         => desc_metadata_values('spatial'),
           TITLE                 => title_display,
-          TYPE_FACET            => type,
+          TYPE_FACET            => descMetadata.type,
           WORKFLOW_STATE        => workflow_state,
           YEAR_FACET            => year_facet,
         }
@@ -79,14 +78,14 @@ module Ddr
       end
 
       def title_display
-        return title.first if title.present?
-        return identifier.first if identifier.present?
+        return descMetadata.title.first if descMetadata.title.present?
+        return descMetadata.identifier.first if descMetadata.identifier.present?
         return original_filename if respond_to?(:original_filename) && original_filename.present?
         "[#{pid}]"
       end
 
       def all_identifiers
-        identifier + [local_id, permanent_id, pid].compact
+        descMetadata.identifier + [local_id, permanent_id, pid].compact
       end
 
       def associated_collection
@@ -106,7 +105,7 @@ module Ddr
       end
 
       def date_sort
-        date.first
+        descMetadata.date.first
       end
 
       def year_facet

@@ -69,21 +69,21 @@ module Ddr
       # changed by this method
       def move_first_identifier_to_local_id(replace: true)
         moved = false
-        identifiers = identifier.to_a
+        identifiers = descMetadata.identifier.to_a
         first_id = identifiers.shift
         if first_id
           if local_id.blank?
             self.local_id = first_id
-            self.identifier = identifiers
+            self.descMetadata.identifier = identifiers
             moved = true
           else
             if local_id == first_id
-              self.identifier = identifiers
+              self.descMetadata.identifier = identifiers
               moved = true
             else
               if replace
                 self.local_id = first_id
-                self.identifier = identifiers
+                self.descMetadata.identifier = identifiers
                 moved = true
               end
             end

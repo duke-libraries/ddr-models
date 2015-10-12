@@ -55,7 +55,7 @@ module Ddr::Models
     end
 
     def facet_values
-      obj.date.each do |date|
+      obj.descMetadata.date.each do |date|
         date.split(/;/).each do |value|
           clean! value
           years = extract_years(value)

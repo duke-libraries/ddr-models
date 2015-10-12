@@ -34,7 +34,6 @@ module Ddr::Index
     EXTRACTED_TEXT              = Field.new :extracted_text, :searchable, type: :text
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
-    INTERNAL_URI                = Field.new :internal_uri, :stored_sortable
     IS_ATTACHED_TO              = Field.new :is_attached_to, :symbol
     IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, :symbol
     IS_GOVERNED_BY              = Field.new :is_governed_by, :symbol
