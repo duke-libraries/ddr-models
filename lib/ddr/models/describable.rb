@@ -8,8 +8,6 @@ module Ddr::Models
           index.as :stored_searchable
         end
       end
-
-      delegate *(MetadataMapper.dc11.unqualified_names), to: :descMetadata
     end
 
     def descMetadata
