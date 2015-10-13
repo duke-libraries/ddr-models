@@ -42,14 +42,6 @@ module Ddr
       autoload :SuperuserAbilityDefinitions
     end
 
-    autoload_under 'legacy' do
-      autoload :AbstractLegacyPermissions
-      autoload :LegacyAuthorization
-      autoload :LegacyDefaultPermissions
-      autoload :LegacyPermissions
-      autoload :LegacyRoles
-    end
-
     # Name of group whose members are authorized to act as superuser
     mattr_accessor :superuser_group
 

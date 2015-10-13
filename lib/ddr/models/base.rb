@@ -43,10 +43,6 @@ module Ddr
         false
       end
 
-      def legacy_authorization
-        Ddr::Auth::LegacyAuthorization.new(self)
-      end
-
       # Moves the first (descriptive metadata) identifier into
       # (administrative metadata) local_id according to the following
       # rubric:

@@ -2,7 +2,7 @@ module Ddr::Auth
   RSpec.describe EffectiveRoles do
     
     let(:resource) { FactoryGirl.build(:item) }
-    let(:policy) { Collection.new(pid: "coll:1") }
+    let(:policy) { Collection.new(pid: "coll-1") }
     let(:agents) { [ "Editors", "bob@example.com", "public" ] }
     let(:editor) { Roles::Role.build type: "Editor", agent: "Editors", scope: "policy" }
     let(:downloader) { FactoryGirl.build(:role, :downloader, :public) }
