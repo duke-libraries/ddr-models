@@ -1,5 +1,5 @@
 module ActiveFedora
-  class Datastream
+  class File
     include Ddr::Datastreams::DatastreamBehavior
   end
 end
