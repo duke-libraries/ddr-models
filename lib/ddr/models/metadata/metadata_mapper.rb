@@ -1,19 +1,31 @@
 module Ddr::Models
   #
-  # Maps vocaulary terms to names
+  # Maps vocabulary terms to names
   #
   class MetadataMapper
+    extend MetadataMappers
 
-    attr_reader :vocab
+    attr_reader :mapping
 
-    def initialize(rdf_vocab)
-      @vocab = MetadataVocabulary.new(rdf_vocab)
-    end
-
-    def mapping
-      @mapping ||= vocab.terms.each_with_object({}) do |term, memo|
+    # param vocab [MetadataVocabulary] the vocabulary
+    def initialize(vocab)
+      @mapping = vocab.terms.each_with_object({}) do |term, memo|
         memo[term.qualified_name] = term
       end
+    end
+
+    def terms
+      mapping.values
+    end
+
+    def unqualified_names
+      mapping.values.map(&:unqualified_name)
+    end
+
+    def merge(other)
+      merged = self.dup
+      merged.mapping.merge! other.mapping
+      merged
     end
 
   end

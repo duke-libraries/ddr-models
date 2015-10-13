@@ -68,8 +68,10 @@ module Ddr
       autoload :DescriptiveMetadata
       autoload :Metadata
       autoload :MetadataMapper
+      autoload :MetadataMappers
       autoload :MetadataTerm
       autoload :MetadataVocabulary
+      autoload :MetadataVocabularies
     end
 
     # Base directory of default external file store

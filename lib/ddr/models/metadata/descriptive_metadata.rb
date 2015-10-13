@@ -6,14 +6,20 @@ module Ddr::Models
     include Metadata
 
     class << self
-      attr_accessor :rdf_vocabs
-
       def mappers
-        @mappers ||= rdf_vocabs.map { |rdf_vocab| MetadataMapper.new(rdf_vocab) }
+        [ MetadataMapper.dcterms, MetadataMapper.duketerms ]
+      end
+
+      def mapper
+        @mapper ||= mappers.reduce(&:merge)
       end
 
       def mapping
-        @mapping ||= mappers.map(&:mapping).reduce(&:merge).except(:dc_license)
+        mapper.mapping
+      end
+
+      def unqualified_names
+        mapper.unqualified_names
       end
 
       def field_names
@@ -26,16 +32,14 @@ module Ddr::Models
       end
     end
 
-    self.rdf_vocabs = [RDF::DC, Ddr::Vocab::DukeTerms].freeze
-
     attr_reader :object
 
     def_delegators :object, *field_readers
     def_delegators :object, *field_writers
 
-    mapping.each do |name, term|
-      def_delegator :object, name, term.unqualified_name
-      def_delegator :object, "#{name}=".to_sym, "#{term.unqualified_name}=".to_sym
+    mapping.each do |qualified_name, term|
+      def_delegator :object, qualified_name, term.unqualified_name
+      def_delegator :object, "#{qualified_name}=".to_sym, "#{term.unqualified_name}=".to_sym
     end
 
     def initialize(object)

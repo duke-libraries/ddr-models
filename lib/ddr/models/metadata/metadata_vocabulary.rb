@@ -1,11 +1,18 @@
 module Ddr::Models
   class MetadataVocabulary
+    extend MetadataVocabularies
 
-    attr_reader :rdf_vocab
+    attr_reader :rdf_vocab, :except, :only_properties
 
     # @param rdf_vocab [RDF::Vocabulary] an RDF vocabulary class
-    def initialize(rdf_vocab)
+    # @param except [RDF::Vocabulary::Term, Array<RDF::Vocabulary::Term>] term(s) to exclude
+    # @param only_properties [Boolean] whether to include only RDF properties
+    #   -- i.e., having RDF type http://www.w3.org/1999/02/22-rdf-syntax-ns#Property
+    #   -- default: true
+    def initialize(rdf_vocab, except: nil, only_properties: true)
       @rdf_vocab = rdf_vocab
+      @except = Array(except)
+      @only_properties = only_properties
     end
 
     # @return [Array<RDF::Vocabulary::Term>]
@@ -16,9 +23,11 @@ module Ddr::Models
     private
 
     def rdf_properties
-      @rdf_properties ||= rdf_vocab.properties.select do |prop|
-        prop.type.include?("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property")
+      props = rdf_vocab.properties
+      if only_properties
+        props.select! { |prop| prop.type.include?("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") }
       end
+      props - except
     end
 
   end
