@@ -21,7 +21,6 @@ module Ddr::Index
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
-    CONTENT_CONTROL_GROUP       = Field.new :content_control_group, :searchable, type: :string
     CONTENT_SIZE                = Field.new :content_size, :stored_sortable, type: :integer
     CONTENT_SIZE_HUMAN          = Field.new :content_size_human, :symbol
     CREATOR_FACET               = Field.new :creator_facet, :facetable

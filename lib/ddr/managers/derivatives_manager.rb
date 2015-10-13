@@ -19,7 +19,7 @@ module Ddr
             # either (or both) of the following conditions are true:
             # - object already has content in the derivative's datastream (need to delete or replace it)
             # - the derivative can be generated for this object
-            if object.datastreams.include?(derivative.datastream) &&
+            if object.datastreams.key?(derivative.datastream) &&
                   (object.datastreams[derivative.datastream].has_content? || generatable?(derivative))
               schedule == SCHEDULE_NOW ? update_derivative(derivative) : Resque.enqueue(DerivativeJob, object.pid, derivative.name)
             end
@@ -29,7 +29,7 @@ module Ddr
 
       def update_derivative(derivative)
         raise ArgumentError, "This object does not have a datastream for #{derivative.name} derivatives" unless
-                                  object.datastreams.include?(derivative.datastream)
+                                  object.datastreams.key?(derivative.datastream)
         if generatable? derivative
           generate_derivative derivative
         else

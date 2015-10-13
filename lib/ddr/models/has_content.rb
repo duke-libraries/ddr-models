@@ -57,7 +57,7 @@ module Ddr
       end
 
       def content_size
-        content.external? ? content.file_size : content.dsSize
+        content.size
       end
 
       def content_human_size
@@ -65,7 +65,7 @@ module Ddr
       end
 
       def content_type
-        content.mimeType
+        content.mime_type
       end
 
       def content_major_type
@@ -105,7 +105,7 @@ module Ddr
       end
 
       def content_changed?
-        content.external? ? content.dsLocation_changed? : content.content_changed?
+        content.content_changed?
       end
 
       def has_extracted_text?

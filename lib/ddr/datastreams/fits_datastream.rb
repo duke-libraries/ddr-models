@@ -74,9 +74,10 @@ module Ddr::Datastreams
       builder.doc
     end
 
-    def prefix
-      "fits__"
-    end
+    # TODO fix or remove
+    # def prefix
+    #   "fits__"
+    # end
 
     def modified
       ng_xml
