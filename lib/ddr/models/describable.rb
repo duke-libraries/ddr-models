@@ -8,6 +8,8 @@ module Ddr::Models
           index.as :stored_searchable
         end
       end
+
+      delegate *(MetadataMapper.dc11.unqualified_names), to: :descMetadata
     end
 
     def descMetadata
@@ -19,7 +21,7 @@ module Ddr::Models
     end
 
     def desc_metadata_terms *args
-      return Ddr::Datastreams::DescriptiveMetadataDatastream.term_names if args.empty?
+      return DescriptiveMetadata.unqualified_names.sort if args.empty?
       arg = args.pop
       terms = case arg.to_sym
               when :empty
@@ -31,8 +33,8 @@ module Ddr::Models
               when :required
                 desc_metadata_terms(:defined_attributes).select {|t| required? t}
               when :dcterms
-                Ddr::Vocab::Vocabulary.term_names(RDF::DC11) +
-                  (Ddr::Vocab::Vocabulary.term_names(RDF::DC) - Ddr::Vocab::Vocabulary.term_names(RDF::DC11))
+                MetadataMapper.dc11.unqualified_names +
+                  (MetadataMapper.dcterms.unqualified_names - MetadataMapper.dc11.unqualified_names)
               when :dcterms_elements11
                 Ddr::Vocab::Vocabulary.term_names(RDF::DC11)
               when :duke
@@ -48,11 +50,10 @@ module Ddr::Models
     end
 
     def desc_metadata_attributes
-      defattrs = self.class.defined_attributes
-      defattrs.keys.select {|k| defattrs[k].dsid == "descMetadata"}.map(&:to_sym)
+      MetadataMapper.dc11.unqualified_names
     end
 
-    def desc_metadata_values term
+    def desc_metadata_values(term)
       descMetadata.values term
     end
 
@@ -60,13 +61,13 @@ module Ddr::Models
       descMetadata.class.vocabularies
     end
 
-    def set_desc_metadata_values term, values
+    def set_desc_metadata_values(term, values)
       descMetadata.set_values term, values
     end
 
     # Update all descMetadata terms with values in hash
     # Note that term not having key in hash will be set to nil!
-    def set_desc_metadata term_values_hash
+    def set_desc_metadata(term_values_hash)
       desc_metadata_terms.each { |t| set_desc_metadata_values(t, term_values_hash[t]) }
     end
 

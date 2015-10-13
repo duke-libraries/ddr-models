@@ -5,8 +5,6 @@ module Ddr
 
       included do
         contains Ddr::Datastreams::MULTIRES_IMAGE
-
-        include FileManagement unless include?(FileManagement)
       end
 
       def multires_image_file_path

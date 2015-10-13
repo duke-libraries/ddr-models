@@ -1,6 +1,8 @@
 RSpec.shared_examples "a describable object" do
+
   let(:object) { described_class.new }
-  context "having an identifier" do
+
+  describe "having an identifier" do
     before do
       object.descMetadata.identifier = ["id001"]
       object.save(validate: false)
@@ -9,14 +11,17 @@ RSpec.shared_examples "a describable object" do
       expect(described_class.find_by_identifier('id001')).to include object
     end
   end
+
   describe "#desc_metadata_terms" do
     it "should have a default value" do
-      expect(object.desc_metadata_terms).to eq Ddr::Datastreams::DescriptiveMetadataDatastream.term_names
+      expect(object.desc_metadata_terms).to match_array(Ddr::Models::DescriptiveMetadata.unqualified_names)
     end
     describe "arguments" do
       it "with fixed results" do
-        expect(object.desc_metadata_terms(:dcterms)).to eq(Ddr::Vocab::Vocabulary.term_names(RDF::DC11) + (Ddr::Vocab::Vocabulary.term_names(RDF::DC) - Ddr::Vocab::Vocabulary.term_names(RDF::DC11)))
-        expect(object.desc_metadata_terms(:dcterms)).to match_array Ddr::Vocab::Vocabulary.term_names(RDF::DC)
+        expect(object.desc_metadata_terms(:dcterms))
+          .to eq(Ddr::Models::MetadataMapper.dc11.unqualified_names + (Ddr::Models::MetadataMapper.dcterms.unqualified_names - Ddr::Models::MetadataMapper.dc11.unqualified_names))
+        expect(object.desc_metadata_terms(:dcterms))
+          .to match_array(Ddr::Models::MetadataMapper.dcterms.unqualified_names)
         expect(object.desc_metadata_terms(:duke)).to eq Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms)
         expect(object.desc_metadata_terms(:dcterms_elements11)).to eq Ddr::Vocab::Vocabulary.term_names(RDF::DC11)
         expect(object.desc_metadata_terms(:defined_attributes)).to match_array Ddr::Vocab::Vocabulary.term_names(RDF::DC11)

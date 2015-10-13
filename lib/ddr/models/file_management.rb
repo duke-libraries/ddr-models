@@ -15,7 +15,7 @@ module Ddr::Models
       # Deleting the datastream external files on destroying the object can't
       # be handled with a datastream around_destroy callback.
       # See https://groups.google.com/d/msg/hydra-tech/xJaZr2wVhbg/4iafvso98w8J
-      around_destroy :cleanup_external_files_on_destroy
+      # around_destroy :cleanup_external_files_on_destroy
     end
 
     # add_file(file, dsid, opts={})
