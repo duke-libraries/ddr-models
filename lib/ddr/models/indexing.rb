@@ -101,7 +101,7 @@ module Ddr
       end
 
       def collection_facet
-        associated_collection.internal_uri if associated_collection.present?
+        associated_collection.id if associated_collection.present?
       end
 
       def date_sort
