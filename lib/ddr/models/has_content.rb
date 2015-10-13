@@ -38,12 +38,12 @@ module Ddr
       end
 
       # Convenience method wrapping FileManagement#add_file
-      def upload file, opts={}
-        add_file(file, Ddr::Datastreams::CONTENT, opts)
+      def upload(file, opts={})
+        add_file(file, opts.merge(path: Ddr::Datastreams::CONTENT))
       end
 
       # Set content to file and save
-      def upload! file, opts={}
+      def upload!(file, opts={})
         upload(file, opts)
         save
       end

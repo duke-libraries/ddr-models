@@ -15,7 +15,7 @@ module Ddr::Auth
     end
 
     describe "Datastream abilities" do
-      let(:obj) { FactoryGirl.build(:component) }
+      let(:obj) { FactoryGirl.create(:component) }
 
       DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.each do |dsid, permission|
         describe "\"#{dsid}\"" do
@@ -32,7 +32,7 @@ module Ddr::Auth
       end
 
       describe "non-downloadable datastreams" do
-        (Component.ds_specs.keys - DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.keys).each do |dsid|
+        (Component.ds_specs.keys.map(&:to_s) - DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.keys).each do |dsid|
           describe "\"#{dsid}\"" do
             let(:ds) { obj.datastreams[dsid] }
             before { subject.can :download, obj.pid }
