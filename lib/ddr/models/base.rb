@@ -4,11 +4,11 @@ module Ddr
 
       include Describable
       include Governable
-      # include AccessControllable
       include HasThumbnail
       include EventLoggable
       include FixityCheckable
-      include FileManagement
+      # TODO fix or remove
+      # include FileManagement
       include Indexing
       include Hydra::Validations
       include HasAdminMetadata

@@ -20,17 +20,19 @@ module Ddr
         contains Ddr::Datastreams::EXTRACTED_TEXT, class_name: 'Ddr::Datastreams::PlainTextDatastream'
         contains Ddr::Datastreams::FITS, class_name: 'Ddr::Datastreams::FitsDatastream'
 
-        include FileManagement
+        # TODO fix or remove
+        # include FileManagement
 
         around_save :update_derivatives, if: :content_changed?
 
         around_save :characterize_file, if: [ :content_changed?, "Ddr::Models.characterize_files?" ]
 
-        after_add_file do
-          if file_to_add.original_name && file_to_add.dsid == "content"
-            self.original_filename = file_to_add.original_name
-          end
-        end
+        # TODO reimplement or remove
+        # after_add_file do
+        #   if file_to_add.original_name && file_to_add.dsid == "content"
+        #     self.original_filename = file_to_add.original_name
+        #   end
+        # end
 
         delegate :validate_checksum!, to: :content
       end
