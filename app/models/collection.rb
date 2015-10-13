@@ -16,7 +16,7 @@ class Collection < Ddr::Models::Base
 
   after_create :set_admin_policy
 
-  validates_presence_of :title
+  validates_presence_of :dc_title
 
   # Returns the SolrDocuments for Components associated with the Collection.
   #

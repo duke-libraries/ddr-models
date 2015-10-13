@@ -32,12 +32,6 @@ module Ddr
           Ddr::Index::Fields::LAST_FIXITY_CHECK_OUTCOME => outcome }
       end
 
-      protected
-
-      def default_software
-        self.class.repository_software
-      end
-
     end
   end
 end

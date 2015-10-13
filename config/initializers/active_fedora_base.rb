@@ -18,7 +18,7 @@ module ActiveFedora
     end
 
     def can_have_content?
-      datastreams.include? "content"
+      datastreams.key? "content"
     end
 
     def has_content?
@@ -43,7 +43,7 @@ module ActiveFedora
     end
 
     def can_have_struct_metadata?
-      datastreams.include? Ddr::Datastreams::STRUCT_METADATA
+      datastreams.key? Ddr::Datastreams::STRUCT_METADATA
     end
 
     def has_struct_metadata?
@@ -51,7 +51,7 @@ module ActiveFedora
     end
 
     def can_have_multires_image?
-      datastreams.include? Ddr::Datastreams::MULTIRES_IMAGE
+      datastreams.key? Ddr::Datastreams::MULTIRES_IMAGE
     end
 
     def has_multires_image?
@@ -59,7 +59,7 @@ module ActiveFedora
     end
 
     def can_have_thumbnail?
-      datastreams.include? "thumbnail"
+      datastreams.key? "thumbnail"
     end
 
     def has_thumbnail?
