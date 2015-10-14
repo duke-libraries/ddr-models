@@ -39,6 +39,7 @@ module Ddr
     autoload :Describable
     autoload :Error
     autoload :EventLoggable
+    autoload :ExternalFile
     autoload :FileManagement
     autoload :FindingAid
     autoload :FixityCheckable

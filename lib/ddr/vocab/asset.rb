@@ -18,6 +18,15 @@
       property "eadId",
         label: "EAD ID"
 
+      property "externalFile",
+        label: "External File"
+
+      property "use",
+        label: "Use"
+
+      property "location",
+        label: "Location"
+
     end
   end
 end
