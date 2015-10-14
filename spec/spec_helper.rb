@@ -23,6 +23,10 @@ Dir[File.join(File.dirname(__FILE__), "support", "*.rb")].each { |f| require f }
 
 DatabaseCleaner.strategy = :truncation
 
+# Silence deprecation warnings
+warn "Default deprecation behavior set to :silence!"
+Deprecation.default_deprecation_behavior = :silence
+
 RSpec.configure do |config|
 
   config.include ActionDispatch::TestProcess
