@@ -59,7 +59,7 @@ module Ddr
         if results.status.success?
           generator_output = File.open(generator_output, 'rb')
           object.reload if object.persisted?
-          object.add_file generator_output, derivative.datastream, mime_type: derivative.generator.output_mime_type
+          object.add_file generator_output, path: derivative.datastream, mime_type: derivative.generator.output_mime_type
           object.save!
         else
           Rails.logger.error results.stderr
