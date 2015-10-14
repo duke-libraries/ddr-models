@@ -39,6 +39,7 @@ module Ddr
 
       # Convenience method wrapping FileManagement#add_file
       def upload(file, opts={})
+        opts[:mime_type] ||= Ddr::Utils.mime_type_for(file)
         add_file(file, opts.merge(path: Ddr::Datastreams::CONTENT))
       end
 
@@ -109,7 +110,7 @@ module Ddr
       end
 
       def has_extracted_text?
-        extractedText.has_content?
+        !extractedText.empty?
       end
 
       protected
