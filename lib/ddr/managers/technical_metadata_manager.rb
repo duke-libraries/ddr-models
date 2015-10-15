@@ -40,11 +40,11 @@ module Ddr::Managers
     end
 
     def checksum_digest
-      content.checksumType
+      checksum_uri.split(":")[1].upcase rescue nil
     end
 
     def checksum_value
-      content.checksum
+      checksum_uri.split(":").last rescue nil
     end
 
     def invalid?
@@ -97,6 +97,10 @@ module Ddr::Managers
       DateTime.parse(datestr).to_time
     rescue ArgumentError
       nil
+    end
+
+    def checksum_uri
+      content.digest.first.to_s
     end
 
   end
