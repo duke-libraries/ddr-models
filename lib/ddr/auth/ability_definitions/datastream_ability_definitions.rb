@@ -11,7 +11,6 @@ module Ddr
         Ddr::Datastreams::CONTENT         => :download,
         Ddr::Datastreams::EXTRACTED_TEXT  => :download,
         Ddr::Datastreams::FITS            => :read,
-        Ddr::Datastreams::MULTIRES_IMAGE  => :read,
         Ddr::Datastreams::STRUCT_METADATA => :read,
         Ddr::Datastreams::THUMBNAIL       => :read,
       }.freeze

@@ -9,4 +9,3 @@ module Ddr::Models
 
   end
 end
-  
