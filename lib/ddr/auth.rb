@@ -102,8 +102,11 @@ module Ddr
       "::Ability"
     end
 
-    mattr_accessor :repository_group_filter do
-      ENV["REPOSITORY_GROUP_FILTER"]
+    def self.repository_group_filter
+      if filter = ENV["REPOSITORY_GROUP_FILTER"]
+        return filter
+      end
+      raise Ddr::Models::Error, "The \"REPOSITORY_GROUP_FILTER\" environment variable is not set."
     end
 
   end
