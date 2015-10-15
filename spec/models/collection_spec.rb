@@ -4,23 +4,10 @@ RSpec.describe Collection, type: :model do
 
   it_behaves_like "a DDR model"
 
-  describe "legacy license information" do
-    before do
-      subject.defaultRights.license.title = ["License Title"]
-      subject.defaultRights.license.description = ["License Description"]
-      subject.defaultRights.license.url = ["http://library.duke.edu"]
-    end
-    it "should index the terms" do
-      expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_TITLE]).to eq("License Title")
-      expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_DESCRIPTION]).to eq("License Description")
-      expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_URL]).to eq("http://library.duke.edu")
-    end
-  end
-
   describe "#components_from_solr" do
-    subject { Collection.new(pid: 'test:1') }
+    subject { Collection.new(id: 'test-1') }
     before do
-      allow_any_instance_of(Component).to receive(:collection_uri).and_return(subject.internal_uri)
+      allow_any_instance_of(Component).to receive(:collection_uri).and_return(subject.id)
     end
     it "should return the correct component(s)" do
       component = Component.create
@@ -33,12 +20,12 @@ RSpec.describe Collection, type: :model do
   describe "validation" do
     it "should require a title" do
       expect(subject).to_not be_valid
-      expect(subject.errors.messages).to have_key(:title)
+      expect(subject.errors.messages).to have_key(:dc_title)
     end
   end
 
   describe "creation" do
-    subject { Collection.create(title: [ "Test Collection" ]) }
+    subject { Collection.create(dc_title: [ "Test Collection" ]) }
     it "should be governed by itself" do
       expect(subject.admin_policy).to eq(subject)
     end

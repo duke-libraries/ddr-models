@@ -63,7 +63,7 @@ module Ddr
           fields[EXTRACTED_TEXT] = extractedText.content
         end
         if is_a? Component
-          fields[COLLECTION_URI] = collection_uri
+          fields[COLLECTION_URI] = collection_id
         end
         if is_a? Collection
           fields[ADMIN_SET_FACET] = admin_set_facet

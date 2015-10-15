@@ -3,7 +3,7 @@ module Ddr::Models
 
     subject { described_class.new(obj) }
     let(:obj) { Item.new }
-    before { obj.date = [ date ] }
+    before { obj.dc_date = [ date ] }
 
     describe "splitting on semicolons" do
       let(:date) { "1935; 1936; 1937; 1938" }
