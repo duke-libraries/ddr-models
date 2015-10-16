@@ -57,12 +57,11 @@ module Ddr::Managers
 
     describe "checksum fields" do
       before do
-        allow(obj.content).to receive(:checksumType) { "SHA-256" }
-        allow(obj.content).to receive(:checksum) { "b744b4b308a11a7b6282b383ec428a91d77b21701d4bd09021bf0543dc8946fa" }
+        allow(obj.content).to receive(:digest) { [RDF::URI("urn:sha1:da75a5724d49962456804dc019333a5faeb80898")] }
       end
 
-      its(:checksum_digest) { is_expected.to eq("SHA-256") }
-      its(:checksum_value) { is_expected.to eq("b744b4b308a11a7b6282b383ec428a91d77b21701d4bd09021bf0543dc8946fa") }
+      its(:checksum_digest) { is_expected.to eq("SHA1") }
+      its(:checksum_value) { is_expected.to eq("da75a5724d49962456804dc019333a5faeb80898") }
     end
 
     describe "image metadata" do
