@@ -34,7 +34,7 @@ module Ddr::Models
             it "should assign a permanent id once" do
               expect(subject).to receive(:assign_permanent_id!).once { nil }
               subject.save!
-              subject.title = ["New Title"]
+              subject.dc_title = ["New Title"]
               subject.save!
             end
           end
