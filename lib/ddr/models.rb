@@ -52,6 +52,7 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
+    autoload :MultiresImage
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
