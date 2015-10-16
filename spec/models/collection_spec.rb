@@ -7,7 +7,7 @@ RSpec.describe Collection, type: :model do
   describe "#components_from_solr" do
     subject { Collection.new(id: 'test-1') }
     before do
-      allow_any_instance_of(Component).to receive(:collection_uri).and_return(subject.id)
+      allow_any_instance_of(Component).to receive(:collection_id).and_return(subject.id)
     end
     it "should return the correct component(s)" do
       component = Component.create

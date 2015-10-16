@@ -5,7 +5,7 @@ module Ddr::Index
 
     class << self
       def is_governed_by(pid)
-        Filter.where(Fields::IS_GOVERNED_BY => internal_uri(pid))
+        Filter.where(Fields::IS_GOVERNED_BY => pid)
       end
 
       def internal_uri(pid)
