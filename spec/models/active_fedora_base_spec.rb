@@ -6,7 +6,7 @@ RSpec.describe ActiveFedora::Base do
     let!(:collection) { FactoryGirl.create(:collection) }
     describe "when called on the wrong class" do
       it "should raise an exception" do
-        expect { Item.find(collection.pid) }.to raise_error(Ddr::Models::ContentModelError)
+        expect { Item.find(collection.pid) }.to raise_error(ActiveFedora::ActiveFedoraError)
       end
     end
     describe "when called on Ddr::Models::Base" do
