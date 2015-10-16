@@ -31,6 +31,7 @@ module Ddr
       end
       describe "defaults" do
         it "should set software to the Fedora repository version" do
+          pending "Fedora 4 API for getting repository version"
           expect(subject.software).to match /^Fedora Repository \d\.\d\.\d$/
         end
       end
