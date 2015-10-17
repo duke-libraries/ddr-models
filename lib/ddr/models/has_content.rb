@@ -20,7 +20,7 @@ module Ddr
         contains Ddr::Datastreams::EXTRACTED_TEXT, class_name: 'Ddr::Datastreams::PlainTextDatastream'
         contains Ddr::Datastreams::FITS, class_name: 'Ddr::Datastreams::FitsDatastream'
 
-        property :external_files, predicate: Ddr::Vocab::Asset.externalFile, class_name: 'Ddr::Models::ExternalFile'
+        has_many :external_files, predicate: Ddr::Vocab::Asset.hasExternalFile, class_name: 'Ddr::Models::ExternalFile'
 
         # TODO fix or remove
         # include FileManagement

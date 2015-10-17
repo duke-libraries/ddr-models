@@ -18,8 +18,11 @@
       property "eadId",
         label: "EAD ID"
 
-      property "externalFile",
+      property "hasExternalFile",
         label: "External File"
+
+      property "isExternalFileFor",
+        label: "Is External File For"
 
       property "use",
         label: "Use"
