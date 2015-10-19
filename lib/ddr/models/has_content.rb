@@ -22,26 +22,17 @@ module Ddr
 
         has_many :external_files, predicate: Ddr::Vocab::Asset.hasExternalFile, class_name: 'Ddr::Models::ExternalFile'
 
-        # TODO fix or remove
-        # include FileManagement
+        include FileManagement
 
         around_save :update_derivatives, if: :content_changed?
 
         around_save :characterize_file, if: [ :content_changed?, "Ddr::Models.characterize_files?" ]
-
-        # TODO reimplement or remove
-        # after_add_file do
-        #   if file_to_add.original_name && file_to_add.dsid == "content"
-        #     self.original_filename = file_to_add.original_name
-        #   end
-        # end
 
         delegate :validate_checksum!, to: :content
       end
 
       # Convenience method wrapping FileManagement#add_file
       def upload(file, opts={})
-        opts[:mime_type] ||= Ddr::Utils.mime_type_for(file)
         add_file(file, opts.merge(path: Ddr::Datastreams::CONTENT))
       end
 

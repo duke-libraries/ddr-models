@@ -7,8 +7,7 @@ module Ddr
       include HasThumbnail
       include EventLoggable
       include FixityCheckable
-      # TODO fix or remove
-      # include FileManagement
+      include FileManagement
       include Indexing
       include Hydra::Validations
       include HasAdminMetadata
