@@ -7,10 +7,6 @@ module Ddr
         external_files.detect { |ef| ef.use.first == MultiresImage::USE }
       end
 
-      def multires_image=(file_path)
-        self.external_files << MultiresImage.new(file_path)
-      end
-
       def multires_image_file_path
         if mri = multires_image
           mri.file_path
