@@ -3,14 +3,8 @@ module Ddr
     module HasMultiresImage
       extend ActiveSupport::Concern
 
-      def multires_image
-        external_files.detect { |ef| ef.use.first == MultiresImage::USE }
-      end
-
-      def multires_image_file_path
-        if mri = multires_image
-          mri.file_path
-        end
+      included do
+        property :multires_image_file_path, predicate: Ddr::Vocab::Asset.multiresImageFilePath, multiple: false
       end
 
     end
