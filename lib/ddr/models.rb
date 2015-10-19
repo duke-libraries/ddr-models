@@ -39,7 +39,6 @@ module Ddr
     autoload :Describable
     autoload :Error
     autoload :EventLoggable
-    autoload :ExternalFile
     autoload :FileManagement
     autoload :FindingAid
     autoload :FixityCheckable
@@ -52,7 +51,6 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
-    autoload :MultiresImage
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure

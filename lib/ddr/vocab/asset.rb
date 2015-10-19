@@ -18,17 +18,8 @@
       property "eadId",
         label: "EAD ID"
 
-      property "hasExternalFile",
-        label: "External File"
-
-      property "isExternalFileFor",
-        label: "Is External File For"
-
-      property "use",
-        label: "Use"
-
-      property "location",
-        label: "Location"
+      property "multiresImageFilePath",
+        label: "Multires Image File Path"
 
     end
   end
