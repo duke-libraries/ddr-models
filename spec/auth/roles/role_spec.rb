@@ -42,15 +42,18 @@ module Ddr::Auth
 
       describe "validation" do
         it "should require the presence of an agent" do
+          pending "https://github.com/projecthydra/active_fedora/issues/915"
           expect { described_class.build(type: "Curator", scope: "resource") }.to raise_error
           expect { described_class.build(type: "Curator", agent: nil, scope: "resource") }.to raise_error
           expect { described_class.build(type: "Curator", agent: "", scope: "resource") }.to raise_error
         end
         it "should require a valid scope" do
+          pending "https://github.com/projecthydra/active_fedora/issues/915"
           expect { described_class.build(type: "Curator", agent: agent, scope: "") }.to raise_error
           expect { described_class.build(type: "Curator", agent: agent, scope: "other") }.to raise_error
         end
         it "should require a valid type" do
+          pending "https://github.com/projecthydra/active_fedora/issues/915"
           expect { described_class.build(agent: agent, scope: "policy") }.to raise_error
           expect { described_class.build(type: nil, agent: agent, scope: "policy") }.to raise_error
           expect { described_class.build(type: "", agent: agent, scope: "policy") }.to raise_error
