@@ -51,13 +51,13 @@ module ActiveFedora
     end
 
     def can_have_multires_image?
-      datastreams.key? Ddr::Datastreams::MULTIRES_IMAGE
+      respond_to? :multires_image_file_path
     end
 
     def has_multires_image?
-      can_have_multires_image? && datastreams[Ddr::Datastreams::MULTIRES_IMAGE].has_content?
+      can_have_multires_image? && multires_image_file_path.present?
     end
-
+    
     def can_have_thumbnail?
       datastreams.key? "thumbnail"
     end
