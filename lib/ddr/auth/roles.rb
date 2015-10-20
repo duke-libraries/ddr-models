@@ -7,6 +7,7 @@ module Ddr::Auth
     autoload :Role
     autoload :RoleSet
     autoload :RoleSetQuery
+    autoload :RolesDatastream
     autoload :RoleType
     autoload :RoleTypes
 

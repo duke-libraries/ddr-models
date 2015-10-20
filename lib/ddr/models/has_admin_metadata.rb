@@ -6,9 +6,7 @@ module Ddr::Models
     extend ActiveSupport::Concern
 
     included do
-      property :access_role,
-               predicate: Ddr::Vocab::Roles.hasRole,
-               class_name: Ddr::Auth::Roles::Role
+      contains "accessRoles", class_name: "Ddr::Auth::Roles::RolesDatastream"
 
       property :admin_set,
                predicate: Ddr::Vocab::Asset.adminSet,
@@ -71,7 +69,7 @@ module Ddr::Models
     end
 
     def roles
-      Ddr::Auth::Roles::PropertyRoleSet.new(access_role)
+      Ddr::Auth::Roles::PropertyRoleSet.new(accessRoles.roles)
     end
 
     def inherited_roles
