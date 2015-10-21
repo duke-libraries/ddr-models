@@ -21,8 +21,7 @@ module Ddr
       end
 
       def association_query(association)
-        # XXX Ideally we would include a clause to limit by AF model, but this should suffice
-        ActiveFedora::SolrService.construct_query_for_rel(reflections[association].options[:property] => internal_uri)
+        raise NotImplementedError, "The previous implementation does not work with ActiveFedora 9."
       end
 
       # e.g., "Collection duke:1"

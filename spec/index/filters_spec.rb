@@ -9,7 +9,7 @@ module Ddr::Index
     describe "class methods" do
       describe "is_governed_by(pid)" do
         subject { Filters.is_governed_by("test-1") }
-        its(:clauses) { is_expected.to eq(["{!term f=is_governed_by_ssim}test-1"]) }
+        its(:clauses) { is_expected.to eq(["{!term f=isGovernedBy_ssim}test-1"]) }
       end
     end
 

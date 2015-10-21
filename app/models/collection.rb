@@ -3,16 +3,11 @@
 #
 class Collection < Ddr::Models::Base
 
-  # include Hydra::AdminPolicyBehavior
-
   include Ddr::Models::HasChildren
   include Ddr::Models::HasAttachments
 
-  has_many :children, property: :is_member_of_collection, class_name: 'Item'
+  has_many :children, property: :is_member_of_collection, class_name: 'Item', as: :parent
   has_many :targets, property: :is_external_target_for, class_name: 'Target'
-
-  alias_method :items, :children
-  alias_method :item_ids, :child_ids
 
   after_create :set_admin_policy
 
