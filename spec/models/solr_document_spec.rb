@@ -43,7 +43,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     describe "where there is an admin policy relationship" do
       let(:admin_policy) { FactoryGirl.create(:collection) }
       before do
-        subject[Ddr::Index::Fields::IS_GOVERNED_BY] = [ admin_policy.internal_uri ]
+        subject[Ddr::Index::Fields::IS_GOVERNED_BY] = [ admin_policy.id ]
       end
       it "should get the admin policy document" do
         expect(subject.admin_policy.id).to eq(admin_policy.id)

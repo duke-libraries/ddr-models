@@ -40,7 +40,6 @@ RSpec.shared_examples "an object that can have content" do
       before { subject.add_file file, path: "content", mime_type: "image/tiff" }
       its(:content_type) { should eq("image/tiff") }
       it "should create a 'virus check' event for the object" do
-        pending "Fixing FileManagement"
         expect { subject.save }.to change { subject.virus_checks.count }
       end
     end
@@ -105,7 +104,7 @@ RSpec.shared_examples "an object that can have content" do
   describe "#upload" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
     it "should add the file to the content datastream" do
-      expect(subject).to receive(:add_file).with(file, { path: "content", mime_type: "image/tiff" })
+      expect(subject).to receive(:add_file).with(file, { path: "content" })
       subject.upload(file)
     end
   end
@@ -113,7 +112,7 @@ RSpec.shared_examples "an object that can have content" do
   describe "#upload!" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
     it "should add the file to the content datastream and save the object" do
-      expect(subject).to receive(:add_file).with(file, { path: "content", mime_type: "image/tiff" }).and_call_original
+      expect(subject).to receive(:add_file).with(file, { path: "content" }).and_call_original
       expect(subject).to receive(:save)
       subject.upload!(file)
     end
