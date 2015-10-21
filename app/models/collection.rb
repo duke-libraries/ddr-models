@@ -6,8 +6,14 @@ class Collection < Ddr::Models::Base
   include Ddr::Models::HasChildren
   include Ddr::Models::HasAttachments
 
-  has_many :children, property: :is_member_of_collection, class_name: 'Item', as: :parent
-  has_many :targets, property: :is_external_target_for, class_name: 'Target'
+  has_many :children,
+           predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isMemberOfCollection,
+           class_name: "Item",
+           as: :parent
+
+  has_many :targets,
+           predicate: ::RDF::URI("http://www.loc.gov/mix/v20/externalTarget#isExternalTargetFor"),
+           class_name: "Target"
 
   after_create :set_admin_policy
 

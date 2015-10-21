@@ -42,19 +42,19 @@ module Ddr::Auth
 
       describe "validation" do
         it "should require the presence of an agent" do
-          expect { described_class.build(type: "Curator", scope: "resource") }.to raise_error
-          expect { described_class.build(type: "Curator", agent: nil, scope: "resource") }.to raise_error
-          expect { described_class.build(type: "Curator", agent: "", scope: "resource") }.to raise_error
+          expect { described_class.build(type: "Curator", scope: "resource") }.to raise_error(Ddr::Models::Error)
+          expect { described_class.build(type: "Curator", agent: nil, scope: "resource") }.to raise_error(Ddr::Models::Error)
+          expect { described_class.build(type: "Curator", agent: "", scope: "resource") }.to raise_error(Ddr::Models::Error)
         end
         it "should require a valid scope" do
-          expect { described_class.build(type: "Curator", agent: agent, scope: "") }.to raise_error
-          expect { described_class.build(type: "Curator", agent: agent, scope: "other") }.to raise_error
+          expect { described_class.build(type: "Curator", agent: agent, scope: "") }.to raise_error(Ddr::Models::Error)
+          expect { described_class.build(type: "Curator", agent: agent, scope: "other") }.to raise_error(Ddr::Models::Error)
         end
         it "should require a valid type" do
-          expect { described_class.build(agent: agent, scope: "policy") }.to raise_error
-          expect { described_class.build(type: nil, agent: agent, scope: "policy") }.to raise_error
-          expect { described_class.build(type: "", agent: agent, scope: "policy") }.to raise_error
-          expect { described_class.build(type: "Invalid", agent: agent, scope: "policy") }.to raise_error
+          expect { described_class.build(agent: agent, scope: "policy") }.to raise_error(Ddr::Models::Error)
+          expect { described_class.build(type: nil, agent: agent, scope: "policy") }.to raise_error(Ddr::Models::Error)
+          expect { described_class.build(type: "", agent: agent, scope: "policy") }.to raise_error(Ddr::Models::Error)
+          expect { described_class.build(type: "Invalid", agent: agent, scope: "policy") }.to raise_error(Ddr::Models::Error)
         end
       end
 
