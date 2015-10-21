@@ -6,6 +6,20 @@ module Ddr
 
       STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
 
+      def dsid
+        warn "[DEPRECATION] `dsid` is no longer a datastream/file method." \
+             " Use `File.basename(id)`."
+        if id
+          ::File.basename(id)
+        end
+      end
+
+      def dsCreateDate
+        warn "[DEPRECATION] `dsCreateDate` is no longer a datastream/file method." \
+             " Use `create_date` instead."
+        create_date
+      end
+
       def validate_checksum! checksum, checksum_type=nil
         raise Ddr::Models::Error, "Checksum cannot be validated on new datastream." if new?
         raise Ddr::Models::Error, "Checksum cannot be validated on unpersisted content." if content_changed?
@@ -23,16 +37,6 @@ module Ddr
         end
       end
 
-      def version_uri
-        # E.g., info:fedora/duke:1/content/content.0
-        ["info:fedora", pid, dsid, dsVersionID].join("/") unless new?
-      end
-
-      def version_info
-        # E.g., info:fedora/duke:1/content/content.0 [2013-09-26T20:00:03.357Z]
-        "#{version_uri} [#{Ddr::Utils.ds_as_of_date_time(self)}]" unless new?
-      end
-
       def create_date_string
         dsCreateDate.strftime(STRFTIME_FORMAT) if dsCreateDate
       end
@@ -41,38 +45,11 @@ module Ddr
         Ddr::Utils.digest(self.content, algorithm)
       end
 
-      # Returns a list of the external file paths for all versions of the datastream.
-      def file_paths
-        raise "The `file_paths' method is valid only for external datastreams." unless external?
-        return Array(file_path) if new?
-        versions.map(&:file_path).compact
-      end
-
-      # Returns the external file path for the datastream.
-      # Returns nil if dsLocation is not a file URI.
-      def file_path
-        raise "The `file_path' method is valid only for external datastreams." unless external?
-        Ddr::Utils.path_from_uri(dsLocation) if Ddr::Utils.file_uri?(dsLocation)
-      end
-
-      # Returns the file name of the external file for the datastream.
-      # See #external_datastream_file_path(ds)
-      def file_name
-        raise "The `file_name' method is valid only for external datastreams." unless external?
-        File.basename(file_path) rescue nil
-      end
-
-      # Returns the size of the external file for the datastream.
-      def file_size
-        raise "The `file_size' method is valid only for external datastreams." unless external?
-        File.size(file_path) rescue nil
-      end
-
       # Return default file extension for datastream based on MIME type
       def default_file_extension
-        mimetypes = MIME::Types[mimeType]
+        mimetypes = MIME::Types[mime_type]
         return mimetypes.first.extensions.first unless mimetypes.empty?
-        case mimeType
+        case mime_type
         when 'application/n-triples'
           'txt'
         else
@@ -80,14 +57,13 @@ module Ddr
         end
       end
 
-      # Return default file name prefix based on object PID
       def default_file_prefix
-        [pid.sub(/:/, '_'), dsid].join("_")
+        (id && id.gsub(/\//, "_")) || "NEW"
       end
 
       # Return default file name
       def default_file_name
-        [default_file_prefix, default_file_extension].join(".")
+        [ default_file_prefix, default_file_extension ].join(".")
       end
 
       def tempfile(prefix: nil, suffix: nil)
