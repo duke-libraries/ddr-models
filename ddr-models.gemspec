@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib", "app/models"]
 
   s.add_dependency "rails", "~> 4.1.13"
+  s.add_dependency "active-triples", "~> 0.7.2"
   s.add_dependency "active-fedora", "~> 9.4"
   s.add_dependency "hydra-core", "~> 9.3"
   s.add_dependency "hydra-validations", "~> 0.5"
