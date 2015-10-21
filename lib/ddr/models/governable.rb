@@ -4,7 +4,9 @@ module Ddr
       extend ActiveSupport::Concern
 
       included do
-        belongs_to :admin_policy, :property => :is_governed_by, :class_name => "Collection"
+        belongs_to :admin_policy,
+                   predicate: ActiveFedora::RDF::ProjectHydra.isGovernedBy,
+                   class_name: "Collection"
       end
 
       def inherited_permissions

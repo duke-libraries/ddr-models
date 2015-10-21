@@ -8,7 +8,13 @@ class Item < Ddr::Models::Base
   include Ddr::Models::HasChildren
   include Ddr::Models::HasStructMetadata
 
-  has_many :children, property: :is_part_of, class_name: 'Component'
-  belongs_to :parent, property: :is_member_of_collection, class_name: 'Collection'
+  has_many :children,
+           predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isPartOf,
+           class_name: "Component",
+           as: :parent
+
+  belongs_to :parent,
+             predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isMemberOfCollection,
+             class_name: "Collection"
 
 end

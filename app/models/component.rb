@@ -9,8 +9,13 @@ class Component < Ddr::Models::Base
   include Ddr::Models::HasMultiresImage
   include Ddr::Models::HasStructMetadata
 
-  belongs_to :parent, :property => :is_part_of, :class_name => 'Item'
-  belongs_to :target, :property => :has_external_target, :class_name => 'Target'
+  belongs_to :parent,
+             predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isPartOf,
+             class_name: "Item"
+
+  belongs_to :target,
+             predicate: ::RDF::URI("http://www.loc.gov/mix/v20/externalTarget#hasExternalTarget"),
+             class_name: "Target"
 
   def collection
     self.parent.parent rescue nil
