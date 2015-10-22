@@ -3,7 +3,6 @@ module Ddr
     module DatastreamBehavior
 
       DEFAULT_FILE_EXTENSION = "bin"
-
       STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
 
       def dsid
@@ -20,20 +19,20 @@ module Ddr
         create_date
       end
 
-      def validate_checksum! checksum, checksum_type=nil
-        raise Ddr::Models::Error, "Checksum cannot be validated on new datastream." if new?
+      def validate_checksum!(checksum_value, checksum_type=nil)
+        raise Ddr::Models::Error, "Checksum cannot be validated on new datastream." if new_record?
         raise Ddr::Models::Error, "Checksum cannot be validated on unpersisted content." if content_changed?
-        raise Ddr::Models::ChecksumInvalid, "The repository internal checksum validation failed." unless dsChecksumValid
-        algorithm = checksum_type || self.checksumType
-        ds_checksum = if algorithm == self.checksumType
-                        self.checksum
-                      else
-                        content_digest(algorithm)
-                      end
-        if checksum == ds_checksum
-          "The checksum [#{algorithm}]#{checksum} is valid for datastream #{version_info}."
+        raise Ddr::Models::ChecksumInvalid, "The repository internal checksum validation failed." unless check_fixity
+        algorithm = checksum_type || checksum.algorithm
+        calculated_checksum = if algorithm == checksum.algorithm
+                                checksum.value
+                              else
+                                content_digest(algorithm)
+                              end
+        if checksum_value == calculated_checksum
+          "The checksum #{algorithm}:#{checksum_value} is valid for datastream #{dsid}."
         else
-          raise Ddr::Models::ChecksumInvalid, "The checksum [#{algorithm}]#{checksum} is not valid for datastream #{version_info}."
+          raise Ddr::Models::ChecksumInvalid, "The checksum #{algorithm}:#{checksum_value} is not valid for datastream #{dsid}."
         end
       end
 
@@ -41,8 +40,8 @@ module Ddr
         dsCreateDate.strftime(STRFTIME_FORMAT) if dsCreateDate
       end
 
-      def content_digest algorithm
-        Ddr::Utils.digest(self.content, algorithm)
+      def content_digest(algorithm)
+        Ddr::Utils.digest(content, algorithm)
       end
 
       # Return default file extension for datastream based on MIME type
