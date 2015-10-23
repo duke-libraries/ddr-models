@@ -13,30 +13,25 @@ module Ddr
 
       def update_derivatives(schedule=SCHEDULE_LATER)
         raise ArgumentError, "Must be one of #{SCHEDULES}" unless SCHEDULES.include?(schedule)
-        Ddr::Derivatives::DERIVATIVES.values.each do |derivative|
-          if Ddr::Derivatives.update_derivatives.include?(derivative.name)
-            # Need to update derivative if object has a datastream for this type of derivative and
-            # either (or both) of the following conditions are true:
-            # - object already has content in the derivative's datastream (need to delete or replace it)
+        Ddr::Derivatives.update_derivatives.each do |derivative_to_update|
+          derivative = Ddr::Derivatives::DERIVATIVES[derivative_to_update]
+            # Need to update derivative if either (or both) of the following conditions are true:
+            # - object already has this derivative (need to delete or replace it)
             # - the derivative can be generated for this object
-            if object.datastreams.key?(derivative.datastream) &&
-                  (object.datastreams[derivative.datastream].has_content? || generatable?(derivative))
-              schedule == SCHEDULE_NOW ? update_derivative(derivative) : Resque.enqueue(DerivativeJob, object.pid, derivative.name)
-            end
+          if derivative.class.has_derivative?(object) || derivative.class.generatable?(object)
+            schedule == SCHEDULE_NOW ? update_derivative(derivative) : Resque.enqueue(DerivativeJob, object.pid, derivative_to_update)
           end
         end
       end
 
       def update_derivative(derivative)
-        raise ArgumentError, "This object does not have a datastream for #{derivative.name} derivatives" unless
-                                  object.datastreams.key?(derivative.datastream)
-        if generatable? derivative
-          generate_derivative derivative
+        if derivative.class.generatable?(object)
+          generate_derivative(derivative)
         else
           # Delete existing derivative (if there is one) if that type of derivative is no longer
           # applicable to the object
-          if object.datastreams[derivative.datastream].has_content?
-            delete_derivative derivative
+          if derivative.class.has_derivative?(object)
+            delete_derivative(derivative)
           end
         end
       end
@@ -44,38 +39,18 @@ module Ddr
       def generate_derivative(derivative)
         ActiveSupport::Notifications.instrument(Ddr::Notifications::UPDATE,
                                                 pid: object.pid,
-                                                summary: "Generate #{derivative.name.to_s} derivative"
+                                                summary: "Generate #{derivative.class.name} derivative"
                                                 ) do |payload|
-          generate_derivative! derivative
+          derivative.generate!(object)
         end
-      end
-
-      def generate_derivative!(derivative)
-        tempdir = FileUtils.mkdir(File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname('',nil))).first
-        generator_source = create_source_file(tempdir)
-        generator_output = File.new(File.join(tempdir, "output.out"), 'wb')
-        results = derivative.generator.new(generator_source.path, generator_output.path, derivative.options).generate
-        generator_source.close unless generator_source.closed?
-        if results.status.success?
-          generator_output = File.open(generator_output, 'rb')
-          object.reload if object.persisted?
-          object.add_file generator_output, path: derivative.datastream, mime_type: derivative.generator.output_mime_type
-          object.save!
-        else
-          Rails.logger.error results.stderr
-          raise Ddr::Models::DerivativeGenerationFailure,
-                  "Failure generating #{derivative.name} for #{object.pid}: #{results.stderr}"
-        end
-        generator_output.close unless generator_output.closed?
-        FileUtils.remove_dir(tempdir)
       end
 
       def delete_derivative(derivative)
         ActiveSupport::Notifications.instrument(Ddr::Notifications::UPDATE,
                                                 pid: object.pid,
-                                                summary: "Delete derivative #{derivative.name.to_s}"
+                                                summary: "Delete derivative #{derivative.class.name}"
                                                 ) do |payload|
-          delete_derivative! derivative
+          derivative.delete!(object)
         end
       end
 
@@ -92,27 +67,6 @@ module Ddr
           object = ActiveFedora::Base.find(pid)
           derivative = Ddr::Derivatives::DERIVATIVES[derivative_name.to_sym]
           object.derivatives.update_derivative(derivative)
-        end
-      end
-
-      private
-
-      def create_source_file(dir)
-        generator_source = File.new(File.join(dir, "source"), "wb")
-        generator_source.write(object.content.content)
-        generator_source.close
-        generator_source
-      end
-
-      def generatable?(derivative)
-        return false unless object.has_content?
-        case derivative.name
-        when :multires_image
-          object.content_type == "image/tiff"
-        when :thumbnail
-          object.image? || object.pdf?
-        else
-          false
         end
       end
 
