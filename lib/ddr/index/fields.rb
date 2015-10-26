@@ -24,7 +24,7 @@ module Ddr::Index
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
     CONTENT_CONTROL_GROUP       = Field.new :content_control_group, :searchable, type: :string
-    CONTENT_SIZE                = Field.new :content_size, :stored_sortable, type: :integer
+    CONTENT_SIZE                = Field.new :content_size, solr_name: "content_size_lsi"
     CONTENT_SIZE_HUMAN          = Field.new :content_size_human, :symbol
     CREATOR_FACET               = Field.new :creator_facet, :facetable
     DATE_FACET                  = Field.new :date_facet, :facetable
@@ -69,7 +69,7 @@ module Ddr::Index
     TECHMD_COLOR_SPACE          = Field.new :techmd_color_space, :symbol
     TECHMD_CREATING_APPLICATION = Field.new :techmd_creating_application, :symbol
     TECHMD_CREATION_TIME        = Field.new :techmd_creation_time, :stored_searchable, type: :date
-    TECHMD_FILE_SIZE            = Field.new :techmd_file_size, :stored_searchable, type: :integer
+    TECHMD_FILE_SIZE            = Field.new :techmd_file_size, solr_name: "techmd_file_size_lsi"
     TECHMD_FITS_VERSION         = Field.new :techmd_fits_version, :stored_sortable
     TECHMD_FITS_DATETIME        = Field.new :techmd_fits_datetime, :stored_sortable, type: :date
     TECHMD_FORMAT_LABEL         = Field.new :techmd_format_label, :symbol
