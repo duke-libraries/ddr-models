@@ -20,7 +20,7 @@ module Ddr
           validation = dsProfile["dsChecksumValid"] ? VALID : INVALID
           detail << DETAIL_TEMPLATE % {dsid: dsid, validation: validation}
         end
-        create(pid: result.pid,
+        create(pid: result.id,
                event_date_time: notification.time,
                outcome: result.success ? SUCCESS : FAILURE,
                detail: detail.join("\n")

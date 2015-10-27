@@ -82,7 +82,7 @@ RSpec.shared_examples "an event" do
     end
     context "when attributes are set" do
       let(:obj) { ActiveFedora::Base.create }
-      let(:event) { described_class.new(pid: obj.pid, outcome: Ddr::Events::Event::FAILURE, event_date_time: Time.utc(2013), software: "Test", summary: "A terrible disaster") }
+      let(:event) { described_class.new(pid: obj.id, outcome: Ddr::Events::Event::FAILURE, event_date_time: Time.utc(2013), software: "Test", summary: "A terrible disaster") }
       it "should not overwrite attributes" do
         expect { event.send(:set_defaults) }.not_to change { event.outcome }
         expect { event.send(:set_defaults) }.not_to change { event.event_date_time }
@@ -93,25 +93,25 @@ RSpec.shared_examples "an event" do
   end
 
   describe "object getter" do
-    subject { described_class.new(pid: "test:123") }
+    subject { described_class.new(pid: "test-123") }
     let(:object) { mock_object }
-    before { allow(ActiveFedora::Base).to receive(:find).with("test:123") { object } }
+    before { allow(ActiveFedora::Base).to receive(:find).with("test-123") { object } }
     it "should retrieve the object" do
       expect(subject.object).to eq object
     end
     it "should cache the object" do
-      expect(ActiveFedora::Base).to receive(:find).with("test:123").once
+      expect(ActiveFedora::Base).to receive(:find).with("test-123").once
       subject.object
       subject.object
     end
   end
 
   describe "object setter" do
-    let(:object) { mock_object(pid: "test:123") }
+    let(:object) { mock_object(id: "test-123") }
     it "should set the event pid and object" do
       allow(object).to receive(:new_record?) { false }
       subject.object = object
-      expect(subject.pid).to eq "test:123"
+      expect(subject.pid).to eq "test-123"
       expect(subject.object).to eq object
     end
     it "should raise an ArgumentError if object is a new record" do

@@ -13,7 +13,7 @@ RSpec.describe Collection, type: :model do
       component = Component.create
       docs = subject.components_from_solr
       expect(docs.size).to eq(1)
-      expect(docs.first.id).to eq(component.pid)
+      expect(docs.first.id).to eq(component.id)
     end
   end
 

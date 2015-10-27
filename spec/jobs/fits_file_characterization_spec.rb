@@ -24,7 +24,7 @@ module Ddr::Jobs
         before do
           allow(Open3).to receive(:capture3) { [ stdout_msg, stderr_msg,  $? ] }
           allow_any_instance_of(Process::Status).to receive(:success?) { true }
-          Ddr::Jobs::FitsFileCharacterization.perform(object.pid)
+          Ddr::Jobs::FitsFileCharacterization.perform(object.id)
           object.reload
         end
         it "should populate the fits datastream" do
@@ -38,7 +38,7 @@ module Ddr::Jobs
         before do
           allow(Open3).to receive(:capture3) { [ stdout_msg, stderr_msg,  $? ] }
           allow_any_instance_of(Process::Status).to receive(:success?) { false }
-          Ddr::Jobs::FitsFileCharacterization.perform(object.pid)
+          Ddr::Jobs::FitsFileCharacterization.perform(object.id)
           object.reload
         end
         it "should not populate the fits datastream" do

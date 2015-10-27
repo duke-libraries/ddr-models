@@ -6,22 +6,22 @@ RSpec.describe ActiveFedora::Base do
     let!(:collection) { FactoryGirl.create(:collection) }
     describe "when called on the wrong class" do
       it "should raise an exception" do
-        expect { Item.find(collection.pid) }.to raise_error(ActiveFedora::ActiveFedoraError)
+        expect { Item.find(collection.id) }.to raise_error(ActiveFedora::ActiveFedoraError)
       end
     end
     describe "when called on Ddr::Models::Base" do
       it "should cast to the object's class" do
-        expect(Ddr::Models::Base.find(collection.pid)).to eq(collection)
+        expect(Ddr::Models::Base.find(collection.id)).to eq(collection)
       end
     end
     describe "when called on ActiveFedora::Base" do
       it "should cast to the object's class" do
-        expect(ActiveFedora::Base.find(collection.pid)).to eq(collection)
+        expect(ActiveFedora::Base.find(collection.id)).to eq(collection)
       end
     end
     describe "when called on the object's class" do
       it "should return the object" do
-        expect(Collection.find(collection.pid)).to eq(collection)
+        expect(Collection.find(collection.id)).to eq(collection)
       end
     end
   end

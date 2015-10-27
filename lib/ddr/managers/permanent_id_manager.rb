@@ -21,13 +21,13 @@ module Ddr
       end
 
       def assign_later
-        Resque.enqueue(AssignmentJob, object.pid)
+        Resque.enqueue(AssignmentJob, object.id)
       end
 
       def assign
         raise Ddr::Models::Error, "Permanent ID already assigned." if object.permanent_id
         ActiveSupport::Notifications.instrument(Ddr::Notifications::UPDATE,
-                                                pid: object.pid,
+                                                pid: object.id,
                                                 software: SOFTWARE,
                                                 summary: ASSIGN_EVENT_SUMMARY
                                                 ) do |payload|

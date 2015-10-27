@@ -95,13 +95,13 @@ module Ddr::Utils
     objs = []
     ActiveFedora::Base.find_each( { Ddr::Index::Fields::IDENTIFIER_ALL => identifier }, { :cast => true } ) { |o| objs << o }
     pids = []
-    objs.each { |obj| pids << obj.pid }
+    objs.each { |obj| pids << obj.id }
     if model.present?
-      objs.each { |obj| pids.delete(obj.pid) unless obj.is_a?(model.constantize) }
+      objs.each { |obj| pids.delete(obj.id) unless obj.is_a?(model.constantize) }
     end
     if collection.present?
       objs.each do |obj|
-        pids.delete(obj.pid) unless obj == collection || obj.parent == collection
+        pids.delete(obj.id) unless obj == collection || obj.parent == collection
       end
     end
     case pids.size
