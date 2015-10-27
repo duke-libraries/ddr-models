@@ -8,7 +8,7 @@ module Ddr::Models
     let(:license) { License.new(url: url) }
     before { allow(License).to receive(:find).with(url: url) { license } }
 
-    let(:obj) { double(pid: "test:1", id: "test:1", license: nil, parent: nil, admin_policy: nil, admin_policy_id: nil) }
+    let(:obj) { double(id: "test-1", license: nil, parent: nil, admin_policy: nil, admin_policy_id: nil) }
 
     describe "when the object has a license" do
       before { allow(obj).to receive(:license) { url } }
@@ -17,7 +17,7 @@ module Ddr::Models
 
     describe "when the object does not have a license" do
       describe "and the object has a parent" do
-        let(:parent) { double(pid: "test:2", license: nil) }
+        let(:parent) { double(id: "test-2", license: nil) }
         before do
           allow(obj).to receive(:parent) { parent }
         end
@@ -33,11 +33,11 @@ module Ddr::Models
       end
       describe "and the object does not have a parent" do
         describe "and the object has an admin policy" do
-          let(:admin_policy) { double(pid: "test:3", id: "test:3", license: nil) }
+          let(:admin_policy) { double(id: "test-3", license: nil) }
           before { allow(obj).to receive(:admin_policy) { admin_policy } }
           describe "and the admin policy has a different id from the object" do
             before do
-              allow(obj).to receive(:admin_policy_id) { "test:3" }
+              allow(obj).to receive(:admin_policy_id) { "test-3" }
             end
             describe "and the admin policy has a license" do
               before do

@@ -11,7 +11,7 @@ module Ddr
 
       # Return result of fixity check
       def self._execute(object)
-        Result.new(pid: object.pid).tap do |r|
+        Result.new(pid: object.id).tap do |r|
           object.datastreams_to_validate.each do |dsid, ds|
             r.success &&= ds.dsChecksumValid
             r.results[dsid] = ds.profile

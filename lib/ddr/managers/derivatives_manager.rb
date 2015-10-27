@@ -19,7 +19,7 @@ module Ddr
             # - object already has this derivative (need to delete or replace it)
             # - the derivative can be generated for this object
           if derivative.class.has_derivative?(object) || derivative.class.generatable?(object)
-            schedule == SCHEDULE_NOW ? update_derivative(derivative) : Resque.enqueue(DerivativeJob, object.pid, derivative_to_update)
+            schedule == SCHEDULE_NOW ? update_derivative(derivative) : Resque.enqueue(DerivativeJob, object.id, derivative_to_update)
           end
         end
       end
@@ -38,7 +38,7 @@ module Ddr
 
       def generate_derivative(derivative)
         ActiveSupport::Notifications.instrument(Ddr::Notifications::UPDATE,
-                                                pid: object.pid,
+                                                pid: object.id,
                                                 summary: "Generate #{derivative.class.name} derivative"
                                                 ) do |payload|
           derivative.generate!(object)
@@ -47,7 +47,7 @@ module Ddr
 
       def delete_derivative(derivative)
         ActiveSupport::Notifications.instrument(Ddr::Notifications::UPDATE,
-                                                pid: object.pid,
+                                                pid: object.id,
                                                 summary: "Delete derivative #{derivative.class.name}"
                                                 ) do |payload|
           derivative.delete!(object)

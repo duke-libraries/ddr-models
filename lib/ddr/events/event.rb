@@ -45,7 +45,7 @@ module Ddr
       # Scopes
 
       def self.for_object(obj)
-        for_pid(obj.pid)
+        for_pid(obj.id)
       end
 
       def self.for_pid(pid)
@@ -92,7 +92,7 @@ module Ddr
 
       def object=(obj)
         raise ArgumentError, "Can't set to new object" if obj.new_record?
-        self.pid = obj.pid
+        self.pid = obj.id
         @object = obj
       end
 

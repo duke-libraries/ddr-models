@@ -19,7 +19,7 @@ module Ddr
       def permissions(obj)
         case obj
         when Ddr::Models::Base, SolrDocument
-          cached_permissions obj.pid do
+          cached_permissions obj.id do
             obj.effective_permissions(agents)
           end
         when String

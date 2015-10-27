@@ -65,20 +65,20 @@ module ActiveFedora
         context "the datstream is new" do
           before { allow(subject).to receive(:new_record?) { true } }
           it "should raise an exception" do
-            expect { subject.validate_checksum!(checksum, checksum_type) }.to raise_error
+            expect { subject.validate_checksum!("bb3200c2ddaee4bd7b9a4dc1ad3e10ed886eaef1") }.to raise_error(Ddr::Models::Error)
           end
         end
         context "the datastream content has changed" do
           before { allow(subject).to receive(:content_changed?) { true } }
           it "should raise an exception" do
-            expect { subject.validate_checksum!(checksum, checksum_type) }.to raise_error
+            expect { subject.validate_checksum!("bb3200c2ddaee4bd7b9a4dc1ad3e10ed886eaef1") }.to raise_error(Ddr::Models::Error)
           end
         end
       end
       context "with persisted content" do
         before do
           allow(subject).to receive(:new_record?) { false }
-          allow(subject).to receive(:pid) { "foobar:1" }
+          allow(subject).to receive(:pid) { "foobar-1" }
           allow(subject).to receive(:checksum) { checksum }
         end
         context "and the repository internal checksum in invalid" do
@@ -99,21 +99,19 @@ module ActiveFedora
           end
           context "and the checksum type is nil" do
             it "should compare the provided checksum with the datastream checksum" do
-              expect { subject.validate_checksum!(checksum.value) }
-                .not_to raise_error(Ddr::Models::Error)
+              expect { subject.validate_checksum!(checksum.value) }.not_to raise_error
             end
           end
           context "and the checksum type is the same as the datastream checksum type" do
             it "should compare the provided checksum with the datastream checksum" do
-              expect { subject.validate_checksum!(checksum.value, checksum.algorithm) }
-                .not_to raise_error(Ddr::Models::Error)
+              expect { subject.validate_checksum!(checksum.value, checksum.algorithm) }.not_to raise_error
             end
           end
           context "and the checksum type differs from the datastream checksum type" do
             let!(:md5digest) { "273ae0f4aa60d94e89bc0e0652ae2c8f" }
             it "should generate a checksum for comparison" do
               allow(subject).to receive(:content_digest).with("MD5") { md5digest }
-              expect { subject.validate_checksum!(md5digest, "MD5") }.not_to raise_error(Ddr::Models::Error)
+              expect { subject.validate_checksum!(md5digest, "MD5") }.not_to raise_error
             end
           end
           context "and the checksum doesn't match" do

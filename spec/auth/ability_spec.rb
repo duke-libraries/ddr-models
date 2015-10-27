@@ -21,11 +21,11 @@ module Ddr::Auth
         describe "\"#{dsid}\"" do
           let(:ds) { obj.datastreams[dsid] }
           describe "can #{permission.inspect} object" do
-            before { subject.can permission, obj.pid }
+            before { subject.can permission, obj.id }
             it { should be_able_to(:download, ds) }
           end
           describe "cannot #{permission.inspect} object" do
-            before { subject.cannot permission, obj.pid }
+            before { subject.cannot permission, obj.id }
             it { should_not be_able_to(:download, ds) }
           end
         end
@@ -35,7 +35,7 @@ module Ddr::Auth
         (Component.ds_specs.keys.map(&:to_s) - DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.keys).each do |dsid|
           describe "\"#{dsid}\"" do
             let(:ds) { obj.datastreams[dsid] }
-            before { subject.can :download, obj.pid }
+            before { subject.can :download, obj.id }
             it { should_not be_able_to(:download, ds) }
           end
         end
@@ -175,23 +175,23 @@ module Ddr::Auth
       end
 
       describe "with a Ddr model instance" do
-        let(:obj) { Collection.new(pid: "test:1") }
-        let(:cache_key) { obj.pid }
+        let(:obj) { Collection.new(id: "test-1") }
+        let(:cache_key) { obj.id }
         let(:perm_obj) { obj }
         it_behaves_like "it has role based abilities"
       end
 
       describe "with a Solr document" do
-        let(:obj) { SolrDocument.new({"id"=>"test:1"}) }
-        let(:cache_key) { obj.pid }
+        let(:obj) { SolrDocument.new({"id"=>"test-1"}) }
+        let(:cache_key) { obj.id }
         let(:perm_obj) { obj }
         it_behaves_like "it has role based abilities"
       end
 
       describe "with a String" do
-        let(:obj) { "test:1" }
+        let(:obj) { "test-1" }
         let(:cache_key) { obj }
-        let(:perm_obj) { SolrDocument.new({"id"=>"test:1"}) }
+        let(:perm_obj) { SolrDocument.new({"id"=>"test-1"}) }
         before do
           allow_any_instance_of(RoleBasedAbilityDefinitions).to receive(:permissions_doc).with(obj) { perm_obj }
         end

@@ -36,7 +36,7 @@ module Ddr
         when other.has_admin_policy?
           other.admin_policy_id
         when other.is_a?(Collection)
-          other.pid
+          other.id
         end
         # self.admin_policy_id = other.admin_policy_id if other.has_admin_policy?
       end
