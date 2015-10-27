@@ -4,6 +4,7 @@ RSpec.shared_examples "a DDR model" do
   it_behaves_like "a governable object"
   it_behaves_like "an object that has a display title"
   it_behaves_like "an object that has identifiers"
+  it_behaves_like "a fixity checkable object"
 
   describe "events" do
     describe "on deletion with #destroy" do

@@ -17,7 +17,8 @@ module Ddr
         result = notification.payload[:result] # FixityCheck::Result instance
         detail = [DETAIL_PREAMBLE]
         result.results.each do |dsid, dsProfile|
-          validation = dsProfile["dsChecksumValid"] ? VALID : INVALID
+          # validation = dsProfile["dsChecksumValid"] ? VALID : INVALID
+          validation = dsProfile["checksum_valid"] ? VALID : INVALID
           detail << DETAIL_TEMPLATE % {dsid: dsid, validation: validation}
         end
         create(pid: result.id,
