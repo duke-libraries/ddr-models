@@ -53,9 +53,11 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
+    autoload :ObjectApi
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
+    autoload :UrlSafeId
     autoload :YearFacet
 
     autoload_under "licenses" do
@@ -69,8 +71,7 @@ module Ddr
     autoload_under "metadata" do
       autoload :DescriptiveMetadata
       autoload :Metadata
-      autoload :MetadataMapper
-      autoload :MetadataMappers
+      autoload :MetadataMapping
       autoload :MetadataTerm
       autoload :MetadataVocabulary
       autoload :MetadataVocabularies
