@@ -32,6 +32,8 @@ module Ddr
 
     autoload :AccessControllable
     autoload :AdminSet
+    autoload :AttachedFileProfile
+    autoload :AttachedFilesProfile
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :ContentModelError, 'ddr/models/error'

@@ -1,7 +1,7 @@
 module Ddr::Models
   RSpec.describe Indexing do
 
-    let(:obj) { FactoryGirl.build(:item) }
+    let(:obj) { FactoryGirl.create(:item) }
 
     let(:role1) { FactoryGirl.build(:role, :curator, :person, :resource) }
     let(:role2) { FactoryGirl.build(:role, :curator, :person, :policy) }

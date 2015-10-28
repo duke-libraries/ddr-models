@@ -11,3 +11,5 @@ notifications:
   email:
     - lib-drs@duke.edu
 bundler_args: --without production
+jdk:
+  - oraclejdk8

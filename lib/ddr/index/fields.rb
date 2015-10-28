@@ -18,6 +18,7 @@ module Ddr::Index
     ACTIVE_FEDORA_MODEL         = Field.new :active_fedora_model, :stored_sortable
     ADMIN_SET                   = Field.new :admin_set, :stored_sortable
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
+    ATTACHED_FILES              = Field.new :attached_files, solr_name: "attached_files_ss"
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_URI              = Field.new :collection_uri, :symbol

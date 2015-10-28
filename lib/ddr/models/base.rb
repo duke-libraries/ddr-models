@@ -16,6 +16,10 @@ module Ddr
         notify_event :deletion
       end
 
+      def attached_files_profile
+        AttachedFilesProfile.new(self.attached_files)
+      end
+
       def copy_admin_policy_or_roles_from(other)
         copy_resource_roles_from(other) unless copy_admin_policy_from(other)
       end
