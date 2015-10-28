@@ -13,6 +13,7 @@ module Ddr
         fields = {
           ACCESS_ROLE           => roles.to_json,
           ADMIN_SET             => admin_set,
+          ATTACHED_FILES        => attached_files_profile.to_json,
           BOX_NUMBER_FACET      => desc_metadata_values('box_number'),
           CREATOR_FACET         => descMetadata.creator,
           DATE_FACET            => descMetadata.date,
