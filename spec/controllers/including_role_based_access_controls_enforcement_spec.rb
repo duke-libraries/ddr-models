@@ -1,7 +1,6 @@
 RSpec.describe ApplicationController, type: :controller do
 
   controller do
-    include Hydra::AccessControlsEnforcement
     include Ddr::Auth::RoleBasedAccessControlsEnforcement
   end
 

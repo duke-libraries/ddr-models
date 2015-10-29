@@ -1,3 +1,5 @@
+require 'cancancan'
+
 module Ddr::Auth
   # @abstract
   class AbstractAbility
