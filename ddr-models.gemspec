@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 4.1.13"
   s.add_dependency "active-triples", "~> 0.7.2"
   s.add_dependency "active-fedora", "~> 9.5"
-  s.add_dependency "hydra-core", "~> 9.3"
   s.add_dependency "hydra-validations", "~> 0.5"
   s.add_dependency "devise", "~> 3.4"
   s.add_dependency "omniauth-shibboleth", "~> 1.2.0"
@@ -42,4 +41,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "factory_girl_rails", "~> 4.4"
   s.add_development_dependency "jettywrapper", "~> 2.0"
   s.add_development_dependency "database_cleaner"
+  s.add_development_dependency "blacklight", "~> 5.15"
 end
