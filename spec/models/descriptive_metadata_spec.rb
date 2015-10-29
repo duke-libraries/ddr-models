@@ -1,7 +1,4 @@
 require 'spec_helper'
-require 'rdf/isomorphic'
-
-include RDF::Isomorphic
 
 module Ddr::Models
   RSpec.describe DescriptiveMetadata do

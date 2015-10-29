@@ -19,9 +19,9 @@ RSpec.shared_examples "a describable object" do
     describe "arguments" do
       it "with fixed results" do
         expect(object.desc_metadata_terms(:dcterms))
-          .to eq(Ddr::Models::MetadataMapper.dc11.unqualified_names + (Ddr::Models::MetadataMapper.dcterms.unqualified_names - Ddr::Models::MetadataMapper.dc11.unqualified_names))
+          .to eq(Ddr::Models::MetadataMapping.dc11.unqualified_names + (Ddr::Models::MetadataMapping.dcterms.unqualified_names - Ddr::Models::MetadataMapping.dc11.unqualified_names))
         expect(object.desc_metadata_terms(:dcterms))
-          .to match_array(Ddr::Models::MetadataMapper.dcterms.unqualified_names)
+          .to match_array(Ddr::Models::MetadataMapping.dcterms.unqualified_names)
         expect(object.desc_metadata_terms(:duke)).to eq Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms)
         expect(object.desc_metadata_terms(:dcterms_elements11)).to eq Ddr::Vocab::Vocabulary.term_names(RDF::DC11)
         expect(object.desc_metadata_terms(:defined_attributes)).to match_array Ddr::Vocab::Vocabulary.term_names(RDF::DC11)

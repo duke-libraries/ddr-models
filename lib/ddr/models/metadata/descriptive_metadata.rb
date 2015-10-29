@@ -5,21 +5,15 @@ module Ddr::Models
     extend Forwardable
     include Metadata
 
+    class_attribute :mappings
+
     class << self
-      def mappers
-        [ MetadataMapper.dcterms, MetadataMapper.duketerms ]
-      end
-
-      def mapper
-        @mapper ||= mappers.reduce(&:merge)
-      end
-
       def mapping
-        mapper.mapping
+        @mapping ||= mappings.reduce(&:merge)
       end
 
       def unqualified_names
-        mapper.unqualified_names
+        mapping.unqualified_names
       end
 
       def field_names
@@ -31,6 +25,8 @@ module Ddr::Models
         field_names.map { |name| "#{name}=".to_sym }
       end
     end
+
+    self.mappings = [ MetadataMapping.dcterms, MetadataMapping.duketerms ].freeze
 
     attr_reader :object
 

@@ -31,8 +31,8 @@ module Ddr::Models
               when :required
                 desc_metadata_terms(:defined_attributes).select {|t| required? t}
               when :dcterms
-                MetadataMapper.dc11.unqualified_names +
-                  (MetadataMapper.dcterms.unqualified_names - MetadataMapper.dc11.unqualified_names)
+                MetadataMapping.dc11.unqualified_names +
+                  (MetadataMapping.dcterms.unqualified_names - MetadataMapping.dc11.unqualified_names)
               when :dcterms_elements11
                 Ddr::Vocab::Vocabulary.term_names(RDF::DC11)
               when :duke
@@ -48,7 +48,7 @@ module Ddr::Models
     end
 
     def desc_metadata_attributes
-      MetadataMapper.dc11.unqualified_names
+      MetadataMapping.dc11.unqualified_names
     end
 
     def desc_metadata_values(term)
