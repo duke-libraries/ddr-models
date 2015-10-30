@@ -73,6 +73,11 @@ module Ddr
       autoload :MetadataVocabularies
     end
 
+    autoload_under "search" do
+      autoload :Catalog
+      autoload :SearchBuilder
+    end
+
     # Base directory of default external file store
     mattr_accessor :external_file_store
 
