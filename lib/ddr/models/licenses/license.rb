@@ -15,7 +15,7 @@ module Ddr::Models
     end
 
     def pid
-      Deprecation.warn(License, "Use `object_id` instead.")
+      Deprecation.warn(License, "`pid` is deprecated; use `object_id` instead.")
       object_id
     end
 

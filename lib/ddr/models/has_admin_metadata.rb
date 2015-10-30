@@ -35,13 +35,6 @@ module Ddr::Models
                predicate: RDF::Vocab::Identifiers.local,
                multiple: false
 
-      # XXX Is this admin metadata?
-      property :original_filename,
-               predicate: Ddr::Vocab::PREMIS.hasOriginalName,
-               multiple: false do |index|
-        index.as :stored_sortable
-      end
-
       property :permanent_id,
                predicate: Ddr::Vocab::Asset.permanentId,
                multiple: false

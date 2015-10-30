@@ -4,6 +4,7 @@ module Ddr
   module Models
     module HasContent
       extend ActiveSupport::Concern
+      extend Deprecation
 
       MASTER_FILE_TYPES = [ "image/tiff" ]
 
@@ -38,6 +39,14 @@ module Ddr
       def upload!(file, opts={})
         upload(file, opts)
         save
+      end
+
+      def original_filename
+        content.original_name
+      end
+
+      def original_filename=(filename)
+        content.original_name = filename
       end
 
       def derivatives
