@@ -54,7 +54,7 @@ class Collection < Ddr::Models::Base
 
   def set_admin_policy
     self.admin_policy = self
-    self.save
+    save
   end
 
 end

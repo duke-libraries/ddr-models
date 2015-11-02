@@ -1,5 +1,6 @@
 module Ddr::Models
   class Base < ActiveFedora::Base
+    extend Deprecation
 
     include ObjectApi
     include Describable
@@ -16,21 +17,29 @@ module Ddr::Models
       notify_event :deletion
     end
 
+    def inspect
+      "#<#{model_and_id}, uri: \"#{uri}\">"
+    end
+
     def attached_files_profile
       AttachedFilesProfile.new(attached_files)
     end
 
     def copy_admin_policy_or_roles_from(other)
-      copy_resource_roles_from(other) unless copy_admin_policy_from(other)
+      copy_admin_policy_from(other) || copy_resource_roles_from(other)
     end
 
     def association_query(association)
       raise NotImplementedError, "The previous implementation does not work with ActiveFedora 9."
     end
 
-    # e.g., "Collection duke:1"
+    def model_and_id
+      "#{self.class} id: #{id.inspect || '[NEW]'}"
+    end
+
     def model_pid
-      [self.class.to_s, pid].join(" ")
+      Deprecation.warn(Base, "`model_pid` is deprecated; use `model_and_id` instead.")
+      model_and_id
     end
 
     # @override ActiveFedora::Core

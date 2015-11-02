@@ -1,5 +1,6 @@
 module Ddr::Index
   module Fields
+    extend Deprecation
 
     def self.get(name)
       const_get(name.to_s.upcase, false)
@@ -11,8 +12,15 @@ module Ddr::Index
         .map    { |c| const_get(c) }
     end
 
+    def self.const_missing(name)
+      if name == :PID
+        Deprecation.warn(Fields, "The constant `:PID` is deprecated; use `:ID` instead.")
+        return ID
+      end
+      super
+    end
+
     ID = UniqueKeyField.instance
-    PID = UniqueKeyField.instance
 
     ACCESS_ROLE                 = Field.new :access_role, :stored_sortable
     ACTIVE_FEDORA_MODEL         = Field.new :active_fedora_model, :stored_sortable
@@ -54,6 +62,7 @@ module Ddr::Index
     OBJECT_STATE                = Field.new :object_state, :stored_sortable
     OBJECT_CREATE_DATE          = Field.new :system_create, :stored_sortable, type: :date
     OBJECT_MODIFIED_DATE        = Field.new :system_modified, :stored_sortable, type: :date
+    ORIGINAL_FILENAME           = Field.new :original_filename, :stored_sortable
     PERMANENT_ID                = Field.new :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = Field.new :permanent_url, :stored_sortable, type: :string
     POLICY_ROLE                 = Field.new :policy_role, :symbol
