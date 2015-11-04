@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency "net-ldap", "~> 0.11"
   s.add_dependency "cancancan", "~> 1.12"
   s.add_dependency "ddr-aux-client", "~> 1.2", ">= 1.2.2"
-  s.add_dependency "ddr-antivirus", "2.0.0"
+  s.add_dependency "ddr-antivirus", "~> 2.1.1"
 
   s.add_development_dependency "bundler", "~> 1.7"
   s.add_development_dependency "rake"
