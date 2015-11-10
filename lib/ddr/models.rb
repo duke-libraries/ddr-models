@@ -34,7 +34,6 @@ module Ddr
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :ContentModelError, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
-    autoload :Describable
     autoload :Error
     autoload :EventLoggable
     autoload :FileManagement
