@@ -6,16 +6,6 @@ module Ddr
       extend ActiveSupport::Concern
       extend Deprecation
 
-      MASTER_FILE_TYPES = [ "image/tiff" ]
-
-      def master_file?
-        if respond_to?(:file_use) && file_use.present?
-          file_use == Ddr::Models::HasStructMetadata::FILE_USE_MASTER
-        else
-          MASTER_FILE_TYPES.include?(content_type)
-        end
-      end
-
       included do
         contains Ddr::Datastreams::CONTENT
         contains Ddr::Datastreams::EXTRACTED_TEXT, class_name: 'Ddr::Datastreams::PlainTextDatastream'
