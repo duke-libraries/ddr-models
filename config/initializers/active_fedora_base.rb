@@ -1,5 +1,4 @@
-module ActiveFedora
-  class Base
+ActiveFedora::Base.class_eval do
 
     def can_have_attachments?
       has_association? :attachments
@@ -26,8 +25,9 @@ module ActiveFedora
     end
 
     def describable?
-      self.is_a? Ddr::Models::Describable
+      self.is_a? Ddr::Models::Base
     end
+    deprecation_deprecate :describable?
 
     def governable?
       has_association? :admin_policy
@@ -85,5 +85,4 @@ module ActiveFedora
       !association(assoc).nil?
     end
 
-  end
 end
