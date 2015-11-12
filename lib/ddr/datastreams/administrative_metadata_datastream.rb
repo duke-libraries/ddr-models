@@ -46,6 +46,9 @@ module Ddr
       property :ead_id,
                predicate: Ddr::Vocab::Asset.eadId
 
+      property :aspace_id,
+               predicate: Ddr::Vocab::Asset.archivesSpaceId
+
     end
   end
 end
