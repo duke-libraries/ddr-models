@@ -53,6 +53,8 @@ module Ddr
     autoload :StructDiv
     autoload :Structure
     autoload :UrlSafeId
+    autoload :Validatable
+    autoload :Validator
     autoload :YearFacet
 
     autoload_under "licenses" do

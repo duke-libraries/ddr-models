@@ -2,14 +2,14 @@ module Ddr::Auth
   module Roles
     extend ActiveSupport::Autoload
 
-    autoload :DetachedRoleSet
-    autoload :PropertyRoleSet
     autoload :Role
+    autoload :RoleAttribute
     autoload :RoleSet
+    autoload :RoleSetManager
     autoload :RoleSetQuery
-    autoload :RolesDatastream
     autoload :RoleType
     autoload :RoleTypes
+    autoload :RoleValidator
 
     include RoleTypes
 

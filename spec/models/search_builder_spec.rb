@@ -26,11 +26,11 @@ module Ddr::Models
     describe "#policy_role_policies" do
       let(:collections) { FactoryGirl.build_list(:collection, 3) }
       before do
-        collections[0].roles.grant type: "Editor", agent: "foo", scope: "policy"
+        collections[0].roles.grant role_type: "Editor", agent: "foo", scope: "policy"
         collections[0].save
-        collections[1].roles.grant type: "Contributor", agent: "bar", scope: "policy"
+        collections[1].roles.grant role_type: "Contributor", agent: "bar", scope: "policy"
         collections[1].save
-        collections[2].roles.grant type: "Viewer", agent: "foo:bar", scope: "policy"
+        collections[2].roles.grant role_type: "Viewer", agent: "foo:bar", scope: "policy"
         collections[2].save
       end
       it "returns a list of IDs for collections on which the current ability has a role" do

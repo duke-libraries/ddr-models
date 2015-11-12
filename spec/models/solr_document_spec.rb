@@ -82,12 +82,12 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
   end
 
   describe "#roles" do
-    let(:json) { "[{\"role_type\":[\"Editor\"],\"agent\":[\"Editors\"],\"scope\":[\"policy\"]},{\"role_type\":[\"Contributor\"],\"agent\":[\"bob@example.com\"],\"scope\":[\"resource\"]}]" }
+    let(:json) { "{\"roles\":[{\"role_type\":\"Editor\",\"agent\":\"Editors\",\"scope\":\"policy\"},{\"role_type\":\"Contributor\",\"agent\":\"bob@example.com\",\"scope\":\"resource\"}]}" }
     before { subject[Ddr::Index::Fields::ACCESS_ROLE] = json }
     it "should deserialize the roles from JSON" do
       expect(subject.roles.to_a)
-        .to eq([Ddr::Auth::Roles::Role.build(type: "Editor", agent: "Editors", scope: "policy"),
-                Ddr::Auth::Roles::Role.build(type: "Contributor", agent: "bob@example.com", scope: "resource")])
+        .to eq([Ddr::Auth::Roles::Role.build(role_type: "Editor", agent: "Editors", scope: "policy"),
+                Ddr::Auth::Roles::Role.build(role_type: "Contributor", agent: "bob@example.com", scope: "resource")])
     end
   end
 

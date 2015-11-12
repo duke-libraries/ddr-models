@@ -27,8 +27,8 @@ module Ddr::Models
     its([Indexing::PERMANENT_URL]) { is_expected.to eq("http://id.library.duke.edu/ark:/99999/fk4zzz") }
     its([Indexing::DISPLAY_FORMAT]) { is_expected.to eq("Image") }
     its([Indexing::ACCESS_ROLE]) { is_expected.to eq(obj.roles.to_json) }
-    its([Indexing::POLICY_ROLE]) { is_expected.to contain_exactly(role2.agent.first, role3.agent.first, role4.agent.first) }
-    its([Indexing::RESOURCE_ROLE]) { is_expected.to contain_exactly(role1.agent.first) }
+    its([Indexing::POLICY_ROLE]) { is_expected.to contain_exactly(role2.agent, role3.agent, role4.agent) }
+    its([Indexing::RESOURCE_ROLE]) { is_expected.to contain_exactly(role1.agent) }
 
   end
 end

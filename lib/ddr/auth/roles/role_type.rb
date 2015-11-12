@@ -16,6 +16,7 @@ module Ddr
         def to_s
           title
         end
+        # alias_method :to_str, :to_s
 
       end
     end

@@ -46,8 +46,12 @@ class Collection < Ddr::Models::Base
   end
 
   def grant_roles_to_creator(creator)
-    roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::RESOURCE_SCOPE
-    roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::POLICY_SCOPE
+    roles.grant role_type: Ddr::Auth::Roles::CURATOR,
+                agent: creator.agent,
+                scope: Ddr::Auth::Roles::RESOURCE_SCOPE
+    roles.grant role_type: Ddr::Auth::Roles::CURATOR,
+                agent: creator.agent,
+                scope: Ddr::Auth::Roles::POLICY_SCOPE
   end
 
   private
