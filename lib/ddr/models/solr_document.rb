@@ -19,7 +19,7 @@ module Ddr::Models
     end
 
     def pid
-      Deprecation.warn(SolrDocument, "Use `id` instead.")
+      Deprecation.warn(SolrDocument, "`pid` is deprecated; use `id` instead.")
       id
     end
 
@@ -50,6 +50,10 @@ module Ddr::Models
 
     def safe_id
       id.sub(/:/, "-")
+    end
+
+    def access_roles
+      get(Ddr::Index::Fields::ACCESS_ROLE)
     end
 
     def object_profile
@@ -177,7 +181,7 @@ module Ddr::Models
     end
 
     def roles
-      @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
+      @roles ||= Ddr::Auth::Roles::RoleSetManager.new(self)
     end
 
     def struct_maps

@@ -6,7 +6,9 @@ module Ddr::Models
     extend ActiveSupport::Concern
 
     included do
-      contains "accessRoles", class_name: "Ddr::Auth::Roles::RolesDatastream"
+      property :access_roles,
+               predicate: Ddr::Vocab::Roles.roleSet,
+               multiple: false
 
       property :admin_set,
                predicate: Ddr::Vocab::Asset.adminSet,
@@ -62,7 +64,7 @@ module Ddr::Models
     end
 
     def roles
-      Ddr::Auth::Roles::PropertyRoleSet.new(accessRoles.roles)
+      Ddr::Auth::Roles::RoleSetManager.new(self)
     end
 
     def inherited_roles
@@ -78,13 +80,13 @@ module Ddr::Models
     end
 
     def grant_roles_to_creator(creator)
-      roles.grant type: Ddr::Auth::Roles::EDITOR,
+      roles.grant role_type: Ddr::Auth::Roles::EDITOR,
                   agent: creator,
                   scope: Ddr::Auth::Roles::RESOURCE_SCOPE
     end
 
     def copy_resource_roles_from(other)
-      roles.grant *(other.roles.in_resource_scope)
+      roles.grant *(Ddr::Auth::ResourceRoles.call(other))
     end
 
     def effective_permissions(agents)

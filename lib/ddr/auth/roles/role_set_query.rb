@@ -8,14 +8,13 @@ module Ddr::Auth
     class RoleSetQuery
       include Enumerable
 
-      attr_reader :role_set
+      attr_reader :criteria, :role_set
+
+      delegate :each, :agents, :permissions, :empty?, to: :result
 
       def initialize(role_set)
         @role_set = role_set
-      end
-
-      def criteria
-        @criteria ||= {}
+        @criteria = {}
       end
 
       def where(conditions={})
@@ -45,24 +44,13 @@ module Ddr::Auth
       end
       alias_method :type, :role_type
 
-      def each(&block)
-        role_set.select { |role| matches_all?(role) }.each(&block)
+      def merge(other_query)
+        where(other_query.criteria)
       end
 
-      # Return the list of agents for the Roles matching the criteria.
-      # @return [Array] the agents
-      def agents
-        map { |role| role.agent.first }
-      end
-
-      # Return a list of the permissions granted to the Roles matching the criteria.
-      # @return [Array<Symbol>] the permissions
-      def permissions
-        map(&:permissions).flatten.uniq
-      end
-
-      def detach
-        DetachedRoleSet.new(self)
+      def result
+        matching_roles = role_set.select { |role| matches_all?(role) }
+        RoleSet.new(roles: matching_roles)
       end
 
       private
@@ -77,7 +65,7 @@ module Ddr::Auth
       end
 
       def matches_one?(role, key, value)
-        Array(value).include?(role.send(key).first)
+        Array(value).include? role.send(key)
       end
 
     end
