@@ -18,7 +18,7 @@ module Ddr::Jobs
       private
 
       def __queue__
-        @__queue__ = Queue.new(Resque.queue_from_class(self))
+        Queue.new(Resque.queue_from_class(self))
       end
     end
 
