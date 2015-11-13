@@ -79,6 +79,10 @@ module Ddr::Auth
           expect(subject.granted?(role1.to_h)).to be true
           expect(subject.granted?(role2.to_h)).to be false
         end
+        it "coerces argument to Role" do
+          expect(subject.granted?(role_type: Roles::EDITOR, agent: role1.agent, scope: "resource"))
+            .to be true
+        end
       end
 
     end
