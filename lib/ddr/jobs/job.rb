@@ -15,10 +15,20 @@ module Ddr::Jobs
         __queue__.jobs(**args).map { |job| job["args"].first }
       end
 
+      protected
+
+      def method_missing(name, *args, &block)
+        # If .queue method not defined, do the right thing
+        if name == :queue
+          return Resque.queue_from_class(self)
+        end
+        super
+      end
+
       private
 
       def __queue__
-        Queue.new(Resque.queue_from_class(self))
+        Queue.new(queue)
       end
     end
 
