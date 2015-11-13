@@ -18,6 +18,9 @@
       property "eadId",
         label: "EAD ID"
 
+      property "archivesSpaceId",
+        label: "ArchivesSpace Identifier"
+
     end
   end
 end

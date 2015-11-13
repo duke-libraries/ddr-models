@@ -20,6 +20,7 @@ module Ddr::Models
                      :research_help_contact,
                      :workflow_state,
                      :ead_id,
+                     :aspace_id,
                      datastream: "adminMetadata",
                      multiple: false
 
