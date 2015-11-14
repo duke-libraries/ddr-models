@@ -20,7 +20,7 @@ module Ddr::Auth
         if role.is_a?(Role)
           role_set.include?(role)
         else
-          !where(role).empty?
+          granted? Role.new(role)
         end
       end
 
