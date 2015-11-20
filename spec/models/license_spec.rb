@@ -8,7 +8,9 @@ module Ddr::Models
         let(:url) { "http://example.com" }
         let(:obj) { double(pid: "test:1", license: url) }
         before do
-          allow(described_class).to receive(:find).with(url: url) { described_class.new(url: url, title: "A License") }
+          allow(described_class).to receive(:get).with(:find, url: url) do
+            described_class.new(url: url, title: "A License")
+          end
         end
         its(:pid) { is_expected.to eq("test:1") }
         its(:to_s) { is_expected.to eq("A License") }
