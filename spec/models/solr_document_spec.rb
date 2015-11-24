@@ -128,9 +128,12 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
 
   describe "contacts" do
     before do
-      allow(YAML).to receive(:load_file) { { 'xa' => { 'name' => 'Contact A', 'short_name' => 'A' },
-                                             'yb' => { 'name' => 'Contact B', 'short_name' => 'B' } } }
-      Ddr::Contacts.load_contacts
+      allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'xa') do
+        Ddr::Models::Contact.new('id'=>1, 'slug'=>'xa', 'name'=>'Contact A', 'short_name'=>'A')
+      end
+      allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'yb') do
+        Ddr::Models::Contact.new('id'=>1, 'slug'=>'yb', 'name'=>'Contact B', 'short_name'=>'B')
+      end
     end
     describe "#research_help" do
       context "object has research help contact" do
