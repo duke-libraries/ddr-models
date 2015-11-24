@@ -7,6 +7,5 @@ script: "bundle exec rake ci"
 cache:
   - bundler
   - apt
-notifications:
-  email:
-    - lib-drs@duke.edu
+env:
+  - DDR_AUX_API_URL=http://localhost:3000/api
