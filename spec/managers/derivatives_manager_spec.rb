@@ -85,7 +85,7 @@ module Ddr
             object.derivatives.update_derivatives(:now)
           end
         end
-end
+      end
 
       describe "derivative generation" do
         let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
@@ -117,6 +117,18 @@ end
         let(:object) { MultiresImageable.create }
         it "should create an update event for each derivative updated" do
           expect {object.derivatives.update_derivatives(:now) }.to change { object.update_events.count }.by(2)
+        end
+      end
+
+      describe "exception during derivative generation" do
+        let(:object) { ContentBearing.create }
+        before do
+          allow(Dir::Tmpname).to receive(:make_tmpname).with('', nil) { 'test-temp-dir' }
+          # simulate raising of exception during derivative generation
+          allow_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:generate_derivative!).and_raise(StandardError)
+        end
+        it "should delete the temporary work directory" do
+          expect(File.exist?(File.join(Dir.tmpdir, 'test-temp-dir'))).to be false
         end
       end
 

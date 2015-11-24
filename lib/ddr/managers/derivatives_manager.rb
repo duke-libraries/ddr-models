@@ -51,23 +51,27 @@ module Ddr
       end
 
       def generate_derivative!(derivative)
-        tempdir = FileUtils.mkdir(File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname('',nil))).first
-        generator_source = create_source_file(tempdir)
-        generator_output = File.new(File.join(tempdir, "output.out"), 'wb')
-        results = derivative.generator.new(generator_source.path, generator_output.path, derivative.options).generate
-        generator_source.close unless generator_source.closed?
-        if results.status.success?
-          generator_output = File.open(generator_output, 'rb')
-          object.reload if object.persisted?
-          object.add_file generator_output, derivative.datastream, mime_type: derivative.generator.output_mime_type
-          object.save!
-        else
-          Rails.logger.error results.stderr
-          raise Ddr::Models::DerivativeGenerationFailure,
-                  "Failure generating #{derivative.name} for #{object.pid}: #{results.stderr}"
+        tempdir_path = File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname('',nil))
+        begin
+          tempdir = FileUtils.mkdir(tempdir_path).first
+          generator_source = create_source_file(tempdir)
+          generator_output = File.new(File.join(tempdir, "output.out"), 'wb')
+          results = derivative.generator.new(generator_source.path, generator_output.path, derivative.options).generate
+          generator_source.close unless generator_source.closed?
+          if results.status.success?
+            generator_output = File.open(generator_output, 'rb')
+            object.reload if object.persisted?
+            object.add_file generator_output, derivative.datastream, mime_type: derivative.generator.output_mime_type
+            object.save!
+          else
+            Rails.logger.error results.stderr
+            raise Ddr::Models::DerivativeGenerationFailure,
+                    "Failure generating #{derivative.name} for #{object.pid}: #{results.stderr}"
+          end
+          generator_output.close unless generator_output.closed?
+        ensure
+          FileUtils.remove_dir(tempdir_path) if File.exist?(tempdir_path)
         end
-        generator_output.close unless generator_output.closed?
-        FileUtils.remove_dir(tempdir)
       end
 
       def delete_derivative(derivative)
