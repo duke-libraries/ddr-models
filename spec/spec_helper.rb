@@ -1,5 +1,7 @@
 ENV['RAILS_ENV'] ||= "test"
 
+ENV['DDR_AUX_API_URL'] ||= "http://localhost:3000/api"
+
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 
 require "ddr-models"
