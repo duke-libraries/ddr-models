@@ -14,7 +14,6 @@ module Ddr
 
   autoload :Actions
   autoload :Auth
-  autoload :Contacts
   autoload :Datastreams
   autoload :Derivatives
   autoload :Events
@@ -34,6 +33,7 @@ module Ddr
     autoload :AdminSet
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
+    autoload :Contact
     autoload :ContentModelError, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :Describable

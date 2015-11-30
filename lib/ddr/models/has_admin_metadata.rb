@@ -65,7 +65,7 @@ module Ddr::Models
     end
 
     def research_help
-      Ddr::Contacts.get(research_help_contact) if research_help_contact
+      Ddr::Models::Contact.call(research_help_contact) if research_help_contact
     end
 
     def effective_license

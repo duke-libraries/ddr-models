@@ -189,7 +189,7 @@ module Ddr::Models
 
     def research_help
       research_help_contact = self[Ddr::Index::Fields::RESEARCH_HELP_CONTACT] || inherited_research_help_contact
-      Ddr::Contacts.get(research_help_contact) if research_help_contact
+      Ddr::Models::Contact.call(research_help_contact) if research_help_contact
     end
 
     def parent_uri
