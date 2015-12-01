@@ -11,7 +11,7 @@ module Ddr::Jobs
     def self.perform(pid)
       obj = ActiveFedora::Base.find(pid)
       tmp_filename = Ddr::Utils::sanitize_filename(obj.original_filename) || obj.content.default_file_name
-      Dir.mktmpdir do |dir|
+      Dir.mktmpdir(nil, Ddr::Models.tempdir) do |dir|
         infile = create_temp_infile(dir, tmp_filename, obj.content.content)
         fits_output, err, status = Open3.capture3(fits_command, '-i', infile)
         if status.success? && fits_output.present?
