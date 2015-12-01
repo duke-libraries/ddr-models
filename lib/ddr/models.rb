@@ -98,6 +98,11 @@ module Ddr
       "http://library.duke.edu/rubenstein/findingaids/"
     end
 
+    # Application temp dir - defaults to system temp dir
+    mattr_accessor :tempdir do
+      Dir.tmpdir
+    end
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self
