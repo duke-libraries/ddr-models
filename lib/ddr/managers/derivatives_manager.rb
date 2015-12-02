@@ -114,7 +114,7 @@ module Ddr
         when :multires_image
           object.content_type == "image/tiff"
         when :thumbnail
-          object.image? || object.pdf?
+          object.image?
         else
           false
         end
