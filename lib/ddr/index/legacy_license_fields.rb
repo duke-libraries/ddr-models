@@ -1,7 +1,8 @@
 module Ddr::Index
   module LegacyLicenseFields
+    extend Deprecation
 
-    warn "[DEPRECATION] `Ddr::Index::LegacyLicenseFields` is deprecated and will be removed from ddr-models 3.0."
+    Deprecation.warn(LegacyLicenseFields, "`Ddr::Index::LegacyLicenseFields` is deprecated and will be removed from ddr-models 3.0.")
 
     DEFAULT_LICENSE_DESCRIPTION = Field.new :default_license_description, type: :string
     DEFAULT_LICENSE_TITLE       = Field.new :default_license_title, type: :string
