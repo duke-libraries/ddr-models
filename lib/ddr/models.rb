@@ -39,6 +39,7 @@ module Ddr
     autoload :Describable
     autoload :Error
     autoload :EventLoggable
+    autoload :FileCharacterization
     autoload :FileManagement
     autoload :FindingAid
     autoload :FixityCheckable
@@ -54,6 +55,7 @@ module Ddr
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
+    autoload :WithContentFile
     autoload :YearFacet
 
     autoload_under "licenses" do
