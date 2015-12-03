@@ -28,7 +28,7 @@ module Ddr
         context "all derivatives" do
           context "not multires_image_able" do
             let(:object) { ContentBearing.new }
-            context "content is image" do
+            context "content is an image" do
               let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
               it "should generate a thumbnail and not a ptif" do
                 expect(object.derivatives).to receive(:generate_derivative!).with(Ddr::Derivatives::DERIVATIVES[:thumbnail])
@@ -36,15 +36,7 @@ module Ddr
                 object.derivatives.update_derivatives(:now)
               end
             end
-            context "content is a PDF" do
-              let(:file) { fixture_file_upload("sample.pdf", "application/pdf") }
-              it "should generate a thumbnail and not a ptif" do
-                expect(object.derivatives).to receive(:generate_derivative!).with(Ddr::Derivatives::DERIVATIVES[:thumbnail])
-                expect(object.derivatives).to_not receive(:generate_derivative!).with(Ddr::Derivatives::DERIVATIVES[:multires_image])
-                object.derivatives.update_derivatives(:now)
-              end
-            end
-            context "content is neither an image nor a PDF" do
+            context "content is not an image" do
               let(:file) { fixture_file_upload("sample.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document") }
               it "should generate neither a thumbnail nor a ptif" do
                 expect(object.derivatives).to_not receive(:generate_derivative!).with(Ddr::Derivatives::DERIVATIVES[:thumbnail])
@@ -64,7 +56,7 @@ module Ddr
               end
             end
             context "content is not tiff image" do
-              let(:file) { fixture_file_upload("sample.pdf", "application/pdf") }
+              let(:file) { fixture_file_upload("bird.jpg", "image/jpeg") }
               it "should generate a thumbnail but not a ptif" do
                 expect(object.derivatives).to receive(:generate_derivative!).with(Ddr::Derivatives::DERIVATIVES[:thumbnail])
                 expect(object.derivatives).to_not receive(:generate_derivative!).with(Ddr::Derivatives::DERIVATIVES[:multires_image])
