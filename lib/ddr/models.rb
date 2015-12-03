@@ -57,6 +57,10 @@ module Ddr
     autoload :Validator
     autoload :YearFacet
 
+    autoload_under "fcrepo3" do
+      autoload :Fcrepo3AdminMetadata
+    end
+
     autoload_under "licenses" do
       autoload :AdminPolicyLicense
       autoload :EffectiveLicense
