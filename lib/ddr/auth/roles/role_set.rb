@@ -17,7 +17,7 @@ module Ddr::Auth
                :in_policy_scope, :in_resource_scope,
                to: :query
 
-      delegate :each, :empty?, :clear, to: :roles
+      delegate :each, :<<, :empty?, :clear, to: :roles
 
       def self.from_json(json)
         new.from_json(json.present? ? json : "{}")
