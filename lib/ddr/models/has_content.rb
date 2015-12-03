@@ -1,5 +1,3 @@
-require 'openssl'
-
 module Ddr
   module Models
     module HasContent
@@ -126,6 +124,10 @@ module Ddr
 
       def has_extracted_text?
         extractedText.has_content?
+      end
+
+      def with_content_file(&block)
+        WithContentFile.new(self, &block)
       end
 
       protected
