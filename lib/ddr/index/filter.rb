@@ -13,10 +13,11 @@ module Ddr::Index
 
     def where(conditions)
       clauses = conditions.map do |field, value|
-        if value.respond_to?(:each)
-          QueryClause.or_values(field, *value)
+        values = Array(value)
+        if values.size > 1
+          QueryClause.or_values(field, values)
         else
-          QueryClause.term(field, value)
+          QueryClause.term(field, values.first)
         end
       end
       raw *clauses

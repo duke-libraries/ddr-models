@@ -6,9 +6,12 @@ module Ddr::Index
         RSolr.solr_escape(value)
       end
 
-      def or_values(*values)
-        value = values.map { |v| build(v) }.join(" OR ")
-        "(#{value})"
+      # @param values [Enumerable<String>]
+      def or_values(values)
+        unless values.is_a?(::Enumerable) && values.present?
+          raise ArgumentError, "`#{self.name}.or_values` requires a non-empty enumerable of strings."
+        end
+        "(%s)" % values.map { |value| build(value) }.join(" OR ")
       end
     end
 
