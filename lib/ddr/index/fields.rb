@@ -40,6 +40,7 @@ module Ddr::Index
     DOI                         = Field.new :doi, :symbol
     EAD_ID                      = Field.new :ead_id, :stored_sortable
     EXTRACTED_TEXT              = Field.new :extracted_text, :searchable, type: :text
+    FCREPO3_PID                 = Field.new :fcrepo3_pid, :stored_sortable
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
     IS_ATTACHED_TO              = Field.new :is_attached_to, :symbol

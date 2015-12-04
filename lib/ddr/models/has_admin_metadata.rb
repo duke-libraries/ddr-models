@@ -29,6 +29,10 @@ module Ddr::Models
                predicate: Ddr::Vocab::Asset.eadId,
                multiple: false
 
+      property :fcrepo3_pid,
+               predicate: RDF::URI("info:fedora/fedora-system:def/model#PID"),
+               multiple: false
+
       property :license,
                predicate: RDF::DC.license,
                multiple: false
