@@ -29,8 +29,8 @@ module Ddr::Index
         negative field, PRESENT
       end
 
-      def or_values(field, *values)
-        build field, QueryValue.or_values(*values)
+      def or_values(field, values)
+        build field, QueryValue.or_values(values)
       end
 
       def before(field, date_time)
