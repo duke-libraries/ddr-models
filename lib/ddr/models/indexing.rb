@@ -22,6 +22,7 @@ module Ddr
           DISPLAY_FORMAT        => display_format,
           DOI                   => doi,
           EAD_ID                => ead_id,
+          FCREPO3_PID           => fcrepo3_pid,
           IDENTIFIER_ALL        => all_identifiers,
           LICENSE               => license,
           LOCAL_ID              => local_id,
