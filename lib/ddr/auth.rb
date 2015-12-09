@@ -1,6 +1,7 @@
 module Ddr
   module Auth
     extend ActiveSupport::Autoload
+    extend Deprecation
 
     autoload :Ability
     autoload :AbilityDefinitions
@@ -58,22 +59,25 @@ module Ddr
 
     # Group of which everyone (including anonymous users) is a member
     def self.everyone_group
-      warn "[DEPRECATION] `Ddr::Auth.everyone_group` is deprecated." \
-           " Use `Ddr::Auth::Groups::PUBLIC` instead."
+      Deprecation.warn(Ddr::Auth,
+                       "`Ddr::Auth.everyone_group` is deprecated and will be removed in ddr-models 3.0." \
+                       " Use `Ddr::Auth::Groups::PUBLIC` instead.")
       Groups::PUBLIC
     end
 
     # Group of authenticated users
     def self.authenticated_users_group
-      warn "[DEPRECATION] `Ddr::Auth.authenticated_users_group` is deprecated." \
-           " Use `Ddr::Auth::Groups::REGISTERED` instead."
+      Deprecation.warn(Ddr::Auth,
+                       "`Ddr::Auth.authenticated_users_group` is deprecated and will be removed in ddr-models 3.0." \
+                       " Use `Ddr::Auth::Groups::REGISTERED` instead.")
       Groups::REGISTERED
     end
 
     def self.const_missing(name)
       if name == :Superuser
-        warn "[DEPRECATION] `Ddr::Auth::Superuser` is deprecated." \
-             " Use `Ddr::Auth::SuperuserAbility` instead."
+        Deprecation.warn(Ddr::Auth,
+                         "`Ddr::Auth::Superuser` is deprecated and will be removed in ddr-models 3.0." \
+                         " Use `Ddr::Auth::SuperuserAbility` instead.")
         return SuperuserAbility
       end
       super

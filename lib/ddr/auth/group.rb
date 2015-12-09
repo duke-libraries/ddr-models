@@ -4,6 +4,7 @@ module Ddr
   module Auth
     # Wraps a String
     class Group < SimpleDelegator
+      extend Deprecation
 
       attr_reader :rule
 
@@ -32,7 +33,7 @@ module Ddr
       end
 
       def to_agent
-        warn "[DEPRECATION] `#{self.class.name}#to_agent` is deprecated. Use `#{self.class.name}#agent instead."
+        Deprecation.warn(self.class, "`to_agent` is deprecated. Use `agent` instead.")
         agent
       end
 

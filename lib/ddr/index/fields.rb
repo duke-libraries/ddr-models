@@ -1,7 +1,16 @@
 module Ddr::Index
   module Fields
+    extend Deprecation
 
-    include LegacyLicenseFields
+    def self.const_missing(name)
+      if const = LegacyLicenseFields.const_get(name)
+        Deprecation.warn(Ddr::Index::Fields,
+                         "The constant `#{name}` is deprecated and will be removed in ddr-models 3.0.")
+        const
+      else
+        super
+      end
+    end
 
     def self.get(name)
       const_get(name.to_s.upcase, false)

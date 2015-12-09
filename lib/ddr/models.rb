@@ -11,6 +11,7 @@ require 'hydra/validations'
 
 module Ddr
   extend ActiveSupport::Autoload
+  extend Deprecation
 
   autoload :Actions
   autoload :Auth
@@ -18,13 +19,22 @@ module Ddr
   autoload :Derivatives
   autoload :Events
   autoload :Index
-  autoload :IndexFields
   autoload :Jobs
   autoload :Managers
   autoload :Metadata
   autoload :Notifications
   autoload :Utils
   autoload :Vocab
+
+  def self.const_missing(name)
+    if name == :IndexFields
+      Deprecation.warn(Ddr::Models, "`Ddr::IndexFields` is deprecated and will be removed in ddr-models 3.0." \
+                                    " Use `Ddr::Index::Fields` instead.")
+      Index::Fields
+    else
+      super
+    end
+  end
 
   module Models
     extend ActiveSupport::Autoload
