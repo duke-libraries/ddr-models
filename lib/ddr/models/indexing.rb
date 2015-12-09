@@ -4,6 +4,10 @@ module Ddr
 
       include Ddr::Index::Fields
 
+      def self.const_missing(name)
+        Ddr::Index::Fields.const_missing(name)
+      end
+
       def to_solr(solr_doc=Hash.new, opts={})
         solr_doc = super(solr_doc, opts)
         solr_doc.merge index_fields
