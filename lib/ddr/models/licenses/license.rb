@@ -9,10 +9,12 @@ module Ddr::Models
 
     def self.call(obj)
       if obj.license
-        license = get(:find, url: obj.license)
+        license = new get(:find, url: obj.license)
         license.pid = obj.pid
         license
       end
+    rescue ActiveResource::ResourceNotFound => e
+      raise Ddr::Models::NotFoundError, e
     end
 
     def to_s

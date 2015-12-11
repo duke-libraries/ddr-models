@@ -6,7 +6,9 @@ module Ddr::Models
     self.site = ENV["DDR_AUX_API_URL"]
 
     def self.call(slug)
-      get(:find, slug: slug)
+      new get(:find, slug: slug)
+    rescue ActiveResource::ResourceNotFound => e
+      raise Ddr::Models::NotFoundError, e
     end
 
     def to_s
