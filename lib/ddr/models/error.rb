@@ -11,5 +11,8 @@ module Ddr
 
     # Content model casting error
     class ContentModelError < Error; end
+
+    # A model instance was not found
+    class NotFoundError < Error; end
   end
 end
