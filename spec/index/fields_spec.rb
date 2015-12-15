@@ -1,6 +1,28 @@
 module Ddr::Index
   RSpec.describe Fields do
 
+    describe "module methods" do
+      specify {
+        expect(Fields.techmd).to contain_exactly(
+                                   Fields::TECHMD_COLOR_SPACE,
+                                   Fields::TECHMD_CREATING_APPLICATION,
+                                   Fields::TECHMD_CREATION_TIME,
+                                   Fields::TECHMD_FILE_SIZE,
+                                   Fields::TECHMD_FITS_VERSION,
+                                   Fields::TECHMD_FITS_DATETIME,
+                                   Fields::TECHMD_FORMAT_LABEL,
+                                   Fields::TECHMD_FORMAT_VERSION,
+                                   Fields::TECHMD_IMAGE_HEIGHT,
+                                   Fields::TECHMD_IMAGE_WIDTH,
+                                   Fields::TECHMD_MEDIA_TYPE,
+                                   Fields::TECHMD_MODIFICATION_TIME,
+                                   Fields::TECHMD_PRONOM_IDENTIFIER,
+                                   Fields::TECHMD_VALID,
+                                   Fields::TECHMD_WELL_FORMED
+                                 )
+      }
+    end
+
     describe "constants" do
       describe "ID" do
         subject { Fields::ID }
