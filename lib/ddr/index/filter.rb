@@ -1,14 +1,24 @@
+require "forwardable"
+
 module Ddr::Index
   class Filter
 
     class << self
-      delegate :where, :raw, :before_days, :before, :present, :absent, to: :new
+      extend Forwardable
+
+      def_delegators :new, :raw, :where, :absent, :present, :negative, :before, :before_days
     end
 
     attr_accessor :clauses
 
-    def initialize
-      @clauses = [ ]
+    def initialize(clauses = nil)
+      @clauses = Array(clauses)
+    end
+
+    # Adds clause (String) w/o escaping
+    def raw(*clauses)
+      self.clauses.push *clauses
+      self
     end
 
     def where(conditions)
@@ -23,26 +33,28 @@ module Ddr::Index
       raw *clauses
     end
 
-    # Adds clause (String) w/o escaping
-    def raw(*clauses)
-      self.clauses += clauses
-      self
+    def absent(*args)
+      raw QueryClause.absent(*args)
     end
 
-    def present(field)
-      raw QueryClause.present(field)
+    def present(*args)
+      raw QueryClause.present(*args)
     end
 
-    def absent(field)
-      raw QueryClause.absent(field)
+    def negative(*args)
+      raw QueryClause.negative(*args)
     end
 
-    def before(field, date_time)
-      raw QueryClause.before(field, date_time)
+    def before(*args)
+      raw QueryClause.before(*args)
     end
 
-    def before_days(field, days)
-      raw QueryClause.before_days(field, days)
+    def before_days(*args)
+      raw QueryClause.before_days(*args)
+    end
+
+    def ==(other)
+      other.instance_of?(self.class) && (other.clauses == self.clauses)
     end
 
   end
