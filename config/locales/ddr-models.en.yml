@@ -1,0 +1,74 @@
+en:
+  ddr:
+    index:
+      fields:
+        id:
+          label: "Fedora PID"
+          heading: pid
+        active_fedora_model:
+          label: Model
+          heading: model
+        aspace_id:
+          label: "ArchivesSpace ID"
+        doi:
+          label: DOI
+        ead_id:
+          label: "EAD ID"
+        local_id:
+          label: "Local ID"
+        system_create:
+          label: "Creation Date"
+          heading: creation_date
+        system_modified:
+          label: "Modification Date"
+          heading: modification_date
+        permanent_id:
+          label: "Permanent ID"
+        permanent_url:
+          label: "Permanent URL"
+        techmd_color_space:
+          label: "Color Space"
+          heading: color_space          
+        techmd_creating_application:
+          label: "Creating Application"
+          heading: creating_application          
+        techmd_creation_time:
+          label: "Creation Time"
+          heading: creation_time          
+        techmd_file_size:
+          label: "File Size"
+          heading: "file_size"        
+        techmd_fits_version:
+          label: "FITS Version"
+          heading: fits_version
+        techmd_fits_datetime:
+          label: "FITS Run At"
+          heading: fits_datetime
+        techmd_format_label:
+          label: "Format Label"
+          heading: format_label
+        techmd_format_version:
+          label: "Format Version"
+          heading: format_version
+        techmd_image_height:
+          label: "Image Height"
+          heading: image_height          
+        techmd_image_width:
+          label: "Image Width"
+          heading: image_width
+        techmd_media_type:
+          label: "Media Type"
+          heading: media_type
+        techmd_modification_time:
+          label: "Modification Time"
+          heading: modification_time
+        techmd_pronom_identifier:
+          label: "PRONOM Unique ID"
+          heading: "pronom_uid"
+        techmd_valid:
+          label: Valid
+          heading: valid
+        techmd_well_formed:
+          label: "Well-formed"
+          heading: well_formed
+          

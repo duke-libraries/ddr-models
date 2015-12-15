@@ -1,9 +1,18 @@
+require "virtus"
+require "forwardable"
+
 module Ddr::Index
   class Query
+    include Virtus.model
+    extend Forwardable
 
-    attr_reader :q, :fields, :filters, :sort, :rows
+    attribute :q,       String
+    attribute :fields,  Array[String], default: [ ]
+    attribute :filters, Array[Filter], default: [ ]
+    attribute :sort,    Array[String], default: [ ]
+    attribute :rows,    Integer
 
-    delegate :count, :docs, :pids, :each_pid, :all, to: :result
+    def_delegators :result, :count, :docs, :pids, :each_pid, :all
 
     def inspect
       "#<#{self.class.name} q=#{q.inspect}, filters=#{filters.inspect}," \
@@ -15,12 +24,7 @@ module Ddr::Index
     end
 
     def params
-      { q:    q,
-        fq:   filters.map(&:clauses).flatten,
-        fl:   fields.join(","),
-        sort: sort.join(","),
-        rows: rows,
-      }.select { |k, v| v.present? }
+      QueryParams.new(self).params
     end
 
     def result

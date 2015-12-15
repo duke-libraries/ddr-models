@@ -179,10 +179,10 @@ module Ddr::Models
       describe "contacts" do
         before do
           allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'xa') do
-            Ddr::Models::Contact.new('id'=>1, 'slug'=>'xa', 'name'=>'Contact A', 'short_name'=>'A')
+            {'id'=>1, 'slug'=>'xa', 'name'=>'Contact A', 'short_name'=>'A'}
           end
           allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'yb') do
-            Ddr::Models::Contact.new('id'=>1, 'slug'=>'yb', 'name'=>'Contact B', 'short_name'=>'B')
+            {'id'=>1, 'slug'=>'yb', 'name'=>'Contact B', 'short_name'=>'B'}
           end
         end
         describe "#research_help" do

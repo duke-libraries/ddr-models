@@ -7,8 +7,10 @@ module Ddr::Models
 
     def self.call(obj)
       if obj.admin_set
-        get(:find, code: obj.admin_set)
+        new get(:find, code: obj.admin_set)
       end
+    rescue ActiveResource::ResourceNotFound => e
+      raise Ddr::Models::NotFoundError, e
     end
 
     def to_s

@@ -10,7 +10,7 @@ module Ddr::Index
 
     SOLR_CSV_OPTS = {
       "csv.header"       => "false",
-      "csv.mv.separator" => "|",
+      "csv.mv.separator" => ";",
       "wt"               => "csv",
     }.freeze
 
