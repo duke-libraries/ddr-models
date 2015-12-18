@@ -27,6 +27,12 @@ module Ddr::Index
         self
       end
 
+      def where_not(conditions)
+        self.clauses += conditions.map do |field, v|
+          Array(v).map { |value| QueryClause.negative(field, value) }
+        end.flatten
+      end
+
       def absent(field)
         self.clauses << QueryClause.absent(field)
         self
@@ -59,7 +65,7 @@ module Ddr::Index
       delegate Api.public_instance_methods => :new_filter
 
       def has_content
-        where active_fedora_model: [ "Component", "Attachment", "Target" ]
+        model "Component", "Attachment", "Target"
       end
 
       def is_governed_by(object_or_id)
@@ -68,6 +74,10 @@ module Ddr::Index
 
       def is_member_of_collection(object_or_id)
         term is_member_of_collection: internal_uri(object_or_id)
+      end
+
+      def model(*models)
+        where active_fedora_model: models
       end
 
       private

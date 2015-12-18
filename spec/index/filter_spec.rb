@@ -54,7 +54,23 @@ module Ddr::Index
       end
       describe ".has_content" do
         subject { described_class.has_content }
-        its(:clauses) { are_expected.to eq([QueryClause.where(:active_fedora_model, ["Component", "Attachment", "Target"])]) }
+        its(:clauses) {
+          are_expected.to eq([QueryClause.where(:active_fedora_model, ["Component", "Attachment", "Target"])])
+        }
+      end
+      describe ".model" do
+        describe "with a single model" do
+          subject { described_class.model("Component") }
+          its(:clauses) {
+            are_expected.to eq([QueryClause.where(:active_fedora_model, "Component")])
+          }
+        end
+        describe "with a list of models" do
+          subject { described_class.model("Component", "Attachment", "Target") }
+          its(:clauses) {
+            are_expected.to eq([QueryClause.where(:active_fedora_model, ["Component", "Attachment", "Target"])])
+          }
+        end
       end
       describe ".where" do
         subject { described_class.where("foo"=>"bar", "spam"=>"eggs", "stuff"=>["dog", "cat", "bird"]) }
@@ -95,11 +111,22 @@ module Ddr::Index
 
     describe "API methods" do
       describe "#where" do
-        it "adds raw query filters for the hash of conditions" do
+        it "adds query clauses for the hash of conditions" do
           subject.where("foo"=>"bar", "spam"=>"eggs", "stuff"=>["dog", "cat", "bird"])
           expect(subject.clauses).to eq([QueryClause.where("foo", "bar"),
                                          QueryClause.where("spam", "eggs"),
                                          QueryClause.where("stuff", ["dog", "cat", "bird"])
+                                        ])
+        end
+      end
+      describe "#where_not" do
+        it "adds negative query clauses for the hash of conditions" do
+          subject.where_not("foo"=>"bar", "spam"=>"eggs", "stuff"=>["dog", "cat", "bird"])
+          expect(subject.clauses).to eq([QueryClause.negative("foo", "bar"),
+                                         QueryClause.negative("spam", "eggs"),
+                                         QueryClause.negative("stuff", "dog"),
+                                         QueryClause.negative("stuff", "cat"),
+                                         QueryClause.negative("stuff", "bird")
                                         ])
         end
       end

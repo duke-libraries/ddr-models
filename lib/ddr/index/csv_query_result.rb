@@ -28,7 +28,7 @@ module Ddr::Index
       @solr_csv_opts[:rows] ||= MAX_ROWS
 
       @csv_opts = CSV_OPTS.dup
-      @csv_opts[:headers] = query.fields.map(&:label)
+      @csv_opts[:headers] = headers
 
       # Set column separator and quote character consistently
       @csv_opts[:col_sep]    = @solr_csv_opts["csv.separator"]    = opts.fetch(:col_sep, COL_SEP)
@@ -39,22 +39,39 @@ module Ddr::Index
       CSV.new(data, csv_opts)
     end
 
+    def read
+      csv.read
+    end
+
     def each
       csv.each
     end
 
     def to_s
-      csv.string
+      read.to_s
     end
 
     private
+
+    def headers
+      query.fields.map(&:heading)
+    end
 
     def csv_params
       params.merge(solr_csv_opts)
     end
 
+    def mv_sep
+      solr_csv_opts["csv.mv.separator"]
+    end
+
+    def mv_esc
+      solr_csv_opts["csv.mv.escape"]
+    end
+
     def data
-      conn.get "select", params: csv_params
+      raw = conn.get("select", params: csv_params)
+      raw.gsub(/\\#{mv_sep}/, mv_sep)
     end
 
   end

@@ -43,7 +43,11 @@ module Ddr::Index
           subject { described_class.where("foo", "Jungle Fever") }
           its(:to_s) { is_expected.to eq "foo:\"Jungle Fever\"" }
         end
-        describe "when the value is an array" do
+        describe "when the value is an Array with one entry" do
+          subject { described_class.where("foo", ["Jungle Fever"]) }
+          its(:to_s) { is_expected.to eq "foo:\"Jungle Fever\"" }
+        end
+        describe "when the value is an array with multiple entries" do
           subject { described_class.where("foo", ["Jungle Fever", "bar"]) }
           its(:to_s) { is_expected.to eq "{!lucene q.op=OR df=foo}\"Jungle Fever\" bar" }
         end
