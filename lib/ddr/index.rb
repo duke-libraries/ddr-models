@@ -7,17 +7,16 @@ module Ddr
     autoload :CSVQueryResult
     autoload :DocumentBuilder
     autoload :Field
+    autoload :FieldAttribute
     autoload :Fields
     autoload :Filter
     autoload :Filters
     autoload :LegacyLicenseFields
-    autoload :Queries
     autoload :Query
     autoload :QueryBuilder
     autoload :QueryClause
     autoload :QueryParams
     autoload :QueryResult
-    autoload :QueryValue
     autoload :Response
     autoload :SortOrder
     autoload :UniqueKeyField

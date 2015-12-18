@@ -7,12 +7,13 @@ module Ddr::Index
     extend Forwardable
 
     attribute :q,       String
-    attribute :fields,  Array[String], default: [ ]
-    attribute :filters, Array[Filter], default: [ ]
-    attribute :sort,    Array[String], default: [ ]
+    attribute :fields,  Array[FieldAttribute], default: [ ]
+    attribute :filters, Array[Filter],         default: [ ]
+    attribute :sort,    Array[String],         default: [ ]
     attribute :rows,    Integer
 
-    def_delegators :result, :count, :docs, :pids, :each_pid, :all
+    delegate [:count, :docs, :pids, :each_pid, :all] => :result
+    delegate :params => :query_params
 
     def inspect
       "#<#{self.class.name} q=#{q.inspect}, filters=#{filters.inspect}," \
@@ -23,16 +24,20 @@ module Ddr::Index
       URI.encode_www_form(params)
     end
 
-    def params
-      QueryParams.new(self).params
-    end
-
     def result
       QueryResult.new(self)
     end
 
     def csv(**opts)
       CSVQueryResult.new(self, **opts)
+    end
+
+    def filter_clauses
+      filters.map(&:clauses).flatten
+    end
+
+    def query_params
+      QueryParams.new(self)
     end
 
   end
