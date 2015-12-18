@@ -46,10 +46,11 @@ module Ddr::Index
       alias_method :id, :unique_key
 
       def where(field, value)
-        if value.respond_to?(:each)
-          disjunction(field, value)
+         values = Array(value)
+        if values.size > 1
+          disjunction(field, values)
         else
-          new(field: field, value: value, quote_value: true)
+          new(field: field, value: values.first, quote_value: true)
         end
       end
 
@@ -65,7 +66,7 @@ module Ddr::Index
 
       # Builds a query clause to filter where field is NOT present (no values)
       def absent(field)
-        new(field: "-#{field}", value: ANY_VALUE)
+        new(field: field, value: ANY_VALUE, template: NEGATIVE_QUERY)
       end
 
       # Builds a query clause to filter where field contains at least one of a set of values.

@@ -12,6 +12,7 @@ module Ddr::Index
   #
   # asc [field], ...
   #   Adds ascending orderings by the fields specified.
+  #
   #   See also: desc, order_by
   #
   # before [field], [date_time]
@@ -20,10 +21,11 @@ module Ddr::Index
   #
   # before_days [field], [int]
   #   Adds a filter selecting documents where the field has a date/time the
-  #   specified number of days before today (now) or earlier.
+  #     specified number of days before today (now) or earlier.
   #
   # desc [field], ...
   #   Adds descending orderings by the fields specified.
+  #
   #   See also: asc, order_by
   #
   # id [doc_id]
@@ -31,6 +33,7 @@ module Ddr::Index
   #
   # filter [filter1], ...
   #   Adds filters to the query.
+  #
   #   Aliased as: filters
   #
   # filters [filter], ...
@@ -38,7 +41,8 @@ module Ddr::Index
   #
   # field [field1], ...
   #   Adds fields to result documents.
-  #   Note that all fields are returned when none is specified.
+  #     Note that all fields are returned when none is specified.
+  #
   #   Aliased as: fields
   #
   # fields [field], ...
@@ -46,13 +50,19 @@ module Ddr::Index
   #
   # limit [int]
   #   Limits the number of documents returned by the query.
+  #
   #   Aliased as: rows
+  #
+  # model [model_name], ...
+  #   Adds a filter selecting document where ActiveFedora model equals value
+  #     or one of the values.
   #
   # negative [field], [value]
   #   Adds a filter selecting document where field does not have the value.
   #
   # order_by [{field => order, ...}], ...
   #   Adds ordering(s) to the query.
+  #
   #   Aliased as: sort
   #
   # present [field]
@@ -75,8 +85,8 @@ module Ddr::Index
   #
   # where [{field => value, ...}]
   #   Adds a filter of "standard" query clauses.
-  #   Values will be escaped when the filter is serialized.
-  #   If a hash value is an array, that query clause will select documents
+  #     Values will be escaped when the filter is serialized.
+  #     If a hash value is an array, that query clause will select documents
   #     where the field matches any array entry.
   #
   class QueryBuilder
@@ -95,8 +105,8 @@ module Ddr::Index
 
     attr_reader :query
 
-    def initialize(&block)
-      @query = Query.new
+    def initialize(query = nil, &block)
+      @query = query || Query.new
       if block_given?
         instance_eval &block
       end
@@ -120,7 +130,7 @@ module Ddr::Index
     # @param fields [Array<Field>]
     # @return [QueryBuilder] self
     def field(*fields)
-      query.fields += fields
+      query.fields += fields.flatten.map { |f| FieldAttribute.coerce(f) }
       self
     end
     alias_method :fields, :field

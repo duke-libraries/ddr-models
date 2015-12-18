@@ -15,6 +15,13 @@ module Ddr::Index
     delegate [:count, :docs, :pids, :each_pid, :all] => :result
     delegate :params => :query_params
 
+    def initialize(**args, &block)
+      super(**args)
+      if block_given?
+        build(&block)
+      end
+    end
+
     def inspect
       "#<#{self.class.name} q=#{q.inspect}, filters=#{filters.inspect}," \
       " sort=#{sort.inspect}, rows=#{rows.inspect}, fields=#{fields.inspect}>"
@@ -38,6 +45,11 @@ module Ddr::Index
 
     def query_params
       QueryParams.new(self)
+    end
+
+    def build(&block)
+      QueryBuilder.new(self, &block)
+      self
     end
 
   end

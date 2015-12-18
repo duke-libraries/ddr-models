@@ -3,7 +3,7 @@ require "virtus"
 module Ddr::Index
   class FieldAttribute < Virtus::Attribute
 
-    def coerce(value)
+    def self.coerce(value)
       case value
       when Field
         value
@@ -12,6 +12,10 @@ module Ddr::Index
       when Symbol
         Fields.get(value)
       end
+    end
+
+    def coerce(value)
+      self.class.coerce(value)
     end
 
   end
