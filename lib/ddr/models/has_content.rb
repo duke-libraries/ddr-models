@@ -11,6 +11,10 @@ module Ddr
         contains Ddr::Datastreams::EXTRACTED_TEXT, class_name: 'Ddr::Datastreams::PlainTextDatastream'
         contains Ddr::Datastreams::FITS, class_name: 'Ddr::Datastreams::FitsDatastream'
 
+        property :legacy_original_filename,
+                 predicate: RDF::Vocab::PREMIS.hasOriginalName,
+                 multiple: false
+
         include FileManagement
 
         around_save :update_derivatives, if: :content_changed?
