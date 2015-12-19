@@ -4,73 +4,63 @@ module Ddr::Index
   class CSVQueryResult < AbstractQueryResult
 
     MAX_ROWS = 10**8
+    MV_SEP   = ";"
 
-    COL_SEP    = CSV::DEFAULT_OPTIONS[:col_sep].freeze
-    QUOTE_CHAR = CSV::DEFAULT_OPTIONS[:quote_char].freeze
+    attr_reader :mv_sep
 
-    SOLR_CSV_OPTS = {
-      "csv.header"       => "false",
-      "csv.mv.separator" => ";",
-      "wt"               => "csv",
-    }.freeze
+    delegate :read, :each, to: :csv
 
-    CSV_OPTS = {
-      return_headers: true,
-      write_headers:  true,
-    }.freeze
-
-    attr_reader :csv_opts, :solr_csv_opts
-
-    def initialize(query, **opts)
+    def initialize(query, mv_sep: MV_SEP)
       super(query)
-
-      @solr_csv_opts = SOLR_CSV_OPTS.dup
-      @solr_csv_opts[:rows] ||= MAX_ROWS
-
-      @csv_opts = CSV_OPTS.dup
-      @csv_opts[:headers] = headers
-
-      # Set column separator and quote character consistently
-      @csv_opts[:col_sep]    = @solr_csv_opts["csv.separator"]    = opts.fetch(:col_sep, COL_SEP)
-      @csv_opts[:quote_char] = @solr_csv_opts["csv.encapsulator"] = opts.fetch(:quote_char, QUOTE_CHAR)
+      @mv_sep = mv_sep
     end
 
     def csv
-      CSV.new(data, csv_opts)
-    end
-
-    def read
-      csv.read
-    end
-
-    def each
-      csv.each
+      CSV.new(data, csv_opts.to_h)
     end
 
     def to_s
-      read.to_s
+      read.to_csv
     end
 
-    private
+    def rows
+      query.rows || MAX_ROWS
+    end
+
+    def csv_opts
+      @csv_opts ||= CSVOptions.new(headers: csv_headers)
+    end
+
+    def solr_csv_opts
+      @solr_csv_opts ||= SolrCSVOptions.new(col_sep: csv_opts.col_sep,
+                                            quote_char: csv_opts.quote_char,
+                                            header: solr_csv_header,
+                                            mv_sep: mv_sep,
+                                            rows: rows)
+    end
 
     def headers
-      query.fields.map(&:heading)
+      @headers ||= query.fields.map(&:heading)
     end
 
-    def csv_params
-      params.merge(solr_csv_opts)
+    def csv_headers
+      if headers.empty?
+        :first_row
+      else
+        headers
+      end
     end
 
-    def mv_sep
-      solr_csv_opts["csv.mv.separator"]
+    def solr_csv_header
+      csv_headers == :first_row
     end
 
-    def mv_esc
-      solr_csv_opts["csv.mv.escape"]
+    def solr_csv_params
+      params.merge solr_csv_opts.params
     end
 
     def data
-      raw = conn.get("select", params: csv_params)
+      raw = conn.get("select", params: solr_csv_params)
       raw.gsub(/\\#{mv_sep}/, mv_sep)
     end
 
