@@ -4,9 +4,11 @@ module Ddr
 
     autoload :AbstractQueryResult
     autoload :Connection
+    autoload :CSVOptions
     autoload :CSVQueryResult
     autoload :DocumentBuilder
     autoload :Field
+    autoload :FieldAttribute
     autoload :Fields
     autoload :Filter
     autoload :Filters
@@ -14,13 +16,15 @@ module Ddr
     autoload :Query
     autoload :QueryBuilder
     autoload :QueryClause
+    autoload :QueryParams
     autoload :QueryResult
-    autoload :QueryValue
     autoload :Response
+    autoload :SolrCSVOptions
+    autoload :SortOrder
     autoload :UniqueKeyField
 
     def self.pids
-      builder = QueryBuilder.new
+      builder = QueryBuilder.new { field UniqueKeyField.instance }
       query = builder.query
       query.pids
     end

@@ -22,9 +22,8 @@ module Ddr
       end
 
       def copy_admin_policy_or_permissions_from(other)
-        warn "[DEPRECATION] `copy_admin_policy_or_permissions_from` is deprecated." \
-             " Use `copy_admin_policy_or_roles_from` instead." \
-             " (#{caller.first})."
+        Deprecation.warn(self.class, "`copy_admin_policy_or_permissions_from` is deprecated." \
+                                     " Use `copy_admin_policy_or_roles_from` instead.")
         copy_admin_policy_or_roles_from(other)
       end
 

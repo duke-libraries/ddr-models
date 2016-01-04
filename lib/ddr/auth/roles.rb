@@ -1,6 +1,7 @@
 module Ddr::Auth
   module Roles
     extend ActiveSupport::Autoload
+    extend Deprecation
 
     autoload :DetachedRoleSet
     autoload :PropertyRoleSet
@@ -20,8 +21,8 @@ module Ddr::Auth
 
       def const_missing(name)
         if name == :ArrayRoleSet
-          warn "[DEPRECATION] `Ddr::Auth::Roles::ArrayRoleSet` is deprecated." \
-               " Use `Ddr::Auth::Roles::DetachedRoleSet` instead."
+          Deprecation.warn(Ddr::Auth::Roles, "`Ddr::Auth::Roles::ArrayRoleSet` is deprecated." \
+                                             " Use `Ddr::Auth::Roles::DetachedRoleSet` instead.")
           DetachedRoleSet
         else
           super

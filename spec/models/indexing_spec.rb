@@ -21,6 +21,7 @@ module Ddr::Models
       obj.permanent_url = "http://id.library.duke.edu/ark:/99999/fk4zzz"
       obj.display_format = "Image"
       obj.roles.grant role1, role2, role3, role4
+      obj.aspace_id = "aspace_dccea43034e1b8261e14cf999e86449d"
     end
 
     its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
@@ -35,6 +36,7 @@ module Ddr::Models
     its([Indexing::ACCESS_ROLE]) { is_expected.to eq(obj.roles.to_json) }
     its([Indexing::POLICY_ROLE]) { is_expected.to contain_exactly(role2.agent.first, role3.agent.first, role4.agent.first) }
     its([Indexing::RESOURCE_ROLE]) { is_expected.to contain_exactly(role1.agent.first) }
+    its([Indexing::ASPACE_ID]) { is_expected.to eq("aspace_dccea43034e1b8261e14cf999e86449d") }
 
   end
 end

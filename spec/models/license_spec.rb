@@ -1,23 +1,44 @@
 module Ddr::Models
-  RSpec.describe License do
+  RSpec.describe License, ddr_aux: true do
 
     describe ".call" do
-      subject { described_class.call(obj) }
-
       describe "when the object has a license URL" do
-        let(:url) { "http://example.com" }
-        let(:obj) { double(pid: "test:1", license: url) }
-        before do
-          allow(described_class).to receive(:find).with(url: url) { described_class.new(url: url, title: "A License") }
+        let(:obj) { double(pid: "test:1", license: "http://example.com") }
+        describe "and the license is found" do
+          before {
+            allow(described_class).to receive(:get).with(:find, url: "http://example.com") {
+              {"id"=>1, "url"=>"http://example.com", "title"=>"A License"}
+            }
+          }
+          it "returns a License instance" do
+            expect(described_class.call(obj)).to be_a(described_class)
+          end
+          it "sets `pid` to the object pid" do
+            expect(described_class.call(obj).pid).to eq("test:1")
+          end
         end
-        its(:pid) { is_expected.to eq("test:1") }
-        its(:to_s) { is_expected.to eq("A License") }
+        describe "and the license is not found" do
+          before {
+            allow(described_class).to receive(:get).with(:find, url: "http://example.com")
+                                       .and_raise(ActiveResource::ResourceNotFound, "404")
+          }
+          it "raises an exception" do
+            expect { described_class.call(obj) }.to raise_error(Ddr::Models::NotFoundError)
+          end
+        end
       end
 
       describe "when the object does not have a license" do
         let(:obj) { double(pid: "test:1", license: nil) }
-        it { is_expected.to be_nil }
+        it "returns nil" do
+          expect(described_class.call(obj)).to be_nil
+        end
       end
+    end
+
+    describe "instance methods" do
+      subject { described_class.new("id"=>1, "url"=>"http://example.com", "title"=>"A License") }
+      its(:to_s) { is_expected.to eq("A License") }
     end
 
   end

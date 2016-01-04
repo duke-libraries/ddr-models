@@ -1,5 +1,6 @@
 module Ddr::Auth
   class Permissions
+    extend Deprecation
 
     READ         = :read
     DOWNLOAD     = :download
@@ -14,7 +15,7 @@ module Ddr::Auth
 
     def self.const_missing(name)
       if name == :EDIT
-        warn "[DEPRECATION] `EDIT` is deprecated. Use `UPDATE` instead."
+        Deprecation.warn(self, "`EDIT` is deprecated. Use `UPDATE` instead.")
         return UPDATE
       end
       super

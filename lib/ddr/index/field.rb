@@ -16,7 +16,17 @@ module Ddr::Index
     end
 
     def label
-      I18n.t "ddr.index.fields.#{base}", default: base.titleize
+      I18n.t "#{i18n_base}.label", default: base.titleize
+    end
+
+    def heading
+      I18n.t "#{i18n_base}.heading", default: base
+    end
+
+    private
+
+    def i18n_base
+      "ddr.index.fields.#{base}"
     end
 
   end

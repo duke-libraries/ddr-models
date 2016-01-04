@@ -1,5 +1,6 @@
 module Ddr::Auth
   module Roles
+    extend Deprecation
     #
     # Wraps a set of Roles
     #
@@ -21,8 +22,8 @@ module Ddr::Auth
       end
 
       def granted
-        warn "[DEPRECATION] `granted` is deprecated." \
-             " Use the RoleSet object directly (#{caller.first})."
+        Deprecation.warn(self.class, "`granted` is deprecated." \
+                                     " Use the RoleSet object directly.")
         self
       end
 

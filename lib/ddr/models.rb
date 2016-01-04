@@ -11,21 +11,30 @@ require 'hydra/validations'
 
 module Ddr
   extend ActiveSupport::Autoload
+  extend Deprecation
 
   autoload :Actions
   autoload :Auth
-  autoload :Contacts
   autoload :Datastreams
   autoload :Derivatives
   autoload :Events
   autoload :Index
-  autoload :IndexFields
   autoload :Jobs
   autoload :Managers
   autoload :Metadata
   autoload :Notifications
   autoload :Utils
   autoload :Vocab
+
+  def self.const_missing(name)
+    if name == :IndexFields
+      Deprecation.warn(Ddr::Models, "`Ddr::IndexFields` is deprecated and will be removed in ddr-models 3.0." \
+                                    " Use `Ddr::Index::Fields` instead.")
+      Index::Fields
+    else
+      super
+    end
+  end
 
   module Models
     extend ActiveSupport::Autoload
@@ -34,11 +43,13 @@ module Ddr
     autoload :AdminSet
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
+    autoload :Contact
     autoload :ContentModelError, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :Describable
     autoload :Error
     autoload :EventLoggable
+    autoload :FileCharacterization
     autoload :FileManagement
     autoload :FindingAid
     autoload :FixityCheckable
@@ -51,9 +62,11 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
+    autoload :NotFoundError, 'ddr/models/error'
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
+    autoload :WithContentFile
     autoload :YearFacet
 
     autoload_under "licenses" do

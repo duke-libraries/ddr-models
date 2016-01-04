@@ -178,14 +178,17 @@ module Ddr::Models
 
       describe "contacts" do
         before do
-          allow(YAML).to receive(:load_file) { { 'a' => { 'name' => 'Contact A', 'short_name' => 'A' },
-                                                 'b' => { 'name' => 'Contact B', 'short_name' => 'B' } } }
-          Ddr::Contacts.load_contacts
+          allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'xa') do
+            {'id'=>1, 'slug'=>'xa', 'name'=>'Contact A', 'short_name'=>'A'}
+          end
+          allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'yb') do
+            {'id'=>1, 'slug'=>'yb', 'name'=>'Contact B', 'short_name'=>'B'}
+          end
         end
         describe "#research_help" do
-          before { subject.research_help_contact = 'b' }
+          before { subject.research_help_contact = 'yb' }
           it "should return the appropriate contact" do
-            expect(subject.research_help.slug).to eq('b')
+            expect(subject.research_help.slug).to eq('yb')
           end
         end
       end
