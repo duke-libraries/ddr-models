@@ -62,6 +62,7 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
+    autoload :NotFoundError, 'ddr/models/error'
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure

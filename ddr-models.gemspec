@@ -32,6 +32,8 @@ Gem::Specification.new do |s|
   s.add_dependency "net-ldap", "~> 0.11"
   s.add_dependency "cancancan", "~> 1.12"
   s.add_dependency "ddr-antivirus", "~> 2.1.1"
+  s.add_dependency "virtus", "~> 1.0.5"
+  s.add_dependency "hashie", "~> 3.4.3"
 
   s.add_development_dependency "bundler", "~> 1.11", ">= 1.11.2"
   s.add_development_dependency "rake"

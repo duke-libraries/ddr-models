@@ -2,28 +2,7 @@ module Ddr::Index
   module Fields
     extend Deprecation
 
-    def self.const_missing(name)
-      if const = LegacyLicenseFields.const_get(name)
-        Deprecation.warn(Ddr::Index::Fields,
-                         "The constant `#{name}` is deprecated and will be removed in ddr-models 3.0.")
-        const
-      else
-        super
-      end
-    end
-
-    def self.get(name)
-      const_get(name.to_s.upcase, false)
-    end
-
-    def self.techmd
-      constants(false)
-        .select { |c| c =~ /\ATECHMD_/ }
-        .map    { |c| const_get(c) }
-    end
-
     ID = UniqueKeyField.instance
-    PID = UniqueKeyField.instance
 
     ACCESS_ROLE                 = Field.new :access_role, :stored_sortable
     ACTIVE_FEDORA_MODEL         = Field.new :active_fedora_model, :stored_sortable
@@ -95,6 +74,35 @@ module Ddr::Index
     TYPE_FACET                  = Field.new :type_facet, :facetable
     WORKFLOW_STATE              = Field.new :workflow_state, :stored_sortable
     YEAR_FACET                  = Field.new :year_facet, solr_name: "year_facet_iim"
+
+    def self.get(name)
+      const_get(name.to_s.upcase, false)
+    end
+
+    def self.techmd
+      @techmd ||= constants(false).select { |c| c =~ /\ATECHMD_/ }.map { |c| const_get(c) }
+    end
+
+    def self.descmd
+      @descmd ||= Ddr::Datastreams::DescriptiveMetadataDatastream.properties.map do |base, config|
+        Field.new base, *(config.behaviors)
+      end
+    end
+
+    def self.const_missing(name)
+      if name == :PID
+        Deprecation.warn(Ddr::Index::Fields,
+                         "`Ddr::Index::Fields::#{name}` is deprecated." \
+                         " Use `Ddr::Index::Fields::ID` instead.")
+        return ID
+      end
+      if const = LegacyLicenseFields.const_get(name)
+        Deprecation.warn(Ddr::Index::Fields,
+                         "`Ddr::Index::Fields::#{name}` is deprecated and will be removed in ddr-models 3.0.")
+        return const
+      end
+      super
+    end
 
   end
 end

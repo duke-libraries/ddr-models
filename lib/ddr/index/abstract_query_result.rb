@@ -6,7 +6,7 @@ module Ddr::Index
     delegate :params, to: :query
 
     def initialize(query)
-      @query = query
+      @query = query.dup.freeze
       @conn = Connection.new
     end
 
