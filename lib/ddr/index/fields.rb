@@ -15,6 +15,7 @@ module Ddr::Index
     CONTENT_CONTROL_GROUP       = Field.new :content_control_group, :searchable, type: :string
     CONTENT_SIZE                = Field.new :content_size, solr_name: "content_size_lsi"
     CONTENT_SIZE_HUMAN          = Field.new :content_size_human, :symbol
+    CONTRIBUTOR_FACET           = Field.new :contributor_facet, :facetable
     CREATOR_FACET               = Field.new :creator_facet, :facetable
     DATE_FACET                  = Field.new :date_facet, :facetable
     DATE_SORT                   = Field.new :date_sort, :sortable
@@ -55,6 +56,7 @@ module Ddr::Index
     SERIES_FACET                = Field.new :series_facet, :facetable
     SPATIAL_FACET               = Field.new :spatial_facet, :facetable
     STRUCT_MAPS                 = Field.new :struct_maps, :stored_sortable
+    SUBJECT_FACET               = Field.new :subject_facet, :facetable
     TECHMD_COLOR_SPACE          = Field.new :techmd_color_space, :symbol
     TECHMD_CREATING_APPLICATION = Field.new :techmd_creating_application, :symbol
     TECHMD_CREATION_TIME        = Field.new :techmd_creation_time, :stored_searchable, type: :date
