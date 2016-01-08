@@ -27,8 +27,8 @@ module Ddr::Models
     end
 
     def verify_checksum!(file)
-      digest = Ddr::Utils.digest(File.read(file), content.checksumType)
-      if digest != content.checksum
+      digest = Ddr::Utils.digest(File.read(file), content.checksum.algorithm)
+      if digest != content.checksum.value
         raise ChecksumInvalid, "The checksum of the downloaded file does not match the stored checksum of the content."
       end
     end

@@ -15,12 +15,12 @@ module Ddr::Derivatives
           generator.generate(source_path, output_path)
           expect(File.size(output_path)).to be > 0
         end
-        context "animated gif source" do
-          let(:source) { File.join(Ddr::Models::Engine.root, "spec", "fixtures", "arrow1rightred_e0.gif") }
-          it "should generate a non-empty file" do
-            generator.generate
-            expect(File.size(output_file.path)).to be > 0
-          end
+      end
+      context "animated gif source" do
+        let(:source_path) { File.join(Ddr::Models::Engine.root, "spec", "fixtures", "arrow1rightred_e0.gif") }
+        it "should generate a non-empty file" do
+          generator.generate(source_path, output_path)
+          expect(File.size(output_path)).to be > 0
         end
       end
     end

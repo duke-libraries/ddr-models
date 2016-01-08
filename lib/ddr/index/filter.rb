@@ -69,11 +69,11 @@ module Ddr::Index
       end
 
       def is_governed_by(object_or_id)
-        term is_governed_by: internal_uri(object_or_id)
+        term is_governed_by: get_id(object_or_id)
       end
 
       def is_member_of_collection(object_or_id)
-        term is_member_of_collection: internal_uri(object_or_id)
+        term is_member_of_collection: get_id(object_or_id)
       end
 
       def model(*models)
@@ -82,12 +82,8 @@ module Ddr::Index
 
       private
 
-      def internal_uri(object_or_id)
-        if object_or_id.respond_to?(:internal_uri)
-          object_or_id.internal_uri
-        else
-          ActiveFedora::Base.internal_uri(object_or_id)
-        end
+      def get_id(object_or_id)
+        object_or_id.respond_to?(:id) ? object_or_id.id : object_or_id
       end
 
       def new_filter

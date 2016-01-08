@@ -3,17 +3,16 @@ module Ddr::Models
 
     subject { described_class.new(obj) }
 
-    before {
-      obj.content.checksumType = "SHA-1"
-      obj.save!
-    }
-
     let(:obj) { FactoryGirl.create(:component) }
     let(:fits_output) { "<fits/>" }
 
+    before {
+      allow(subject).to receive(:with_content_file).and_yield("/tmp/foobar")
+    }
+
     describe "when there is an error running FITS" do
       before {
-        allow(subject).to receive(:run_fits).and_raise(FileCharacterization::FITSError)
+        allow(subject).to receive(:run_fits).with("/tmp/foobar").and_raise(FileCharacterization::FITSError)
       }
       specify {
         begin
@@ -27,7 +26,7 @@ module Ddr::Models
 
     describe "when FITS runs successfully" do
       before {
-        allow(subject).to receive(:run_fits) { fits_output }
+        allow(subject).to receive(:run_fits).with("/tmp/foobar") { fits_output }
       }
       specify {
         subject.call
