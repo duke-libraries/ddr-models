@@ -42,17 +42,10 @@ module Ddr
         create(notification.payload)
       end
 
-      # Repository software version -- e.g., "Fedora Repository 3.7.0"
-      def self.repository_software
-        @@repository_software ||= ActiveFedora::Base.connection_for_pid(0).repository_profile
-                                                    .values_at(:repositoryName, :repositoryVersion)
-                                                    .join(" ")
-      end
-
       # Scopes
 
       def self.for_object(obj)
-        for_pid(obj.pid)
+        for_pid(obj.id)
       end
 
       def self.for_pid(pid)
@@ -99,7 +92,7 @@ module Ddr
 
       def object=(obj)
         raise ArgumentError, "Can't set to new object" if obj.new_record?
-        self.pid = obj.pid
+        self.pid = obj.id
         @object = obj
       end
 

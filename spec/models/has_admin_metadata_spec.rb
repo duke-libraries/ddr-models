@@ -34,7 +34,7 @@ module Ddr::Models
             it "should assign a permanent id once" do
               expect(subject).to receive(:assign_permanent_id!).once { nil }
               subject.save!
-              subject.title = ["New Title"]
+              subject.dc_title = ["New Title"]
               subject.save!
             end
           end
@@ -163,7 +163,7 @@ module Ddr::Models
       describe "#grant_roles_to_creator" do
         let(:user) { FactoryGirl.build(:user) }
         before { subject.grant_roles_to_creator(user) }
-        its(:roles) { should include(Ddr::Auth::Roles::Role.build(type: "Editor", agent: user.agent, scope: "resource")) }
+        its(:roles) { should include(Ddr::Auth::Roles::Role.build(role_type: "Editor", agent: user.agent, scope: "resource")) }
       end
 
       describe "persistence" do
@@ -172,7 +172,7 @@ module Ddr::Models
           subject.roles.grant role
           subject.save!
           subject.reload
-          expect(subject.roles).to contain_exactly(role)
+          expect(subject.roles.role_set).to contain_exactly(role)
         end
       end
 

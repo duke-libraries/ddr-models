@@ -1,107 +1,123 @@
-module Ddr
-  module Models
-    class Base < ActiveFedora::Base
+module Ddr::Models
+  class Base < ActiveFedora::Base
+    extend Deprecation
 
-      include Describable
-      include Governable
-      include AccessControllable
-      include HasThumbnail
-      include EventLoggable
-      include FixityCheckable
-      include FileManagement
-      include Indexing
-      include Hydra::Validations
-      include HasAdminMetadata
+    include ObjectApi
+    include Governable
+    include HasThumbnail
+    include EventLoggable
+    include FixityCheckable
+    include FileManagement
+    include Indexing
+    include Hydra::Validations
+    include HasAdminMetadata
 
-      extend Deprecation
-      # Deprecate Hydra permissions-related methods
-      deprecation_deprecate *(Hydra::AccessControls::Permissions.public_instance_methods)
-
-      after_destroy do
-        notify_event :deletion
-      end
-
-      def copy_admin_policy_or_permissions_from(other)
-        Deprecation.warn(self.class, "`copy_admin_policy_or_permissions_from` is deprecated." \
-                                     " Use `copy_admin_policy_or_roles_from` instead.")
-        copy_admin_policy_or_roles_from(other)
-      end
-
-      def copy_admin_policy_or_roles_from(other)
-        copy_resource_roles_from(other) unless copy_admin_policy_from(other)
-      end
-
-      def association_query(association)
-        # XXX Ideally we would include a clause to limit by AF model, but this should suffice
-        ActiveFedora::SolrService.construct_query_for_rel(reflections[association].options[:property] => internal_uri)
-      end
-
-      # e.g., "Collection duke:1"
-      def model_pid
-        [self.class.to_s, pid].join(" ")
-      end
-
-      # @override ActiveFedora::Core
-      # See ActiveFedora overrides in engine initializers
-      def adapt_to_cmodel
-        super
-      rescue ::TypeError
-        raise ContentModelError, "Cannot adapt to nil content model."
-      end
-
-      def has_extracted_text?
-        false
-      end
-
-      def legacy_authorization
-        Ddr::Auth::LegacyAuthorization.new(self)
-      end
-
-      # Moves the first (descriptive metadata) identifier into
-      # (administrative metadata) local_id according to the following
-      # rubric:
-      #
-      # No existing local_id:
-      #   - Set local_id to first identifier value
-      #   - Remove first identifier value
-      #
-      # Existing local_id:
-      #   Same as first identifier value
-      #     - Remove first identifier value
-      #   Not same as first identifier value
-      #     :replace option is true
-      #       - Set local_id to first identifier value
-      #       - Remove first identifier value
-      #     :replace option is false
-      #       - Do nothing
-      #
-      # Returns true or false depending on whether the object was
-      # changed by this method
-      def move_first_identifier_to_local_id(replace: true)
-        moved = false
-        identifiers = identifier.to_a
-        first_id = identifiers.shift
-        if first_id
-          if local_id.blank?
-            self.local_id = first_id
-            self.identifier = identifiers
-            moved = true
-          else
-            if local_id == first_id
-              self.identifier = identifiers
-              moved = true
-            else
-              if replace
-                self.local_id = first_id
-                self.identifier = identifiers
-                moved = true
-              end
-            end
-          end
-        end
-        moved
-      end
-
+    after_destroy do
+      notify_event :deletion
     end
+
+    DescriptiveMetadata.mapping.each do |name, term|
+      property name, predicate: term.predicate do |index|
+        index.as :stored_searchable
+      end
+    end
+
+    def self.find_by_identifier(identifier)
+      find(Ddr::Index::Fields::IDENTIFIER_ALL => identifier)
+    end
+
+    def inspect
+      "#<#{model_and_id}, uri: \"#{uri}\">"
+    end
+
+    def model_and_id
+      "#{self.class} id: #{id.inspect || '[NEW]'}"
+    end
+
+    def model_pid
+      Deprecation.warn(Base, "`model_pid` is deprecated; use `model_and_id` instead.")
+      model_and_id
+    end
+
+    def descMetadata
+      Deprecation.warn(Base, "`descMetadata` is deprecated; use `desc_metadata` instead.")
+      desc_metadata
+    end
+
+    def desc_metadata
+      @desc_metadata ||= DescriptiveMetadata.new(self)
+    end
+
+    def has_desc_metadata?
+      desc_metadata.has_content?
+    end
+
+    def desc_metadata_terms(*args)
+      return DescriptiveMetadata.unqualified_names.sort if args.empty?
+      arg = args.pop
+      terms = case arg.to_sym
+              when :empty
+                desc_metadata_terms.select { |t| desc_metadata_values(t).empty? }
+              when :present
+                desc_metadata_terms.select { |t| desc_metadata_values(t).present? }
+              when :defined_attributes
+                desc_metadata_terms & desc_metadata_attributes
+              when :required
+                desc_metadata_terms(:defined_attributes).select {|t| required? t}
+              when :dcterms
+                MetadataMapping.dc11.unqualified_names +
+                  (MetadataMapping.dcterms.unqualified_names - MetadataMapping.dc11.unqualified_names)
+              when :dcterms_elements11
+                Ddr::Vocab::Vocabulary.term_names(::RDF::DC11)
+              when :duke
+                Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms)
+              else
+                raise ArgumentError, "Invalid argument: #{arg.inspect}"
+              end
+      if args.empty?
+        terms
+      else
+        terms | desc_metadata_terms(*args)
+      end
+    end
+    deprecation_deprecate :desc_metadata_terms
+
+    def desc_metadata_attributes
+      MetadataMapping.dc11.unqualified_names
+    end
+    deprecation_deprecate :desc_metadata_attributes
+
+    def desc_metadata_values(term)
+      Deprecation.warn(Base, "`desc_metadata_values` is deprecated; use `desc_metadata.values` instead.")
+      desc_metadata.values(term)
+    end
+
+    def set_desc_metadata_values(term, values)
+      Deprecation.warn(Base, "`set_desc_metadata_values` is deprecated; use `desc_metadata.set_values` instead.")
+      desc_metadata.set_values(term, values)
+    end
+
+    # Update all descMetadata terms with values in hash
+    # Note that term not having key in hash will be set to nil!
+    def set_desc_metadata(term_values_hash)
+      desc_metadata_terms.each { |t| set_desc_metadata_values(t, term_values_hash[t]) }
+    end
+
+    def attached_files_profile
+      AttachedFilesProfile.new(attached_files)
+    end
+
+    def copy_admin_policy_or_roles_from(other)
+      copy_admin_policy_from(other) || copy_resource_roles_from(other)
+    end
+
+    def has_extracted_text?
+      false
+    end
+
+    def adminMetadata
+      self
+    end
+
   end
 end

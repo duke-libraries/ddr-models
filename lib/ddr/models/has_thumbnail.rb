@@ -4,10 +4,7 @@ module Ddr
       extend ActiveSupport::Concern
 
       included do
-        has_file_datastream name: Ddr::Datastreams::THUMBNAIL,
-                            versionable: true,
-                            label: "Thumbnail for this object",
-                            control_group: 'M'
+        contains Ddr::Datastreams::THUMBNAIL
       end
 
       def thumbnail_changed?

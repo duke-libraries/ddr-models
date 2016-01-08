@@ -3,7 +3,7 @@ require 'openssl'
 
 RSpec.shared_examples "an object that can have content" do
 
-  subject { described_class.new(title: [ "I Have Content!" ]) }
+  subject { described_class.new(dc_title: [ "I Have Content!" ]) }
 
   before { allow(Resque).to receive(:enqueue) }
 
@@ -18,14 +18,6 @@ RSpec.shared_examples "an object that can have content" do
     before { allow(subject).to receive(:last_virus_check) { virus_check } }
     its(:last_virus_check_on) { should eq(virus_check.event_date_time) }
     its(:last_virus_check_outcome) { should eq(virus_check.outcome) }
-  end
-
-  describe "indexing" do
-    let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
-    before { subject.upload file }
-    it "should index the content ds control group" do
-      expect(subject.to_solr).to include(Ddr::Index::Fields::CONTENT_CONTROL_GROUP)
-    end
   end
 
   describe "extracted text" do
@@ -45,20 +37,11 @@ RSpec.shared_examples "an object that can have content" do
   describe "adding a file" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
     context "defaults" do
-      before { subject.add_file file, "content" }
-      its(:original_filename) { should eq("imageA.tif") }
+      before { subject.add_file file, path: "content", mime_type: "image/tiff" }
       its(:content_type) { should eq("image/tiff") }
       it "should create a 'virus check' event for the object" do
         expect { subject.save }.to change { subject.virus_checks.count }
       end
-    end
-    context "with option `:original_name=>false`" do
-      before { subject.add_file file, "content", original_name: false }
-      its(:original_filename) { should be_nil }
-    end
-    context "with `:original_name` option set to a string" do
-      before { subject.add_file file, "content", original_name: "another-name.tiff" }
-      its(:original_filename) { should eq("another-name.tiff") }
     end
   end
 
@@ -67,7 +50,7 @@ RSpec.shared_examples "an object that can have content" do
     describe "when new content is present" do
 
       context "and it's a new object" do
-        before { subject.add_file file, "content" }
+        before { subject.add_file file, path: "content" }
         let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
         it "should generate derivatives" do
           expect(subject.derivatives).to receive(:update_derivatives)
@@ -121,7 +104,7 @@ RSpec.shared_examples "an object that can have content" do
   describe "#upload" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
     it "should add the file to the content datastream" do
-      expect(subject).to receive(:add_file).with(file, "content", {})
+      expect(subject).to receive(:add_file).with(file, { path: "content" })
       subject.upload(file)
     end
   end
@@ -129,7 +112,7 @@ RSpec.shared_examples "an object that can have content" do
   describe "#upload!" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
     it "should add the file to the content datastream and save the object" do
-      expect(subject).to receive(:add_file).with(file, "content", {}).and_call_original
+      expect(subject).to receive(:add_file).with(file, { path: "content" }).and_call_original
       expect(subject).to receive(:save)
       subject.upload!(file)
     end

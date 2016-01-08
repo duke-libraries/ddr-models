@@ -4,7 +4,7 @@ module Ddr
   module Models
     RSpec.describe HasStructMetadata, type: :model, structural_metadata: true do
 
-      let(:item) { Item.new(pid: 'test:2') }
+      let(:item) { Item.new(id: 'test_2') }
 
       describe "#structure" do
         context "no existing structural metadata" do
@@ -21,9 +21,9 @@ module Ddr
       end
 
       describe "#build_default_structure" do
-        let(:components) { [ Component.new(pid: 'test:5', identifier: [ 'abc002' ]),
-                             Component.new(pid: 'test:6', identifier: [ 'abc001' ]),
-                             Component.new(pid: 'test:7', identifier: [ 'abc003' ])
+        let(:components) { [ Component.new(id: 'test_5', identifier: [ 'abc002' ]),
+                             Component.new(id: 'test_6', identifier: [ 'abc001' ]),
+                             Component.new(id: 'test_7', identifier: [ 'abc003' ])
                            ] }
         let(:expected) { FactoryGirl.build(:simple_structure) }
         before { allow(item).to receive(:find_children) { simple_structure_query_response } }

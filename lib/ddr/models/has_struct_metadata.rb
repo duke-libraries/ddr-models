@@ -4,8 +4,7 @@ module Ddr
       extend ActiveSupport::Concern
 
       included do
-        has_file_datastream name: Ddr::Datastreams::STRUCT_METADATA,
-                            type: Ddr::Datastreams::StructuralMetadataDatastream
+        contains Ddr::Datastreams::STRUCT_METADATA, class_name: 'Ddr::Datastreams::StructuralMetadataDatastream'
       end
 
       def structure
@@ -33,7 +32,7 @@ module Ddr
       private
 
       def find_children
-        query = association_query(:children)
+        query = ActiveFedora::SolrService.construct_query_for_rel([[ self.class.reflect_on_association(:children), self.id ]])
         sort = "#{Ddr::Index::Fields::LOCAL_ID} ASC, #{Ddr::Index::Fields::OBJECT_CREATE_DATE} ASC"
         ActiveFedora::SolrService.query(query, sort: sort, rows: 999999)
       end
@@ -51,9 +50,9 @@ module Ddr
         div
       end
 
-      def create_fptr(stru, div, pid)
+      def create_fptr(stru, div, id)
         fptr = Nokogiri::XML::Node.new('fptr', stru.as_xml_document)
-        fptr['CONTENTIDS'] = "info:fedora/#{pid}"
+        fptr['CONTENTIDS'] = id
         div.add_child(fptr)
       end
 

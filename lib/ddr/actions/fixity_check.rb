@@ -11,19 +11,22 @@ module Ddr
 
       # Return result of fixity check
       def self._execute(object)
-        Result.new(pid: object.pid).tap do |r|
+        Result.new(id: object.id).tap do |r|
           object.datastreams_to_validate.each do |dsid, ds|
-            r.success &&= ds.dsChecksumValid
-            r.results[dsid] = ds.profile
+            # r.success &&= ds.dsChecksumValid
+            # r.results[dsid] = ds.profile
+            checksum_valid = ds.check_fixity
+            r.success &&= checksum_valid
+            r.results[dsid] = { 'checksum_valid' => checksum_valid }
           end
         end
       end
 
       class Result
-        attr_accessor :pid, :success, :results, :checked_at
+        attr_accessor :id, :success, :results, :checked_at
 
         def initialize(args={})
-          @pid = args[:pid]
+          @id = args[:id]
           @success = args[:success] || true
           @results = args[:results] || {}
           @checked_at = args[:checked_at] || Time.now.utc

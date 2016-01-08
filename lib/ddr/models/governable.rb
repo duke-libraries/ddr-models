@@ -4,7 +4,9 @@ module Ddr
       extend ActiveSupport::Concern
 
       included do
-        belongs_to :admin_policy, :property => :is_governed_by, :class_name => "Collection"
+        belongs_to :admin_policy,
+                   predicate: ActiveFedora::RDF::ProjectHydra.isGovernedBy,
+                   class_name: "Collection"
       end
 
       def inherited_permissions
@@ -28,15 +30,10 @@ module Ddr
       end
 
       def copy_admin_policy_from(other)
-        # XXX In active-fedora 7.0 can do
-        # self.admin_policy = other.admin_policy
-        self.admin_policy_id = case
-        when other.has_admin_policy?
-          other.admin_policy_id
-        when other.is_a?(Collection)
-          other.pid
+        if admin_policy = other.admin_policy
+          self.admin_policy = admin_policy
+          logger.debug "Copied admin policy from #{other.model_and_id} to #{model_and_id}"
         end
-        # self.admin_policy_id = other.admin_policy_id if other.has_admin_policy?
       end
 
     end

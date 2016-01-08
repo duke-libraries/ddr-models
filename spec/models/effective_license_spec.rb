@@ -44,7 +44,7 @@ module Ddr::Models
           before { allow(obj).to receive(:admin_policy) { admin_policy } }
           describe "and the admin policy has a different id from the object" do
             before do
-              allow(obj).to receive(:admin_policy_id) { "test:3" }
+              allow(obj).to receive(:admin_policy_id) { "test-3" }
             end
             describe "and the admin policy has a license" do
               before do

@@ -43,7 +43,7 @@ module Ddr
       private
 
       def fptr_pids(div_node)
-        div_node.xpath('xmlns:fptr').map { |fptr_node| fptr_node["CONTENTIDS"].gsub('info:fedora/', '') }
+        div_node.xpath('xmlns:fptr').map { |fptr_node| fptr_node["CONTENTIDS"] }
       end
 
       def subdivs(structmap_or_div_node)

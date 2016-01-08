@@ -9,8 +9,6 @@ module Ddr::Index
       Filter.is_governed_by(pid)
     end
 
-    private
-
     def self.const_missing(name)
       if name == :HAS_CONTENT
         Deprecation.warn(self,

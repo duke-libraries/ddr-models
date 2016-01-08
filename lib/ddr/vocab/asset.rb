@@ -21,6 +21,9 @@
       property "archivesSpaceId",
         label: "ArchivesSpace Identifier"
 
+      property "multiresImageFilePath",
+        label: "Multires Image File Path"
+
     end
   end
 end

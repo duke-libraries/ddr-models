@@ -2,10 +2,13 @@ language: ruby
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install libvips-dev
-  - gem install bundler
-bundler_args: --without production
+  - gem install bundler --version "~> 1.10"
 rvm:
   - 2.1.5
 script: "bundle exec rake ci"
+bundler_args: --without production
+jdk:
+  - oraclejdk8
 env:
   - DDR_AUX_API_URL=http://localhost:3000/api
+

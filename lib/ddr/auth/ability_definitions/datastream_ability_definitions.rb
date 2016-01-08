@@ -9,21 +9,27 @@ module Ddr
       # course by the :manage ability.
       DATASTREAM_DOWNLOAD_ABILITIES = {
         Ddr::Datastreams::CONTENT         => :download,
-        Ddr::Datastreams::DESC_METADATA   => :read,
         Ddr::Datastreams::EXTRACTED_TEXT  => :download,
         Ddr::Datastreams::FITS            => :read,
-        Ddr::Datastreams::MULTIRES_IMAGE  => :read,
         Ddr::Datastreams::STRUCT_METADATA => :read,
         Ddr::Datastreams::THUMBNAIL       => :read,
       }.freeze
 
       def call
-        can :download, ActiveFedora::Datastream do |ds|
-          can_download_datastream?(ds.dsid, ds.pid)
+        can :download, ActiveFedora::File do |file|
+          can_download_datastream?(_dsid(file), _pid(file))
         end
       end
 
       private
+
+      def _dsid(file)
+        File.basename(file.id)
+      end
+
+      def _pid(file)
+        File.dirname(file.id)
+      end
 
       def can_download_datastream?(dsid, pid)
         can? DATASTREAM_DOWNLOAD_ABILITIES.fetch(dsid), pid

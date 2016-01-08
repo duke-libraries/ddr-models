@@ -2,39 +2,16 @@ module Ddr
   module Models
     module HasContent
       extend ActiveSupport::Concern
-
-      MASTER_FILE_TYPES = [ "image/tiff" ]
-
-      def master_file?
-        if respond_to?(:file_use) && file_use.present?
-          file_use == Ddr::Models::HasStructMetadata::FILE_USE_MASTER
-        else
-          MASTER_FILE_TYPES.include?(content_type)
-        end
-      end
+      extend Deprecation
 
       included do
-        has_file_datastream \
-          name: Ddr::Datastreams::CONTENT,
-          versionable: true,
-          label: "Content file for this object",
-          control_group: "M"
+        contains Ddr::Datastreams::CONTENT
+        contains Ddr::Datastreams::EXTRACTED_TEXT, class_name: 'Ddr::Datastreams::PlainTextDatastream'
+        contains Ddr::Datastreams::FITS, class_name: 'Ddr::Datastreams::FitsDatastream'
 
-        has_file_datastream \
-          name: Ddr::Datastreams::EXTRACTED_TEXT,
-          type: Ddr::Datastreams::PlainTextDatastream,
-          versionable: true,
-          label: "Text extracted from the content file",
-          control_group: "M"
-
-        has_metadata \
-          name: Ddr::Datastreams::FITS,
-          type: Ddr::Datastreams::FitsDatastream,
-          versionable: true,
-          label: "FITS Output for content file",
-          control_group: "M"
-
-        has_attributes :original_filename, datastream: "adminMetadata", multiple: false
+        property :legacy_original_filename,
+                 predicate: RDF::Vocab::PREMIS.hasOriginalName,
+                 multiple: false
 
         include FileManagement
 
@@ -42,24 +19,26 @@ module Ddr
 
         around_save :characterize_file, if: [ :content_changed?, "Ddr::Models.characterize_files?" ]
 
-        after_add_file do
-          if file_to_add.original_name && file_to_add.dsid == "content"
-            self.original_filename = file_to_add.original_name
-          end
-        end
-
         delegate :validate_checksum!, to: :content
       end
 
       # Convenience method wrapping FileManagement#add_file
-      def upload file, opts={}
-        add_file(file, Ddr::Datastreams::CONTENT, opts)
+      def upload(file, opts={})
+        add_file(file, opts.merge(path: Ddr::Datastreams::CONTENT))
       end
 
       # Set content to file and save
-      def upload! file, opts={}
+      def upload!(file, opts={})
         upload(file, opts)
         save
+      end
+
+      def original_filename
+        content.original_name
+      end
+
+      def original_filename=(filename)
+        content.original_name = filename
       end
 
       def derivatives
@@ -71,7 +50,7 @@ module Ddr
       end
 
       def content_size
-        content.external? ? content.file_size : content.dsSize
+        content.size
       end
 
       def content_human_size
@@ -79,7 +58,7 @@ module Ddr
       end
 
       def content_type
-        content.mimeType
+        content.mime_type
       end
 
       def content_major_type
@@ -119,11 +98,11 @@ module Ddr
       end
 
       def content_changed?
-        content.external? ? content.dsLocation_changed? : content.content_changed?
+        content.content_changed?
       end
 
       def has_extracted_text?
-        extractedText.has_content?
+        !extractedText.empty?
       end
 
       def with_content_file(&block)

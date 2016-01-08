@@ -1,12 +1,8 @@
 require 'ddr/models/engine'
 require 'ddr/models/version'
 
-# Awful hack to make Hydra::AccessControls::Permissions accessible
-$: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/concerns"
-
 require 'active_record'
-
-require 'hydra-core'
+require 'active_fedora'
 require 'hydra/validations'
 
 module Ddr
@@ -41,12 +37,13 @@ module Ddr
 
     autoload :AccessControllable
     autoload :AdminSet
+    autoload :AttachedFileProfile
+    autoload :AttachedFilesProfile
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :Contact
     autoload :ContentModelError, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
-    autoload :Describable
     autoload :Error
     autoload :EventLoggable
     autoload :FileCharacterization
@@ -63,9 +60,13 @@ module Ddr
     autoload :HasThumbnail
     autoload :Indexing
     autoload :NotFoundError, 'ddr/models/error'
+    autoload :ObjectApi
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
+    autoload :UrlSafeId
+    autoload :Validatable
+    autoload :Validator
     autoload :WithContentFile
     autoload :YearFacet
 
@@ -75,6 +76,20 @@ module Ddr
       autoload :License
       autoload :InheritedLicense
       autoload :ParentLicense
+    end
+
+    autoload_under "metadata" do
+      autoload :DescriptiveMetadata
+      autoload :Metadata
+      autoload :MetadataMapping
+      autoload :MetadataTerm
+      autoload :MetadataVocabulary
+      autoload :MetadataVocabularies
+    end
+
+    autoload_under "search" do
+      autoload :Catalog
+      autoload :SearchBuilder
     end
 
     # Base directory of default external file store
@@ -131,5 +146,7 @@ module Ddr
 
   end
 end
+
+ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
 
 Dir[Ddr::Models::Engine.root.to_s + "/app/models/*.rb"].each { |m| require m }

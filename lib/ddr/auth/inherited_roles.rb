@@ -3,18 +3,15 @@ require "delegate"
 module Ddr::Auth
   class InheritedRoles < SimpleDelegator
 
-    # @param obj [Object] an object that receives :roles and returns a RoleSet
-    # @return [Ddr::Auth::Roles::RoleSetQuery]
     def self.call(obj)
       new(obj).call
     end
 
-    # @return [Ddr::Auth::Roles::DetachedRoleSet]
     def call
       if has_admin_policy?
-        admin_policy.roles.in_policy_scope.detach
+        admin_policy.roles.in_policy_scope.result
       else
-        Roles::DetachedRoleSet.new
+        Roles::RoleSet.new
       end
     end
 

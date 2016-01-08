@@ -3,22 +3,24 @@ require 'json'
 module Ddr::Models
   module SolrDocument
     extend ActiveSupport::Concern
-
-    included do
-      alias_method :pid, :id
-    end
+    extend Deprecation
+    include ObjectApi
 
     class NotFound < Error; end
 
     module ClassMethods
-      def find(pid_or_uri)
-        pid = pid_or_uri.sub(/\Ainfo:fedora\//, "")
-        query = Ddr::Index::QueryBuilder.build { |q| q.id(pid) }
+      def find(id)
+        query = Ddr::Index::QueryBuilder.build { |q| q.id(id) }
         if doc = query.docs.first
           return doc
         end
-        raise NotFound, "SolrDocument not found for \"#{pid_or_uri}\"."
+        raise NotFound, "SolrDocument not found for \"#{id}\"."
       end
+    end
+
+    def pid
+      Deprecation.warn(SolrDocument, "`pid` is deprecated; use `id` instead.")
+      id
     end
 
     def inspect
@@ -50,6 +52,10 @@ module Ddr::Models
       id.sub(/:/, "-")
     end
 
+    def access_roles
+      get(Ddr::Index::Fields::ACCESS_ROLE)
+    end
+
     def object_profile
       @object_profile ||= get_json(Ddr::Index::Fields::OBJECT_PROFILE)
     end
@@ -75,7 +81,12 @@ module Ddr::Models
     end
 
     def datastreams
-      object_profile["datastreams"]
+      Deprecation.warn(SolrDocument, "Use `attached_files` instead.")
+      attached_files
+    end
+
+    def attached_files
+      (get_json(Ddr::Index::Fields::ATTACHED_FILES) || {}).with_indifferent_access
     end
 
     def has_datastream?(dsID)
@@ -170,7 +181,7 @@ module Ddr::Models
     end
 
     def roles
-      @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
+      @roles ||= Ddr::Auth::Roles::RoleSetManager.new(self)
     end
 
     def struct_maps

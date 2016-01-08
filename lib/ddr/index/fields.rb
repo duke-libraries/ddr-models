@@ -9,10 +9,10 @@ module Ddr::Index
     ADMIN_SET                   = Field.new :admin_set, :stored_sortable
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable
+    ATTACHED_FILES              = Field.new :attached_files, solr_name: "attached_files_ss"
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
-    CONTENT_CONTROL_GROUP       = Field.new :content_control_group, :searchable, type: :string
     CONTENT_SIZE                = Field.new :content_size, solr_name: "content_size_lsi"
     CONTENT_SIZE_HUMAN          = Field.new :content_size_human, :symbol
     CONTRIBUTOR_FACET           = Field.new :contributor_facet, :facetable
@@ -24,12 +24,12 @@ module Ddr::Index
     DOI                         = Field.new :doi, :symbol
     EAD_ID                      = Field.new :ead_id, :stored_sortable
     EXTRACTED_TEXT              = Field.new :extracted_text, :searchable, type: :text
+    FCREPO3_PID                 = Field.new :fcrepo3_pid, :stored_sortable
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
-    INTERNAL_URI                = Field.new :internal_uri, :stored_sortable
     IS_ATTACHED_TO              = Field.new :is_attached_to, :symbol
     IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, :symbol
-    IS_GOVERNED_BY              = Field.new :is_governed_by, :symbol
+    IS_GOVERNED_BY              = Field.new :is_governed_by, solr_name: "isGovernedBy_ssim"
     IS_MEMBER_OF                = Field.new :is_member_of, :symbol
     IS_MEMBER_OF_COLLECTION     = Field.new :is_member_of_collection, :symbol
     IS_PART_OF                  = Field.new :is_part_of, :symbol
@@ -47,6 +47,7 @@ module Ddr::Index
     OBJECT_STATE                = Field.new :object_state, :stored_sortable
     OBJECT_CREATE_DATE          = Field.new :system_create, :stored_sortable, type: :date
     OBJECT_MODIFIED_DATE        = Field.new :system_modified, :stored_sortable, type: :date
+    ORIGINAL_FILENAME           = Field.new :original_filename, :stored_sortable
     PERMANENT_ID                = Field.new :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = Field.new :permanent_url, :stored_sortable, type: :string
     POLICY_ROLE                 = Field.new :policy_role, :symbol
@@ -97,11 +98,6 @@ module Ddr::Index
                          "`Ddr::Index::Fields::#{name}` is deprecated." \
                          " Use `Ddr::Index::Fields::ID` instead.")
         return ID
-      end
-      if const = LegacyLicenseFields.const_get(name)
-        Deprecation.warn(Ddr::Index::Fields,
-                         "`Ddr::Index::Fields::#{name}` is deprecated and will be removed in ddr-models 3.0.")
-        return const
       end
       super
     end

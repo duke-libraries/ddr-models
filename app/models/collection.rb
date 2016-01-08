@@ -3,26 +3,27 @@
 #
 class Collection < Ddr::Models::Base
 
-  include Hydra::AdminPolicyBehavior
-
   include Ddr::Models::HasChildren
   include Ddr::Models::HasAttachments
 
-  has_many :children, property: :is_member_of_collection, class_name: 'Item'
-  has_many :targets, property: :is_external_target_for, class_name: 'Target'
+  has_many :children,
+           predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isMemberOfCollection,
+           class_name: "Item",
+           as: :parent
 
-  alias_method :items, :children
-  alias_method :item_ids, :child_ids
+  has_many :targets,
+           predicate: ::RDF::URI("http://www.loc.gov/mix/v20/externalTarget#isExternalTargetFor"),
+           class_name: "Target"
 
   after_create :set_admin_policy
 
-  validates_presence_of :title
+  validates_presence_of :dc_title
 
   # Returns the SolrDocuments for Components associated with the Collection.
   #
   # @return A lazy enumerator of SolrDocuments.
   def components_from_solr
-    query = "#{Ddr::Index::Fields::COLLECTION_URI}:#{RSolr.solr_escape(internal_uri)}"
+    query = "#{Ddr::Index::Fields::COLLECTION_URI}:#{RSolr.solr_escape(id)}"
     filter = ActiveFedora::SolrService.construct_query_for_rel(:has_model => Component.to_class_uri)
     results = ActiveFedora::SolrService.query(query, fq: filter, rows: 100000)
     results.lazy.map {|doc| SolrDocument.new(doc)}
@@ -45,15 +46,19 @@ class Collection < Ddr::Models::Base
   end
 
   def grant_roles_to_creator(creator)
-    roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::RESOURCE_SCOPE
-    roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::POLICY_SCOPE
+    roles.grant role_type: Ddr::Auth::Roles::CURATOR,
+                agent: creator.agent,
+                scope: Ddr::Auth::Roles::RESOURCE_SCOPE
+    roles.grant role_type: Ddr::Auth::Roles::CURATOR,
+                agent: creator.agent,
+                scope: Ddr::Auth::Roles::POLICY_SCOPE
   end
 
   private
 
   def set_admin_policy
     self.admin_policy = self
-    self.save
+    save
   end
 
 end
