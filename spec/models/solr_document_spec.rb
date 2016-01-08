@@ -195,4 +195,21 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
       end
     end
   end
+
+  describe "#has_datastream?" do
+    before do
+      allow(subject).to receive(:attached_files) { {"thumbnail"=>{"size"=>nil}, "content"=>{"size"=>987654} }}
+    end
+    context "when there is no content for the datastream" do
+      it "should return false" do
+        expect(subject.has_datastream?("thumbnail")).to be false
+      end
+    end
+    context "when there is content for the datastream" do
+      it "should return true" do
+        expect(subject.has_datastream?("content")).to be true
+      end
+    end
+  end
+
 end
