@@ -35,7 +35,6 @@ module Ddr
   module Models
     extend ActiveSupport::Autoload
 
-    autoload :AccessControllable
     autoload :AdminSet
     autoload :AttachedFileProfile
     autoload :AttachedFilesProfile
