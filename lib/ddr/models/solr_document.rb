@@ -90,7 +90,7 @@ module Ddr::Models
     end
 
     def has_datastream?(dsID)
-      datastreams[dsID].present?
+      datastreams.key?(dsID) && datastreams[dsID]["size"].present?
     end
 
     def has_admin_policy?
