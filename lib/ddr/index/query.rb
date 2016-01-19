@@ -52,5 +52,14 @@ module Ddr::Index
       self
     end
 
+    def ==(other)
+      other.instance_of?(self.class) &&
+        other.q == self.q &&
+        other.fields == self.fields &&
+        other.filters == self.filters &&
+        other.rows == self.rows &&
+        other.sort == self.sort
+    end
+
   end
 end
