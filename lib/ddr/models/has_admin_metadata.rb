@@ -38,7 +38,7 @@ module Ddr::Models
                multiple: false
 
       property :license,
-               predicate: RDF::DC.license,
+               predicate: RDF::Vocab::DC.license,
                multiple: false
 
       property :local_id,

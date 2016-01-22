@@ -3,11 +3,11 @@ module Ddr::Models
   module MetadataVocabularies
 
     def dc11
-      MetadataVocabulary.new(RDF::DC11)
+      MetadataVocabulary.new(RDF::Vocab::DC11)
     end
 
     def dcterms
-      MetadataVocabulary.new(RDF::DC, except: RDF::DC.license)
+      MetadataVocabulary.new(RDF::Vocab::DC, except: RDF::Vocab::DC.license)
     end
 
     def duketerms
