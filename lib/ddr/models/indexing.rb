@@ -1,3 +1,5 @@
+require 'time'
+
 module Ddr
   module Models
     module Indexing
@@ -57,6 +59,7 @@ module Ddr
           fields.merge!(last_virus_check.to_solr) if last_virus_check
         end
         if has_content?
+          fields[CONTENT_CREATE_DATE] = Ddr::Utils.solr_date(content.createDate)
           fields[CONTENT_CONTROL_GROUP] = content.controlGroup
           fields[CONTENT_SIZE] = content_size
           fields[CONTENT_SIZE_HUMAN] = content_human_size
