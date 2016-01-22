@@ -26,13 +26,13 @@ module Ddr
       end
 
       def multires_image_file_paths(type='default')
-        ::SolrDocument.find(pid).multires_image_file_paths(type)
+        ::SolrDocument.find(id).multires_image_file_paths(type)
       end
 
       private
 
       def find_children
-        query = ActiveFedora::SolrService.construct_query_for_rel([[ self.class.reflect_on_association(:children), self.id ]])
+        query = ActiveFedora::SolrQueryBuilder.construct_query_for_rel([[ self.class.reflect_on_association(:children), self.id ]])
         sort = "#{Ddr::Index::Fields::LOCAL_ID} ASC, #{Ddr::Index::Fields::OBJECT_CREATE_DATE} ASC"
         ActiveFedora::SolrService.query(query, sort: sort, rows: 999999)
       end

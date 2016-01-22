@@ -7,9 +7,9 @@ module Ddr::Models
 
     let(:license) { License.new(url: url) }
 
-    let(:obj) { Component.new(pid: "test:1") }
-    let(:parent) { Item.new(pid: "test:2") }
-    let(:admin_policy) { Collection.new(pid: "test:3") }
+    let(:obj) { Component.new(id: "test-1") }
+    let(:parent) { Item.new(id: "test-2") }
+    let(:admin_policy) { Collection.new(id: "test-3") }
 
     describe "when the object has a license" do
       before do

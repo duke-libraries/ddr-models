@@ -2,16 +2,6 @@ RSpec.shared_examples "a describable object" do
 
   let(:object) { described_class.new }
 
-  describe "having an identifier" do
-    before do
-      object.descMetadata.identifier = ["id001"]
-      object.save(validate: false)
-    end
-    it "should be findable by identifier" do
-      expect(described_class.find_by_identifier('id001')).to include object
-    end
-  end
-
   describe "#desc_metadata_terms" do
     it "should have a default value" do
       expect(object.desc_metadata_terms).to match_array(Ddr::Models::DescriptiveMetadata.unqualified_names)
@@ -28,9 +18,9 @@ RSpec.shared_examples "a describable object" do
       end
       context "with variable results" do
         before do
-          object.descMetadata.title = ["Object Title"]
-          object.descMetadata.creator = ["Duke University Libraries"]
-          object.descMetadata.identifier = ["id001"]
+          object.desc_metadata.title = ["Object Title"]
+          object.desc_metadata.creator = ["Duke University Libraries"]
+          object.desc_metadata.identifier = ["id001"]
           object.save
         end
         it "should accept an :empty argument" do
@@ -44,9 +34,9 @@ RSpec.shared_examples "a describable object" do
   end
   describe "#set_desc_metadata" do
     let(:term_values_hash) { object.desc_metadata_terms.each_with_object({}) {|t, memo| memo[t] = ["Value"]} }
-    it "should set the descMetadata terms to the values of the matching keys in the hash" do
+    it "should set the desc_metadata terms to the values of the matching keys in the hash" do
       object.desc_metadata_terms.each do |t|
-        expect(object).to receive(:set_desc_metadata_values).with(t, ["Value"])
+        expect(object.desc_metadata).to receive(:set_values).with(t, ["Value"])
       end
       object.set_desc_metadata(term_values_hash)
     end
@@ -55,13 +45,13 @@ RSpec.shared_examples "a describable object" do
     context "when values == nil" do
       it "should set the term to an empty value" do
         object.set_desc_metadata_values(:title, nil)
-        expect(object.descMetadata.title).to be_empty
+        expect(object.desc_metadata.title).to be_empty
       end
     end
     context "when values is an array" do
       it "should reject empty values from the array" do
         object.set_desc_metadata_values(:title, ["Object Title", nil, "Alternative Title", ""])
-        expect(object.descMetadata.title).to eq ["Object Title", "Alternative Title"]
+        expect(object.desc_metadata.title).to eq ["Object Title", "Alternative Title"]
       end
     end
   end

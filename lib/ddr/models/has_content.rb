@@ -118,7 +118,7 @@ module Ddr
 
       def characterize_file
         yield
-        Resque.enqueue(Ddr::Jobs::FitsFileCharacterization, pid)
+        Resque.enqueue(Ddr::Jobs::FitsFileCharacterization, id)
       end
 
       def default_content_type

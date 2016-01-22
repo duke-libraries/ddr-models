@@ -24,7 +24,7 @@ class Collection < Ddr::Models::Base
   # @return A lazy enumerator of SolrDocuments.
   def components_from_solr
     query = "#{Ddr::Index::Fields::COLLECTION_URI}:#{RSolr.solr_escape(id)}"
-    filter = ActiveFedora::SolrService.construct_query_for_rel(:has_model => Component.to_class_uri)
+    filter = ActiveFedora::SolrQueryBuilder.construct_query_for_rel(:has_model => Component.to_class_uri)
     results = ActiveFedora::SolrService.query(query, fq: filter, rows: 100000)
     results.lazy.map {|doc| SolrDocument.new(doc)}
   end

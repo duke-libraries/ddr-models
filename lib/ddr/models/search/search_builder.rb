@@ -40,13 +40,13 @@ module Ddr::Models
     def policy_role_filters
       if policy_role_policies.present?
         rels = policy_role_policies.map { |pid| [:isGovernedBy, pid] }
-        ActiveFedora::SolrService.construct_query_for_rel(rels, " OR ")
+        ActiveFedora::SolrQueryBuilder.construct_query_for_rel(rels, " OR ")
       end
     end
 
     def resource_role_filters
       current_ability.agents.map do |agent|
-        ActiveFedora::SolrService.raw_query(Ddr::Index::Fields::RESOURCE_ROLE, agent)
+        ActiveFedora::SolrQueryBuilder.raw_query(Ddr::Index::Fields::RESOURCE_ROLE, agent)
       end.join(" OR ")
     end
 

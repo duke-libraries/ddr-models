@@ -19,10 +19,10 @@ module Ddr
           ADMIN_SET             => admin_set,
           ASPACE_ID             => aspace_id,
           ATTACHED_FILES        => attached_files_profile.to_json,
-          BOX_NUMBER_FACET      => desc_metadata_values('box_number'),
-          CONTRIBUTOR_FACET     => desc_metadata_values('contributor'),
-          CREATOR_FACET         => descMetadata.creator,
-          DATE_FACET            => descMetadata.date,
+          BOX_NUMBER_FACET      => desc_metadata.values('box_number'),
+          CONTRIBUTOR_FACET     => desc_metadata.values('contributor'),
+          CREATOR_FACET         => desc_metadata.creator,
+          DATE_FACET            => desc_metadata.date,
           DATE_SORT             => date_sort,
           DEPOSITOR             => depositor,
           DISPLAY_FORMAT        => display_format,
@@ -35,14 +35,14 @@ module Ddr
           PERMANENT_ID          => permanent_id,
           PERMANENT_URL         => permanent_url,
           POLICY_ROLE           => roles.in_policy_scope.agents,
-          PUBLISHER_FACET       => descMetadata.publisher,
+          PUBLISHER_FACET       => desc_metadata.publisher,
           RESEARCH_HELP_CONTACT => research_help_contact,
           RESOURCE_ROLE         => roles.in_resource_scope.agents,
-          SERIES_FACET          => desc_metadata_values('series'),
-          SPATIAL_FACET         => desc_metadata_values('spatial'),
-          SUBJECT_FACET         => desc_metadata_values('subject'),
+          SERIES_FACET          => desc_metadata.values('series'),
+          SPATIAL_FACET         => desc_metadata.values('spatial'),
+          SUBJECT_FACET         => desc_metadata.values('subject'),
           TITLE                 => title_display,
-          TYPE_FACET            => descMetadata.type,
+          TYPE_FACET            => desc_metadata.type,
           WORKFLOW_STATE        => workflow_state,
           YEAR_FACET            => year_facet,
         }
@@ -87,14 +87,14 @@ module Ddr
       end
 
       def title_display
-        return descMetadata.title.first if descMetadata.title.present?
-        return descMetadata.identifier.first if descMetadata.identifier.present?
+        return desc_metadata.title.first if desc_metadata.title.present?
+        return desc_metadata.identifier.first if desc_metadata.identifier.present?
         return original_filename if respond_to?(:original_filename) && original_filename.present?
-        "[#{pid}]"
+        "[#{id}]"
       end
 
       def all_identifiers
-        descMetadata.identifier + [local_id, permanent_id, pid].compact
+        desc_metadata.identifier + [local_id, permanent_id, id].compact
       end
 
       def associated_collection
@@ -114,7 +114,7 @@ module Ddr
       end
 
       def date_sort
-        descMetadata.date.first
+        desc_metadata.date.first
       end
 
       def year_facet

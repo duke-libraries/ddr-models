@@ -1,8 +1,8 @@
 RSpec.shared_examples "a governable object" do
   let(:object) do
     described_class.new.tap do |obj|
-      obj.descMetadata.title = [ 'Describable' ]
-      obj.descMetadata.identifier = [ 'id001' ]
+      obj.desc_metadata.title = [ 'Describable' ]
+      obj.desc_metadata.identifier = [ 'id001' ]
       obj.save(validate: false)
     end
   end

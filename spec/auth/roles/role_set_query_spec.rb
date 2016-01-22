@@ -12,11 +12,11 @@ module Ddr::Auth
       let(:contributor_group) { "Contributors" }
       let(:downloader_group) { "Downloaders" }
       let(:viewer_group) { "Viewers" }
-      let(:contributor_role) { Role.build(role_type: "Contributor", agent: contributor_group, scope: "resource") }
-      let(:downloader_role) { Role.build(role_type: "Downloader", agent: downloader_group, scope: "resource") }
-      let(:editor_role) { Role.build(role_type: "Editor", agent: editor, scope: "resource") }
-      let(:curator_role) { Role.build(role_type: "Curator", agent: curator, scope: "policy") }
-      let(:viewer_role) { Role.build(role_type: "Viewer", agent: viewer_group, scope: "policy") }
+      let(:contributor_role) { Role.new(role_type: "Contributor", agent: contributor_group, scope: "resource") }
+      let(:downloader_role) { Role.new(role_type: "Downloader", agent: downloader_group, scope: "resource") }
+      let(:editor_role) { Role.new(role_type: "Editor", agent: editor, scope: "resource") }
+      let(:curator_role) { Role.new(role_type: "Curator", agent: curator, scope: "policy") }
+      let(:viewer_role) { Role.new(role_type: "Viewer", agent: viewer_group, scope: "policy") }
       let(:policy_roles) { [curator_role, viewer_role] }
       let(:resource_roles) { [contributor_role, downloader_role, editor_role] }
 

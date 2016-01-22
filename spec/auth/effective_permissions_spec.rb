@@ -2,7 +2,7 @@ module Ddr::Auth
   RSpec.describe EffectivePermissions do
 
     let(:resource) { FactoryGirl.build(:item) }
-    let(:policy) { Collection.new(pid: "coll-1") }
+    let(:policy) { Collection.new(id: "coll-1") }
     let(:agents) { [ "Editors", "bob@example.com" ] }
     
     before do

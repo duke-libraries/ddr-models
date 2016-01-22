@@ -55,7 +55,7 @@ module Ddr::Models
 
     def notify_virus_scan_results
       while result = virus_scan_results.shift
-        result.merge! pid: pid
+        result.merge! pid: id
         ActiveSupport::Notifications.instrument(Ddr::Notifications::VIRUS_CHECK, result)
       end
     end

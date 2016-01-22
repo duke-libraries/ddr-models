@@ -14,7 +14,7 @@ module ActiveFedora
         before do
           subject.content = file.read
           subject.mime_type = file.content_type
-          allow(subject).to receive(:pid) { "test:1" }
+          allow(subject).to receive(:id) { "test-1" }
         end
         describe "the yielded file" do
           it "should by default have an extension for the datastream media type" do
@@ -43,6 +43,7 @@ module ActiveFedora
             end
             describe "when the file has no id" do
               it "should be NEW" do
+                allow(subject).to receive(:id) { nil }
                 subject.tempfile do |f|
                   expect(::File.basename(f.path).start_with?("NEW--")).to be true
                 end
@@ -78,7 +79,7 @@ module ActiveFedora
       context "with persisted content" do
         before do
           allow(subject).to receive(:new_record?) { false }
-          allow(subject).to receive(:pid) { "foobar-1" }
+          allow(subject).to receive(:id) { "foobar-1" }
           allow(subject).to receive(:checksum) { checksum }
         end
         context "and the repository internal checksum in invalid" do

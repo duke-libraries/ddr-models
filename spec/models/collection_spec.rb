@@ -35,7 +35,7 @@ RSpec.describe Collection, type: :model do
     let(:user) { FactoryGirl.build(:user) }
     before { subject.grant_roles_to_creator(user) }
     it "should include Curator roles in both resource abd policy scopes" do
-      expect(subject.roles.to_a).to eq([Ddr::Auth::Roles::Role.build(role_type: "Curator", agent: user.agent, scope: "resource"), Ddr::Auth::Roles::Role.build(role_type: "Curator", agent: user.agent, scope: "policy")])
+      expect(subject.roles.to_a).to eq([Ddr::Auth::Roles::Role.new(role_type: "Curator", agent: user.agent, scope: "resource"), Ddr::Auth::Roles::Role.new(role_type: "Curator", agent: user.agent, scope: "policy")])
     end
   end
 
