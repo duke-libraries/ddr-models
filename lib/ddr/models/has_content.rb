@@ -17,7 +17,9 @@ module Ddr
 
         around_save :update_derivatives, if: :content_changed?
 
-        around_save :characterize_file, if: [ :content_changed?, "Ddr::Models.characterize_files?" ]
+        before_save if: :re_characterize? do
+          fits.delete
+        end
 
         delegate :validate_checksum!, to: :content
       end
@@ -116,9 +118,8 @@ module Ddr
         derivatives.update_derivatives(:later)
       end
 
-      def characterize_file
-        yield
-        Resque.enqueue(Ddr::Jobs::FitsFileCharacterization, id)
+      def re_characterize?
+        content_changed? && !fits.new_record?
       end
 
       def default_content_type
