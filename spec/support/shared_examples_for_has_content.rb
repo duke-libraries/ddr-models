@@ -73,22 +73,6 @@ RSpec.shared_examples "an object that can have content" do
           expect(subject.derivatives).to receive(:update_derivatives)
           subject.save
         end
-        describe "file characterization" do
-          context "characterize files is false" do
-            before { allow(Ddr::Models).to receive(:characterize_files?) { false } }
-            it "should not enqueue a FITS file characterization job" do
-              expect(Resque).to_not receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
-              subject.save
-            end
-          end
-          context "characterize files is true" do
-            before { allow(Ddr::Models).to receive(:characterize_files?) { true } }
-            it "should enqueue a FITS file characterization job" do
-              expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
-              subject.save
-            end
-          end
-        end
       end
 
       context "and it's an existing object with content" do
@@ -98,20 +82,29 @@ RSpec.shared_examples "an object that can have content" do
           expect(subject.derivatives).to receive(:update_derivatives)
           subject.upload! file
         end
-        describe "file characterization" do
-          context "characterize files is false" do
-            before { allow(Ddr::Models).to receive(:characterize_files?) { false } }
-            it "should not enqueue a FITS file characterization job" do
-              expect(Resque).to_not receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
-              subject.upload! file
-            end
+        context "and the file has not previously been characterized" do
+          it "does not try to delete the existing characterization data" do
+            expect(subject.fits).not_to receive(:delete)
+            subject.upload! file
           end
-          context "characterize files is true" do
-            before { allow(Ddr::Models).to receive(:characterize_files?) { true } }
-            it "should enqueue a FITS file characterization job" do
-              expect(Resque).to receive(:enqueue).with(Ddr::Jobs::FitsFileCharacterization, instance_of(String))
-              subject.upload! file
-            end
+        end
+        context "and the file has new characterization data" do
+          before {
+            subject.fits.content = fixture_file_upload("fits/document.xml")
+          }
+          it "preserves the characterization data" do
+            subject.upload! file
+            expect(subject.reload.fits).to have_content
+          end
+        end
+        context "and the file has previously been characterized" do
+          before {
+            subject.fits.content = fixture_file_upload("fits/document.xml")
+            subject.save!
+          }
+          it "deletes the existing characterization data" do
+            subject.upload! file
+            expect(subject.reload.fits).to_not have_content
           end
         end
       end
