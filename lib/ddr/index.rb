@@ -11,7 +11,6 @@ module Ddr
     autoload :FieldAttribute
     autoload :Fields
     autoload :Filter
-    autoload :Filters
     autoload :LegacyLicenseFields
     autoload :Query
     autoload :QueryBuilder

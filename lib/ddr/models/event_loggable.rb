@@ -13,7 +13,7 @@ module Ddr
 
       # TESTME
       def notify_event(type, args={})
-        Ddr::Notifications.notify_event(type, args.merge(pid: pid))
+        Ddr::Notifications.notify_event(type, args.merge(pid: id))
       end
 
       def has_events?

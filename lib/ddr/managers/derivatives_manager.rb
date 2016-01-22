@@ -63,8 +63,8 @@ module Ddr
 
       class DerivativeJob
         @queue = :derivatives
-        def self.perform(pid, derivative_name)
-          object = ActiveFedora::Base.find(pid)
+        def self.perform(id, derivative_name)
+          object = ActiveFedora::Base.find(id)
           derivative = Ddr::Derivatives::DERIVATIVES[derivative_name.to_sym]
           object.derivatives.update_derivative(derivative)
         end

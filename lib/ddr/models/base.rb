@@ -22,10 +22,6 @@ module Ddr::Models
       end
     end
 
-    def self.find_by_identifier(identifier)
-      find(Ddr::Index::Fields::IDENTIFIER_ALL => identifier)
-    end
-
     def inspect
       "#<#{model_and_id}, uri: \"#{uri}\">"
     end
@@ -57,9 +53,9 @@ module Ddr::Models
       arg = args.pop
       terms = case arg.to_sym
               when :empty
-                desc_metadata_terms.select { |t| desc_metadata_values(t).empty? }
+                desc_metadata_terms.select { |t| desc_metadata.values(t).empty? }
               when :present
-                desc_metadata_terms.select { |t| desc_metadata_values(t).present? }
+                desc_metadata_terms.select { |t| desc_metadata.values(t).present? }
               when :defined_attributes
                 desc_metadata_terms & desc_metadata_attributes
               when :required
@@ -97,10 +93,10 @@ module Ddr::Models
       desc_metadata.set_values(term, values)
     end
 
-    # Update all descMetadata terms with values in hash
+    # Update all desc_metadata terms with values in hash
     # Note that term not having key in hash will be set to nil!
     def set_desc_metadata(term_values_hash)
-      desc_metadata_terms.each { |t| set_desc_metadata_values(t, term_values_hash[t]) }
+      desc_metadata_terms.each { |t| desc_metadata.set_values(t, term_values_hash[t]) }
     end
 
     def attached_files_profile

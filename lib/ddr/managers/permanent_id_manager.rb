@@ -46,8 +46,8 @@ EZID Metadata:
       class AssignmentJob
         @queue = :permanent_id
 
-        def self.perform(pid)
-          object = ActiveFedora::Base.find(pid)
+        def self.perform(id)
+          object = ActiveFedora::Base.find(id)
           object.permanent_id_manager.assign
         end
       end
