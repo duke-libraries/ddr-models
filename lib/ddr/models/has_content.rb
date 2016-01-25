@@ -18,7 +18,7 @@ module Ddr
         around_save :update_derivatives, if: :content_changed?
 
         before_save if: :re_characterize? do
-          fits.delete
+          fits.delete(eradicate: true)
         end
 
         delegate :validate_checksum!, to: :content

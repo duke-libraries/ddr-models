@@ -10,7 +10,11 @@ module Ddr::Models
     end
 
     def attributes
-      files_hash.keys.each_with_object({}) { |k, memo| memo[k.to_s] = nil }
+      files_hash.keys.each_with_object({}) do |key, memo|
+        unless files_hash[key].destroyed?
+          memo[key.to_s] = nil
+        end
+      end
     end
 
     def read_attribute_for_serialization(key)
