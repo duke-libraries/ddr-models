@@ -13,6 +13,7 @@ module Ddr::Index
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
+    CONTENT_CREATE_DATE         = Field.new :content_create_date, :stored_sortable, type: :date
     CONTENT_SIZE                = Field.new :content_size, solr_name: "content_size_lsi"
     CONTENT_SIZE_HUMAN          = Field.new :content_size_human, :symbol
     CONTRIBUTOR_FACET           = Field.new :contributor_facet, :facetable

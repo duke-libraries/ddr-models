@@ -1,3 +1,5 @@
+require 'time'
+
 module Ddr
   module Models
     module Indexing
@@ -56,6 +58,7 @@ module Ddr
         end
         if has_content?
           fields[ORIGINAL_FILENAME] = original_filename
+          fields[CONTENT_CREATE_DATE] = Ddr::Utils.solr_date(content.create_date)
           fields[CONTENT_SIZE] = content_size
           fields[CONTENT_SIZE_HUMAN] = content_human_size
           fields[MEDIA_TYPE] = content_type
