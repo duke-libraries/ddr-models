@@ -19,7 +19,7 @@ module Ddr
           run_generator(source)
         else
           raise Ddr::Models::DerivativeGenerationFailure,
-                  "Unexpected depth -- #{source_depth} -- for source file #{Ddr::Utils.file_path(source)}"
+                  "Unexpected depth #{source_depth} for source file #{Ddr::Utils.file_path(source)}"
         end
       end
 
@@ -44,7 +44,7 @@ module Ddr
       end
 
       def source_depth
-        `identify -format '%[depth]' #{Ddr::Utils.file_path(source)}`
+        `identify -quiet -format '%[depth]' #{Ddr::Utils.file_path(source)}[0]`
       end
 
     end
