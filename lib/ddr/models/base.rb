@@ -13,7 +13,7 @@ module Ddr::Models
     include HasAdminMetadata
 
     after_destroy do
-      notify_event :deletion
+      notify_event(:deletion, deletion_event_payload)
     end
 
     DescriptiveMetadata.mapping.each do |name, term|
@@ -113,6 +113,10 @@ module Ddr::Models
 
     def adminMetadata
       self
+    end
+
+    def deletion_event_payload
+      {}
     end
 
   end
