@@ -9,12 +9,12 @@ module Ddr::Models
     class NotFound < Error; end
 
     module ClassMethods
-      def find(id)
-        query = Ddr::Index::QueryBuilder.build { |q| q.id(id) }
+      def find(doc_id)
+        query = Ddr::Index::Query.new { id doc_id }
         if doc = query.docs.first
           return doc
         end
-        raise NotFound, "SolrDocument not found for \"#{id}\"."
+        raise NotFound, "SolrDocument not found for \"#{doc_id}\"."
       end
     end
 
