@@ -8,9 +8,9 @@ module Ddr
     DELETION = "deletion.events.ddr"
     MIGRATION = "migration.events.ddr"
 
-    def self.notify_event(type, args={})
+    def self.notify_event(type, args={}, &block)
       name = "#{type}.events.ddr"
-      ActiveSupport::Notifications.instrument(name, args)
+      ActiveSupport::Notifications.instrument(name, args, &block)
     end
 
   end

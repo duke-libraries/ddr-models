@@ -2,6 +2,7 @@ module Ddr
   module Jobs
     extend ActiveSupport::Autoload
 
+    autoload :DeleteMultiresImage
     autoload :FitsFileCharacterization
     autoload :FixityCheck
     autoload :Job
