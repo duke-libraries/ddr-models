@@ -9,13 +9,13 @@ module Ddr::Models
         @path = @file.path
       }
       after {
-        File.unlink(@path) if File.exist?(@path)
+        ::File.unlink(@path) if ::File.exist?(@path)
       }
       it "deletes the file" do
         subject.multires_image_file_path = "file:#{@path}"
         subject.save!
         subject.destroy
-        expect(File.exist?(@path)).to be false
+        expect(::File.exist?(@path)).to be false
       end
     end
 

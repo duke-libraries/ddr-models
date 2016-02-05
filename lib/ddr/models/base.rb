@@ -11,6 +11,7 @@ module Ddr::Models
     include Indexing
     include Hydra::Validations
     include HasAdminMetadata
+    extend AutoVersion
 
     after_destroy do
       notify_event(:deletion, deletion_event_payload)

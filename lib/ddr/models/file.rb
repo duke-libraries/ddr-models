@@ -1,28 +1,29 @@
-module Ddr::Datastreams
-  module DatastreamBehavior
+require 'tempfile'
+
+module Ddr::Models
+  class File < ActiveFedora::File
+    extend AutoVersion
     extend Deprecation
 
     DEFAULT_FILE_EXTENSION = "bin"
     STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
 
     def dsid
-      Deprecation.warn(DatastreamBehavior,
-                       "`dsid` is no longer a datastream/file method. Use `File.basename(id)`.")
+      Deprecation.warn(File, "`dsid` is no longer a file method. Use `::File.basename(id)`.")
       if id
         ::File.basename(id)
       end
     end
 
     def dsCreateDate
-      Deprecation.warn(DatastreamBehavior,
-                       "`dsCreateDate` is no longer a datastream/file method. Use `create_date` instead.")
+      Deprecation.warn(File, "`dsCreateDate` is no longer a file method. Use `create_date` instead.")
       create_date
     end
 
     def validate_checksum!(checksum_value, checksum_type=nil)
-      raise Ddr::Models::Error, "Checksum cannot be validated on new datastream." if new_record?
-      raise Ddr::Models::Error, "Checksum cannot be validated on unpersisted content." if content_changed?
-      raise Ddr::Models::ChecksumInvalid, "The repository internal checksum validation failed." unless check_fixity
+      raise Error, "Checksum cannot be validated on new file." if new_record?
+      raise Error, "Checksum cannot be validated on unpersisted content." if content_changed?
+      raise ChecksumInvalid, "The repository internal checksum validation failed." unless check_fixity
       algorithm = checksum_type || checksum.algorithm
       calculated_checksum = if algorithm == checksum.algorithm
                               checksum.value
@@ -30,9 +31,9 @@ module Ddr::Datastreams
                               content_digest(algorithm)
                             end
       if checksum_value == calculated_checksum
-        "The checksum #{algorithm}:#{checksum_value} is valid for datastream #{dsid}."
+        "The checksum #{algorithm}:#{checksum_value} is valid for file #{dsid}."
       else
-        raise Ddr::Models::ChecksumInvalid, "The checksum #{algorithm}:#{checksum_value} is not valid for datastream #{dsid}."
+        raise ChecksumInvalid, "The checksum #{algorithm}:#{checksum_value} is not valid for file #{dsid}."
       end
     end
 
@@ -44,7 +45,7 @@ module Ddr::Datastreams
       Ddr::Utils.digest(content, algorithm)
     end
 
-    # Return default file extension for datastream based on MIME type
+    # Return default file extension for file based on MIME type
     def default_file_extension
       mimetypes = MIME::Types[mime_type]
       return mimetypes.first.extensions.first unless mimetypes.empty?
@@ -67,7 +68,7 @@ module Ddr::Datastreams
 
     def tempfile(prefix: nil, suffix: nil)
       if empty?
-        raise Ddr::Models::Error, "Refusing to create tempfile for empty datastream!"
+        raise Error, "Refusing to create tempfile for empty file!"
       end
       prefix ||= default_file_prefix + "--"
       suffix ||= "." + default_file_extension

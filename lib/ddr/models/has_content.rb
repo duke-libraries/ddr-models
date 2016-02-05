@@ -5,9 +5,9 @@ module Ddr
       extend Deprecation
 
       included do
-        contains Ddr::Datastreams::CONTENT
-        contains Ddr::Datastreams::EXTRACTED_TEXT, class_name: 'Ddr::Datastreams::PlainTextDatastream'
-        contains Ddr::Datastreams::FITS, class_name: 'Ddr::Datastreams::FitsDatastream'
+        contains Ddr::Datastreams::CONTENT, class_name: 'Ddr::Models::File'
+        contains Ddr::Datastreams::EXTRACTED_TEXT, class_name: 'Ddr::Models::File'
+        contains Ddr::Datastreams::FITS, class_name: 'Ddr::Models::FitsXmlFile'
 
         property :legacy_original_filename,
                  predicate: RDF::Vocab::PREMIS.hasOriginalName,
