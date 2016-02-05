@@ -1,5 +1,5 @@
-module Ddr::Datastreams
-  class FitsDatastream < ActiveFedora::OmDatastream
+module Ddr::Models
+  class FitsXmlFile < ActiveFedora::OmDatastream
     extend AutoVersion
 
     FITS_XMLNS = "http://hul.harvard.edu/ois/xml/ns/fits/fits_output".freeze

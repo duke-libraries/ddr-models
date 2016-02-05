@@ -1,12 +1,34 @@
 require 'spec_helper'
 
-module ActiveFedora
-  RSpec.describe Datastream do
+module Ddr::Models
+  RSpec.describe File do
+
+    describe "versioning" do
+      let(:obj) { FactoryGirl.build(:component) }
+      describe "on create" do
+        it "creates a version" do
+          expect { obj.save }.to change { obj.content.has_versions? }.from(false).to(true)
+          obj.save
+          expect(obj.content.versions.all.size).to eq 1
+        end
+      end
+      describe "on update" do
+        it "creates a version" do
+            obj.save
+            expect {
+              obj.upload fixture_file_upload("imageB.tif", "image/tiff")
+              obj.save
+            }.to change {
+              obj.content.versions.all.size
+            }.by(1)
+        end
+      end
+    end
 
     describe "#tempfile" do
       describe "when the datastream has no content" do
         it "should raise an exception" do
-          expect { subject.tempfile { |f| puts f.path } }.to raise_error(Ddr::Models::Error)
+          expect { subject.tempfile { |f| puts f.path } }.to raise_error(Error)
         end
       end
       describe "when the datastream has content" do
@@ -37,7 +59,8 @@ module ActiveFedora
               it "should start with the id" do
                 allow(subject).to receive(:id) { "4f/78/97/71/4f789771-c663-466a-98a8-fd7c6fa0f452/foo" }
                 subject.tempfile do |f|
-                  expect(::File.basename(f.path).start_with?("4f_78_97_71_4f789771-c663-466a-98a8-fd7c6fa0f452_foo--")).to be true
+                  expect(::File.basename(f.path).start_with?("4f_78_97_71_4f789771-c663-466a-98a8-fd7c6fa0f452_foo--"))
+                    .to be true
                 end
               end
             end
@@ -66,13 +89,15 @@ module ActiveFedora
         context "the datstream is new" do
           before { allow(subject).to receive(:new_record?) { true } }
           it "should raise an exception" do
-            expect { subject.validate_checksum!("bb3200c2ddaee4bd7b9a4dc1ad3e10ed886eaef1") }.to raise_error(Ddr::Models::Error)
+            expect { subject.validate_checksum!("bb3200c2ddaee4bd7b9a4dc1ad3e10ed886eaef1") }
+              .to raise_error(Error)
           end
         end
         context "the datastream content has changed" do
           before { allow(subject).to receive(:content_changed?) { true } }
           it "should raise an exception" do
-            expect { subject.validate_checksum!("bb3200c2ddaee4bd7b9a4dc1ad3e10ed886eaef1") }.to raise_error(Ddr::Models::Error)
+            expect { subject.validate_checksum!("bb3200c2ddaee4bd7b9a4dc1ad3e10ed886eaef1") }
+              .to raise_error(Error)
           end
         end
       end
@@ -86,7 +111,7 @@ module ActiveFedora
           before { allow(subject).to receive(:check_fixity) { false } }
           it "should raise an error" do
             expect { subject.validate_checksum!(checksum.value, checksum.algorithm) }
-              .to raise_error(Ddr::Models::ChecksumInvalid)
+              .to raise_error(ChecksumInvalid)
           end
         end
         context "and the repository internal checksum is valid" do
@@ -118,7 +143,7 @@ module ActiveFedora
           context "and the checksum doesn't match" do
             it "should raise an exception" do
               expect { subject.validate_checksum!("0123456789abcdef", checksum.algorithm) }
-                .to raise_error(Ddr::Models::ChecksumInvalid)
+                .to raise_error(ChecksumInvalid)
             end
           end
         end

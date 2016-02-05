@@ -22,4 +22,24 @@ RSpec.shared_examples "a DDR model" do
     end
   end
 
+  describe "versioning" do
+    describe "on create" do
+      it "creates a version" do
+        expect { subject.save(validate: false) }
+          .to change(subject, :has_versions?).from(false).to(true)
+      end
+    end
+    describe "on update" do
+      before { subject.save(validate: false) }
+      it "creates a version" do
+        expect {
+          subject.dc_title = ["Changed Title"]
+          subject.save(validate: false)
+        }.to change {
+          subject.versions.all.size
+        }.by(1)
+      end
+    end
+  end
+
 end

@@ -6,20 +6,20 @@ module Ddr::Models
     it "yields a temp file path to the block and deletes the temp file afterwards" do
       WithContentFile.new(obj) do |path|
         @path = path
-        expect(File.exist?(path)).to be true
+        expect(::File.exist?(path)).to be true
       end
-      expect(File.exist?(@path)).to be false
+      expect(::File.exist?(@path)).to be false
     end
 
     it "deletes the temp file even when an exception is raised in the block" do
       begin
         WithContentFile.new(obj) do |path|
           @path = path
-          expect(File.exist?(path)).to be true
+          expect(::File.exist?(path)).to be true
           raise Error, "error"
         end
       rescue Error
-        expect(File.exist?(@path)).to be false
+        expect(::File.exist?(@path)).to be false
       end
     end
 

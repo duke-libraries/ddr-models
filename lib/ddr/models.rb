@@ -27,6 +27,7 @@ module Ddr
     autoload :AdminSet
     autoload :AttachedFileProfile
     autoload :AttachedFilesProfile
+    autoload :AutoVersion
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :Contact
@@ -34,6 +35,7 @@ module Ddr
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
     autoload :Error
     autoload :EventLoggable
+    autoload :File
     autoload :FileCharacterization
     autoload :FileManagement
     autoload :FindingAid
@@ -55,8 +57,14 @@ module Ddr
     autoload :UrlSafeId
     autoload :Validatable
     autoload :Validator
+    autoload :Versionable
     autoload :WithContentFile
     autoload :YearFacet
+
+    autoload_under "files" do
+      autoload :FitsXmlFile
+      autoload :StructuralMetadataFile
+    end
 
     autoload_under "licenses" do
       autoload :AdminPolicyLicense

@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rails", "~> 4.1.13"
   s.add_dependency "activeresource"
   s.add_dependency "active-triples", "~> 0.7.2"
-  s.add_dependency "active-fedora", "~> 9.6.2"
+  s.add_dependency "active-fedora", "~> 9.8.1"
   s.add_dependency "hydra-validations", "~> 0.5"
   s.add_dependency "devise", "~> 3.4"
   s.add_dependency "omniauth-shibboleth", "~> 1.2.0"
