@@ -13,7 +13,7 @@ module Ddr::Models
     def copy_thumbnail_from(other)
       if other && other.has_thumbnail?
         self.thumbnail.content = other.thumbnail.content
-        self.thumbnail.mimeType = other.thumbnail.mimeType if thumbnail_changed?
+        self.thumbnail.mime_type = other.thumbnail.mime_type if thumbnail_changed?
       end
       thumbnail_changed?
     end
