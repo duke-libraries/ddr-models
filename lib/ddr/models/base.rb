@@ -14,7 +14,7 @@ module Ddr::Models
     extend AutoVersion
 
     after_destroy do
-      notify_event(:deletion, deletion_event_payload)
+      notify_event :deletion
     end
 
     DescriptiveMetadata.mapping.each do |name, term|
@@ -114,10 +114,6 @@ module Ddr::Models
 
     def adminMetadata
       self
-    end
-
-    def deletion_event_payload
-      {}
     end
 
   end
