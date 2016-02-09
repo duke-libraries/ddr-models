@@ -16,4 +16,3 @@ ActiveSupport::Notifications.subscribe(Ddr::Notifications::UPDATE, Ddr::Events::
 
 # Deletion
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::DELETION, Ddr::Events::DeletionEvent)
-ActiveSupport::Notifications.subscribe(Ddr::Notifications::DELETION, Ddr::Jobs::DeleteMultiresImage)

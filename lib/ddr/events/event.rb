@@ -39,9 +39,7 @@ module Ddr
       # Receive message sent by ActiveSupport::Notifications
       def self.call(*args)
         notification = ActiveSupport::Notifications::Event.new(*args)
-        evt = new
-        attrs = notification.payload.dup.keep_if { |k, v| evt.has_attribute?(k) }
-        evt.update(attrs)
+        create(notification.payload)
       end
 
       # Scopes
