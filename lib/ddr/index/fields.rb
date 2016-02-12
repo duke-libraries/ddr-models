@@ -88,8 +88,8 @@ module Ddr::Index
     end
 
     def self.descmd
-      @descmd ||= Ddr::Datastreams::DescriptiveMetadataDatastream.properties.map do |base, config|
-        Field.new base, *(config.behaviors)
+      @descmd ||= Ddr::Models::DescriptiveMetadata.field_names.map do |base|
+        Field.new(base, :stored_searchable)
       end
     end
 

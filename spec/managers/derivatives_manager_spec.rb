@@ -24,7 +24,7 @@ module Ddr
       end
 
       describe "generators called" do
-        before { object.add_file file, path: Ddr::Datastreams::CONTENT }
+        before { object.add_file file, path: Ddr::Models::File::CONTENT }
         context "all derivatives" do
           context "not multires_image_able" do
             let(:object) { ContentBearing.new }
@@ -85,10 +85,10 @@ module Ddr
         describe "thumbnail" do
           let(:object) { ContentBearing.create }
           it "should create content in the thumbnail datastream" do
-            expect(object.datastreams[Ddr::Datastreams::THUMBNAIL]).to_not be_present
+            expect(object.datastreams[Ddr::Models::File::THUMBNAIL]).to_not be_present
             object.derivatives.generate_derivative Ddr::Derivatives::DERIVATIVES[:thumbnail]
-            expect(object.datastreams[Ddr::Datastreams::THUMBNAIL]).to be_present
-            expect(object.datastreams[Ddr::Datastreams::THUMBNAIL].size).to be > 0
+            expect(object.datastreams[Ddr::Models::File::THUMBNAIL]).to be_present
+            expect(object.datastreams[Ddr::Models::File::THUMBNAIL].size).to be > 0
           end
         end
         describe "ptif" do

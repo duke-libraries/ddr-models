@@ -135,15 +135,15 @@ module Ddr::Models
     end
 
     def has_thumbnail?
-      has_datastream?(Ddr::Datastreams::THUMBNAIL)
+      has_datastream?(Ddr::Models::File::THUMBNAIL)
     end
 
     def has_content?
-      has_datastream?(Ddr::Datastreams::CONTENT)
+      has_datastream?(Ddr::Models::File::CONTENT)
     end
 
     def content_ds
-      datastreams[Ddr::Datastreams::CONTENT]
+      datastreams[Ddr::Models::File::CONTENT]
     end
 
     def content_mime_type

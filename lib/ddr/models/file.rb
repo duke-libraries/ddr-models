@@ -5,6 +5,13 @@ module Ddr::Models
     extend AutoVersion
     extend Deprecation
 
+    CONTENT         = "content".freeze
+    DESC_METADATA   = "descMetadata".freeze
+    EXTRACTED_TEXT  = "extractedText".freeze
+    FITS            = "fits".freeze
+    STRUCT_METADATA = "structMetadata".freeze
+    THUMBNAIL       = "thumbnail".freeze
+
     DEFAULT_FILE_EXTENSION = "bin"
     STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
 
