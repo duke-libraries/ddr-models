@@ -3,28 +3,6 @@ require 'spec_helper'
 module Ddr::Models
   RSpec.describe File do
 
-    describe "versioning" do
-      let(:obj) { FactoryGirl.build(:component) }
-      describe "on create" do
-        it "creates a version" do
-          expect { obj.save }.to change { obj.content.has_versions? }.from(false).to(true)
-          obj.save
-          expect(obj.content.versions.all.size).to eq 1
-        end
-      end
-      describe "on update" do
-        it "creates a version" do
-            obj.save
-            expect {
-              obj.upload fixture_file_upload("imageB.tif", "image/tiff")
-              obj.save
-            }.to change {
-              obj.content.versions.all.size
-            }.by(1)
-        end
-      end
-    end
-
     describe "#tempfile" do
       describe "when the datastream has no content" do
         it "should raise an exception" do
