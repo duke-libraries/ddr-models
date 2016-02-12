@@ -37,13 +37,8 @@ ActiveFedora::Base.class_eval do
       governable? && admin_policy.present?
     end
 
-    def has_rights_metadata?
-      ds = self.datastreams[Ddr::Datastreams::RIGHTS_METADATA]
-      ds && ds.size && ds.size > 0
-    end
-
     def can_have_struct_metadata?
-      datastreams.key? Ddr::Datastreams::STRUCT_METADATA
+      datastreams.key? Ddr::Models::File::STRUCT_METADATA
     end
 
     def has_struct_metadata?

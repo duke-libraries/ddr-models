@@ -13,7 +13,7 @@ module Ddr
           end
         end
         context "existing structural metadata" do
-          before { item.datastreams[Ddr::Datastreams::STRUCT_METADATA].content = simple_structure }
+          before { item.datastreams[Ddr::Models::File::STRUCT_METADATA].content = simple_structure }
           it "should return the structural metadata" do
             expect(item.structure.to_xml).to be_equivalent_to(simple_structure)
           end
@@ -35,7 +35,7 @@ module Ddr
 
       describe "indexing" do
         let(:expected_json) { multiple_struct_maps_structure_to_json }
-        before { item.datastreams[Ddr::Datastreams::STRUCT_METADATA].content = multiple_struct_maps_structure }
+        before { item.datastreams[Ddr::Models::File::STRUCT_METADATA].content = multiple_struct_maps_structure }
         it "should index the JSON representation of the structure" do
           indexing = item.to_solr
           expect(indexing.keys).to include(Ddr::Index::Fields::STRUCT_MAPS)

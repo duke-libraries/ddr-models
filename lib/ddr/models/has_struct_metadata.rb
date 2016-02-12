@@ -4,13 +4,14 @@ module Ddr
       extend ActiveSupport::Concern
 
       included do
-        contains Ddr::Datastreams::STRUCT_METADATA, class_name: 'Ddr::Datastreams::StructuralMetadataDatastream'
+        contains Ddr::Models::File::STRUCT_METADATA,
+                 class_name: 'Ddr::Models::StructuralMetadataFile'
       end
 
       def structure
         unless @structure
-          if datastreams[Ddr::Datastreams::STRUCT_METADATA].content
-            @structure = Ddr::Models::Structure.new(Nokogiri::XML(datastreams[Ddr::Datastreams::STRUCT_METADATA].content))
+          if datastreams[Ddr::Models::File::STRUCT_METADATA].content
+            @structure = Ddr::Models::Structure.new(Nokogiri::XML(datastreams[Ddr::Models::File::STRUCT_METADATA].content))
           end
         end
         @structure

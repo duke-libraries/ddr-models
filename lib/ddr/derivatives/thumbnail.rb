@@ -28,7 +28,7 @@ module Ddr::Derivatives
     def store(object, output_path)
       output_file = File.open(output_path, 'rb')
       object.reload if object.persisted?
-      object.add_file output_file, path: Ddr::Datastreams::THUMBNAIL, mime_type: generator.class.output_mime_type
+      object.add_file output_file, path: Ddr::Models::File::THUMBNAIL, mime_type: generator.class.output_mime_type
       object.save!
     end
 

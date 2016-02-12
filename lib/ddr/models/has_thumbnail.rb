@@ -3,7 +3,7 @@ module Ddr::Models
     extend ActiveSupport::Concern
 
     included do
-      contains Ddr::Datastreams::THUMBNAIL, class_name: "Ddr::Models::File"
+      contains Ddr::Models::File::THUMBNAIL, class_name: "Ddr::Models::File"
     end
 
     def thumbnail_changed?
