@@ -2,7 +2,6 @@ require 'tempfile'
 
 module Ddr::Models
   class File < ActiveFedora::File
-    extend AutoVersion
     extend Deprecation
 
     DEFAULT_FILE_EXTENSION = "bin"

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-module Ddr::Datastreams
-  RSpec.describe FitsDatastream do
+module Ddr::Models
+  RSpec.describe FitsXmlFile do
 
     let(:fits_xml) do
       <<-XML
