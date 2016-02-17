@@ -13,7 +13,7 @@ module Ddr::Jobs
         allow(ActiveFedora::Base).to receive(:find).with("test:1") { obj }
       end
       it "should call `fixity_check` on the object" do
-        expect(obj).to receive(:fixity_check)
+        expect(obj).to receive(:check_fixity)
         described_class.perform("test:1")
       end
     end

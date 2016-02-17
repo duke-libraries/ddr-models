@@ -39,6 +39,9 @@ module Ddr
       # Receive message sent by ActiveSupport::Notifications
       def self.call(*args)
         notification = ActiveSupport::Notifications::Event.new(*args)
+        if block_given?
+          yield notification.payload
+        end
         create(notification.payload)
       end
 
