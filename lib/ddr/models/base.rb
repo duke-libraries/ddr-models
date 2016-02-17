@@ -6,7 +6,6 @@ module Ddr::Models
     include Governable
     include HasThumbnail
     include EventLoggable
-    include FixityCheckable
     include FileManagement
     include Indexing
     include Hydra::Validations
@@ -114,6 +113,45 @@ module Ddr::Models
 
     def adminMetadata
       self
+    end
+
+    def datastreams_to_validate
+      Deprecation.warn(FixityCheckable, "`datastreams_to_validate` is deprecated." \
+                                        " Use `attached_files_having_content` instead.")
+      attached_files_having_content
+    end
+
+    def attached_files_having_content
+      Hash.new.tap do |h|
+        attached_files.each do |file_id, file|
+          h[file_id] = file if file.has_content?
+        end
+      end
+    end
+
+    def fixity_checks
+      Ddr::Events::FixityCheckEvent.for_object(self)
+    end
+
+    def check_fixity
+      results = attached_files_having_content.each_with_object({}) do |(file_id, file), memo|
+        memo[file_id] = !!file.check_fixity
+      end
+      notify_event(:fixity_check, results: results)
+    end
+    alias_method :fixity_check, :check_fixity
+    deprecation_deprecate :fixity_check
+
+    def last_fixity_check
+      fixity_checks.last
+    end
+
+    def last_fixity_check_on
+      last_fixity_check && last_fixity_check.event_date_time
+    end
+
+    def last_fixity_check_outcome
+      last_fixity_check && last_fixity_check.outcome
     end
 
   end

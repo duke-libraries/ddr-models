@@ -39,7 +39,6 @@ module Ddr
     autoload :FileCharacterization
     autoload :FileManagement
     autoload :FindingAid
-    autoload :FixityCheckable
     autoload :Governable
     autoload :HasAdminMetadata
     autoload :HasAttachments

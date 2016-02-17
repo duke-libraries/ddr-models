@@ -44,7 +44,7 @@ module Ddr::Models
     end
 
     def create_date_string
-      dsCreateDate.strftime(STRFTIME_FORMAT) if dsCreateDate
+      create_date.strftime(STRFTIME_FORMAT) if create_date
     end
 
     def content_digest(algorithm)
