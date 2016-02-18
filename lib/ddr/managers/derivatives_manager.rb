@@ -112,7 +112,7 @@ module Ddr
         return false unless object.has_content?
         case derivative.name
         when :multires_image
-          object.content_type == "image/tiff"
+          object.content_type == "image/tiff" || object.content_type == "image/jpeg"
         when :thumbnail
           object.image?
         else
