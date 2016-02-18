@@ -90,50 +90,57 @@ module Ddr::Models
 
     describe "workflow" do
 
-      subject { FactoryGirl.build(:item) }
+      let(:collection) { FactoryGirl.create(:collection) }
+      let(:item) { FactoryGirl.create(:item) }
+      let(:component) { FactoryGirl.create(:component) }
+      before do
+        item.parent = collection
+        item.save!
+        component.parent = item
+        component.save!
+      end
 
       describe "#published?" do
         context "object is published" do
-          before { allow(subject).to receive(:workflow_state) { Ddr::Managers::WorkflowManager::PUBLISHED } }
+          before { allow(collection).to receive(:workflow_state) { Ddr::Managers::WorkflowManager::PUBLISHED } }
           it "should return true" do
-            expect(subject).to be_published
+            expect(collection).to be_published
           end
         end
         context "object is not published" do
-          before { allow(subject).to receive(:workflow_state) { nil } }
+          before { allow(collection).to receive(:workflow_state) { nil } }
           it "should return false" do
-            expect(subject).not_to be_published
+            expect(collection).not_to be_published
           end
-        end
-      end
-
-      describe "#publish" do
-        it "should publish the object" do
-          subject.publish
-          expect(subject).to be_published
         end
       end
 
       describe "#publish!" do
-        it "should publish and persist the object" do
-          subject.publish!
-          expect(subject.reload).to be_published
+        context "do not include descendants" do
+          it "should publish and persist the object" do
+            collection.publish!(include_descendants: false)
+            expect(collection.reload).to be_published
+            expect(item.reload).not_to be_published
+            expect(component.reload).not_to be_published
+          end
         end
-      end
-
-      describe "#unpublish" do
-        before { subject.publish }
-        it "should unpublish the object" do
-          subject.unpublish
-          expect(subject).not_to be_published
+        context "do include descendants" do
+          it "should publish and persist the object and descendants" do
+            collection.publish!
+            expect(collection.reload).to be_published
+            expect(item.reload).to be_published
+            expect(component.reload).to be_published
+          end
         end
       end
 
       describe "#unpublish!" do
-        before { subject.publish! }
+        before { collection.publish! }
         it "should unpublish and persist the object" do
-          subject.unpublish!
-          expect(subject.reload).not_to be_published
+          collection.unpublish!
+          expect(collection.reload).not_to be_published
+          expect(item.reload).not_to be_published
+          expect(component.reload).not_to be_published
         end
       end
     end
