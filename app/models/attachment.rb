@@ -11,4 +11,8 @@ class Attachment < Ddr::Models::Base
              predicate: ::RDF::URI("http://projecthydra.org/ns/relations#isAttachedTo"),
              class_name: "ActiveFedora::Base"
 
+  def publishable?
+    false
+  end
+
 end

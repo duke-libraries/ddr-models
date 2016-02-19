@@ -154,5 +154,9 @@ module Ddr::Models
       last_fixity_check && last_fixity_check.outcome
     end
 
+    def publishable?
+      raise NotImplementedError, "Must be implemented by subclasses"
+    end
+
   end
 end

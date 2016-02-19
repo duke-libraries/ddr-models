@@ -3,6 +3,7 @@ require 'spec_helper'
 RSpec.describe Collection, type: :model do
 
   it_behaves_like "a DDR model"
+  it_behaves_like "a publishable object"
 
   describe "#components_from_solr" do
     subject { Collection.new(id: 'test-1') }

@@ -7,10 +7,12 @@ module Ddr::Auth
     UPDATE       = :update
     REPLACE      = :replace
     ARRANGE      = :arrange
+    PUBLISH      = :publish
+    UNPUBLISH    = :unpublish
     AUDIT        = :audit
     GRANT        = :grant
 
-    ALL = [ READ, DOWNLOAD, ADD_CHILDREN, UPDATE, REPLACE, ARRANGE, AUDIT, GRANT ]
+    ALL = [ READ, DOWNLOAD, ADD_CHILDREN, UPDATE, REPLACE, ARRANGE, PUBLISH, UNPUBLISH, AUDIT, GRANT ]
 
   end
 end

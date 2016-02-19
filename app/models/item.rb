@@ -17,4 +17,8 @@ class Item < Ddr::Models::Base
              predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isMemberOfCollection,
              class_name: "Collection"
 
+  def publishable?
+    parent.present? && parent.published?
+  end
+
 end
