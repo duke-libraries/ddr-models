@@ -2,7 +2,9 @@ module Ddr::Derivatives
   class MultiresImage < Derivative
 
     def self.generatable?(object)
-      object.can_have_multires_image? && object.has_content? && object.content_type == "image/tiff"
+      object.can_have_multires_image? &&
+          object.has_content? &&
+          (object.content_type == "image/tiff" || object.content_type == "image/jpeg")
     end
 
     def self.has_derivative?(object)

@@ -55,8 +55,16 @@ module Ddr
                 object.derivatives.update_derivatives(:now)
               end
             end
-            context "content is not tiff image" do
+            context "content is a jpeg image" do
               let(:file) { fixture_file_upload("bird.jpg", "image/jpeg") }
+              it "should generate a thumbnail and a ptif" do
+                expect(object.derivatives).to receive(:generate_derivative).with(Ddr::Derivatives::DERIVATIVES[:thumbnail])
+                expect(object.derivatives).to receive(:generate_derivative).with(Ddr::Derivatives::DERIVATIVES[:multires_image])
+                object.derivatives.update_derivatives(:now)
+              end
+            end
+            context "content is neither a tiff nor a jpeg image" do
+              let(:file) { fixture_file_upload("arrow1rightred_e0.gif", "image/gif") }
               it "should generate a thumbnail but not a ptif" do
                 expect(object.derivatives).to receive(:generate_derivative).with(Ddr::Derivatives::DERIVATIVES[:thumbnail])
                 expect(object.derivatives).to_not receive(:generate_derivative).with(Ddr::Derivatives::DERIVATIVES[:multires_image])

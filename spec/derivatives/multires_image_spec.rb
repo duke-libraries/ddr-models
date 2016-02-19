@@ -21,8 +21,14 @@ module Ddr::Derivatives
             expect(subject.generatable?(object)).to be_truthy
           end
         end
-        context 'content is not a tiff image' do
+        context 'content is a jpeg image' do
           before { allow(object).to receive(:content_type) { 'image/jpeg' } }
+          it "should be generatable" do
+            expect(subject.generatable?(object)).to be_truthy
+          end
+        end
+        context 'content is neither a tiff nor a jpeg image' do
+          before { allow(object).to receive(:content_type) { 'image/gif' } }
           it "should not be generatable" do
             expect(subject.generatable?(object)).to be_falsey
           end
