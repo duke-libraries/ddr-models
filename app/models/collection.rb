@@ -54,6 +54,10 @@ class Collection < Ddr::Models::Base
                 scope: Ddr::Auth::Roles::POLICY_SCOPE
   end
 
+  def publishable?
+    true
+  end
+
   private
 
   def set_admin_policy

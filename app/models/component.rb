@@ -25,4 +25,8 @@ class Component < Ddr::Models::Base
     collection.id rescue nil
   end
 
+  def publishable?
+    parent.present? && parent.published?
+  end
+
 end

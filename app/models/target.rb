@@ -17,4 +17,8 @@ class Target < Ddr::Models::Base
              predicate: ::RDF::URI("http://www.loc.gov/mix/v20/externalTarget#isExternalTargetFor"),
              class_name: "Collection"
 
+  def publishable?
+    false
+  end
+
 end

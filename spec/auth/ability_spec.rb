@@ -2,7 +2,7 @@ module Ddr::Auth
   RSpec.describe Ability, type: :model, abilities: true do
 
     subject { described_class.new(auth_context) }
-    
+
     let(:auth_context) { FactoryGirl.build(:auth_context) }
 
     describe "aliases" do
@@ -142,6 +142,38 @@ module Ddr::Auth
       describe "when the attachment is not attached" do
         it { should_not be_able_to(:create, attachment) }
       end
+    end
+
+    describe "publication abilities" do
+      let(:obj) { Ddr::Models::Base.new }
+
+      describe "publish" do
+        describe "when the object is published" do
+          before { allow(obj).to receive(:published?) { true } }
+          it { should_not be_able_to(:publish, obj) }
+        end
+        describe "when the object is not published" do
+          describe "when the object is publishable" do
+            before { allow(obj).to receive(:publishable?) { true } }
+            it { should be_able_to(:publish, obj) }
+          end
+          describe "when the object is not publishable" do
+            before { allow(obj).to receive(:publishable?) { false } }
+            it { should_not be_able_to(:publish, obj) }
+          end
+        end
+      end
+
+      describe "unpublish" do
+        describe "when the object is published" do
+          before { allow(obj).to receive(:published?) { true } }
+          it { should be_able_to(:unpublish, obj) }
+        end
+        describe "when the object is not published" do
+          it { should_not be_able_to(:unpublish, obj) }
+        end
+      end
+
     end
 
     describe "role based abilities" do
