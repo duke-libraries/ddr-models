@@ -21,8 +21,7 @@ module Ddr::Derivatives
     end
 
     def output_file_name(object)
-      basename = object.content.original_name.present? ? File.basename(object.content.original_name, '.*') : "thumbnail"
-      "#{basename}.#{generator.class.output_extension}"
+      "thumbnail.#{generator.class.output_extension}"
     end
 
     def store(object, output_path)
