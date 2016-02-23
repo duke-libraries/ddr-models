@@ -49,15 +49,29 @@ module Ddr::Models
       end
 
       describe "lifecycle" do
-        let!(:identifier) { Ezid::MockIdentifier.new(id: "ark:/99999/fk4zzz", status: "public") }
+        subject { FactoryGirl.create(:item) }
+        let!(:identifier) {
+          Ezid::MockIdentifier.create(subject.permanent_id_manager.default_metadata)
+        }
         before do
           allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false }
-          allow(Ezid::Identifier).to receive(:find).with("ark:/99999/fk4zzz") { identifier }
-          subject.permanent_id = "ark:/99999/fk4zzz"
+          allow(Ezid::Identifier).to receive(:find).with(identifier.id) { identifier }
+          subject.permanent_id = identifier.id
           subject.save!
         end
-        it "should update the status of the identifier when the object is destroyed" do
-          expect { subject.destroy }.to change(identifier, :status).from("public").to("unavailable | deleted")
+        describe "identifier creation" do
+          it "sets default metadata" do
+            expect(identifier.profile).to eq("dc")
+            expect(identifier.export).to eq("no")
+            expect(identifier["fcrepo3.pid"]).to eq(subject.pid)
+          end
+        end
+        describe "object destruction" do
+          it "marks the identifier as unavailable" do
+            expect { subject.destroy }
+              .to change(identifier, :status)
+                   .to("unavailable | deleted")
+          end
         end
       end
 
