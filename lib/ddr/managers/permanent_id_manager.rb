@@ -10,10 +10,11 @@ module Ddr
     #
     class PermanentIdManager
 
-      PERMANENT_URL_BASE = "http://id.library.duke.edu/"
+      PERMANENT_URL_BASE   = "http://id.library.duke.edu/"
       ASSIGN_EVENT_SUMMARY = "Permanent ID assignment"
-      SOFTWARE = Ezid::Client.version
-      FCREPO3_PID = "fcrepo3.pid"
+      SOFTWARE             = Ezid::Client.version
+      FCREPO3_PID          = "fcrepo3.pid"
+      FCREPO4_ID           = "fcrepo4.id"
 
       attr_reader :object
 
@@ -56,7 +57,7 @@ EZID Metadata:
       def default_metadata
         { :profile => "dc",
           :export => "no",
-          FCREPO3_PID => object.pid
+          FCREPO4_ID => object.id
         }
       end
 

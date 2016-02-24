@@ -63,7 +63,7 @@ module Ddr::Models
           it "sets default metadata" do
             expect(identifier.profile).to eq("dc")
             expect(identifier.export).to eq("no")
-            expect(identifier["fcrepo3.pid"]).to eq(subject.pid)
+            expect(identifier["fcrepo4.id"]).to eq(subject.id)
           end
         end
         describe "object destruction" do
