@@ -7,7 +7,7 @@ module Ddr::Models
 
     included do
       def self.property_term(term)
-        property_terms[term]
+        property_terms[term.to_sym]
       end
     end
 
