@@ -74,6 +74,7 @@ module Ddr
     end
 
     autoload_under "metadata" do
+      autoload :AdministrativeMetadata
       autoload :DescriptiveMetadata
       autoload :Metadata
       autoload :MetadataMapping

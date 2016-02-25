@@ -24,6 +24,13 @@ module Ddr::Models
       def field_writers
         field_names.map { |name| "#{name}=".to_sym }
       end
+
+      def property_terms
+        mapping.terms.each_with_object({}) do |term, memo|
+          memo[term.unqualified_name] = term.qualified_name
+        end
+      end
+
     end
 
     self.mappings = [ MetadataMapping.dcterms, MetadataMapping.duketerms ].freeze

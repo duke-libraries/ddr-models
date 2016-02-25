@@ -5,7 +5,6 @@ module Ddr::Models
     extend Deprecation
 
     CONTENT         = "content".freeze
-    DESC_METADATA   = "descMetadata".freeze
     EXTRACTED_TEXT  = "extractedText".freeze
     FITS            = "fits".freeze
     STRUCT_METADATA = "structMetadata".freeze
@@ -13,6 +12,15 @@ module Ddr::Models
 
     DEFAULT_FILE_EXTENSION = "bin"
     STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
+
+    def self.const_missing(name)
+      case name
+        when :DESC_METADATA
+          Deprecation.warn(self, "Ddr::File::DESC_METADATA is deprecated." \
+                               " Use Ddr::Models::Metadata::DESC_METADATA instead.")
+          Ddr::Models::Metadata::DESC_METADATA
+      end
+    end
 
     def dsid
       Deprecation.warn(File, "`dsid` is no longer a file method. Use `::File.basename(id)`.")

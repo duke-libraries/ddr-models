@@ -13,10 +13,14 @@ module Ddr
 
     def self.const_missing(name)
       case name
-      when :CONTENT, :DESC_METADATA, :EXTRACTED_TEXT, :FITS, :STRUCT_METADATA, :THUMBNAIL
+      when :CONTENT, :EXTRACTED_TEXT, :FITS, :STRUCT_METADATA, :THUMBNAIL
         Deprecation.warn(self, "Ddr::Datastreams::#{name} is deprecated." \
                                " Use Ddr::Models::File::#{name} instead.")
         Ddr::Models::File.const_get(name)
+      when :DESC_METADATA
+        Deprecation.warn(self, "Ddr::Datastreams::DESC_METADATA is deprecated." \
+                               " Use Ddr::Models::Metadata::DESC_METADATA instead.")
+        Ddr::Models::Metadata::DESC_METADATA
       when :FitsDatastream
         Deprecation.warn(self, "Ddr::Datastreams::FitsDatastream is deprecated." \
                                " Use Ddr::Models::FitsXmlFile instead.")

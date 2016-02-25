@@ -15,6 +15,11 @@ module Ddr::Models
         expect(subject).to include(*Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms))
       end
     end
+    describe ".property_term" do
+      it "should return the correct property term" do
+        expect(described_class.property_term(:subject)).to eq(:dc_subject)
+      end
+    end
     describe "using the set_values and add_value methods" do
       let(:ds) { described_class.new(obj) }
       before { ds.type = ["Photograph"] }

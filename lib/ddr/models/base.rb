@@ -35,6 +35,15 @@ module Ddr::Models
       model_and_id
     end
 
+    def adminMetadata
+      Deprecation.warn(Base, "`adminMetadata` is deprecated; use `admin_metadata` instead.")
+      admin_metadata
+    end
+
+    def admin_metadata
+      @admin_metadata ||= AdministrativeMetadata.new(self)
+    end
+
     def descMetadata
       Deprecation.warn(Base, "`descMetadata` is deprecated; use `desc_metadata` instead.")
       desc_metadata
@@ -42,10 +51,6 @@ module Ddr::Models
 
     def desc_metadata
       @desc_metadata ||= DescriptiveMetadata.new(self)
-    end
-
-    def has_desc_metadata?
-      desc_metadata.has_content?
     end
 
     def desc_metadata_terms(*args)
