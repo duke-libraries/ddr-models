@@ -18,6 +18,7 @@ module Ddr::Models
     describe ".property_term" do
       it "should return the correct property term" do
         expect(described_class.property_term(:subject)).to eq(:dc_subject)
+        expect(described_class.property_term('subject')).to eq(:dc_subject)
       end
     end
     describe "using the set_values and add_value methods" do

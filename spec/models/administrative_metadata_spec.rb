@@ -8,6 +8,7 @@ module Ddr::Models
     describe ".property_term" do
       it "should return the correct property term" do
         expect(described_class.property_term(:local_id)).to eq(:local_id)
+        expect(described_class.property_term('local_id')).to eq(:local_id)
       end
     end
 
