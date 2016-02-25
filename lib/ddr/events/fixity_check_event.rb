@@ -12,7 +12,7 @@ module Ddr
       def self.call(*args)
         super do |payload|
           results = payload.delete(:results)
-          payload[:outcome] = results.values.all? ? SUCCESS : FAILURE
+          payload[:outcome] = results.success? ? SUCCESS : FAILURE
           payload[:detail] = "Fixity check results:\n\n#{results}"
         end
       end
