@@ -139,10 +139,12 @@ module Ddr::Models
     end
 
     def check_fixity
-      results = attached_files_having_content.each_with_object({}) do |(file_id, file), memo|
-        memo[file_id] = !!file.check_fixity
+      FixityCheckResults.new.tap do |results|
+        attached_files_having_content.each_with_object(results) do |(file_id, file), memo|
+          results[file_id] = !!file.check_fixity
+        end
+        notify_event(:fixity_check, results: results)
       end
-      notify_event(:fixity_check, results: results)
     end
     alias_method :fixity_check, :check_fixity
     deprecation_deprecate :fixity_check
