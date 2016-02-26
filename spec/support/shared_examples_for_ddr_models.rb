@@ -6,6 +6,38 @@ RSpec.shared_examples "a DDR model" do
   it_behaves_like "an object that has identifiers"
   it_behaves_like "a fixity checkable object"
 
+  describe "#to_param" do
+    before {
+      subject.save(validate: false) if subject.new_record?
+    }
+    describe "when it has a permanent id" do
+      before {
+        subject.permanent_id = "ark:/99999/fk4rx95k8w"
+      }
+      its(:to_param) { is_expected.to eq("fk4rx95k8w") }
+    end
+    describe "when it does not have a permanent id" do
+      its(:to_param) { is_expected.to_not be_nil }
+      its(:to_param) { is_expected.to eq(subject.id) }
+    end
+  end
+
+  describe ".find_by_unique_id" do
+    before {
+      subject.permanent_id = "ark:/99999/fk4rx95k8w"
+      subject.save(validate: false)
+    }
+    it "finds by Fedora id" do
+      expect(described_class.find_by_unique_id(subject.id)).to eq(subject)
+    end
+    it "finds by permanent id" do
+      expect(described_class.find_by_unique_id("ark:/99999/fk4rx95k8w")).to eq(subject)
+    end
+    it "finds by permanent id suffix" do
+      expect(described_class.find_by_unique_id("fk4rx95k8w")).to eq(subject)
+    end
+  end
+
   describe "events" do
     describe "on deletion with #destroy" do
       before { subject.save(validate: false) }
