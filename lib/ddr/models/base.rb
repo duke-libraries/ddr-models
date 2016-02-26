@@ -22,8 +22,30 @@ module Ddr::Models
       end
     end
 
+    def self.find_by_unique_id(unique_id)
+      if result = where(Ddr::Index::Fields::UNIQUE_ID => unique_id).first
+        result
+      else
+        raise ActiveFedora::ObjectNotFoundError,
+              "#{self} not found having unique id #{unique_id.inspect}."
+      end
+    end
+
+    def unique_ids
+      [id, permanent_id, permanent_id_suffix].compact
+    end
+
     def inspect
       "#<#{model_and_id}, uri: \"#{uri}\">"
+    end
+
+    def permanent_id_suffix
+      permanent_id && permanent_id.sub(/\Aark:\/\d+\//, "")
+    end
+
+    # @see ActiveModel::Conversion
+    def to_key
+      (key = permanent_id_suffix) ? [key] : super
     end
 
     def model_and_id

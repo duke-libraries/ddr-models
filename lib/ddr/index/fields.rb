@@ -76,6 +76,7 @@ module Ddr::Index
     TECHMD_WELL_FORMED          = Field.new :techmd_well_formed, :symbol
     TITLE                       = Field.new :title, :stored_sortable
     TYPE_FACET                  = Field.new :type_facet, :facetable
+    UNIQUE_ID                   = Field.new :unique_id, :searchable, type: :symbol
     WORKFLOW_STATE              = Field.new :workflow_state, :stored_sortable
     YEAR_FACET                  = Field.new :year_facet, solr_name: "year_facet_iim"
 

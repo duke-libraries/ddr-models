@@ -45,6 +45,7 @@ module Ddr
           SUBJECT_FACET         => desc_metadata.values('subject'),
           TITLE                 => title_display,
           TYPE_FACET            => desc_metadata.type,
+          UNIQUE_ID             => unique_ids,
           WORKFLOW_STATE        => workflow_state,
           YEAR_FACET            => year_facet,
         }
