@@ -138,10 +138,6 @@ module Ddr::Models
       false
     end
 
-    def adminMetadata
-      self
-    end
-
     def datastreams_to_validate
       Deprecation.warn(FixityCheckable, "`datastreams_to_validate` is deprecated." \
                                         " Use `attached_files_having_content` instead.")
