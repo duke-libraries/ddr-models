@@ -148,28 +148,45 @@ module Ddr::Auth
       let(:obj) { Ddr::Models::Base.new }
 
       describe "publish" do
-        describe "when the object is published" do
-          before { allow(obj).to receive(:published?) { true } }
-          it { should_not be_able_to(:publish, obj) }
-        end
-        describe "when the object is not published" do
-          describe "when the object is publishable" do
-            before { allow(obj).to receive(:publishable?) { true } }
-            it { should be_able_to(:publish, obj) }
+        describe "when role-based permissions permit publish" do
+          before do
+            allow(obj).to receive(:effective_permissions) { [ Permissions::PUBLISH ] }
           end
-          describe "when the object is not publishable" do
-            before { allow(obj).to receive(:publishable?) { false } }
+          describe "when the object is published" do
+            before { allow(obj).to receive(:published?) { true } }
             it { should_not be_able_to(:publish, obj) }
           end
+          describe "when the object is not published" do
+            describe "when the object is publishable" do
+              before { allow(obj).to receive(:publishable?) { true } }
+              it { should be_able_to(:publish, obj) }
+            end
+            describe "when the object is not publishable" do
+              before { allow(obj).to receive(:publishable?) { false } }
+              it { should_not be_able_to(:publish, obj) }
+            end
+          end
+        end
+        describe "when role-based permissions do not permit publish" do
+          before { allow(obj).to receive(:publishable?) { true } }
+          it { should_not be_able_to(:publish, obj) }
         end
       end
 
       describe "unpublish" do
-        describe "when the object is published" do
-          before { allow(obj).to receive(:published?) { true } }
-          it { should be_able_to(:unpublish, obj) }
+        describe "when role-based permissions permit unpublish" do
+          before do
+            allow(obj).to receive(:effective_permissions) { [ Permissions::UNPUBLISH ] }
+          end
+          describe "when the object is published" do
+            before { allow(obj).to receive(:published?) { true } }
+            it { should be_able_to(:unpublish, obj) }
+          end
+          describe "when the object is not published" do
+            it { should_not be_able_to(:unpublish, obj) }
+          end
         end
-        describe "when the object is not published" do
+        describe "when role-based permissions do not permit unpublish" do
           it { should_not be_able_to(:unpublish, obj) }
         end
       end
