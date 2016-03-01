@@ -57,21 +57,37 @@ module Ddr::Auth
     end
 
     describe "Collection abilities" do
-      before do
-        allow(Ddr::Auth).to receive(:collection_creators_group) { "collection_creators" }
-      end
-      describe "when the user is a collection creator" do
+      describe "collection creation" do
         before do
-          allow(auth_context).to receive(:member_of?).with("collection_creators") { true }
+          allow(Ddr::Auth).to receive(:collection_creators_group) { "collection_creators" }
         end
-        it { should be_able_to(:create, Collection) }
+        describe "when the user is a collection creator" do
+          before do
+            allow(auth_context).to receive(:member_of?).with("collection_creators") { true }
+          end
+          it { should be_able_to(:create, Collection) }
+        end
+
+        describe "when the user is not a collection creator" do
+          before do
+            allow(auth_context).to receive(:member_of?).with("collection_creators") { false }
+          end
+          it { should_not be_able_to(:create, Collection) }
+        end
       end
 
-      describe "when the user is not a collection creator" do
-        before do
-          allow(auth_context).to receive(:member_of?).with("collection_creators") { false }
+      describe "metadata ingest" do
+        let(:coll) { Collection.new }
+        describe "ingest_metadata" do
+          describe "when the collection can be edited" do
+            before { subject.can :update, coll }
+            it { should be_able_to(:ingest_metadata, coll) }
+          end
+          describe "when the collection cannot be edited" do
+            before { subject.cannot :update, coll }
+            it { should_not be_able_to(:ingest_metadata, coll) }
+          end
         end
-        it { should_not be_able_to(:create, Collection) }
       end
     end
 
