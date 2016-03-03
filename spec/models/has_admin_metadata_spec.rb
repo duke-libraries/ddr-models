@@ -78,8 +78,9 @@ module Ddr::Models
       describe "events" do
         before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
         context "when the operation succeeds" do
-          let!(:mock_identifier) { Ezid::MockIdentifier.new(id: "ark:/99999/fk4zzz",
-                                                            metadata: "_target: http://example.com") }
+          let!(:mock_identifier) {
+            Ezid::MockIdentifier.new("ark:/99999/fk4zzz", metadata: "_target: http://example.com")
+          }
           before do
             allow(Ezid::Identifier).to receive(:create) { mock_identifier }
             allow(Ezid::Identifier).to receive(:find) { mock_identifier }
