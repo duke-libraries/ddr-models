@@ -28,12 +28,11 @@ module Ddr::Index
     FCREPO3_PID                 = Field.new :fcrepo3_pid, :stored_sortable
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
-    IS_ATTACHED_TO              = Field.new :is_attached_to, :symbol
-    IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, :symbol
+    IS_ATTACHED_TO              = Field.new :is_attached_to, solr_name: "isAttachedTo_ssim"
+    IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, solr_name: "isExternalTargetFor_ssim"
     IS_GOVERNED_BY              = Field.new :is_governed_by, solr_name: "isGovernedBy_ssim"
-    IS_MEMBER_OF                = Field.new :is_member_of, :symbol
-    IS_MEMBER_OF_COLLECTION     = Field.new :is_member_of_collection, :symbol
-    IS_PART_OF                  = Field.new :is_part_of, :symbol
+    IS_MEMBER_OF_COLLECTION     = Field.new :is_member_of_collection, solr_name: "isMemberOfCollection_ssim"
+    IS_PART_OF                  = Field.new :is_part_of, solr_name: "isPartOf_ssim"
     LAST_FIXITY_CHECK_ON        = Field.new :last_fixity_check_on, :stored_sortable, type: :date
     LAST_FIXITY_CHECK_OUTCOME   = Field.new :last_fixity_check_outcome, :symbol
     LAST_VIRUS_CHECK_ON         = Field.new :last_virus_check_on, :stored_sortable, type: :date
