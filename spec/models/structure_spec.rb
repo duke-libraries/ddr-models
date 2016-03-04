@@ -111,6 +111,16 @@ module Ddr
         end
       end
 
+      describe "#fptr_nodes" do
+        let(:structure) { FactoryGirl.build(:nested_structure) }
+        it "should return all fptr nodes" do
+          results = structure.fptr_nodes
+          expect(results.size).to eq(3)
+          ids = results.map { |entry| entry['CONTENTIDS'] }
+          expect(ids).to match_array([ 'info:fedora/test:5', 'info:fedora/test:6', 'info:fedora/test:7' ])
+        end
+      end
+
     end
   end
 end

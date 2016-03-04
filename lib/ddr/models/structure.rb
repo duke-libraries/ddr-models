@@ -25,6 +25,10 @@ module Ddr
         xpath("//xmlns:structMap[@TYPE='#{type}']").first
       end
 
+      def fptr_nodes(type='default')
+        structMap_node(type).xpath('//xmlns:fptr')
+      end
+
       def as_xml_document
         __getobj__
       end
