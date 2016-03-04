@@ -117,7 +117,7 @@ module Ddr
           results = structure.fptr_nodes
           expect(results.size).to eq(3)
           ids = results.map { |entry| entry['CONTENTIDS'] }
-          expect(ids).to match_array([ 'info:fedora/test:5', 'info:fedora/test:6', 'info:fedora/test:7' ])
+          expect(ids).to match_array([ 'test_5', 'test_6', 'test_7' ])
         end
       end
 
