@@ -6,8 +6,8 @@ module Ezid
 
     self.defaults = {}
 
-    def reload; self; end
-    def reset; self; end
+    def load_metadata; self; end
+    def reset_metadata; self; end
 
     private
 

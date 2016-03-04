@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency "devise", "~> 3.4"
   s.add_dependency "omniauth-shibboleth", "~> 1.2.0"
   s.add_dependency "grouper-rest-client"
-  s.add_dependency "ezid-client", "~> 1.1", ">= 1.1.1"
+  s.add_dependency "ezid-client", "~> 1.4.2"
   s.add_dependency "resque", "~> 1.25"
   s.add_dependency "rdf-vocab", "~> 0.8"
   s.add_dependency "net-ldap", "~> 0.11"
