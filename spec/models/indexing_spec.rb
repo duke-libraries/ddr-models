@@ -48,6 +48,9 @@ module Ddr::Models
       }
 
       its([Indexing::CONTENT_CREATE_DATE]) { is_expected.to eq "2016-01-22T21:50:33Z" }
+      its([Indexing::ATTACHED_FILES_HAVING_CONTENT]) {
+        is_expected.to contain_exactly("content", "RELS-EXT", "descMetadata", "adminMetadata")
+      }
     end
 
   end
