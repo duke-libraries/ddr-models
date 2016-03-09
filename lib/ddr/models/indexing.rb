@@ -20,6 +20,7 @@ module Ddr
           ACCESS_ROLE           => roles.to_json,
           ADMIN_SET             => admin_set,
           ASPACE_ID             => aspace_id,
+          ATTACHED_FILES_HAVING_CONTENT => attached_files_having_content.keys,
           BOX_NUMBER_FACET      => desc_metadata_values('box_number'),
           CONTRIBUTOR_FACET     => desc_metadata_values('contributor'),
           CREATOR_FACET         => creator,
@@ -90,6 +91,7 @@ module Ddr
         if is_a? Item
           fields[ADMIN_SET_FACET] = admin_set_facet
           fields[COLLECTION_FACET] = collection_facet
+          fields[ALL_TEXT] = all_text
         end
         fields
       end

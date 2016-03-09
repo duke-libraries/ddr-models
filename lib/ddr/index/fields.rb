@@ -8,7 +8,10 @@ module Ddr::Index
     ACTIVE_FEDORA_MODEL         = Field.new :active_fedora_model, :stored_sortable
     ADMIN_SET                   = Field.new :admin_set, :stored_sortable
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
+    ALL_TEXT                    = Field.new :all_text, solr_name: "all_text_timv"
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable
+    ATTACHED_FILES_HAVING_CONTENT =
+      Field.new :attached_files_having_content, :symbol
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
@@ -24,7 +27,7 @@ module Ddr::Index
     DISPLAY_FORMAT              = Field.new :display_format, :stored_sortable
     DOI                         = Field.new :doi, :symbol
     EAD_ID                      = Field.new :ead_id, :stored_sortable
-    EXTRACTED_TEXT              = Field.new :extracted_text, :searchable, type: :text
+    EXTRACTED_TEXT              = Field.new :extracted_text, solr_name: "extracted_text_tsm"
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
     INTERNAL_URI                = Field.new :internal_uri, :stored_sortable

@@ -131,6 +131,10 @@ module Ddr::Models
       has_datastream?(Ddr::Datastreams::CONTENT)
     end
 
+    def has_extracted_text?
+      has_datastream?(Ddr::Datastreams::EXTRACTED_TEXT)
+    end
+
     def content_ds
       datastreams[Ddr::Datastreams::CONTENT]
     end
