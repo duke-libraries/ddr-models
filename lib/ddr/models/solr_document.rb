@@ -53,7 +53,7 @@ module Ddr::Models
     end
 
     def access_roles
-      get(Ddr::Index::Fields::ACCESS_ROLE)
+      fetch(Ddr::Index::Fields::ACCESS_ROLE)
     end
 
     def object_profile
@@ -90,7 +90,7 @@ module Ddr::Models
     end
 
     def has_datastream?(dsID)
-      datastreams.key?(dsID) && datastreams[dsID]["size"].present?
+      attached_files.key?(dsID) && attached_files[dsID]["size"].present?
     end
 
     def has_admin_policy?

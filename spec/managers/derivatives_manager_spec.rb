@@ -93,10 +93,10 @@ module Ddr
         describe "thumbnail" do
           let(:object) { ContentBearing.create }
           it "should create content in the thumbnail datastream" do
-            expect(object.datastreams[Ddr::Models::File::THUMBNAIL]).to_not be_present
+            expect(object.attached_files[Ddr::Models::File::THUMBNAIL]).to_not be_present
             object.derivatives.generate_derivative Ddr::Derivatives::DERIVATIVES[:thumbnail]
-            expect(object.datastreams[Ddr::Models::File::THUMBNAIL]).to be_present
-            expect(object.datastreams[Ddr::Models::File::THUMBNAIL].size).to be > 0
+            expect(object.attached_files[Ddr::Models::File::THUMBNAIL]).to be_present
+            expect(object.attached_files[Ddr::Models::File::THUMBNAIL].size).to be > 0
           end
         end
         describe "ptif" do
