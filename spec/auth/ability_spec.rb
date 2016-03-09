@@ -19,7 +19,7 @@ module Ddr::Auth
 
       DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.each do |dsid, permission|
         describe "\"#{dsid}\"" do
-          let(:ds) { obj.datastreams[dsid] }
+          let(:ds) { obj.attached_files[dsid] }
           describe "can #{permission.inspect} object" do
             before { subject.can permission, obj.id }
             it { should be_able_to(:download, ds) }
@@ -31,10 +31,10 @@ module Ddr::Auth
         end
       end
 
-      describe "non-downloadable datastreams" do
+      describe "non-downloadable attached_files" do
         (Component.ds_specs.keys.map(&:to_s) - DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.keys).each do |dsid|
           describe "\"#{dsid}\"" do
-            let(:ds) { obj.datastreams[dsid] }
+            let(:ds) { obj.attached_files[dsid] }
             before { subject.can :download, obj.id }
             it { should_not be_able_to(:download, ds) }
           end

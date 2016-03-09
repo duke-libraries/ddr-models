@@ -17,7 +17,7 @@ ActiveFedora::Base.class_eval do
     end
 
     def can_have_content?
-      datastreams.key? "content"
+      attached_files.key? "content"
     end
 
     def has_content?
@@ -38,7 +38,7 @@ ActiveFedora::Base.class_eval do
     end
 
     def can_have_struct_metadata?
-      datastreams.key? Ddr::Models::File::STRUCT_METADATA
+      attached_files.key? Ddr::Models::File::STRUCT_METADATA
     end
 
     def has_struct_metadata?
@@ -52,9 +52,9 @@ ActiveFedora::Base.class_eval do
     def has_multires_image?
       can_have_multires_image? && multires_image_file_path.present?
     end
-    
+
     def can_have_thumbnail?
-      datastreams.key? "thumbnail"
+      attached_files.key? "thumbnail"
     end
 
     def has_thumbnail?

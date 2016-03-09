@@ -10,8 +10,8 @@ module Ddr
 
       def structure
         unless @structure
-          if datastreams[Ddr::Models::File::STRUCT_METADATA].content
-            @structure = Ddr::Models::Structure.new(Nokogiri::XML(datastreams[Ddr::Models::File::STRUCT_METADATA].content))
+          if attached_files[Ddr::Models::File::STRUCT_METADATA].content
+            @structure = Ddr::Models::Structure.new(Nokogiri::XML(attached_files[Ddr::Models::File::STRUCT_METADATA].content))
           end
         end
         @structure

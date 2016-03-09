@@ -55,7 +55,7 @@ RSpec.describe ActiveFedora::Base do
   describe "children", children: true do
     before do
       class Childrenable < ActiveFedora::Base
-        has_many :children, property: :is_member_of, class_name: 'ActiveFedora::Base'
+        has_many :children, predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isMemberOf, class_name: 'ActiveFedora::Base'
       end
     end
     after do
@@ -95,7 +95,7 @@ RSpec.describe ActiveFedora::Base do
     end
     describe "#has_thumbnail?" do
       let(:thumbnailable) { Thumbnailable.new }
-      before { allow(thumbnailable.datastreams[Ddr::Models::File::THUMBNAIL]).to receive(:has_content?).and_return(true) }
+      before { allow(thumbnailable.attached_files[Ddr::Models::File::THUMBNAIL]).to receive(:has_content?).and_return(true) }
       it "should return true if object has a thumbnail, else false" do
         expect(thumbnailable).to have_thumbnail
         expect(Thumbnailable.new).not_to have_thumbnail
@@ -121,7 +121,7 @@ RSpec.describe ActiveFedora::Base do
     end
     describe "#has_content?" do
       let(:contentable) { Contentable.new }
-      before { allow(contentable.datastreams[Ddr::Models::File::CONTENT]).to receive(:has_content?).and_return(true) }
+      before { allow(contentable.attached_files[Ddr::Models::File::CONTENT]).to receive(:has_content?).and_return(true) }
       it "should return true if object has content, else false" do
         expect(contentable).to have_content
         expect(Contentable.new).not_to have_content

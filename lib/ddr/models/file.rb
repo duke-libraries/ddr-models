@@ -45,9 +45,9 @@ module Ddr::Models
                               content_digest(algorithm)
                             end
       if checksum_value == calculated_checksum
-        "The checksum #{algorithm}:#{checksum_value} is valid for file #{dsid}."
+        "The checksum #{algorithm}:#{checksum_value} is valid for file #{::File.basename(id)}."
       else
-        raise ChecksumInvalid, "The checksum #{algorithm}:#{checksum_value} is not valid for file #{dsid}."
+        raise ChecksumInvalid, "The checksum #{algorithm}:#{checksum_value} is not valid for file #{::File.basename(id)}."
       end
     end
 

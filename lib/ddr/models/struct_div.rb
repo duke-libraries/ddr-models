@@ -23,7 +23,7 @@ module Ddr
       end
 
       def docs
-        query = ActiveFedora::SolrService.construct_query_for_pids(pids)
+        query = ActiveFedora::SolrQueryBuilder.construct_query_for_ids(pids)
         results = ActiveFedora::SolrService.query(query, rows: 999999)
         results.each_with_object({}) do |r, memo|
           memo[r["id"]] = ::SolrDocument.new(r)
