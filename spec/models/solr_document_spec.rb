@@ -212,4 +212,14 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     end
   end
 
+  describe "#published?" do
+    context "when the object is published" do
+      before { subject[Ddr::Index::Fields::WORKFLOW_STATE] = Ddr::Managers::WorkflowManager::PUBLISHED }
+      its(:published?) { is_expected.to eq(true) }
+    end
+    context "when the object is published" do
+      its(:published?) { is_expected.to eq(false) }
+    end
+  end
+
 end
