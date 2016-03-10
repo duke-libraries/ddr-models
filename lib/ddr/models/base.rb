@@ -43,10 +43,11 @@ module Ddr::Models
       permanent_id && permanent_id.sub(/\Aark:\/\d+\//, "")
     end
 
+    # Cf. https://github.com/duke-libraries/ddr-models/issues/586
     # @see ActiveModel::Conversion
-    def to_key
-      (key = permanent_id_suffix) ? [key] : super
-    end
+    # def to_key
+    #   (key = permanent_id_suffix) ? [key] : super
+    # end
 
     def model_and_id
       "#{self.class} id: #{id.inspect || '[NEW]'}"
