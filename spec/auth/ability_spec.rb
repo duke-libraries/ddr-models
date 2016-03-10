@@ -32,7 +32,8 @@ module Ddr::Auth
       end
 
       describe "non-downloadable attached_files" do
-        (Component.ds_specs.keys.map(&:to_s) - DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.keys).each do |dsid|
+        (Component.child_resource_reflections.keys.map(&:to_s) - \
+                          DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.keys).each do |dsid|
           describe "\"#{dsid}\"" do
             let(:ds) { obj.attached_files[dsid] }
             before { subject.can :download, obj.id }
