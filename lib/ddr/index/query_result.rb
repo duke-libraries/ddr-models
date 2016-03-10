@@ -24,7 +24,7 @@ module Ddr::Index
     def pids
       Enumerator.new do |e|
         each do |doc|
-          e << doc[Fields::PID]
+          e << doc[Fields::ID]
         end
       end
     end

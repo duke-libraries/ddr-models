@@ -85,7 +85,7 @@ module Ddr::Models
               when :present
                 desc_metadata_terms.select { |t| desc_metadata.values(t).present? }
               when :defined_attributes
-                desc_metadata_terms & desc_metadata_attributes
+                desc_metadata_terms & MetadataMapping.dc11.unqualified_names
               when :required
                 desc_metadata_terms(:defined_attributes).select {|t| required? t}
               when :dcterms
@@ -104,12 +104,6 @@ module Ddr::Models
         terms | desc_metadata_terms(*args)
       end
     end
-    deprecation_deprecate :desc_metadata_terms
-
-    def desc_metadata_attributes
-      MetadataMapping.dc11.unqualified_names
-    end
-    deprecation_deprecate :desc_metadata_attributes
 
     def desc_metadata_values(term)
       Deprecation.warn(Base, "`desc_metadata_values` is deprecated; use `desc_metadata.values` instead.")
