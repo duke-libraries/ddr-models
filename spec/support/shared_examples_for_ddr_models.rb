@@ -14,7 +14,10 @@ RSpec.shared_examples "a DDR model" do
       before {
         subject.permanent_id = "ark:/99999/fk4rx95k8w"
       }
-      its(:to_param) { is_expected.to eq("fk4rx95k8w") }
+      its(:to_param) do
+        pending "Resolution of https://github.com/duke-libraries/ddr-models/issues/586"
+        is_expected.to eq("fk4rx95k8w")
+      end
     end
     describe "when it does not have a permanent id" do
       its(:to_param) { is_expected.to_not be_nil }
