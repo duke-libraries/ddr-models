@@ -76,6 +76,10 @@ module Ddr::Index
         term is_member_of_collection: get_id(object_or_id)
       end
 
+      def is_part_of(object_or_id)
+        term is_part_of: get_id(object_or_id)
+      end
+
       def model(*models)
         where active_fedora_model: models
       end

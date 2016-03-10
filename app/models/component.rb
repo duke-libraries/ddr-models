@@ -17,6 +17,8 @@ class Component < Ddr::Models::Base
              predicate: ::RDF::URI("http://www.loc.gov/mix/v20/externalTarget#hasExternalTarget"),
              class_name: "Target"
 
+  after_save :index_parent, if: :has_extracted_text?, unless: "parent.nil?"
+
   def collection
     self.parent.parent rescue nil
   end
@@ -27,6 +29,10 @@ class Component < Ddr::Models::Base
 
   def publishable?
     parent.present? && parent.published?
+  end
+
+  def index_parent
+    Resque.enqueue(Ddr::Jobs::UpdateIndex, parent_id)
   end
 
 end

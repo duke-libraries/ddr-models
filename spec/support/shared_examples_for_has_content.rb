@@ -23,14 +23,12 @@ RSpec.shared_examples "an object that can have content" do
   describe "extracted text" do
     describe "when it is not present" do
       its(:has_extracted_text?) { should be false }
-      its(:to_solr) { should_not include(Ddr::Index::Fields::EXTRACTED_TEXT) }
+      its(:to_solr) { is_expected.not_to include(Ddr::Index::Fields::EXTRACTED_TEXT) }
     end
     describe "when it is present" do
       before { subject.extractedText.content = "This is my text. See Spot run." }
       its(:has_extracted_text?) { should be true }
-      it "should be indexed" do
-        expect(subject.to_solr[Ddr::Index::Fields::EXTRACTED_TEXT]).to eq("This is my text. See Spot run.")
-      end
+      its(:to_solr) { is_expected.to include(Ddr::Index::Fields::EXTRACTED_TEXT) }
     end
   end
 

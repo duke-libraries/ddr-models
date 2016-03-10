@@ -147,7 +147,7 @@ module Ddr::Models
     def attached_files_having_content
       Hash.new.tap do |h|
         attached_files.each do |file_id, file|
-          h[file_id] = file if file.has_content?
+          h[file_id] = file if !file.destroyed? && file.has_content?
         end
       end
     end

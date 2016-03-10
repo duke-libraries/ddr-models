@@ -25,6 +25,7 @@ module Ddr
           CONTRIBUTOR_FACET     => desc_metadata.values('contributor'),
           CREATOR_FACET         => desc_metadata.creator,
           DATE_FACET            => desc_metadata.date,
+          ATTACHED_FILES_HAVING_CONTENT => attached_files_having_content.keys,
           DATE_SORT             => date_sort,
           DEPOSITOR             => depositor,
           DISPLAY_FORMAT        => display_format,
@@ -86,6 +87,7 @@ module Ddr
         if is_a? Item
           fields[ADMIN_SET_FACET] = admin_set_facet
           fields[COLLECTION_FACET] = collection_facet
+          fields[ALL_TEXT] = all_text
         end
         fields
       end

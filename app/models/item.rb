@@ -21,4 +21,17 @@ class Item < Ddr::Models::Base
     parent.present? && parent.published?
   end
 
+  def children_having_extracted_text
+    item = self
+    Ddr::Index::Query.new do
+      is_part_of item
+      where attached_files_having_content: "extractedText"
+      fields :id, :extracted_text
+    end
+  end
+
+  def all_text
+    children_having_extracted_text.docs.map(&:extracted_text).flatten
+  end
+
 end
