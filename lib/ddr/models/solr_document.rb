@@ -232,6 +232,10 @@ module Ddr::Models
       end
     end
 
+    def published?
+      self[Ddr::Index::Fields::WORKFLOW_STATE] == Ddr::Managers::WorkflowManager::PUBLISHED
+    end
+
     private
 
     def targets_query
