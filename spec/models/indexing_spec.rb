@@ -33,9 +33,6 @@ module Ddr::Models
       its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
       its([Indexing::LOCAL_ID]) { is_expected.to eq("foo") }
       its([Indexing::PERMANENT_ID]) { is_expected.to eq("ark:/99999/fk4zzz") }
-      its([Indexing::PERMANENT_URL]) {
-        is_expected.to eq("http://id.library.duke.edu/ark:/99999/fk4zzz")
-      }
       its([Indexing::POLICY_ROLE]) {
         is_expected.to contain_exactly(role2.agent, role3.agent, role4.agent)
       }
@@ -46,6 +43,16 @@ module Ddr::Models
           obj.permanent_id = nil
         }
         its([Indexing::UNIQUE_ID]) { is_expected.to eq([obj.id]) }
+      end
+
+      describe "permanent URL" do
+        describe "when the object is published" do
+          before { allow(obj).to receive(:published?) { true } }
+          its([Indexing::PERMANENT_URL]) { is_expected.to eq("http://id.library.duke.edu/ark:/99999/fk4zzz") }
+        end
+        describe "when the object is not published" do
+          its([Indexing::PERMANENT_URL]) { is_expected.to be_nil }
+        end
       end
     end
 
