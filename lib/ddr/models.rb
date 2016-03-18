@@ -51,6 +51,7 @@ module Ddr
     autoload :Indexing
     autoload :NotFoundError, 'ddr/models/error'
     autoload :ObjectApi
+    autoload :Relation
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure

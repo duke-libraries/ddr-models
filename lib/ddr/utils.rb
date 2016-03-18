@@ -1,6 +1,7 @@
 require 'openssl'
 
 module Ddr::Utils
+  extend Deprecation
 
   DEFAULT_MIME_TYPE = "application/octet-stream"
 
@@ -90,6 +91,7 @@ module Ddr::Utils
   #      direct children of that collection (i.e., effectively searches a collection and its
   #      items for an object with the given identifier)
   def self.pid_for_identifier(identifier, opts={})
+    Deprecation.warn(self, "`Ddr::Utils.pid_for_identifier` is deprecated. Use .having_local_id model class method and get id from result object(s). (#{caller.first})")
     model = opts.fetch(:model, nil)
     collection = opts.fetch(:collection, nil)
     objs = []
