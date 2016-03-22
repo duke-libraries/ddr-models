@@ -29,6 +29,7 @@ module Ddr::Index
     EAD_ID                      = Field.new :ead_id, :stored_sortable
     EXTRACTED_TEXT              = Field.new :extracted_text, solr_name: "extracted_text_tsm"
     FCREPO3_PID                 = Field.new :fcrepo3_pid, :stored_sortable
+    FORMAT_FACET                = Field.new :format_facet, :facetable
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
     IS_ATTACHED_TO              = Field.new :is_attached_to, solr_name: "isAttachedTo_ssim"
