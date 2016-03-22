@@ -28,6 +28,7 @@ module Ddr::Index
     DOI                         = Field.new :doi, :symbol
     EAD_ID                      = Field.new :ead_id, :stored_sortable
     EXTRACTED_TEXT              = Field.new :extracted_text, solr_name: "extracted_text_tsm"
+    FORMAT_FACET                = Field.new :format_facet, :facetable
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
     INTERNAL_URI                = Field.new :internal_uri, :stored_sortable
