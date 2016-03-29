@@ -5,7 +5,7 @@ module Ddr::Models
     include ActiveModel::Serializers::JSON
 
     def attributes
-      { "size" => nil }
+      { "size" => nil, "mime_type" => nil }
     end
 
   end

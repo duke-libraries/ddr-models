@@ -151,7 +151,7 @@ module Ddr::Models
     end
 
     def content_mime_type
-      content_ds["dsMIME"] rescue nil
+      content_ds["mime_type"] rescue nil
     end
     # For duck-typing with Ddr::Models::HasContent
     alias_method :content_type, :content_mime_type
