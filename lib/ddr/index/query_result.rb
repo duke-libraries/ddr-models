@@ -1,5 +1,6 @@
 module Ddr::Index
   class QueryResult < AbstractQueryResult
+    extend Deprecation
 
     PAGE_SIZE = 1000
 
@@ -22,6 +23,11 @@ module Ddr::Index
     end
 
     def pids
+      Deprecation.warn(QueryResult, "`pids` is deprecated; use `ids` instead.")
+      ids
+    end
+
+    def ids
       Enumerator.new do |e|
         each do |doc|
           e << doc[Fields::ID]
@@ -30,7 +36,12 @@ module Ddr::Index
     end
 
     def each_pid(&block)
-      pids.each(&block)
+      Deprecation.warn(QueryResult, "`each_pid` is deprecated; use `each_id` instead.")
+      each_id(&block)
+    end
+
+    def each_id(&block)
+      ids.each(&block)
     end
 
     def docs
