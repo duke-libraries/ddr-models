@@ -101,17 +101,18 @@ RSpec.shared_examples "a DDR model" do
 
   describe "#all_identifiers" do
     subject { described_class.new(id: 'test-3') }
-    context "when it has descriptive identifiers, local ID, permanent ID, and id" do
+    context "when it has descriptive identifiers, Fedora 3 PID, local ID, permanent ID, and id" do
       before do
         subject.desc_metadata.identifier = [ 'ID001', 'ID002' ]
+        subject.fcrepo3_pid = 'test:92'
         subject.local_id = 'LOCAL_ID_A'
         subject.permanent_id = 'ark:/999999/cd3'
       end
       its(:all_identifiers) {
-        is_expected.to match_array([ 'ID001', 'ID002', 'LOCAL_ID_A', 'ark:/999999/cd3', 'test-3' ])
+        is_expected.to match_array([ 'ID001', 'ID002', 'test:92', 'LOCAL_ID_A', 'ark:/999999/cd3', 'test-3' ])
       }
     end
-    context "when it has no descriptive identifiers or local ID" do
+    context "when it has no descriptive identifiers, Fedora 3 PID, or local ID" do
       before { subject.permanent_id = 'ark:/999999/cd3' }
       its(:all_identifiers) {
         is_expected.to match_array([ 'ark:/999999/cd3', 'test-3' ])
