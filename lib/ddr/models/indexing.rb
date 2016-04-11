@@ -101,7 +101,7 @@ module Ddr
       end
 
       def all_identifiers
-        desc_metadata.identifier + [local_id, permanent_id, id].compact
+        desc_metadata.identifier + [fcrepo3_pid, local_id, permanent_id, id].compact
       end
 
       def associated_collection
