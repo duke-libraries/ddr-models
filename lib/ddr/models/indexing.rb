@@ -33,6 +33,7 @@ module Ddr
           FORMAT_FACET          => format,
           IDENTIFIER_ALL        => all_identifiers,
           INTERNAL_URI          => internal_uri,
+          IS_LOCKED             => is_locked,
           LICENSE               => license,
           LICENSE_DESCRIPTION   => rightsMetadata.license.description.first,
           LICENSE_TITLE         => rightsMetadata.license.title.first,

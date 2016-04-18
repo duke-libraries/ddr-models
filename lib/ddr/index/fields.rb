@@ -35,6 +35,7 @@ module Ddr::Index
     IS_ATTACHED_TO              = Field.new :is_attached_to, :symbol
     IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, :symbol
     IS_GOVERNED_BY              = Field.new :is_governed_by, :symbol
+    IS_LOCKED                   = Field.new :is_locked, :stored_sortable
     IS_MEMBER_OF                = Field.new :is_member_of, :symbol
     IS_MEMBER_OF_COLLECTION     = Field.new :is_member_of_collection, :symbol
     IS_PART_OF                  = Field.new :is_part_of, :symbol

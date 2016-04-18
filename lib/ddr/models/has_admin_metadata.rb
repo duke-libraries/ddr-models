@@ -21,6 +21,7 @@ module Ddr::Models
                      :workflow_state,
                      :ead_id,
                      :aspace_id,
+                     :is_locked,
                      datastream: "adminMetadata",
                      multiple: false
 
@@ -80,6 +81,28 @@ module Ddr::Models
       if ead_id
         FindingAid.new(ead_id)
       end
+    end
+
+    def locked?
+      !!is_locked
+    end
+
+    def lock
+      self.is_locked = true
+    end
+
+    def unlock
+      self.is_locked = false
+    end
+
+    def lock!
+      lock
+      save
+    end
+
+    def unlock!
+      unlock
+      save
     end
 
     private
