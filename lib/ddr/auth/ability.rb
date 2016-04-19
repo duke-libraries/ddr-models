@@ -10,7 +10,8 @@ module Ddr
                                    RoleBasedAbilityDefinitions,
                                    DatastreamAbilityDefinitions,
                                    EventAbilityDefinitions,
-                                   PublicationAbilityDefinitions ]
+                                   PublicationAbilityDefinitions,
+                                   LockAbilityDefinitions ]
 
     end
   end

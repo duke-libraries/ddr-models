@@ -38,6 +38,7 @@ module Ddr
       autoload :DatastreamAbilityDefinitions
       autoload :EventAbilityDefinitions
       autoload :ItemAbilityDefinitions
+      autoload :LockAbilityDefinitions
       autoload :PublicationAbilityDefinitions
       autoload :RoleBasedAbilityDefinitions
       autoload :SuperuserAbilityDefinitions
