@@ -9,7 +9,8 @@ module Ddr
                                    AttachmentAbilityDefinitions,
                                    RoleBasedAbilityDefinitions,
                                    DatastreamAbilityDefinitions,
-                                   EventAbilityDefinitions ]
+                                   EventAbilityDefinitions,
+                                   LockAbilityDefinitions ]
 
     end
   end

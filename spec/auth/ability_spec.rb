@@ -2,7 +2,7 @@ module Ddr::Auth
   RSpec.describe Ability, type: :model, abilities: true do
 
     subject { described_class.new(auth_context) }
-    
+
     let(:auth_context) { FactoryGirl.build(:auth_context) }
 
     describe "aliases" do
@@ -141,6 +141,25 @@ module Ddr::Auth
 
       describe "when the attachment is not attached" do
         it { should_not be_able_to(:create, attachment) }
+      end
+    end
+
+    describe "locks" do
+      let(:obj) { Ddr::Models::Base.new }
+
+      describe "effects of locks on abilities" do
+        before do
+          allow(obj).to receive(:effective_permissions) { Permissions::ALL }
+          allow(obj).to receive(:locked?) { true }
+        end
+        it { should be_able_to(:read, obj) }
+        it { should be_able_to(:download, obj) }
+        it { should_not be_able_to(:add_children, obj) }
+        it { should_not be_able_to(:update, obj) }
+        it { should_not be_able_to(:replace, obj) }
+        it { should_not be_able_to(:arrange, obj) }
+        it { should be_able_to(:audit, obj) }
+        it { should_not be_able_to(:grant, obj) }
       end
     end
 
