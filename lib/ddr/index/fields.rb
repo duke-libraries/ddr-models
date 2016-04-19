@@ -35,6 +35,7 @@ module Ddr::Index
     IS_ATTACHED_TO              = Field.new :is_attached_to, solr_name: "isAttachedTo_ssim"
     IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, solr_name: "isExternalTargetFor_ssim"
     IS_GOVERNED_BY              = Field.new :is_governed_by, solr_name: "isGovernedBy_ssim"
+    IS_LOCKED                   = Field.new :is_locked, :stored_sortable
     IS_MEMBER_OF_COLLECTION     = Field.new :is_member_of_collection, solr_name: "isMemberOfCollection_ssim"
     IS_PART_OF                  = Field.new :is_part_of, solr_name: "isPartOf_ssim"
     LAST_FIXITY_CHECK_ON        = Field.new :last_fixity_check_on, :stored_sortable, type: :date

@@ -34,6 +34,7 @@ module Ddr
           FCREPO3_PID           => fcrepo3_pid,
           FORMAT_FACET          => desc_metadata.format,
           IDENTIFIER_ALL        => all_identifiers,
+          IS_LOCKED             => is_locked,
           LICENSE               => license,
           LOCAL_ID              => local_id,
           PERMANENT_ID          => permanent_id,

@@ -37,6 +37,10 @@ module Ddr::Models
                predicate: RDF::URI("info:fedora/fedora-system:def/model#PID"),
                multiple: false
 
+      property :is_locked,
+               predicate: Ddr::Vocab::Asset.isLocked,
+               multiple: false
+
       property :license,
                predicate: RDF::Vocab::DC.license,
                multiple: false
@@ -117,6 +121,28 @@ module Ddr::Models
       if ead_id
         FindingAid.new(ead_id)
       end
+    end
+
+    def locked?
+      !!is_locked
+    end
+
+    def lock
+      self.is_locked = true
+    end
+
+    def unlock
+      self.is_locked = false
+    end
+
+    def lock!
+      lock
+      save
+    end
+
+    def unlock!
+      unlock
+      save
     end
 
     private

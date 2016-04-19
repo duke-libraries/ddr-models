@@ -24,6 +24,9 @@
       property "multiresImageFilePath",
         label: "Multires Image File Path"
 
+      property "isLocked",
+        label: "Is Locked?"
+
     end
   end
 end
