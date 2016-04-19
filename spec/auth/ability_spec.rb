@@ -208,6 +208,8 @@ module Ddr::Auth
         end
       end
 
+    end
+
     describe "locks" do
       let(:obj) { Ddr::Models::Base.new }
 
