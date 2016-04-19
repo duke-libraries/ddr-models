@@ -49,6 +49,9 @@ module Ddr
       property :aspace_id,
                predicate: Ddr::Vocab::Asset.archivesSpaceId
 
+      property :is_locked,
+               predicate: Ddr::Vocab::Asset.isLocked
+
     end
   end
 end

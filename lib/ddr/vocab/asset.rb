@@ -21,6 +21,9 @@
       property "archivesSpaceId",
         label: "ArchivesSpace Identifier"
 
+      property "isLocked",
+        label: "Is Locked?"
+
     end
   end
 end

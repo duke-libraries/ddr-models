@@ -190,23 +190,77 @@ module Ddr::Models
         end
       end
 
-      describe "contacts" do
-        before do
-          allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'xa') do
-            {'id'=>1, 'slug'=>'xa', 'name'=>'Contact A', 'short_name'=>'A'}
-          end
-          allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'yb') do
-            {'id'=>1, 'slug'=>'yb', 'name'=>'Contact B', 'short_name'=>'B'}
+    end
+
+    describe "contacts" do
+
+      subject { FactoryGirl.build(:item) }
+
+      before do
+        allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'xa') do
+          {'id'=>1, 'slug'=>'xa', 'name'=>'Contact A', 'short_name'=>'A'}
+        end
+        allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'yb') do
+          {'id'=>1, 'slug'=>'yb', 'name'=>'Contact B', 'short_name'=>'B'}
+        end
+      end
+      describe "#research_help" do
+        before { subject.research_help_contact = 'yb' }
+        it "should return the appropriate contact" do
+          expect(subject.research_help.slug).to eq('yb')
+        end
+      end
+    end
+
+    describe "locking" do
+
+      subject { FactoryGirl.build(:item) }
+
+      describe "#locked?" do
+        context "object is locked" do
+          before { subject.is_locked = true }
+          it "should be true" do
+            expect(subject.locked?).to be true
           end
         end
-        describe "#research_help" do
-          before { subject.research_help_contact = 'yb' }
-          it "should return the appropriate contact" do
-            expect(subject.research_help.slug).to eq('yb')
+        context "object is not locked" do
+          it "should be false" do
+            expect(subject.locked?).to be false
           end
         end
       end
 
+      describe "lock" do
+        it "should lock the object" do
+          expect { subject.lock }.to change(subject, :locked?).from(false).to(true)
+        end
+      end
+
+      describe "unlock" do
+        before { subject.lock }
+        it "should unlock the object" do
+          expect { subject.unlock }.to change(subject, :locked?).from(true).to(false)
+        end
+      end
+
+      describe "lock!" do
+        it "should lock and save the object" do
+          subject.lock!
+          subject.reload
+          expect(subject.locked?).to be true
+        end
+      end
+
+      describe "unlock!" do
+        before { subject.lock! }
+        it "should unlock and save the object" do
+          subject.unlock!
+          subject.reload
+          expect(subject.locked?).to be false
+        end
+      end
+
     end
+
   end
 end
