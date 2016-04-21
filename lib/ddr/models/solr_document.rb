@@ -4,7 +4,6 @@ module Ddr::Models
   module SolrDocument
     extend ActiveSupport::Concern
     extend Deprecation
-    include ObjectApi
 
     class NotFound < Error; end
 
