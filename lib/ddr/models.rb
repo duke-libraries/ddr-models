@@ -50,7 +50,6 @@ module Ddr
     autoload :HasThumbnail
     autoload :Indexing
     autoload :NotFoundError, 'ddr/models/error'
-    autoload :ObjectApi
     autoload :Relation
     autoload :SolrDocument
     autoload :StructDiv

@@ -2,7 +2,6 @@ module Ddr::Models
   class Base < ActiveFedora::Base
     extend Deprecation
 
-    include ObjectApi
     include Governable
     include HasThumbnail
     include EventLoggable
