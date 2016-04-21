@@ -211,13 +211,14 @@ module Ddr::Auth
     end
 
     describe "locks" do
-      let(:obj) { Ddr::Models::Base.new }
 
-      describe "effects of locks on abilities" do
-        before do
-          allow(obj).to receive(:effective_permissions) { Permissions::ALL }
-          allow(obj).to receive(:locked?) { true }
-        end
+      before do
+        allow(obj).to receive(:effective_permissions) { Permissions::ALL }
+        allow(obj).to receive(:locked?) { true }
+      end
+
+      describe "effects of locks on non-publication abilities" do
+        let(:obj) { Ddr::Models::Base.new }
         it { should be_able_to(:read, obj) }
         it { should be_able_to(:download, obj) }
         it { should_not be_able_to(:add_children, obj) }
@@ -226,6 +227,17 @@ module Ddr::Auth
         it { should_not be_able_to(:arrange, obj) }
         it { should be_able_to(:audit, obj) }
         it { should_not be_able_to(:grant, obj) }
+      end
+
+      describe "effects of locks on publication abilities" do
+        let(:obj) { Collection.new }
+        describe "unpublished object" do
+          it { should_not be_able_to(:publish, obj) }
+        end
+        describe "published object" do
+          before { allow(obj).to receive(:published?) { true } }
+          it { should_not be_able_to(:unpublish, obj) }
+        end
       end
     end
 
