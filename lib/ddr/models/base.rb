@@ -12,6 +12,12 @@ module Ddr::Models
     extend AutoVersion
     extend Relation
 
+    SAVE_NOTIFICATION = "save.base.models.ddr"
+
+    after_save do
+      ActiveSupport::Notifications.instrument(SAVE_NOTIFICATION, id: id)
+    end
+
     after_destroy do
       notify_event :deletion
     end
