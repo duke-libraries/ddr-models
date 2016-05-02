@@ -43,11 +43,18 @@ module Ddr::Managers
       its(:last_modified) { is_expected.to eq(["2015-06-08T21:22:35Z"]) }
       its(:created) { is_expected.to eq(["2015:06:05 15:16:23-04:00"]) }
       its(:pronom_identifier) { is_expected.to eq(["fmt/20"]) }
-      its(:creating_application) { is_expected.to contain_exactly("Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/PREMIS Editorial Committee", "Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/Acrobat PDFMaker 11 for Word") }
+      its(:creating_application) {
+        is_expected.to contain_exactly("Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/PREMIS Editorial Committee",
+                                       "Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/Acrobat PDFMaker 11 for Word")
+      }
       its(:fits_version) { is_expected.to eq("0.8.5") }
       its(:extent) { is_expected.to eq(["3786205"]) }
       its(:file_size) { is_expected.to eq([3786205]) }
       its(:media_type) { is_expected.to eq(["application/pdf"]) }
+      its(:message) {
+        is_expected.to contain_exactly("Invalid page tree node offset=390028",
+                                       "Outlines contain recursive references.")
+      }
 
       describe "datetime fields" do
         its(:creation_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-05 15:16:23-04:00").to_time.utc) }
