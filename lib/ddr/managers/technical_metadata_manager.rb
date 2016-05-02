@@ -5,10 +5,20 @@ module Ddr::Managers
 
     delegate :content, :fits, to: :object
 
-    delegate :valid, :well_formed,
-             :media_type, :format_label, :format_version, :pronom_identifier,
-             :created, :modified, :creating_application, :extent,
-             :image_width, :image_height, :color_space,
+    delegate :color_space,
+             :created,
+             :creating_application,
+             :extent,
+             :format_label,
+             :format_version,
+             :image_height,
+             :image_width,
+             :media_type,
+             :message,
+             :modified,
+             :pronom_identifier,
+             :valid,
+             :well_formed,
              to: :fits
 
     alias_method :last_modified, :modified
