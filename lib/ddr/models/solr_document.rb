@@ -89,7 +89,12 @@ module Ddr::Models
     end
 
     def has_datastream?(dsID)
-      attached_files.key?(dsID) && attached_files[dsID]["size"].present?
+      Deprecation.warn(SolrDocument, "Use `has_attached_file?` instead.")
+      has_attached_file?(dsID)
+    end
+
+    def has_attached_file?(file_id)
+      attached_files.key?(file_id)
     end
 
     def has_admin_policy?
@@ -134,15 +139,15 @@ module Ddr::Models
     end
 
     def has_thumbnail?
-      has_datastream?(Ddr::Models::File::THUMBNAIL)
+      has_attached_file?(Ddr::Models::File::THUMBNAIL)
     end
 
     def has_content?
-      has_datastream?(Ddr::Models::File::CONTENT)
+      has_attached_file?(Ddr::Models::File::CONTENT)
     end
 
     def has_extracted_text?
-      has_datastream?(Ddr::Datastreams::EXTRACTED_TEXT)
+      has_attached_file?(Ddr::Datastreams::EXTRACTED_TEXT)
     end
 
     def content_ds
