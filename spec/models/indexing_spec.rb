@@ -14,7 +14,7 @@ module Ddr::Models
       before do
         obj.aspace_id = "aspace_dccea43034e1b8261e14cf999e86449d"
         obj.display_format = "Image"
-        obj.doi << "http://doi.org/10.1000/182"
+        obj.doi = "http://doi.org/10.1000/182"
         obj.fcrepo3_pid = "duke:1"
         obj.license = "cc-by-nc-nd-40"
         obj.local_id = "foo"
@@ -28,7 +28,7 @@ module Ddr::Models
       its([Indexing::ACCESS_ROLE]) { is_expected.to eq(obj.roles.to_json) }
       its([Indexing::ASPACE_ID]) { is_expected.to eq("aspace_dccea43034e1b8261e14cf999e86449d") }
       its([Indexing::DISPLAY_FORMAT]) { is_expected.to eq("Image") }
-      its([Indexing::DOI]) { is_expected.to eq(["http://doi.org/10.1000/182"]) }
+      its([Indexing::DOI]) { is_expected.to eq("http://doi.org/10.1000/182") }
       its([Indexing::FCREPO3_PID]) { is_expected.to eq("duke:1") }
       its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
       its([Indexing::LOCAL_ID]) { is_expected.to eq("foo") }
