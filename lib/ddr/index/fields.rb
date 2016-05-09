@@ -10,7 +10,7 @@ module Ddr::Index
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
     ALL_TEXT                    = Field.new :all_text, solr_name: "all_text_timv"
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable
-    ATTACHED_FILES              = Field.new :attached_files, solr_name: "attached_files_ss"
+    ATTACHED_FILES              = Field.new :attached_files, :stored_sortable
     ATTACHED_FILES_HAVING_CONTENT =
       Field.new :attached_files_having_content, :symbol
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
