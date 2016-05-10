@@ -199,7 +199,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
   describe "#has_attached_file?" do
     before do
       allow(subject).to receive(:attached_files) {
-        {"content"=>{"size"=>987654, "sha"=>"7f6ae63610d46448f777591dd6b", "mime_type"=>"image/tiff"}}
+        {"content"=>{"size"=>987654, "sha1"=>"75e2e0cec6e807f6ae63610d46448f777591dd6b", "mime_type"=>"image/tiff"}}
       }
     end
     context "when there is no content for the datastream" do
