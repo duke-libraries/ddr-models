@@ -3,28 +3,20 @@ require "csv"
 module Ddr::Index
   class CSVQueryResult < AbstractQueryResult
 
-    MAX_ROWS = 10**8
-    MV_SEP   = ";"
+    delegate :[], :to_s, :to_csv, to: :table
 
-    attr_reader :mv_sep
-
-    delegate :read, :each, to: :csv
-
-    def initialize(query, mv_sep: MV_SEP)
-      super(query)
-      @mv_sep = mv_sep
+    def delete_empty_columns!
+      mode = table.mode
+      table.by_col!.delete_if { |c, vals| vals.all?(&:nil?) }
+      table.send("by_#{mode}!")
     end
 
-    def csv
-      CSV.new(data, csv_opts.to_h)
+    def each(&block)
+      table.by_row!.each(&block)
     end
 
-    def to_s
-      read.to_csv
-    end
-
-    def rows
-      query.rows || MAX_ROWS
+    def table
+      @table ||= CSV.parse(data, csv_opts.to_h)
     end
 
     def csv_opts
@@ -35,12 +27,11 @@ module Ddr::Index
       @solr_csv_opts ||= SolrCSVOptions.new(col_sep: csv_opts.col_sep,
                                             quote_char: csv_opts.quote_char,
                                             header: solr_csv_header,
-                                            mv_sep: mv_sep,
-                                            rows: rows)
+                                            rows: query.rows)
     end
 
     def headers
-      @headers ||= query.fields.map(&:heading)
+      @headers ||= query.fields.map { |f| f.respond_to?(:heading) ? f.heading : f.to_s }
     end
 
     def csv_headers
@@ -56,11 +47,12 @@ module Ddr::Index
     end
 
     def solr_csv_params
-      params.merge solr_csv_opts.params
+      params.merge(solr_csv_opts.params)
     end
 
     def data
       raw = conn.get("select", params: solr_csv_params)
+      mv_sep = solr_csv_opts["csv.mv.separator"]
       raw.gsub(/\\#{mv_sep}/, mv_sep)
     end
 

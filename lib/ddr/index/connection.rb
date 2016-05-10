@@ -1,3 +1,5 @@
+require "rsolr"
+
 module Ddr::Index
   class Connection < SimpleDelegator
 

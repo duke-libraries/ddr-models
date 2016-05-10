@@ -46,8 +46,8 @@ module Ddr::Index
       QueryResult.new(self)
     end
 
-    def csv(**opts)
-      CSVQueryResult.new(self, **opts)
+    def csv
+      CSVQueryResult.new(self)
     end
 
     def filter_clauses
