@@ -8,18 +8,18 @@ class Item < Ddr::Models::Base
   include Ddr::Models::HasChildren
   include Ddr::Models::HasStructMetadata
 
-  has_many :children, property: :is_part_of, class_name: 'Component'
-  belongs_to :parent, property: :is_member_of_collection, class_name: 'Collection'
+  has_many :children,
+           predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isPartOf,
+           class_name: "Component",
+           as: :parent
 
-  alias_method :components, :children
-  alias_method :component_ids, :child_ids
+  belongs_to :parent,
+             predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isMemberOfCollection,
+             class_name: "Collection"
 
-  alias_method :parts, :children
-  alias_method :part_ids, :child_ids
-
-  alias_method :collection, :parent
-  alias_method :collection_id, :parent_id
-  alias_method :collection=, :parent=
+  def publishable?
+    parent.present? && parent.published?
+  end
 
   def children_having_extracted_text
     item = self

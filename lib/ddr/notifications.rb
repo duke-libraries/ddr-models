@@ -6,6 +6,7 @@ module Ddr
     CREATION = "creation.events.ddr"
     UPDATE = "update.events.ddr"
     DELETION = "deletion.events.ddr"
+    MIGRATION = "migration.events.ddr"
 
     def self.notify_event(type, args={})
       name = "#{type}.events.ddr"

@@ -34,7 +34,7 @@ module Ddr::Models
             it "should assign a permanent id once" do
               expect(subject).to receive(:assign_permanent_id!).once { nil }
               subject.save!
-              subject.title = ["New Title"]
+              subject.dc_title = ["New Title"]
               subject.save!
             end
           end
@@ -63,7 +63,7 @@ module Ddr::Models
           it "sets default metadata" do
             expect(identifier.profile).to eq("dc")
             expect(identifier.export).to eq("no")
-            expect(identifier["fcrepo3.pid"]).to eq(subject.pid)
+            expect(identifier["fcrepo4.id"]).to eq(subject.id)
           end
         end
         describe "object destruction" do
@@ -78,8 +78,9 @@ module Ddr::Models
       describe "events" do
         before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
         context "when the operation succeeds" do
-          let!(:mock_identifier) { Ezid::MockIdentifier.new(id: "ark:/99999/fk4zzz",
-                                                            metadata: "_target: http://example.com") }
+          let!(:mock_identifier) {
+            Ezid::MockIdentifier.new("ark:/99999/fk4zzz", metadata: "_target: http://example.com")
+          }
           before do
             allow(Ezid::Identifier).to receive(:create) { mock_identifier }
             allow(Ezid::Identifier).to receive(:find) { mock_identifier }
@@ -104,50 +105,57 @@ module Ddr::Models
 
     describe "workflow" do
 
-      subject { FactoryGirl.build(:item) }
+      let(:collection) { FactoryGirl.create(:collection) }
+      let(:item) { FactoryGirl.create(:item) }
+      let(:component) { FactoryGirl.create(:component) }
+      before do
+        item.parent = collection
+        item.save!
+        component.parent = item
+        component.save!
+      end
 
       describe "#published?" do
         context "object is published" do
-          before { allow(subject).to receive(:workflow_state) { Ddr::Managers::WorkflowManager::PUBLISHED } }
+          before { allow(collection).to receive(:workflow_state) { Ddr::Managers::WorkflowManager::PUBLISHED } }
           it "should return true" do
-            expect(subject).to be_published
+            expect(collection).to be_published
           end
         end
         context "object is not published" do
-          before { allow(subject).to receive(:workflow_state) { nil } }
+          before { allow(collection).to receive(:workflow_state) { nil } }
           it "should return false" do
-            expect(subject).not_to be_published
+            expect(collection).not_to be_published
           end
-        end
-      end
-
-      describe "#publish" do
-        it "should publish the object" do
-          subject.publish
-          expect(subject).to be_published
         end
       end
 
       describe "#publish!" do
-        it "should publish and persist the object" do
-          subject.publish!
-          expect(subject.reload).to be_published
+        context "do not include descendants" do
+          it "should publish and persist the object" do
+            collection.publish!(include_descendants: false)
+            expect(collection.reload).to be_published
+            expect(item.reload).not_to be_published
+            expect(component.reload).not_to be_published
+          end
         end
-      end
-
-      describe "#unpublish" do
-        before { subject.publish }
-        it "should unpublish the object" do
-          subject.unpublish
-          expect(subject).not_to be_published
+        context "do include descendants" do
+          it "should publish and persist the object and descendants" do
+            collection.publish!
+            expect(collection.reload).to be_published
+            expect(item.reload).to be_published
+            expect(component.reload).to be_published
+          end
         end
       end
 
       describe "#unpublish!" do
-        before { subject.publish! }
+        before { collection.publish! }
         it "should unpublish and persist the object" do
-          subject.unpublish!
-          expect(subject.reload).not_to be_published
+          collection.unpublish!
+          expect(collection.reload).not_to be_published
+          expect(item.reload).not_to be_published
+          expect(component.reload).not_to be_published
         end
       end
     end
@@ -177,7 +185,7 @@ module Ddr::Models
       describe "#grant_roles_to_creator" do
         let(:user) { FactoryGirl.build(:user) }
         before { subject.grant_roles_to_creator(user) }
-        its(:roles) { should include(Ddr::Auth::Roles::Role.build(type: "Editor", agent: user.agent, scope: "resource")) }
+        its(:roles) { should include(Ddr::Auth::Roles::Role.new(role_type: "Editor", agent: user.agent, scope: "resource")) }
       end
 
       describe "persistence" do
@@ -186,7 +194,7 @@ module Ddr::Models
           subject.roles.grant role
           subject.save!
           subject.reload
-          expect(subject.roles).to contain_exactly(role)
+          expect(subject.roles.role_set).to contain_exactly(role)
         end
       end
 

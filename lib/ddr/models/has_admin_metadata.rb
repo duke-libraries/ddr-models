@@ -1,31 +1,72 @@
 require "resque"
+require "rdf/vocab"
 
 module Ddr::Models
   module HasAdminMetadata
     extend ActiveSupport::Concern
 
     included do
-      has_metadata "adminMetadata",
-                   type: Ddr::Datastreams::AdministrativeMetadataDatastream,
-                   versionable: true,
-                   control_group: "M"
+      property :access_roles,
+               predicate: Ddr::Vocab::Roles.roleSet,
+               multiple: false
 
-      has_attributes :admin_set,
-                     :depositor,
-                     :display_format,
-                     :license,
-                     :local_id,
-                     :permanent_id,
-                     :permanent_url,
-                     :research_help_contact,
-                     :workflow_state,
-                     :ead_id,
-                     :aspace_id,
-                     :is_locked,
-                     datastream: "adminMetadata",
-                     multiple: false
+      property :admin_set,
+               predicate: Ddr::Vocab::Asset.adminSet,
+               multiple: false
 
-      delegate :publish, :publish!, :unpublish, :unpublish!, :published?, to: :workflow
+      property :aspace_id,
+               predicate: Ddr::Vocab::Asset.archivesSpaceId,
+               multiple: false
+
+      property :depositor,
+               predicate: RDF::Vocab::MARCRelators.dpt,
+               multiple: false
+
+      property :display_format,
+               predicate: Ddr::Vocab::Display.format,
+               multiple: false
+
+      property :doi,
+               predicate: RDF::Vocab::Identifiers.doi,
+               multiple: false
+
+      property :ead_id,
+               predicate: Ddr::Vocab::Asset.eadId,
+               multiple: false
+
+      property :fcrepo3_pid,
+               predicate: RDF::URI("info:fedora/fedora-system:def/model#PID"),
+               multiple: false
+
+      property :is_locked,
+               predicate: Ddr::Vocab::Asset.isLocked,
+               multiple: false
+
+      property :license,
+               predicate: RDF::Vocab::DC.license,
+               multiple: false
+
+      property :local_id,
+               predicate: RDF::Vocab::Identifiers.local,
+               multiple: false
+
+      property :permanent_id,
+               predicate: Ddr::Vocab::Asset.permanentId,
+               multiple: false
+
+      property :permanent_url,
+               predicate: Ddr::Vocab::Asset.permanentUrl,
+               multiple: false
+
+      property :research_help_contact,
+               predicate: Ddr::Vocab::Contact.assistance,
+               multiple: false
+
+      property :workflow_state,
+               predicate: Ddr::Vocab::Asset.workflowState,
+               multiple: false
+
+      delegate :publish!, :unpublish!, :published?, to: :workflow
 
       after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
       around_destroy :update_permanent_id_on_destroy, if: "permanent_id.present?"
@@ -36,7 +77,7 @@ module Ddr::Models
     end
 
     def roles
-      Ddr::Auth::Roles::PropertyRoleSet.new(adminMetadata.access_role)
+      Ddr::Auth::Roles::RoleSetManager.new(self)
     end
 
     def inherited_roles
@@ -52,13 +93,13 @@ module Ddr::Models
     end
 
     def grant_roles_to_creator(creator)
-      roles.grant type: Ddr::Auth::Roles::EDITOR,
+      roles.grant role_type: Ddr::Auth::Roles::EDITOR,
                   agent: creator,
                   scope: Ddr::Auth::Roles::RESOURCE_SCOPE
     end
 
     def copy_resource_roles_from(other)
-      roles.grant *(other.roles.in_resource_scope)
+      roles.grant *(Ddr::Auth::ResourceRoles.call(other))
     end
 
     def effective_permissions(agents)

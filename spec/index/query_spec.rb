@@ -44,5 +44,27 @@ module Ddr::Index
       }
     end
 
+    describe "equality" do
+      subject {
+        described_class.new do
+          q "foo:bar"
+          where "spam"=>"eggs"
+          fields :id, "foo", "spam"
+          asc "foo"
+          limit 50
+        end
+      }
+      let(:other) do
+        described_class.new do
+          q "foo:bar"
+          where "spam"=>"eggs"
+          fields :id, "foo", "spam"
+          asc "foo"
+          limit 50
+        end
+      end
+      it { is_expected.to eq other }
+    end
+
   end
 end

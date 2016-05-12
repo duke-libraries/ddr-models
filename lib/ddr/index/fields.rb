@@ -10,12 +10,12 @@ module Ddr::Index
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
     ALL_TEXT                    = Field.new :all_text, solr_name: "all_text_timv"
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable
+    ATTACHED_FILES              = Field.new :attached_files, :stored_sortable
     ATTACHED_FILES_HAVING_CONTENT =
       Field.new :attached_files_having_content, :symbol
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
-    CONTENT_CONTROL_GROUP       = Field.new :content_control_group, :searchable, type: :string
     CONTENT_CREATE_DATE         = Field.new :content_create_date, :stored_sortable, type: :date
     CONTENT_SIZE                = Field.new :content_size, solr_name: "content_size_lsi"
     CONTENT_SIZE_HUMAN          = Field.new :content_size_human, :symbol
@@ -28,17 +28,16 @@ module Ddr::Index
     DOI                         = Field.new :doi, :symbol
     EAD_ID                      = Field.new :ead_id, :stored_sortable
     EXTRACTED_TEXT              = Field.new :extracted_text, solr_name: "extracted_text_tsm"
+    FCREPO3_PID                 = Field.new :fcrepo3_pid, :stored_sortable
     FORMAT_FACET                = Field.new :format_facet, :facetable
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
-    INTERNAL_URI                = Field.new :internal_uri, :stored_sortable
-    IS_ATTACHED_TO              = Field.new :is_attached_to, :symbol
-    IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, :symbol
-    IS_GOVERNED_BY              = Field.new :is_governed_by, :symbol
+    IS_ATTACHED_TO              = Field.new :is_attached_to, solr_name: "isAttachedTo_ssim"
+    IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, solr_name: "isExternalTargetFor_ssim"
+    IS_GOVERNED_BY              = Field.new :is_governed_by, solr_name: "isGovernedBy_ssim"
     IS_LOCKED                   = Field.new :is_locked, :stored_sortable
-    IS_MEMBER_OF                = Field.new :is_member_of, :symbol
-    IS_MEMBER_OF_COLLECTION     = Field.new :is_member_of_collection, :symbol
-    IS_PART_OF                  = Field.new :is_part_of, :symbol
+    IS_MEMBER_OF_COLLECTION     = Field.new :is_member_of_collection, solr_name: "isMemberOfCollection_ssim"
+    IS_PART_OF                  = Field.new :is_part_of, solr_name: "isPartOf_ssim"
     LAST_FIXITY_CHECK_ON        = Field.new :last_fixity_check_on, :stored_sortable, type: :date
     LAST_FIXITY_CHECK_OUTCOME   = Field.new :last_fixity_check_outcome, :symbol
     LAST_VIRUS_CHECK_ON         = Field.new :last_virus_check_on, :stored_sortable, type: :date
@@ -53,6 +52,7 @@ module Ddr::Index
     OBJECT_STATE                = Field.new :object_state, :stored_sortable
     OBJECT_CREATE_DATE          = Field.new :system_create, :stored_sortable, type: :date
     OBJECT_MODIFIED_DATE        = Field.new :system_modified, :stored_sortable, type: :date
+    ORIGINAL_FILENAME           = Field.new :original_filename, :stored_sortable
     PERMANENT_ID                = Field.new :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = Field.new :permanent_url, :stored_sortable, type: :string
     POLICY_ROLE                 = Field.new :policy_role, :symbol
@@ -74,12 +74,14 @@ module Ddr::Index
     TECHMD_IMAGE_HEIGHT         = Field.new :techmd_image_height, :stored_searchable, type: :integer
     TECHMD_IMAGE_WIDTH          = Field.new :techmd_image_width, :stored_searchable, type: :integer
     TECHMD_MEDIA_TYPE           = Field.new :techmd_media_type, :symbol
+    TECHMD_MESSAGE              = Field.new :techmd_message, :stored_searchable, type: :text
     TECHMD_MODIFICATION_TIME    = Field.new :techmd_modification_time, :stored_searchable, type: :date
     TECHMD_PRONOM_IDENTIFIER    = Field.new :techmd_pronom_identifier, :symbol
     TECHMD_VALID                = Field.new :techmd_valid, :symbol
     TECHMD_WELL_FORMED          = Field.new :techmd_well_formed, :symbol
     TITLE                       = Field.new :title, :stored_sortable
     TYPE_FACET                  = Field.new :type_facet, :facetable
+    UNIQUE_ID                   = Field.new :unique_id, :searchable, type: :symbol
     WORKFLOW_STATE              = Field.new :workflow_state, :stored_sortable
     YEAR_FACET                  = Field.new :year_facet, solr_name: "year_facet_iim"
 
@@ -92,8 +94,8 @@ module Ddr::Index
     end
 
     def self.descmd
-      @descmd ||= Ddr::Datastreams::DescriptiveMetadataDatastream.properties.map do |base, config|
-        Field.new base, *(config.behaviors)
+      @descmd ||= Ddr::Models::DescriptiveMetadata.field_names.map do |base|
+        Field.new(base, :stored_searchable)
       end
     end
 
@@ -103,11 +105,6 @@ module Ddr::Index
                          "`Ddr::Index::Fields::#{name}` is deprecated." \
                          " Use `Ddr::Index::Fields::ID` instead.")
         return ID
-      end
-      if const = LegacyLicenseFields.const_get(name)
-        Deprecation.warn(Ddr::Index::Fields,
-                         "`Ddr::Index::Fields::#{name}` is deprecated and will be removed in ddr-models 3.0.")
-        return const
       end
       super
     end

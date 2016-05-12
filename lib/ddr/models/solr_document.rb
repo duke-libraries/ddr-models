@@ -3,22 +3,23 @@ require 'json'
 module Ddr::Models
   module SolrDocument
     extend ActiveSupport::Concern
-
-    included do
-      alias_method :pid, :id
-    end
+    extend Deprecation
 
     class NotFound < Error; end
 
     module ClassMethods
-      def find(pid_or_uri)
-        pid = pid_or_uri.sub(/\Ainfo:fedora\//, "")
-        query = Ddr::Index::QueryBuilder.build { |q| q.id(pid) }
+      def find(doc_id)
+        query = Ddr::Index::Query.new { id doc_id }
         if doc = query.docs.first
           return doc
         end
-        raise NotFound, "SolrDocument not found for \"#{pid_or_uri}\"."
+        raise NotFound, "SolrDocument not found for \"#{doc_id}\"."
       end
+    end
+
+    def pid
+      Deprecation.warn(SolrDocument, "`pid` is deprecated; use `id` instead.")
+      id
     end
 
     def inspect
@@ -50,6 +51,10 @@ module Ddr::Models
       id.sub(/:/, "-")
     end
 
+    def access_roles
+      fetch(Ddr::Index::Fields::ACCESS_ROLE)
+    end
+
     def object_profile
       @object_profile ||= get_json(Ddr::Index::Fields::OBJECT_PROFILE)
     end
@@ -75,11 +80,21 @@ module Ddr::Models
     end
 
     def datastreams
-      object_profile["datastreams"]
+      Deprecation.warn(SolrDocument, "Use `attached_files` instead.")
+      attached_files
+    end
+
+    def attached_files
+      (get_json(Ddr::Index::Fields::ATTACHED_FILES) || {}).with_indifferent_access
     end
 
     def has_datastream?(dsID)
-      datastreams[dsID].present?
+      Deprecation.warn(SolrDocument, "Use `has_attached_file?` instead.")
+      has_attached_file?(dsID)
+    end
+
+    def has_attached_file?(file_id)
+      attached_files.key?(file_id)
     end
 
     def has_admin_policy?
@@ -124,23 +139,23 @@ module Ddr::Models
     end
 
     def has_thumbnail?
-      has_datastream?(Ddr::Datastreams::THUMBNAIL)
+      has_attached_file?(Ddr::Models::File::THUMBNAIL)
     end
 
     def has_content?
-      has_datastream?(Ddr::Datastreams::CONTENT)
+      has_attached_file?(Ddr::Models::File::CONTENT)
     end
 
     def has_extracted_text?
-      has_datastream?(Ddr::Datastreams::EXTRACTED_TEXT)
+      has_attached_file?(Ddr::Datastreams::EXTRACTED_TEXT)
     end
 
     def content_ds
-      datastreams[Ddr::Datastreams::CONTENT]
+      datastreams[Ddr::Models::File::CONTENT]
     end
 
     def content_mime_type
-      content_ds["dsMIME"] rescue nil
+      content_ds["mime_type"] rescue nil
     end
     # For duck-typing with Ddr::Models::HasContent
     alias_method :content_type, :content_mime_type
@@ -174,7 +189,7 @@ module Ddr::Models
     end
 
     def roles
-      @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
+      @roles ||= Ddr::Auth::Roles::RoleSetManager.new(self)
     end
 
     def struct_maps
@@ -219,6 +234,10 @@ module Ddr::Models
       if ead_id
         FindingAid.new(ead_id)
       end
+    end
+
+    def published?
+      self[Ddr::Index::Fields::WORKFLOW_STATE] == Ddr::Managers::WorkflowManager::PUBLISHED
     end
 
     private

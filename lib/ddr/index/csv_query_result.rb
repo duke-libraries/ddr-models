@@ -3,65 +3,74 @@ require "csv"
 module Ddr::Index
   class CSVQueryResult < AbstractQueryResult
 
-    MAX_ROWS = 10**8
-    MV_SEP   = ";"
+    MAX_ROWS   = 10**8
+    CSV_MV_SEPARATOR = ";"
 
-    attr_reader :mv_sep
+    DESCMD_HEADER_CONVERTER = lambda { |header|
+      if term = Ddr::Models::DescriptiveMetadata.mapping[header.to_sym]
+        term.unqualified_name.to_s
+      else
+        header
+      end
+    }
 
-    delegate :read, :each, to: :csv
+    delegate :headers, :to_s, :to_csv, to: :table
 
-    def initialize(query, mv_sep: MV_SEP)
-      super(query)
-      @mv_sep = mv_sep
+    def delete_empty_columns!
+      table.by_col!.delete_if { |c, vals| vals.all?(&:nil?) }
     end
 
-    def csv
-      CSV.new(data, csv_opts.to_h)
+    def each(&block)
+      table.by_row!.each(&block)
     end
 
-    def to_s
-      read.to_csv
+    def [](index_or_header)
+      table.by_col_or_row![index_or_header]
     end
 
-    def rows
-      query.rows || MAX_ROWS
+    def table
+      @table ||= CSV.parse(data, csv_opts)
     end
 
     def csv_opts
-      @csv_opts ||= CSVOptions.new(headers: csv_headers)
+      { headers:           csv_headers,
+        return_headers:    false,
+        write_headers:     true,
+        header_converters: [ DESCMD_HEADER_CONVERTER ],
+      }
     end
 
     def solr_csv_opts
-      @solr_csv_opts ||= SolrCSVOptions.new(col_sep: csv_opts.col_sep,
-                                            quote_char: csv_opts.quote_char,
-                                            header: solr_csv_header,
-                                            mv_sep: mv_sep,
-                                            rows: rows)
+      { "csv.mv.separator" => CSV_MV_SEPARATOR,
+        "csv.header"       => solr_csv_header?,
+        "rows"             => solr_csv_rows,
+        "wt"               => "csv",
+      }
     end
 
-    def headers
-      @headers ||= query.fields.map(&:heading)
+    def query_field_headings
+      query.fields.map { |f| f.respond_to?(:heading) ? f.heading : f.to_s }
     end
 
     def csv_headers
-      if headers.empty?
-        :first_row
-      else
-        headers
-      end
+      query.fields.empty? ? :first_row : query_field_headings
     end
 
-    def solr_csv_header
+    def solr_csv_header?
       csv_headers == :first_row
     end
 
+    def solr_csv_rows
+      query.rows || MAX_ROWS
+    end
+
     def solr_csv_params
-      params.merge solr_csv_opts.params
+      params.merge(solr_csv_opts)
     end
 
     def data
       raw = conn.get("select", params: solr_csv_params)
-      raw.gsub(/\\#{mv_sep}/, mv_sep)
+      raw.gsub(/\\#{CSV_MV_SEPARATOR}/, CSV_MV_SEPARATOR)
     end
 
   end

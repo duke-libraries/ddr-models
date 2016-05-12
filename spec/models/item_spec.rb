@@ -3,9 +3,29 @@ require 'spec_helper'
 RSpec.describe Item, type: :model do
 
   it_behaves_like "a DDR model"
-  it_behaves_like "it has an association", :belongs_to, :parent, :is_member_of_collection, "Collection"
-  it_behaves_like "it has an association", :has_many, :children, :is_part_of, "Component"
   it_behaves_like "a non-collection model"
+  it_behaves_like "a potentially publishable object"
+
+  describe ".in_collection scope" do
+    let(:coll) { FactoryGirl.create(:collection) }
+    let(:item1) { FactoryGirl.create(:item) }
+    let(:item2) { FactoryGirl.build(:item) }
+    before {
+      item2.parent = coll
+      item2.local_id = "item2"
+      item2.save
+    }
+    specify {
+      expect(Item.in_collection(coll)).not_to include(item1)
+      expect(Item.in_collection(coll)).to include(item2)
+    }
+    describe "chainability with .having_local_id" do
+      specify {
+        expect(Item.in_collection(coll).having_local_id("item2")).to include(item2)
+        expect(Item.in_collection(coll).having_local_id("item1")).not_to include(item2)
+      }
+    end
+  end
 
   describe "indexing text" do
     let(:children) { FactoryGirl.build_list(:component, 5) }

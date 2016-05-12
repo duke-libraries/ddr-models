@@ -4,14 +4,14 @@ module Ddr
       extend ActiveSupport::Concern
 
       included do
-        has_file_datastream name: Ddr::Datastreams::STRUCT_METADATA,
-                            type: Ddr::Datastreams::StructuralMetadataDatastream
+        contains Ddr::Models::File::STRUCT_METADATA,
+                 class_name: 'Ddr::Models::StructuralMetadataFile'
       end
 
       def structure
         unless @structure
-          if datastreams[Ddr::Datastreams::STRUCT_METADATA].content
-            @structure = Ddr::Models::Structure.new(Nokogiri::XML(datastreams[Ddr::Datastreams::STRUCT_METADATA].content))
+          if attached_files[Ddr::Models::File::STRUCT_METADATA].content
+            @structure = Ddr::Models::Structure.new(Nokogiri::XML(attached_files[Ddr::Models::File::STRUCT_METADATA].content))
           end
         end
         @structure
@@ -27,13 +27,13 @@ module Ddr
       end
 
       def multires_image_file_paths(type='default')
-        ::SolrDocument.find(pid).multires_image_file_paths(type)
+        ::SolrDocument.find(id).multires_image_file_paths(type)
       end
 
       private
 
       def find_children
-        query = association_query(:children)
+        query = ActiveFedora::SolrQueryBuilder.construct_query_for_rel([[ self.class.reflect_on_association(:children), self.id ]])
         sort = "#{Ddr::Index::Fields::LOCAL_ID} ASC, #{Ddr::Index::Fields::OBJECT_CREATE_DATE} ASC"
         ActiveFedora::SolrService.query(query, sort: sort, rows: 999999)
       end
@@ -51,9 +51,9 @@ module Ddr
         div
       end
 
-      def create_fptr(stru, div, pid)
+      def create_fptr(stru, div, id)
         fptr = Nokogiri::XML::Node.new('fptr', stru.as_xml_document)
-        fptr['CONTENTIDS'] = "info:fedora/#{pid}"
+        fptr['CONTENTIDS'] = id
         div.add_child(fptr)
       end
 

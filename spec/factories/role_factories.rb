@@ -2,7 +2,7 @@ FactoryGirl.define do
 
   factory :role, class: Ddr::Auth::Roles::Role do
 
-    initialize_with { Ddr::Auth::Roles::Role.build(attributes) }
+    initialize_with { Ddr::Auth::Roles::Role.new(attributes) }
 
     Ddr::Auth::Roles.role_types.each do |rt|
       trait rt.to_s.downcase.to_sym do

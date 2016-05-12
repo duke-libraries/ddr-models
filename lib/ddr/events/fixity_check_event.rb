@@ -6,36 +6,20 @@ module Ddr
       include ReindexObjectAfterSave
 
       self.preservation_event_type = :fix
-      self.description = "Validation of datastream checksums"
-
-      DETAIL_PREAMBLE = "Datastream checksum validation results:"
-      DETAIL_TEMPLATE = "%{dsid} ... %{validation}"
+      self.description = "Fixity check of attached files".freeze
 
       # Message sent by ActiveSupport::Notifications
       def self.call(*args)
-        notification = ActiveSupport::Notifications::Event.new(*args)
-        result = notification.payload[:result] # FixityCheck::Result instance
-        detail = [DETAIL_PREAMBLE]
-        result.results.each do |dsid, dsProfile|
-          validation = dsProfile["dsChecksumValid"] ? VALID : INVALID
-          detail << DETAIL_TEMPLATE % {dsid: dsid, validation: validation}
+        super do |payload|
+          results = payload.delete(:results)
+          payload[:outcome] = results.success? ? SUCCESS : FAILURE
+          payload[:detail] = "Fixity check results:\n\n#{results}"
         end
-        create(pid: result.pid,
-               event_date_time: notification.time,
-               outcome: result.success ? SUCCESS : FAILURE,
-               detail: detail.join("\n")
-               )
       end
 
       def to_solr
         { Ddr::Index::Fields::LAST_FIXITY_CHECK_ON => event_date_time_s,
           Ddr::Index::Fields::LAST_FIXITY_CHECK_OUTCOME => outcome }
-      end
-
-      protected
-
-      def default_software
-        self.class.repository_software
       end
 
     end

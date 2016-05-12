@@ -7,9 +7,9 @@ module Ddr::Models
 
     let(:license) { License.new(url: url) }
 
-    let(:obj) { Component.new(pid: "test:1") }
-    let(:parent) { Item.new(pid: "test:2") }
-    let(:admin_policy) { Collection.new(pid: "test:3") }
+    let(:obj) { Component.new(id: "test-1") }
+    let(:parent) { Item.new(id: "test-2") }
+    let(:admin_policy) { Collection.new(id: "test-3") }
 
     describe "when the object has a license" do
       before do
@@ -44,7 +44,7 @@ module Ddr::Models
           before { allow(obj).to receive(:admin_policy) { admin_policy } }
           describe "and the admin policy has a different id from the object" do
             before do
-              allow(obj).to receive(:admin_policy_id) { "test:3" }
+              allow(obj).to receive(:admin_policy_id) { "test-3" }
             end
             describe "and the admin policy has a license" do
               before do

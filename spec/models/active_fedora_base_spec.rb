@@ -6,22 +6,22 @@ RSpec.describe ActiveFedora::Base do
     let!(:collection) { FactoryGirl.create(:collection) }
     describe "when called on the wrong class" do
       it "should raise an exception" do
-        expect { Item.find(collection.pid) }.to raise_error(Ddr::Models::ContentModelError)
+        expect { Item.find(collection.id) }.to raise_error(ActiveFedora::ActiveFedoraError)
       end
     end
     describe "when called on Ddr::Models::Base" do
       it "should cast to the object's class" do
-        expect(Ddr::Models::Base.find(collection.pid)).to eq(collection)
+        expect(Ddr::Models::Base.find(collection.id)).to eq(collection)
       end
     end
     describe "when called on ActiveFedora::Base" do
       it "should cast to the object's class" do
-        expect(ActiveFedora::Base.find(collection.pid)).to eq(collection)
+        expect(ActiveFedora::Base.find(collection.id)).to eq(collection)
       end
     end
     describe "when called on the object's class" do
       it "should return the object" do
-        expect(Collection.find(collection.pid)).to eq(collection)
+        expect(Collection.find(collection.id)).to eq(collection)
       end
     end
   end
@@ -55,7 +55,7 @@ RSpec.describe ActiveFedora::Base do
   describe "children", children: true do
     before do
       class Childrenable < ActiveFedora::Base
-        has_many :children, property: :is_member_of, class_name: 'ActiveFedora::Base'
+        has_many :children, predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isMemberOf, class_name: 'ActiveFedora::Base'
       end
     end
     after do
@@ -95,7 +95,7 @@ RSpec.describe ActiveFedora::Base do
     end
     describe "#has_thumbnail?" do
       let(:thumbnailable) { Thumbnailable.new }
-      before { allow(thumbnailable.datastreams[Ddr::Datastreams::THUMBNAIL]).to receive(:has_content?).and_return(true) }
+      before { allow(thumbnailable.attached_files[Ddr::Models::File::THUMBNAIL]).to receive(:has_content?).and_return(true) }
       it "should return true if object has a thumbnail, else false" do
         expect(thumbnailable).to have_thumbnail
         expect(Thumbnailable.new).not_to have_thumbnail
@@ -121,7 +121,7 @@ RSpec.describe ActiveFedora::Base do
     end
     describe "#has_content?" do
       let(:contentable) { Contentable.new }
-      before { allow(contentable.datastreams[Ddr::Datastreams::CONTENT]).to receive(:has_content?).and_return(true) }
+      before { allow(contentable.attached_files[Ddr::Models::File::CONTENT]).to receive(:has_content?).and_return(true) }
       it "should return true if object has content, else false" do
         expect(contentable).to have_content
         expect(Contentable.new).not_to have_content

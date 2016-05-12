@@ -23,7 +23,7 @@ module Ddr
       end
 
       def docs
-        query = ActiveFedora::SolrService.construct_query_for_pids(pids)
+        query = ActiveFedora::SolrQueryBuilder.construct_query_for_ids(pids)
         results = ActiveFedora::SolrService.query(query, rows: 999999)
         results.each_with_object({}) do |r, memo|
           memo[r["id"]] = ::SolrDocument.new(r)
@@ -43,7 +43,7 @@ module Ddr
       private
 
       def fptr_pids(div_node)
-        div_node.xpath('xmlns:fptr').map { |fptr_node| fptr_node["CONTENTIDS"].gsub('info:fedora/', '') }
+        div_node.xpath('xmlns:fptr').map { |fptr_node| fptr_node["CONTENTIDS"] }
       end
 
       def subdivs(structmap_or_div_node)

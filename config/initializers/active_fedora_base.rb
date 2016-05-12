@@ -1,5 +1,4 @@
-module ActiveFedora
-  class Base
+ActiveFedora::Base.class_eval do
 
     def can_have_attachments?
       has_association? :attachments
@@ -18,7 +17,7 @@ module ActiveFedora
     end
 
     def can_have_content?
-      datastreams.include? "content"
+      attached_files.key? "content"
     end
 
     def has_content?
@@ -26,8 +25,9 @@ module ActiveFedora
     end
 
     def describable?
-      self.is_a? Ddr::Models::Describable
+      self.is_a? Ddr::Models::Base
     end
+    deprecation_deprecate :describable?
 
     def governable?
       has_association? :admin_policy
@@ -37,13 +37,8 @@ module ActiveFedora
       governable? && admin_policy.present?
     end
 
-    def has_rights_metadata?
-      ds = self.datastreams[Ddr::Datastreams::RIGHTS_METADATA]
-      ds && ds.size && ds.size > 0
-    end
-
     def can_have_struct_metadata?
-      datastreams.include? Ddr::Datastreams::STRUCT_METADATA
+      attached_files.key? Ddr::Models::File::STRUCT_METADATA
     end
 
     def has_struct_metadata?
@@ -51,15 +46,15 @@ module ActiveFedora
     end
 
     def can_have_multires_image?
-      datastreams.include? Ddr::Datastreams::MULTIRES_IMAGE
+      respond_to? :multires_image_file_path
     end
 
     def has_multires_image?
-      can_have_multires_image? && datastreams[Ddr::Datastreams::MULTIRES_IMAGE].has_content?
+      can_have_multires_image? && multires_image_file_path.present?
     end
 
     def can_have_thumbnail?
-      datastreams.include? "thumbnail"
+      attached_files.key? "thumbnail"
     end
 
     def has_thumbnail?
@@ -85,5 +80,4 @@ module ActiveFedora
       !association(assoc).nil?
     end
 
-  end
 end

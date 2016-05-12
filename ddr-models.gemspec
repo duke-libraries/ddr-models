@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
 
   s.require_paths = ["lib", "app/models"]
 
-  s.add_dependency "rails", "~> 4.1.6"
+  s.add_dependency "rails", "~> 4.1.13"
   s.add_dependency "activeresource"
-  s.add_dependency "active-fedora", "~> 7.0"
-  s.add_dependency "hydra-core", "~> 7.2"
+  s.add_dependency "active-triples", "~> 0.7.2"
+  s.add_dependency "active-fedora", "~> 9.8.1"
   s.add_dependency "hydra-validations", "~> 0.5"
   s.add_dependency "devise", "~> 3.4"
   s.add_dependency "omniauth-shibboleth", "~> 1.2.0"
@@ -34,13 +34,15 @@ Gem::Specification.new do |s|
   s.add_dependency "ddr-antivirus", "~> 2.1.1"
   s.add_dependency "virtus", "~> 1.0.5"
   s.add_dependency "hashie", "~> 3.4.3"
+  s.add_dependency "edtf", "~> 2.3"
 
-  s.add_development_dependency "bundler", "~> 1.11"
+  s.add_development_dependency "bundler", "~> 1.11", ">= 1.11.2"
   s.add_development_dependency "rake"
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "rspec-rails", "~> 3.1"
   s.add_development_dependency "rspec-its"
   s.add_development_dependency "factory_girl_rails", "~> 4.4"
-  s.add_development_dependency "jettywrapper", "~> 1.8"
+  s.add_development_dependency "jettywrapper", "~> 2.0"
   s.add_development_dependency "database_cleaner"
+  s.add_development_dependency "blacklight", "~> 5.15.0"
 end

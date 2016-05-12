@@ -15,27 +15,28 @@ module Ddr::Auth
     end
 
     describe "Datastream abilities" do
-      let(:obj) { FactoryGirl.build(:component) }
+      let(:obj) { FactoryGirl.create(:component) }
 
       DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.each do |dsid, permission|
         describe "\"#{dsid}\"" do
-          let(:ds) { obj.datastreams[dsid] }
+          let(:ds) { obj.attached_files[dsid] }
           describe "can #{permission.inspect} object" do
-            before { subject.can permission, obj.pid }
+            before { subject.can permission, obj.id }
             it { should be_able_to(:download, ds) }
           end
           describe "cannot #{permission.inspect} object" do
-            before { subject.cannot permission, obj.pid }
+            before { subject.cannot permission, obj.id }
             it { should_not be_able_to(:download, ds) }
           end
         end
       end
 
-      describe "non-downloadable datastreams" do
-        (Component.ds_specs.keys - DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.keys).each do |dsid|
+      describe "non-downloadable attached_files" do
+        (Component.child_resource_reflections.keys.map(&:to_s) - \
+                          DatastreamAbilityDefinitions::DATASTREAM_DOWNLOAD_ABILITIES.keys).each do |dsid|
           describe "\"#{dsid}\"" do
-            let(:ds) { obj.datastreams[dsid] }
-            before { subject.can :download, obj.pid }
+            let(:ds) { obj.attached_files[dsid] }
+            before { subject.can :download, obj.id }
             it { should_not be_able_to(:download, ds) }
           end
         end
@@ -57,21 +58,37 @@ module Ddr::Auth
     end
 
     describe "Collection abilities" do
-      before do
-        allow(Ddr::Auth).to receive(:collection_creators_group) { "collection_creators" }
-      end
-      describe "when the user is a collection creator" do
+      describe "collection creation" do
         before do
-          allow(auth_context).to receive(:member_of?).with("collection_creators") { true }
+          allow(Ddr::Auth).to receive(:collection_creators_group) { "collection_creators" }
         end
-        it { should be_able_to(:create, Collection) }
+        describe "when the user is a collection creator" do
+          before do
+            allow(auth_context).to receive(:member_of?).with("collection_creators") { true }
+          end
+          it { should be_able_to(:create, Collection) }
+        end
+
+        describe "when the user is not a collection creator" do
+          before do
+            allow(auth_context).to receive(:member_of?).with("collection_creators") { false }
+          end
+          it { should_not be_able_to(:create, Collection) }
+        end
       end
 
-      describe "when the user is not a collection creator" do
-        before do
-          allow(auth_context).to receive(:member_of?).with("collection_creators") { false }
+      describe "metadata ingest" do
+        let(:coll) { Collection.new }
+        describe "ingest_metadata" do
+          describe "when the collection can be edited" do
+            before { subject.can :update, coll }
+            it { should be_able_to(:ingest_metadata, coll) }
+          end
+          describe "when the collection cannot be edited" do
+            before { subject.cannot :update, coll }
+            it { should_not be_able_to(:ingest_metadata, coll) }
+          end
         end
-        it { should_not be_able_to(:create, Collection) }
       end
     end
 
@@ -144,14 +161,64 @@ module Ddr::Auth
       end
     end
 
-    describe "locks" do
+    describe "publication abilities" do
       let(:obj) { Ddr::Models::Base.new }
 
-      describe "effects of locks on abilities" do
-        before do
-          allow(obj).to receive(:effective_permissions) { Permissions::ALL }
-          allow(obj).to receive(:locked?) { true }
+      describe "publish" do
+        describe "when role-based permissions permit publish" do
+          before do
+            allow(obj).to receive(:effective_permissions) { [ Permissions::PUBLISH ] }
+          end
+          describe "when the object is published" do
+            before { allow(obj).to receive(:published?) { true } }
+            it { should_not be_able_to(:publish, obj) }
+          end
+          describe "when the object is not published" do
+            describe "when the object is publishable" do
+              before { allow(obj).to receive(:publishable?) { true } }
+              it { should be_able_to(:publish, obj) }
+            end
+            describe "when the object is not publishable" do
+              before { allow(obj).to receive(:publishable?) { false } }
+              it { should_not be_able_to(:publish, obj) }
+            end
+          end
         end
+        describe "when role-based permissions do not permit publish" do
+          before { allow(obj).to receive(:publishable?) { true } }
+          it { should_not be_able_to(:publish, obj) }
+        end
+      end
+
+      describe "unpublish" do
+        describe "when role-based permissions permit unpublish" do
+          before do
+            allow(obj).to receive(:effective_permissions) { [ Permissions::UNPUBLISH ] }
+          end
+          describe "when the object is published" do
+            before { allow(obj).to receive(:published?) { true } }
+            it { should be_able_to(:unpublish, obj) }
+          end
+          describe "when the object is not published" do
+            it { should_not be_able_to(:unpublish, obj) }
+          end
+        end
+        describe "when role-based permissions do not permit unpublish" do
+          it { should_not be_able_to(:unpublish, obj) }
+        end
+      end
+
+    end
+
+    describe "locks" do
+
+      before do
+        allow(obj).to receive(:effective_permissions) { Permissions::ALL }
+        allow(obj).to receive(:locked?) { true }
+      end
+
+      describe "effects of locks on non-publication abilities" do
+        let(:obj) { Ddr::Models::Base.new }
         it { should be_able_to(:read, obj) }
         it { should be_able_to(:download, obj) }
         it { should_not be_able_to(:add_children, obj) }
@@ -160,6 +227,17 @@ module Ddr::Auth
         it { should_not be_able_to(:arrange, obj) }
         it { should be_able_to(:audit, obj) }
         it { should_not be_able_to(:grant, obj) }
+      end
+
+      describe "effects of locks on publication abilities" do
+        let(:obj) { Collection.new }
+        describe "unpublished object" do
+          it { should_not be_able_to(:publish, obj) }
+        end
+        describe "published object" do
+          before { allow(obj).to receive(:published?) { true } }
+          it { should_not be_able_to(:unpublish, obj) }
+        end
       end
     end
 
@@ -194,23 +272,23 @@ module Ddr::Auth
       end
 
       describe "with a Ddr model instance" do
-        let(:obj) { Collection.new(pid: "test:1") }
-        let(:cache_key) { obj.pid }
+        let(:obj) { Collection.new(id: "test-1") }
+        let(:cache_key) { obj.id }
         let(:perm_obj) { obj }
         it_behaves_like "it has role based abilities"
       end
 
       describe "with a Solr document" do
-        let(:obj) { SolrDocument.new({"id"=>"test:1"}) }
-        let(:cache_key) { obj.pid }
+        let(:obj) { SolrDocument.new({"id"=>"test-1"}) }
+        let(:cache_key) { obj.id }
         let(:perm_obj) { obj }
         it_behaves_like "it has role based abilities"
       end
 
       describe "with a String" do
-        let(:obj) { "test:1" }
+        let(:obj) { "test-1" }
         let(:cache_key) { obj }
-        let(:perm_obj) { SolrDocument.new({"id"=>"test:1"}) }
+        let(:perm_obj) { SolrDocument.new({"id"=>"test-1"}) }
         before do
           allow_any_instance_of(RoleBasedAbilityDefinitions).to receive(:permissions_doc).with(obj) { perm_obj }
         end

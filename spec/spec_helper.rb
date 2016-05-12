@@ -11,18 +11,19 @@ require "rails"
 require "rspec/rails"
 require "rspec/its"
 require "factory_girl_rails"
-require "database_cleaner"
 require "tempfile"
-require "resque"
 require "cancan/matchers"
 require 'equivalent-xml/rspec_matchers'
+require 'active_fedora/cleaner'
 
+require "resque"
 Resque.inline = true
 
 OmniAuth.config.test_mode = true
 
 Dir[File.join(File.dirname(__FILE__), "support", "*.rb")].each { |f| require f }
 
+require "database_cleaner"
 DatabaseCleaner.strategy = :truncation
 
 RSpec.configure do |config|
@@ -103,7 +104,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.clean
-    ActiveFedora::Base.destroy_all
+    ActiveFedora::Cleaner.clean!
     Ddr::Derivatives.configure do |config|
       config.update_derivatives = [ :multires_image, :thumbnail ]
     end
@@ -125,7 +126,7 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
-    ActiveFedora::Base.destroy_all
+    ActiveFedora::Cleaner.clean!
   end
 
 end

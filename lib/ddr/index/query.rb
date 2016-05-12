@@ -5,6 +5,7 @@ module Ddr::Index
   class Query
     include Virtus.model
     extend Forwardable
+    extend Deprecation
 
     attribute :q,       String
     attribute :fields,  Array[FieldAttribute], default: [ ]
@@ -12,7 +13,7 @@ module Ddr::Index
     attribute :sort,    Array[String],         default: [ ]
     attribute :rows,    Integer
 
-    delegate [:count, :docs, :pids, :each_pid, :all] => :result
+    delegate [:count, :docs, :ids, :each_id, :all] => :result
     delegate :params => :query_params
 
     def initialize(**args, &block)
@@ -31,12 +32,22 @@ module Ddr::Index
       URI.encode_www_form(params)
     end
 
+    def pids
+      Deprecation.warn(QueryResult, "`pids` is deprecated; use `ids` instead.")
+      ids
+    end
+
+    def each_pid(&block)
+      Deprecation.warn(QueryResult, "`each_pid` is deprecated; use `each_id` instead.")
+      each_id(&block)
+    end
+
     def result
       QueryResult.new(self)
     end
 
-    def csv(**opts)
-      CSVQueryResult.new(self, **opts)
+    def csv
+      CSVQueryResult.new(self)
     end
 
     def filter_clauses
@@ -50,6 +61,15 @@ module Ddr::Index
     def build(&block)
       QueryBuilder.new(self, &block)
       self
+    end
+
+    def ==(other)
+      other.instance_of?(self.class) &&
+        other.q == self.q &&
+        other.fields == self.fields &&
+        other.filters == self.filters &&
+        other.rows == self.rows &&
+        other.sort == self.sort
     end
 
   end

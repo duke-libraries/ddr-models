@@ -43,11 +43,18 @@ module Ddr::Managers
       its(:last_modified) { is_expected.to eq(["2015-06-08T21:22:35Z"]) }
       its(:created) { is_expected.to eq(["2015:06:05 15:16:23-04:00"]) }
       its(:pronom_identifier) { is_expected.to eq(["fmt/20"]) }
-      its(:creating_application) { is_expected.to contain_exactly("Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/PREMIS Editorial Committee", "Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/Acrobat PDFMaker 11 for Word") }
+      its(:creating_application) {
+        is_expected.to contain_exactly("Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/PREMIS Editorial Committee",
+                                       "Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/Acrobat PDFMaker 11 for Word")
+      }
       its(:fits_version) { is_expected.to eq("0.8.5") }
       its(:extent) { is_expected.to eq(["3786205"]) }
       its(:file_size) { is_expected.to eq([3786205]) }
       its(:media_type) { is_expected.to eq(["application/pdf"]) }
+      its(:message) {
+        is_expected.to contain_exactly("Invalid page tree node offset=390028",
+                                       "Outlines contain recursive references.")
+      }
 
       describe "datetime fields" do
         its(:creation_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-05 15:16:23-04:00").to_time.utc) }
@@ -57,12 +64,11 @@ module Ddr::Managers
 
     describe "checksum fields" do
       before do
-        allow(obj.content).to receive(:checksumType) { "SHA-256" }
-        allow(obj.content).to receive(:checksum) { "b744b4b308a11a7b6282b383ec428a91d77b21701d4bd09021bf0543dc8946fa" }
+        allow(obj.content).to receive(:digest) { [RDF::URI("urn:sha1:da75a5724d49962456804dc019333a5faeb80898")] }
       end
 
-      its(:checksum_digest) { is_expected.to eq("SHA-256") }
-      its(:checksum_value) { is_expected.to eq("b744b4b308a11a7b6282b383ec428a91d77b21701d4bd09021bf0543dc8946fa") }
+      its(:checksum_digest) { is_expected.to eq("SHA1") }
+      its(:checksum_value) { is_expected.to eq("da75a5724d49962456804dc019333a5faeb80898") }
     end
 
     describe "image metadata" do

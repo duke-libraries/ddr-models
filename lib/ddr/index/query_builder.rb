@@ -91,18 +91,6 @@ module Ddr::Index
   #
   class QueryBuilder
 
-    # Builds a Query object
-    # @yield [builder] a new QueryBuilder instance.
-    # @return [Query]
-    def self.build
-      Deprecation.warn(self,
-                       "`Ddr::Index::QueryBuilder.build` is deprecated and will be removed in ddr-models 3.0." \
-                       " Use `Ddr::Index::QueryBuilder.new` instead.")
-      builder = new
-      yield builder
-      builder.query
-    end
-
     attr_reader :query
 
     def initialize(query = nil, &block)
@@ -146,11 +134,6 @@ module Ddr::Index
     # @param orderings [Hash<Field, String>]
     # @return [QueryBuilder] self
     def order_by(*orderings)
-      unless orderings.first.is_a? Hash
-        Deprecation.warn(QueryBuilder, "`order_by` will require a hash of orderings in ddr-models 3.0.")
-        field, order = orderings
-        return order_by(field => order)
-      end
       query.sort += orderings.first.map { |field, order| SortOrder.new(field: field, order: order) }
       self
     end

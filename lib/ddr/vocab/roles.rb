@@ -3,24 +3,28 @@ module Ddr
     class Roles < RDF::StrictVocabulary("http://repository.lib.duke.edu/vocab/roles/")
 
       term :Role,
-        label: "Role",
-        comment: "An assertion of a role granted to an agent."
+           label: "Role",
+           comment: "An assertion of a role granted to an agent."
 
       property :hasRole,
-        label: "Has Role",
-        comment: "Asserts the granting of a role on the subject to an agent."
+               label: "Has Role",
+               comment: "Asserts the granting of a role on the subject to an agent."
 
       property :type,
-        label: "Type",
-        comment: "The type of role granted to the agent."
+               label: "Type",
+               comment: "The type of role granted to the agent."
 
       property :agent,
-        label: "Agent",
-        comment: "The agent to whom the role is granted."
+               label: "Agent",
+               comment: "The agent to whom the role is granted."
 
       property :scope,
-        label: "Scope",
-        comment: "The scope within which the role applies."
+               label: "Scope",
+               comment: "The scope within which the role applies."
+
+      property :roleSet,
+               label: "Role Set",
+               comment: "A set of roles asserted on the subject"
 
     end
   end

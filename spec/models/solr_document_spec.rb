@@ -43,7 +43,7 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     describe "where there is an admin policy relationship" do
       let(:admin_policy) { FactoryGirl.create(:collection) }
       before do
-        subject[Ddr::Index::Fields::IS_GOVERNED_BY] = [ admin_policy.internal_uri ]
+        subject[Ddr::Index::Fields::IS_GOVERNED_BY] = [ admin_policy.id ]
       end
       it "should get the admin policy document" do
         expect(subject.admin_policy.id).to eq(admin_policy.id)
@@ -82,12 +82,12 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
   end
 
   describe "#roles" do
-    let(:json) { "[{\"role_type\":[\"Editor\"],\"agent\":[\"Editors\"],\"scope\":[\"policy\"]},{\"role_type\":[\"Contributor\"],\"agent\":[\"bob@example.com\"],\"scope\":[\"resource\"]}]" }
+    let(:json) { "{\"roles\":[{\"role_type\":\"Editor\",\"agent\":\"Editors\",\"scope\":\"policy\"},{\"role_type\":\"Contributor\",\"agent\":\"bob@example.com\",\"scope\":\"resource\"}]}" }
     before { subject[Ddr::Index::Fields::ACCESS_ROLE] = json }
     it "should deserialize the roles from JSON" do
       expect(subject.roles.to_a)
-        .to eq([Ddr::Auth::Roles::Role.build(type: "Editor", agent: "Editors", scope: "policy"),
-                Ddr::Auth::Roles::Role.build(type: "Contributor", agent: "bob@example.com", scope: "resource")])
+        .to eq([Ddr::Auth::Roles::Role.new(role_type: "Editor", agent: "Editors", scope: "policy"),
+                Ddr::Auth::Roles::Role.new(role_type: "Contributor", agent: "bob@example.com", scope: "resource")])
     end
   end
 
@@ -195,4 +195,33 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
       end
     end
   end
+
+  describe "#has_attached_file?" do
+    before do
+      allow(subject).to receive(:attached_files) {
+        {"content"=>{"size"=>987654, "sha1"=>"75e2e0cec6e807f6ae63610d46448f777591dd6b", "mime_type"=>"image/tiff"}}
+      }
+    end
+    context "when there is no content for the datastream" do
+      it "should return false" do
+        expect(subject.has_attached_file?("thumbnail")).to be false
+      end
+    end
+    context "when there is content for the datastream" do
+      it "should return true" do
+        expect(subject.has_attached_file?("content")).to be true
+      end
+    end
+  end
+
+  describe "#published?" do
+    context "when the object is published" do
+      before { subject[Ddr::Index::Fields::WORKFLOW_STATE] = Ddr::Managers::WorkflowManager::PUBLISHED }
+      its(:published?) { is_expected.to eq(true) }
+    end
+    context "when the object is published" do
+      its(:published?) { is_expected.to eq(false) }
+    end
+  end
+
 end

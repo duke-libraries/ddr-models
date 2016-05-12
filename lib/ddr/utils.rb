@@ -1,10 +1,11 @@
 require 'openssl'
 
 module Ddr::Utils
+  extend Deprecation
 
   DEFAULT_MIME_TYPE = "application/octet-stream"
 
-  def self.digest content, algorithm
+  def self.digest(content, algorithm)
     raise TypeError, "Algorithm must be a string: #{algorithm.inspect}" unless algorithm.is_a?(String)
     digest_class = OpenSSL::Digest.const_get(algorithm.sub("-", "").to_sym)
     digest_class.new(content).to_s
@@ -22,18 +23,18 @@ module Ddr::Utils
     mime_types.empty? ? DEFAULT_MIME_TYPE : mime_types.first.content_type
   end
 
-  def self.file_or_path? file
+  def self.file_or_path?(file)
     file_path(file)
   rescue ArgumentError
     false
   end
 
-  def self.file_path? file
+  def self.file_path?(file)
     # length is a sanity check
     file.is_a?(String) && (file.length < 1024) && File.exists?(file)
   end
 
-  def self.file_path file
+  def self.file_path(file)
     if file.respond_to?(:path)
       File.absolute_path(file.path)
     elsif file_path?(file)
@@ -43,7 +44,7 @@ module Ddr::Utils
     end
   end
 
-  def self.file_name_for file
+  def self.file_name_for(file)
     return file.original_filename if file.respond_to?(:original_filename) && file.original_filename.present?
     File.basename(file_path(file)) rescue nil
   end
@@ -53,7 +54,7 @@ module Ddr::Utils
     URI.parse(uri).scheme == "file"
   end
 
-  def self.sanitize_filename file_name
+  def self.sanitize_filename(file_name)
     return unless file_name
     raise ArgumentError, "file_name argument must be a string" unless file_name.is_a?(String)
     raise ArgumentError, "file_name argument must not include path" if file_name.include?(File::SEPARATOR)
@@ -90,18 +91,19 @@ module Ddr::Utils
   #      direct children of that collection (i.e., effectively searches a collection and its
   #      items for an object with the given identifier)
   def self.pid_for_identifier(identifier, opts={})
+    Deprecation.warn(self, "`Ddr::Utils.pid_for_identifier` is deprecated. Use .having_local_id model class method and get id from result object(s). (#{caller.first})")
     model = opts.fetch(:model, nil)
     collection = opts.fetch(:collection, nil)
     objs = []
     ActiveFedora::Base.find_each( { Ddr::Index::Fields::IDENTIFIER_ALL => identifier }, { :cast => true } ) { |o| objs << o }
     pids = []
-    objs.each { |obj| pids << obj.pid }
+    objs.each { |obj| pids << obj.id }
     if model.present?
-      objs.each { |obj| pids.delete(obj.pid) unless obj.is_a?(model.constantize) }
+      objs.each { |obj| pids.delete(obj.id) unless obj.is_a?(model.constantize) }
     end
     if collection.present?
       objs.each do |obj|
-        pids.delete(obj.pid) unless obj == collection || obj.parent == collection
+        pids.delete(obj.id) unless obj == collection || obj.parent == collection
       end
     end
     case pids.size

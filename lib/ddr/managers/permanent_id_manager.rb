@@ -10,10 +10,11 @@ module Ddr
     #
     class PermanentIdManager
 
-      PERMANENT_URL_BASE = "http://id.library.duke.edu/"
+      PERMANENT_URL_BASE   = "http://id.library.duke.edu/"
       ASSIGN_EVENT_SUMMARY = "Permanent ID assignment"
-      SOFTWARE = Ezid::Client.version
-      FCREPO3_PID = "fcrepo3.pid"
+      SOFTWARE             = Ezid::Client.version
+      FCREPO3_PID          = "fcrepo3.pid"
+      FCREPO4_ID           = "fcrepo4.id"
 
       attr_reader :object
 
@@ -22,13 +23,13 @@ module Ddr
       end
 
       def assign_later
-        Resque.enqueue(AssignmentJob, object.pid)
+        Resque.enqueue(AssignmentJob, object.id)
       end
 
       def assign
         raise Ddr::Models::Error, "Permanent ID already assigned." if object.permanent_id
         ActiveSupport::Notifications.instrument(Ddr::Notifications::UPDATE,
-                                                pid: object.pid,
+                                                pid: object.id,
                                                 software: SOFTWARE,
                                                 summary: ASSIGN_EVENT_SUMMARY
                                                 ) do |payload|
@@ -47,8 +48,8 @@ EZID Metadata:
       class AssignmentJob
         @queue = :permanent_id
 
-        def self.perform(pid)
-          object = ActiveFedora::Base.find(pid)
+        def self.perform(id)
+          object = ActiveFedora::Base.find(id)
           object.permanent_id_manager.assign
         end
       end
@@ -56,7 +57,7 @@ EZID Metadata:
       def default_metadata
         { :profile => "dc",
           :export => "no",
-          FCREPO3_PID => object.pid
+          FCREPO4_ID => object.id
         }
       end
 

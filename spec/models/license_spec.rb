@@ -3,7 +3,7 @@ module Ddr::Models
 
     describe ".call" do
       describe "when the object has a license URL" do
-        let(:obj) { double(pid: "test:1", license: "http://example.com") }
+        let(:obj) { double(id: "test-1", license: "http://example.com") }
         describe "and the license is found" do
           before {
             allow(described_class).to receive(:get).with(:find, url: "http://example.com") {
@@ -13,8 +13,8 @@ module Ddr::Models
           it "returns a License instance" do
             expect(described_class.call(obj)).to be_a(described_class)
           end
-          it "sets `pid` to the object pid" do
-            expect(described_class.call(obj).pid).to eq("test:1")
+          it "sets `object_id` to the object id" do
+            expect(described_class.call(obj).object_id).to eq("test-1")
           end
         end
         describe "and the license is not found" do
@@ -29,7 +29,7 @@ module Ddr::Models
       end
 
       describe "when the object does not have a license" do
-        let(:obj) { double(pid: "test:1", license: nil) }
+        let(:obj) { double(id: "test-1", license: nil) }
         it "returns nil" do
           expect(described_class.call(obj)).to be_nil
         end

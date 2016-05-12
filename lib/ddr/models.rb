@@ -1,17 +1,12 @@
 require 'ddr/models/engine'
 require 'ddr/models/version'
 
-# Awful hack to make Hydra::AccessControls::Permissions accessible
-$: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/concerns"
-
 require 'active_record'
-
-require 'hydra-core'
+require 'active_fedora'
 require 'hydra/validations'
 
 module Ddr
   extend ActiveSupport::Autoload
-  extend Deprecation
 
   autoload :Actions
   autoload :Auth
@@ -26,33 +21,25 @@ module Ddr
   autoload :Utils
   autoload :Vocab
 
-  def self.const_missing(name)
-    if name == :IndexFields
-      Deprecation.warn(Ddr::Models, "`Ddr::IndexFields` is deprecated and will be removed in ddr-models 3.0." \
-                                    " Use `Ddr::Index::Fields` instead.")
-      Index::Fields
-    else
-      super
-    end
-  end
-
   module Models
     extend ActiveSupport::Autoload
 
-    autoload :AccessControllable
     autoload :AdminSet
+    autoload :AttachedFileProfile
+    autoload :AttachedFilesProfile
+    autoload :AutoVersion
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :Contact
     autoload :ContentModelError, 'ddr/models/error'
     autoload :DerivativeGenerationFailure, 'ddr/models/error'
-    autoload :Describable
     autoload :Error
     autoload :EventLoggable
+    autoload :File
     autoload :FileCharacterization
     autoload :FileManagement
     autoload :FindingAid
-    autoload :FixityCheckable
+    autoload :FixityCheckResults
     autoload :Governable
     autoload :HasAdminMetadata
     autoload :HasAttachments
@@ -63,11 +50,21 @@ module Ddr
     autoload :HasThumbnail
     autoload :Indexing
     autoload :NotFoundError, 'ddr/models/error'
+    autoload :Relation
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
+    autoload :UrlSafeId
+    autoload :Validatable
+    autoload :Validator
+    autoload :Versionable
     autoload :WithContentFile
     autoload :YearFacet
+
+    autoload_under "files" do
+      autoload :FitsXmlFile
+      autoload :StructuralMetadataFile
+    end
 
     autoload_under "licenses" do
       autoload :AdminPolicyLicense
@@ -75,6 +72,21 @@ module Ddr
       autoload :License
       autoload :InheritedLicense
       autoload :ParentLicense
+    end
+
+    autoload_under "metadata" do
+      autoload :AdministrativeMetadata
+      autoload :DescriptiveMetadata
+      autoload :Metadata
+      autoload :MetadataMapping
+      autoload :MetadataTerm
+      autoload :MetadataVocabulary
+      autoload :MetadataVocabularies
+    end
+
+    autoload_under "search" do
+      autoload :Catalog
+      autoload :SearchBuilder
     end
 
     # Base directory of default external file store
@@ -131,5 +143,7 @@ module Ddr
 
   end
 end
+
+ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
 
 Dir[Ddr::Models::Engine.root.to_s + "/app/models/*.rb"].each { |m| require m }

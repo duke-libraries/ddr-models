@@ -9,20 +9,26 @@ class Component < Ddr::Models::Base
   include Ddr::Models::HasMultiresImage
   include Ddr::Models::HasStructMetadata
 
-  belongs_to :parent, :property => :is_part_of, :class_name => 'Item'
-  belongs_to :target, :property => :has_external_target, :class_name => 'Target'
+  belongs_to :parent,
+             predicate: ActiveFedora::RDF::Fcrepo::RelsExt.isPartOf,
+             class_name: "Item"
+
+  belongs_to :target,
+             predicate: ::RDF::URI("http://www.loc.gov/mix/v20/externalTarget#hasExternalTarget"),
+             class_name: "Target"
 
   after_save :index_parent, if: :has_extracted_text?, unless: "parent.nil?"
-
-  alias_method :item, :parent
-  alias_method :item=, :parent=
 
   def collection
     self.parent.parent rescue nil
   end
 
-  def collection_uri
-    self.collection.internal_uri rescue nil
+  def collection_id
+    collection.id rescue nil
+  end
+
+  def publishable?
+    parent.present? && parent.published?
   end
 
   def index_parent

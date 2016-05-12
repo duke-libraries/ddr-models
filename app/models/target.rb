@@ -9,7 +9,16 @@ class Target < Ddr::Models::Base
 
   include Ddr::Models::HasContent
 
-  has_many :components, property: :has_external_target, class_name: 'Component'
-  belongs_to :collection, property: :is_external_target_for, class_name: 'Collection'
+  has_many :components,
+           predicate: ::RDF::URI("http://www.loc.gov/mix/v20/externalTarget#hasExternalTarget"),
+           class_name: "Component"
+
+  belongs_to :collection,
+             predicate: ::RDF::URI("http://www.loc.gov/mix/v20/externalTarget#isExternalTargetFor"),
+             class_name: "Collection"
+
+  def publishable?
+    false
+  end
 
 end

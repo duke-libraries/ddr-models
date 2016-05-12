@@ -17,31 +17,6 @@ module Ddr
       # Initializers
       #
 
-      initializer "active_fedora.content_model" do
-        ActiveFedora::ContentModel.module_eval do
-          # Returns the first known model for the object is equal to or a
-          # subclass of the object's class.
-          # This bubbles up, e.g., to prevent mis-casting via `.find`.
-          def self.best_model_for(obj)
-            known_models_for(obj).find { |model| model <= obj.class }
-          end
-        end
-      end
-
-      initializer "active_fedora.finder_methods" do
-        ActiveFedora::FinderMethods.module_eval do
-          # Override tries to cast by default
-          def load_from_fedora(pid, cast)
-            inner = ActiveFedora::DigitalObject.find(klass, pid)
-            obj = klass.allocate.init_with_object(inner)
-            if cast != false
-              obj = obj.adapt_to_cmodel
-            end
-            obj
-          end
-        end
-      end
-
       initializer "ddr_models.derivatives" do
         Ddr::Derivatives.update_derivatives = ENV['DERIVATIVES'] ?
                                                 ENV['DERIVATIVES'].split(';').map { |deriv| deriv.strip.to_sym } :
@@ -58,11 +33,11 @@ module Ddr
         Ddr::Models.image_server_url = ENV["IMAGE_SERVER_URL"]
       end
 
-      # Add custom predicates to ActiveFedora
-      initializer "ddr_models.predicates" do
-        ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
-      end
-
+      # # Add custom predicates to ActiveFedora
+      # initializer "ddr_models.predicates" do
+      #   ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
+      # end
+      # 
       # Set superuser group
       initializer "ddr_auth.superuser" do
         Ddr::Auth.superuser_group = ENV["SUPERUSER_GROUP"]

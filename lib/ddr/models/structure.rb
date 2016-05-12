@@ -13,6 +13,14 @@ module Ddr
         @struct_maps ||= build_struct_maps(structMap_nodes)
       end
 
+      def default_struct_map
+        struct_maps['default'] || struct_maps[struct_maps.keys.first]
+      end
+
+      def default_struct_map_ids
+        default_struct_map.pids
+      end
+
       def structMap_node(type='default')
         xpath("//xmlns:structMap[@TYPE='#{type}']").first
       end

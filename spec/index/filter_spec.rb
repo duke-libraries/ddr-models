@@ -26,29 +26,29 @@ module Ddr::Index
     describe "class methods" do
       describe ".is_governed_by" do
         describe "with an object" do
-          subject { described_class.is_governed_by(Item.new(pid: "test:1")) }
+          subject { described_class.is_governed_by(Item.new(id: "test-1")) }
           its(:clauses) {
-            are_expected.to eq([QueryClause.term(:is_governed_by, "info:fedora/test:1")])
+            are_expected.to eq([QueryClause.term(:is_governed_by, "test-1")])
           }
         end
         describe "with an ID" do
-          subject { described_class.is_governed_by("test:1") }
+          subject { described_class.is_governed_by("test-1") }
           its(:clauses) {
-            are_expected.to eq([QueryClause.term(:is_governed_by, "info:fedora/test:1")])
+            are_expected.to eq([QueryClause.term(:is_governed_by, "test-1")])
           }
         end
       end
       describe ".is_member_of_collection" do
         describe "with an object" do
-          subject { described_class.is_member_of_collection(Item.new(pid: "test:1")) }
+          subject { described_class.is_member_of_collection(Item.new(id: "test-1")) }
           its(:clauses) {
-            are_expected.to eq([QueryClause.term(:is_member_of_collection, "info:fedora/test:1")])
+            are_expected.to eq([QueryClause.term(:is_member_of_collection, "test-1")])
           }
         end
         describe "with an ID" do
-          subject { described_class.is_member_of_collection("test:1") }
+          subject { described_class.is_member_of_collection("test-1") }
           its(:clauses) {
-            are_expected.to eq([QueryClause.term(:is_member_of_collection, "info:fedora/test:1")])
+            are_expected.to eq([QueryClause.term(:is_member_of_collection, "test-1")])
           }
         end
       end
