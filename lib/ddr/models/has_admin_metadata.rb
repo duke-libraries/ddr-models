@@ -27,7 +27,8 @@ module Ddr::Models
                multiple: false
 
       property :doi,
-               predicate: RDF::Vocab::Identifiers.doi
+               predicate: RDF::Vocab::Identifiers.doi,
+               multiple: false
 
       property :ead_id,
                predicate: Ddr::Vocab::Asset.eadId,

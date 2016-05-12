@@ -15,6 +15,7 @@ module Ddr::Index
                                    Fields::TECHMD_IMAGE_HEIGHT,
                                    Fields::TECHMD_IMAGE_WIDTH,
                                    Fields::TECHMD_MEDIA_TYPE,
+                                   Fields::TECHMD_MESSAGE,
                                    Fields::TECHMD_MODIFICATION_TIME,
                                    Fields::TECHMD_PRONOM_IDENTIFIER,
                                    Fields::TECHMD_VALID,

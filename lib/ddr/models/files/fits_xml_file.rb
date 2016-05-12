@@ -28,6 +28,7 @@ module Ddr::Models
         t.lastmodified
       }
       t.filestatus {
+        t.message
         t.valid
         t.well_formed(path: "well-formed")
       }
@@ -53,6 +54,7 @@ module Ddr::Models
       t.format_version       proxy: [:identification, :identity, :version]
       t.pronom_identifier    proxy: [:identification, :identity, :pronom_identifier]
       # filestatus
+      t.message              proxy: [:filestatus, :message]
       t.valid                proxy: [:filestatus, :valid]
       t.well_formed          proxy: [:filestatus, :well_formed]
       # fileinfo

@@ -10,7 +10,7 @@ module Ddr::Index
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
     ALL_TEXT                    = Field.new :all_text, solr_name: "all_text_timv"
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable
-    ATTACHED_FILES              = Field.new :attached_files, solr_name: "attached_files_ss"
+    ATTACHED_FILES              = Field.new :attached_files, :stored_sortable
     ATTACHED_FILES_HAVING_CONTENT =
       Field.new :attached_files_having_content, :symbol
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
@@ -74,6 +74,7 @@ module Ddr::Index
     TECHMD_IMAGE_HEIGHT         = Field.new :techmd_image_height, :stored_searchable, type: :integer
     TECHMD_IMAGE_WIDTH          = Field.new :techmd_image_width, :stored_searchable, type: :integer
     TECHMD_MEDIA_TYPE           = Field.new :techmd_media_type, :symbol
+    TECHMD_MESSAGE              = Field.new :techmd_message, :stored_searchable, type: :text
     TECHMD_MODIFICATION_TIME    = Field.new :techmd_modification_time, :stored_searchable, type: :date
     TECHMD_PRONOM_IDENTIFIER    = Field.new :techmd_pronom_identifier, :symbol
     TECHMD_VALID                = Field.new :techmd_valid, :symbol

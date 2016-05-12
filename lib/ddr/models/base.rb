@@ -128,7 +128,7 @@ module Ddr::Models
     end
 
     def attached_files_profile
-      AttachedFilesProfile.new(attached_files)
+      AttachedFilesProfile.new(self)
     end
 
     def copy_admin_policy_or_roles_from(other)
