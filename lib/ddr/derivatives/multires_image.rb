@@ -23,7 +23,12 @@ module Ddr::Derivatives
     end
 
     def output_file_name(object)
-      basename = object.content.original_name.present? ? File.basename(object.content.original_name, '.*') : "multires_image"
+      basename = if object.content.original_name.present?
+                   bname = File.basename(object.content.original_name, '.*')
+                   Ddr::Utils.sanitize_filename(bname)
+                 else
+                   "multires_image"
+                 end
       "#{basename}.#{generator.class.output_extension}"
     end
 
