@@ -26,6 +26,9 @@ module Ddr::Models
       end
 
       its([Indexing::ACCESS_ROLE]) { is_expected.to eq(obj.roles.to_json) }
+      its([Indexing::IDENTIFIER_ALL]) {
+        is_expected.to contain_exactly(obj.id, obj.dc_identifier.first, "ark:/99999/fk4zzz", "http://doi.org/10.1000/182", "duke:1", "foo")
+      }
       its([Indexing::ASPACE_ID]) { is_expected.to eq("aspace_dccea43034e1b8261e14cf999e86449d") }
       its([Indexing::DISPLAY_FORMAT]) { is_expected.to eq("Image") }
       its([Indexing::DOI]) { is_expected.to eq("http://doi.org/10.1000/182") }

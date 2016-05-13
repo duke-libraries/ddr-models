@@ -102,7 +102,7 @@ module Ddr
       end
 
       def all_identifiers
-        desc_metadata.identifier + [fcrepo3_pid, local_id, permanent_id, id].compact
+        Ddr::Models.all_identifiers.map { |meth| send(meth) }.flatten.compact
       end
 
       def associated_collection

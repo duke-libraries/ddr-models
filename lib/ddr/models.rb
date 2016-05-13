@@ -128,6 +128,16 @@ module Ddr
       Dir.tmpdir
     end
 
+    mattr_accessor :all_identifiers do
+      [ :id,
+        :fcrepo3_pid,
+        :dc_identifier,
+        :local_id,
+        :permanent_id,
+        :doi,
+      ]
+    end
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self
