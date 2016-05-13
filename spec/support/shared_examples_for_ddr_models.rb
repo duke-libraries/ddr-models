@@ -1,4 +1,5 @@
 RSpec.shared_examples "a DDR model" do
+
   describe "#desc_metadata_terms" do
     it "should have a default value" do
       expect(subject.desc_metadata_terms).to match_array(Ddr::Models::DescriptiveMetadata.unqualified_names)
@@ -29,6 +30,7 @@ RSpec.shared_examples "a DDR model" do
       end
     end
   end
+
   describe "#set_desc_metadata" do
     let(:term_values_hash) { subject.desc_metadata_terms.each_with_object({}) {|t, memo| memo[t] = ["Value"]} }
     it "should set the desc_metadata terms to the values of the matching keys in the hash" do
@@ -36,20 +38,6 @@ RSpec.shared_examples "a DDR model" do
         expect(subject.desc_metadata).to receive(:set_values).with(t, ["Value"])
       end
       subject.set_desc_metadata(term_values_hash)
-    end
-  end
-  describe "#set_desc_metadata_values" do
-    context "when values == nil" do
-      it "should set the term to an empty value" do
-        subject.set_desc_metadata_values(:title, nil)
-        expect(subject.desc_metadata.title).to be_empty
-      end
-    end
-    context "when values is an array" do
-      it "should reject empty values from the array" do
-        subject.set_desc_metadata_values(:title, ["Object Title", nil, "Alternative Title", ""])
-        expect(subject.desc_metadata.title).to eq ["Object Title", "Alternative Title"]
-      end
     end
   end
 

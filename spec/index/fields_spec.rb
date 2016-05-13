@@ -31,12 +31,6 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "pid" }
       end
 
-      describe "PID" do
-        subject { Fields::PID }
-        its(:label) { is_expected.to eq "Fedora PID" }
-        its(:heading) { is_expected.to eq "pid" }
-      end
-
       describe "ACCESS_ROLE" do
         subject { Fields::ACCESS_ROLE }
         its(:label) { is_expected.to eq "Access Role" }
