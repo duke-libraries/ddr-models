@@ -19,6 +19,7 @@ module Ddr::Managers
       its(:creation_time) { is_expected.to be_empty }
       its(:pronom_identifier) { is_expected.to be_empty }
       its(:creating_application) { is_expected.to be_empty }
+      its(:md5checksum) { is_expected.to be_nil }
       its(:file_size) { is_expected.to be_empty }
       its(:fits_version) { is_expected.to be_nil }
       its(:fits_datetime) { is_expected.to be_nil }
@@ -55,6 +56,7 @@ module Ddr::Managers
         is_expected.to contain_exactly("Invalid page tree node offset=390028",
                                        "Outlines contain recursive references.")
       }
+      its(:md5checksum) { is_expected.to eq("432ab76d650bfdc8f8d4a98cea9634bb") }
 
       describe "datetime fields" do
         its(:creation_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-05 15:16:23-04:00").to_time.utc) }
