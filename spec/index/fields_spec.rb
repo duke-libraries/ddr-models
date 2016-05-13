@@ -14,6 +14,7 @@ module Ddr::Index
                                    Fields::TECHMD_FORMAT_VERSION,
                                    Fields::TECHMD_IMAGE_HEIGHT,
                                    Fields::TECHMD_IMAGE_WIDTH,
+                                   Fields::TECHMD_MD5CHECKSUM,
                                    Fields::TECHMD_MEDIA_TYPE,
                                    Fields::TECHMD_MESSAGE,
                                    Fields::TECHMD_MODIFICATION_TIME,

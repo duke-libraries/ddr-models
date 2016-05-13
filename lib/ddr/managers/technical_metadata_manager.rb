@@ -49,6 +49,10 @@ module Ddr::Managers
       end
     end
 
+    def md5checksum
+      fits.md5checksum.first
+    end
+
     def checksum_digest
       checksum_uri.split(":")[1].upcase rescue nil
     end
@@ -82,18 +86,20 @@ module Ddr::Managers
     end
 
     def index_fields
-      { Ddr::Index::Fields::TECHMD_FITS_VERSION      => fits_version,
-        Ddr::Index::Fields::TECHMD_FITS_DATETIME     => Ddr::Utils.solr_date(fits_datetime),
-        Ddr::Index::Fields::TECHMD_CREATION_TIME     => Ddr::Utils.solr_dates(creation_time),
-        Ddr::Index::Fields::TECHMD_MODIFICATION_TIME => Ddr::Utils.solr_dates(modification_time),
+      {
         Ddr::Index::Fields::TECHMD_COLOR_SPACE       => color_space,
         Ddr::Index::Fields::TECHMD_CREATING_APPLICATION => creating_application,
+        Ddr::Index::Fields::TECHMD_CREATION_TIME     => Ddr::Utils.solr_dates(creation_time),
         Ddr::Index::Fields::TECHMD_FILE_SIZE         => file_size,
+        Ddr::Index::Fields::TECHMD_FITS_DATETIME     => Ddr::Utils.solr_date(fits_datetime),
+        Ddr::Index::Fields::TECHMD_FITS_VERSION      => fits_version,
         Ddr::Index::Fields::TECHMD_FORMAT_LABEL      => format_label,
         Ddr::Index::Fields::TECHMD_FORMAT_VERSION    => format_version,
         Ddr::Index::Fields::TECHMD_IMAGE_HEIGHT      => image_height,
         Ddr::Index::Fields::TECHMD_IMAGE_WIDTH       => image_width,
+        Ddr::Index::Fields::TECHMD_MD5CHECKSUM       => md5checksum,
         Ddr::Index::Fields::TECHMD_MEDIA_TYPE        => media_type,
+        Ddr::Index::Fields::TECHMD_MODIFICATION_TIME => Ddr::Utils.solr_dates(modification_time),
         Ddr::Index::Fields::TECHMD_PRONOM_IDENTIFIER => pronom_identifier,
         Ddr::Index::Fields::TECHMD_VALID             => valid,
         Ddr::Index::Fields::TECHMD_WELL_FORMED       => well_formed,

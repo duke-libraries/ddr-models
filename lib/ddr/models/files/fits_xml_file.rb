@@ -26,6 +26,7 @@ module Ddr::Models
         t.creatingApplicationName
         t.created
         t.lastmodified
+        t.md5checksum
       }
       t.filestatus {
         t.message
@@ -61,6 +62,7 @@ module Ddr::Models
       t.created              proxy: [:fileinfo, :created]
       t.creating_application proxy: [:fileinfo, :creatingApplicationName]
       t.extent               proxy: [:fileinfo, :size]
+      t.md5checksum          proxy: [:fileinfo, :md5checksum]
       # image metadata
       t.image_width          proxy: [:metadata, :image, :imageWidth]
       t.image_height         proxy: [:metadata, :image, :imageHeight]
