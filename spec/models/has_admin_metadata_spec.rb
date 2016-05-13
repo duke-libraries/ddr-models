@@ -51,7 +51,7 @@ module Ddr::Models
       describe "lifecycle" do
         subject { FactoryGirl.create(:item) }
         let!(:identifier) {
-          Ezid::MockIdentifier.create(subject.permanent_id_manager.default_metadata)
+          Ezid::MockIdentifier.mint(subject.permanent_id_manager.default_metadata)
         }
         before do
           allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false }
