@@ -98,23 +98,18 @@ module Ddr::Models
     end
 
     def has_admin_policy?
-      admin_policy_uri.present?
+      admin_policy_id.present?
     end
 
-    def admin_policy_uri
+    def admin_policy_id
       is_governed_by
     end
-
-    def admin_policy_pid
-      uri = admin_policy_uri
-      uri &&= ActiveFedora::Base.pid_from_uri(uri)
-    end
-    alias_method :admin_policy_id, :admin_policy_pid
+    alias_method :admin_policy_pid, :admin_policy_id
+    alias_method :admin_policy_uri, :admin_policy_id
+    deprecation_deprecate :admin_policy_pid, :admin_policy_uri
 
     def admin_policy
-      if has_admin_policy?
-        self.class.find(admin_policy_uri)
-      end
+      self.class.find(admin_policy_id) if has_admin_policy?
     end
 
     def has_children?
@@ -211,18 +206,18 @@ module Ddr::Models
       Ddr::Models::Contact.call(research_help_contact) if research_help_contact
     end
 
-    def parent_uri
+    def parent_id
       is_part_of || is_member_of_collection
     end
+    alias_method :parent_uri, :parent_id
+    deprecation_deprecate :parent_uri
 
     def has_parent?
-      parent_uri.present?
+      parent_id.present?
     end
 
     def parent
-      if has_parent?
-        self.class.find(parent_uri)
-      end
+      self.class.find(parent_id) if has_parent?
     end
 
     def multires_image_file_paths(type='default')
