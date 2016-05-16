@@ -10,6 +10,8 @@ module Ddr::Models
     STRUCT_METADATA = "structMetadata".freeze
     THUMBNAIL       = "thumbnail".freeze
 
+    CHECKSUM_TYPE_SHA1 = "SHA1".freeze
+
     DEFAULT_FILE_EXTENSION = "bin"
     STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
 
