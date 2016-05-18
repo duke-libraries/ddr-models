@@ -157,20 +157,49 @@ RSpec.shared_examples "a DDR model" do
 
   describe "versioning" do
     describe "on create" do
-      it "creates a version" do
-        expect { subject.save(validate: false) }
-          .to change(subject, :has_versions?).from(false).to(true)
+      describe "when autoversion is enabled" do
+        before { allow(subject).to receive(:autoversion?) { true } }
+        it "creates a version" do
+          expect { subject.save(validate: false) }
+            .to change(subject, :has_versions?).from(false).to(true)
+        end
+      end
+      describe "when autoversion is disabled" do
+        before { allow(subject).to receive(:autoversion?) { false } }
+        it "does not create a version" do
+          expect { subject.save(validate: false) }
+            .not_to change(subject, :has_versions?)
+        end
       end
     end
     describe "on update" do
-      before { subject.save(validate: false) }
-      it "creates a version" do
-        expect {
-          subject.dc_title = ["Changed Title"]
+      describe "when autoversion is enabled" do
+        before {
+          allow(subject).to receive(:autoversion?) { true }
           subject.save(validate: false)
-        }.to change {
-          subject.versions.all.size
-        }.by(1)
+        }
+        it "creates a version" do
+          expect {
+            subject.dc_title = ["Changed Title"]
+            subject.save(validate: false)
+          }.to change {
+            subject.versions.all.size
+          }.by(1)
+        end
+      end
+      describe "when autoversion is disabled" do
+        before {
+          allow(subject).to receive(:autoversion?) { false }
+          subject.save(validate: false)
+        }
+        it "does not create a version" do
+          expect {
+            subject.dc_title = ["Changed Title"]
+            subject.save(validate: false)
+          }.not_to change {
+            subject.versions.all.size
+          }
+        end
       end
     end
   end
