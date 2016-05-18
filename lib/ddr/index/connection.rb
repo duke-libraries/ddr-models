@@ -1,19 +1,36 @@
 require "rsolr"
+require "forwardable"
 
 module Ddr::Index
-  class Connection < SimpleDelegator
+  #
+  # Wraps an RSolr connection
+  #
+  class Connection
 
-    def initialize
-      super RSolr.connect(ActiveFedora.solr_config)
+    module Methods
+      extend Forwardable
+
+      delegate [:get, :paginate] => :solr
+
+      def solr
+        RSolr.connect(ActiveFedora.solr_config)
+      end
+
+      def select(params, extra={})
+        Response.new get("select", params: params.merge(extra))
+      end
+
+      def page(*args)
+        Response.new paginate(*args)
+      end
+
+      def count(params)
+        select(params, rows: 0).num_found
+      end
     end
 
-    def select(params, extra={})
-      Response.new get("select", params: params.merge(extra))
-    end
-
-    def page(*args)
-      Response.new paginate(*args)
-    end
+    extend Methods
+    include Methods
 
   end
 end

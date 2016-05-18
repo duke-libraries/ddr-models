@@ -69,7 +69,7 @@ module Ddr::Index
     end
 
     def data
-      raw = conn.get("select", params: solr_csv_params)
+      raw = Connection.get("select", params: solr_csv_params)
       raw.gsub(/\\#{CSV_MV_SEPARATOR}/, CSV_MV_SEPARATOR)
     end
 
