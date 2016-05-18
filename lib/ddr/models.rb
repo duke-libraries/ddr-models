@@ -27,7 +27,6 @@ module Ddr
     autoload :AdminSet
     autoload :AttachedFileProfile
     autoload :AttachedFilesProfile
-    autoload :AutoVersion
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :Contact
@@ -57,7 +56,6 @@ module Ddr
     autoload :UrlSafeId
     autoload :Validatable
     autoload :Validator
-    autoload :Versionable
     autoload :WithContentFile
     autoload :YearFacet
 
@@ -136,6 +134,10 @@ module Ddr
         :permanent_id,
         :doi,
       ]
+    end
+
+    mattr_accessor :autoversion do
+      Rails.env.production?
     end
 
     # Yields an object with module configuration accessors
