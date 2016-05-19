@@ -185,7 +185,7 @@ module Ddr::Models
       describe "#grant_roles_to_creator" do
         let(:user) { FactoryGirl.build(:user) }
         before { subject.grant_roles_to_creator(user) }
-        its(:roles) { should include(Ddr::Auth::Roles::Role.new(role_type: "Editor", agent: user.agent, scope: "resource")) }
+        its(:roles) { should include(Ddr::Auth::Role.new(role_type: "Editor", agent: user.agent, scope: "resource")) }
       end
 
       describe "persistence" do

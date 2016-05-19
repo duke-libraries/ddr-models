@@ -11,7 +11,7 @@ module Ddr::Auth
       if has_admin_policy?
         admin_policy.roles.in_policy_scope.result
       else
-        Roles::RoleSet.new
+        RoleSet.new
       end
     end
 

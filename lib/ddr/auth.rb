@@ -44,6 +44,17 @@ module Ddr
       autoload :SuperuserAbilityDefinitions
     end
 
+    autoload_under 'roles' do
+      autoload :Role
+      autoload :RoleAttribute
+      autoload :RoleSet
+      autoload :RoleSetManager
+      autoload :RoleSetQuery
+      autoload :RoleType
+      autoload :RoleTypes
+      autoload :RoleValidator
+    end
+
     # Name of group whose members are authorized to act as superuser
     mattr_accessor :superuser_group
 

@@ -184,7 +184,7 @@ module Ddr::Models
     end
 
     def roles
-      @roles ||= Ddr::Auth::Roles::RoleSetManager.new(self)
+      @roles ||= Ddr::Auth::RoleSetManager.new(self)
     end
 
     def struct_maps

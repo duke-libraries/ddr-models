@@ -86,8 +86,8 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     before { subject[Ddr::Index::Fields::ACCESS_ROLE] = json }
     it "should deserialize the roles from JSON" do
       expect(subject.roles.to_a)
-        .to eq([Ddr::Auth::Roles::Role.new(role_type: "Editor", agent: "Editors", scope: "policy"),
-                Ddr::Auth::Roles::Role.new(role_type: "Contributor", agent: "bob@example.com", scope: "resource")])
+        .to eq([Ddr::Auth::Role.new(role_type: "Editor", agent: "Editors", scope: "policy"),
+                Ddr::Auth::Role.new(role_type: "Contributor", agent: "bob@example.com", scope: "resource")])
     end
   end
 
