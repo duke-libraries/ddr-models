@@ -77,7 +77,7 @@ module Ddr::Models
     end
 
     def roles
-      Ddr::Auth::Roles::RoleSetManager.new(self)
+      Ddr::Auth::RoleSetManager.new(self)
     end
 
     def inherited_roles
