@@ -11,12 +11,12 @@ module Ddr::Auth
 
     # @return [Array<String>]
     def affiliation
-      split_env("affiliation").map { |a| a.sub(/@duke\.edu\z/, "") }
+      anonymous? ? super : split_env("affiliation").map { |a| a.sub(/@duke\.edu\z/, "") }
     end
 
     # @return [Array<String>]
     def ismemberof
-      split_env("ismemberof")
+      anonymous? ? super : split_env("ismemberof")
     end
 
     private

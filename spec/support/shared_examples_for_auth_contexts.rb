@@ -40,7 +40,9 @@ module Ddr::Auth
 
     describe "#agents" do
       before { allow(subject).to receive(:groups) { [ Groups::PUBLIC, Groups::REGISTERED, Group.new("foo") ] } }
-      its(:agents) { should contain_exactly(subject.agent, Groups::PUBLIC.agent, Groups::REGISTERED.agent, "foo") }
+      its(:agents) {
+        are_expected.to match_array([subject.agent, Groups::PUBLIC.agent, Groups::REGISTERED.agent, "foo"].compact)
+      }
     end
 
     describe "#member_of?" do
