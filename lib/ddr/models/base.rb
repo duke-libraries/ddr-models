@@ -11,12 +11,17 @@ module Ddr::Models
     include HasAdminMetadata
     extend Relation
 
-    SAVE_NOTIFICATION = "save.base.models.ddr"
+    SAVE_NOTIFICATION   = "save.base.models.ddr"
+    CREATE_NOTIFICATION = "create.base.models.ddr"
 
     after_save do
       ActiveSupport::Notifications.instrument(SAVE_NOTIFICATION, id: id)
     end
     after_save :create_version, if: :autoversion?
+
+    after_create do
+      ActiveSupport::Notifications.instrument(CREATE_NOTIFICATION, id: id)
+    end
 
     after_destroy do
       notify_event :deletion
