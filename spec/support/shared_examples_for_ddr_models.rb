@@ -246,4 +246,21 @@ RSpec.shared_examples "a DDR model" do
       expect(events).to eq([subject.id])
     }
   end
+
+  describe "after save notification" do
+    let(:events) { [] }
+    before {
+      @subscriber = ActiveSupport::Notifications.subscribe(Ddr::Models::Base::CREATE_NOTIFICATION) do |name, start, finish, id, payload|
+        events << payload[:id]
+      end
+    }
+    after {
+      ActiveSupport::Notifications.unsubscribe(@subscriber)
+    }
+    specify {
+      subject.save(validate: false)
+      expect(events).to eq([subject.id])
+    }
+  end
+
 end
