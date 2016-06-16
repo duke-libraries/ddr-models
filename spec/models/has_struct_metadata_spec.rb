@@ -21,15 +21,29 @@ module Ddr
       end
 
       describe "#build_default_structure" do
-        let(:components) { [ Component.new(id: 'test_5', identifier: [ 'abc002' ]),
-                             Component.new(id: 'test_6', identifier: [ 'abc001' ]),
-                             Component.new(id: 'test_7', identifier: [ 'abc003' ])
-                           ] }
-        let(:expected) { FactoryGirl.build(:simple_structure) }
-        before { allow(item).to receive(:find_children) { simple_structure_query_response } }
-        it "should build the appropriate structural metadata" do
-          results = item.build_default_structure
-          expect(results).to be_equivalent_to(expected)
+        context "with local_id's" do
+          let(:components) { [ Component.new(id: 'test_5', local_id: 'abc002'),
+                               Component.new(id: 'test_6', local_id: 'abc001'),
+                               Component.new(id: 'test_7', local_id: 'abc003')
+                             ] }
+          let(:expected) { FactoryGirl.build(:simple_structure) }
+          before { allow(item).to receive(:find_children) { simple_structure_query_response } }
+          it "should build the appropriate structural metadata" do
+            results = item.build_default_structure
+            expect(results).to be_equivalent_to(expected)
+          end
+        end
+        context "without local_id's" do
+          let(:components) { [ Component.new(id: 'test_5'),
+                               Component.new(id: 'test_6'),
+                               Component.new(id: 'test_7')
+          ] }
+          let(:expected) { FactoryGirl.build(:simple_structure_without_local_id) }
+          before { allow(item).to receive(:find_children) { simple_structure_without_local_id_query_response } }
+          it "should build the appropriate structural metadata" do
+            results = item.build_default_structure
+            expect(results).to be_equivalent_to(expected)
+          end
         end
       end
 
