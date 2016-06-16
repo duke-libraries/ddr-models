@@ -30,7 +30,7 @@ module Ddr::Auth
     # Return the user agent for this context.
     # @return [String] or nil, if auth context is anonymous/
     def agent
-      anonymous? ? nil : user.agent
+      user.agent if authenticated?
     end
 
     # Is the authenticated agent a Duke identity?
