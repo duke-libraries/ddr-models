@@ -3,7 +3,6 @@ module Ddr::Auth
 
     subject { described_class.new(user, env) }
 
-    let(:user) { FactoryGirl.build(:user) }
     let(:mock_ip_middleware) { double(calculate_ip: "8.8.8.8") }
 
     let(:env) do
@@ -13,18 +12,38 @@ module Ddr::Auth
       }
     end
 
-    it_behaves_like "an auth context"
+    shared_examples "a web auth context" do
+      it_behaves_like "an auth context"
+      its(:ip_address) { should eq("8.8.8.8") }
+    end
 
-    its(:affiliation) { should contain_exactly("staff", "student") }
-    its(:ismemberof) { should contain_exactly("group1", "group2", "group3") }
-    its(:ip_address) { should eq("8.8.8.8") }
+    describe "authenticated" do
+      let(:user) { FactoryGirl.build(:user) }
 
-    describe "when env vars are not present" do
-      let(:env) { {} }
+      it_behaves_like "a web auth context"
+      its(:affiliation) { should contain_exactly("staff", "student") }
+      its(:ismemberof) { should contain_exactly("group1", "group2", "group3") }
+
+      describe "when env vars are not present" do
+        let(:env) { {} }
+        its(:affiliation) { should be_empty }
+        its(:ismemberof) { should be_empty }
+        its(:ip_address) { should be_nil }
+      end
+    end
+
+    describe "anonymous" do
+      let(:user) { nil }
+
+      it_behaves_like "a web auth context"
       its(:affiliation) { should be_empty }
       its(:ismemberof) { should be_empty }
-      its(:ip_address) { should be_nil }
+
+      describe "when env vars are not present" do
+        let(:env) { {} }
+        its(:ip_address) { should be_nil }
+      end
     end
-    
+
   end
 end
