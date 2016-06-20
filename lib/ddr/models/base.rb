@@ -9,7 +9,7 @@ module Ddr::Models
     include Indexing
     include Hydra::Validations
     include HasAdminMetadata
-    extend AutoVersion
+    # extend AutoVersion
     extend Relation
 
     SAVE_NOTIFICATION = "save.base.models.ddr"
