@@ -10,6 +10,12 @@ FactoryGirl.define do
       end
     end
 
+    factory :simple_structure_without_local_id do
+      initialize_with do
+        new(simple_structure_document_without_local_id)
+      end
+    end
+
     factory :nested_structure do
       initialize_with do
         new(nested_structure_document)

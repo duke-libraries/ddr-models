@@ -39,13 +39,14 @@ module Ddr
       end
 
       def add_to_struct_map(stru, child)
-        div = create_div(stru)
+        div = create_div(stru, child[Ddr::Index::Fields::LOCAL_ID])
         create_fptr(stru, div, child['id'])
       end
 
-      def create_div(stru)
+      def create_div(stru, local_id)
         div_count = stru.structMap_node('default').xpath('xmlns:div').size
         div = Nokogiri::XML::Node.new('div', stru.as_xml_document)
+        div['ID'] = local_id if local_id.present?
         div['ORDER'] = div_count + 1
         stru.structMap_node('default').add_child(div)
         div
