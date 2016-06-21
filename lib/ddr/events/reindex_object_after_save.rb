@@ -4,13 +4,13 @@ module Ddr
       extend ActiveSupport::Concern
 
       included do
-        after_save :reindex_object, unless: "object.nil?" # in case saved with validate: false
+        after_save :reindex_object, if: :pid # in case saved with validate: false
       end
 
       protected
 
       def reindex_object
-        object.update_index
+        Resque.enqueue(Ddr::Jobs::UpdateIndex, pid)
       end
 
     end
