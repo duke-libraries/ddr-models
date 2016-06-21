@@ -35,5 +35,13 @@ module Ddr::Auth
       end
     end
 
+    describe "delegated methods" do
+      let(:role1) { FactoryGirl.build(:role, :curator, :person, :policy) }
+
+      specify {
+        expect { subject << role1 }.to change { subject.roles.to_a }.from([]).to([role1])
+      }
+    end
+
   end
 end
