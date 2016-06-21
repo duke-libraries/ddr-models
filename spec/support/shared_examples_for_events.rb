@@ -14,13 +14,11 @@ RSpec.shared_examples "a preservation-related event" do
 end
 
 RSpec.shared_examples "an event that reindexes its object after save" do
-  it "should implement the reindexing concern" do
-    expect(subject).to be_a Ddr::Events::ReindexObjectAfterSave
-  end
   context "when object is present" do
     let(:object) { mock_object }
     before do
-      allow(subject).to receive(:object) { object }
+      allow(ActiveFedora::Base).to receive(:find).with("test-1") { object }
+      subject.pid = "test-1"
     end
     it "should reindex its object after save" do
       expect(object).to receive(:update_index)
