@@ -4,7 +4,7 @@ module Ddr::Models
   class FixityCheckResults < SimpleDelegator
 
     def initialize
-      super Hash.new
+      super Hash.new.with_indifferent_access
     end
 
     def success?

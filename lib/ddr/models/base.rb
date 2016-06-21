@@ -151,7 +151,7 @@ module Ddr::Models
     end
 
     def attached_files_having_content
-      Hash.new.tap do |h|
+      Hash.new.with_indifferent_access.tap do |h|
         attached_files.each do |file_id, file|
           h[file_id] = file if !file.destroyed? && file.has_content?
         end
