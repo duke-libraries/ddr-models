@@ -61,7 +61,7 @@ module Ddr::Index
     RESOURCE_ROLE               = Field.new :resource_role, :symbol
     SERIES_FACET                = Field.new :series_facet, :facetable
     SPATIAL_FACET               = Field.new :spatial_facet, :facetable
-    STRUCT_MAPS                 = Field.new :struct_maps, :stored_sortable
+    STRUCT_MAPS                 = Field.new :struct_maps, solr_name: "struct_maps_ss"
     SUBJECT_FACET               = Field.new :subject_facet, :facetable
     TECHMD_COLOR_SPACE          = Field.new :techmd_color_space, :symbol
     TECHMD_CREATING_APPLICATION = Field.new :techmd_creating_application, :symbol
