@@ -94,6 +94,16 @@ module Ddr::Index
         subject { described_class.new { before_days "foo", 7 } }
         specify { expect(subject.query.filters).to eq [Filter.before_days("foo", 7)] }
       end
+      describe "join" do
+        subject {
+          described_class.new do
+            join from: :id, to: :collection_uri, where: {admin_set: "dvs"}
+          end
+        }
+        specify {
+          expect(subject.query.filters).to eq [Filter.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})]
+        }
+      end
     end
 
     describe "using static filters" do

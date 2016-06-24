@@ -57,6 +57,11 @@ module Ddr::Index
         self.clauses << QueryClause.before_days(field, value)
         self
       end
+
+      def join(**args)
+        self.clauses << QueryClause.join(**args)
+        self
+      end
     end
 
     module ClassMethods
