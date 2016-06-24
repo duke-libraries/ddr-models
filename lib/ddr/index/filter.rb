@@ -62,6 +62,11 @@ module Ddr::Index
         self.clauses << QueryClause.join(**args)
         self
       end
+
+      def regexp(field, value)
+        self.clauses << QueryClause.regexp(field, value)
+        self
+      end
     end
 
     module ClassMethods

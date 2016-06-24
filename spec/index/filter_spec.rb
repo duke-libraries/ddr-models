@@ -115,6 +115,12 @@ module Ddr::Index
           are_expected.to eq([QueryClause.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})])
         }
       end
+      describe ".regexp" do
+        subject { described_class.regexp("foo", "foo/bar.*") }
+        its(:clauses) {
+          are_expected.to eq([QueryClause.regexp("foo", "foo/bar.*")])
+        }
+      end
     end
 
     describe "API methods" do
