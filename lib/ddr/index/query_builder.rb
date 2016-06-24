@@ -93,10 +93,10 @@ module Ddr::Index
 
     attr_reader :query
 
-    def initialize(query = nil, &block)
-      @query = query || Query.new
+    def initialize(*args, &block)
+      @query = args.first.is_a?(Query) ? args.shift : Query.new
       if block_given?
-        instance_eval &block
+        instance_exec(*args, &block)
       end
     end
 
