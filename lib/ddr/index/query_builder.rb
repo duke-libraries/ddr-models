@@ -28,9 +28,6 @@ module Ddr::Index
   #
   #   See also: asc, order_by
   #
-  # id [doc_id]
-  #   For selecting a single document by ID.
-  #
   # filter [filter1], ...
   #   Adds filters to the query.
   #
@@ -47,6 +44,12 @@ module Ddr::Index
   #
   # fields [field], ...
   #   Alias for: field
+  #
+  # id [doc_id]
+  #   For selecting a single document by ID.
+  #
+  # join [from: {field1}, to: {field2}, where: {condition}]
+  #   Adds a Solr join clause (see https://wiki.apache.org/solr/Join)
   #
   # limit [int]
   #   Limits the number of documents returned by the query.

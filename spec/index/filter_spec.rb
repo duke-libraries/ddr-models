@@ -107,6 +107,14 @@ module Ddr::Index
           are_expected.to eq([QueryClause.before("foo", DateTime.parse("Thu, 27 Aug 2015 17:42:34 -0400"))])
         }
       end
+      describe ".join" do
+        subject {
+          described_class.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})
+        }
+        its(:clauses) {
+          are_expected.to eq([QueryClause.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})])
+        }
+      end
     end
 
     describe "API methods" do
@@ -166,6 +174,13 @@ module Ddr::Index
           expect(subject.clauses).to eq([QueryClause.before("foo", DateTime.parse("Thu, 27 Aug 2015 17:42:34 -0400"))])
         end
       end
+      describe "#join" do
+        it "adds a join query clause" do
+          subject.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})
+          expect(subject.clauses).to eq([QueryClause.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})])
+        end
+      end
+
     end
 
   end
