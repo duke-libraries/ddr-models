@@ -77,6 +77,11 @@ module Ddr::Index
   # raw [clause1], ...
   #   Adds a filter of "raw" query clauses (i.e., pre-constructed).
   #
+  # regexp [field], [regexp]
+  #   Adds a filter selecting documents where the field has a value
+  #     matching the regular expression.
+  #     Slashes (/) in the regexp will be escaped as required by Solr.
+  #
   # rows [int]
   #   Alias for: limit
   #

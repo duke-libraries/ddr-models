@@ -58,6 +58,10 @@ module Ddr::Index
         }
         its(:to_s) { is_expected.to eq "{!join from=id to=collection_uri_ssim}admin_set_ssi:dvs" }
       end
+      describe ".regexp" do
+        subject { described_class.regexp("foo", "foo/bar.*") }
+        its(:to_s) { is_expected.to eq "foo:/foo\\/bar.*/" }
+      end
     end
 
   end

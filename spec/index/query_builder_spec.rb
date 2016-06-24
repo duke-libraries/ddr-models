@@ -104,6 +104,12 @@ module Ddr::Index
           expect(subject.query.filters).to eq [Filter.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})]
         }
       end
+      describe "regexp" do
+        subject { described_class.new { regexp "foo", "foo/bar.*" } }
+        specify {
+          expect(subject.query.filters).to eq [Filter.regexp("foo", "foo/bar.*")]
+        }
+      end
     end
 
     describe "using static filters" do

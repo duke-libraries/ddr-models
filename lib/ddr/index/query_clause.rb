@@ -12,6 +12,7 @@ module Ddr::Index
     STANDARD_QUERY  = "%{field}:%{value}"
     NEGATIVE_QUERY  = "-%{field}:%{value}"
     DISJUNCTION     = "{!lucene q.op=OR df=%{field}}%{value}"
+    REGEXP_QUERY    = "%{field}:/%{value}/"
 
     values do
       attribute :field,       FieldAttribute
@@ -98,6 +99,12 @@ module Ddr::Index
       # Builds a "term query" clause to filter where field contains value.
       def term(field, value)
         new(field: field, value: value, template: TERM_QUERY)
+      end
+
+      # Builds a regular expression query clause
+      def regexp(field, value)
+        val = value.gsub(/\//, "\\/")
+        new(field: field, value: val, template: REGEXP_QUERY)
       end
     end
 
