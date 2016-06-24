@@ -225,7 +225,7 @@ module Ddr::Models
     end
 
     def multires_image_file_paths(type='default')
-      struct_map_docs(type).map { |doc| doc.multires_image_file_path }.compact
+      struct_map_docs(type).map(&:multires_image_file_path).compact
     end
 
     # DRY HasAdminMetadata
@@ -272,7 +272,11 @@ module Ddr::Models
     end
 
     def struct_map_docs(type='default')
-      struct_map_pids(type).map { |pid| self.class.find(pid) }.compact
+      pids = struct_map_pids(type)
+      return [] if pids.empty?
+      raw_query = "id:(%s)" % pids.map { |p| "\"#{p}\"" }.join(" OR ")
+      q = Ddr::Index::Query.new { raw raw_query }
+      q.docs.to_a
     end
 
     # For simplicity, initial implementation returns PID's only from top-level
@@ -280,7 +284,7 @@ module Ddr::Models
     # an _ordered_ list of PID's should look like if struct map contains nested
     # div's.
     def struct_map_pids(type='default')
-      struct_map(type)['divs'].map { |d| d['fptrs'].present? ? d['fptrs'].first : nil}.compact
+      struct_map(type)['divs'].map { |d| d['fptrs'].present? ? d['fptrs'].first : nil }.compact
     rescue
       []
     end
