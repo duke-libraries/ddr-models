@@ -1,6 +1,5 @@
 module Ddr::Index
   RSpec.describe QueryBuilder do
-
     describe "DSL" do
       describe "id" do
         subject { described_class.new { id "test:1" } }
@@ -112,5 +111,14 @@ module Ddr::Index
       end
     end
 
+    describe "passing local vars" do
+      let(:local_var) { double(bar: "bar") }
+      subject {
+        described_class.new(local_var) { |foo| asc foo.bar }
+      }
+      specify {
+        expect(subject.query.sort).to eq [SortOrder.asc("bar")]
+      }
+    end
   end
 end

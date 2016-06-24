@@ -16,6 +16,12 @@ module Ddr::Index
     delegate [:count, :docs, :ids, :each_id, :all] => :result
     delegate :params => :query_params
 
+    def self.build(*args, &block)
+      new.tap do |query|
+        query.build(*args, &block)
+      end
+    end
+
     def initialize(**args, &block)
       super(**args)
       if block_given?
@@ -58,8 +64,8 @@ module Ddr::Index
       QueryParams.new(self)
     end
 
-    def build(&block)
-      QueryBuilder.new(self, &block)
+    def build(*args, &block)
+      QueryBuilder.new(self, *args, &block)
       self
     end
 
