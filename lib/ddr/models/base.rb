@@ -145,7 +145,7 @@ module Ddr::Models
     end
 
     def datastreams_to_validate
-      Deprecation.warn(FixityCheckable, "`datastreams_to_validate` is deprecated." \
+      Deprecation.warn(Base, "`datastreams_to_validate` is deprecated." \
                                         " Use `attached_files_having_content` instead.")
       attached_files_having_content
     end
