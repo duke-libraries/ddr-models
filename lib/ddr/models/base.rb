@@ -199,6 +199,5 @@ module Ddr::Models
     def autoversion?
       Ddr::Models.autoversion
     end
-
   end
 end
