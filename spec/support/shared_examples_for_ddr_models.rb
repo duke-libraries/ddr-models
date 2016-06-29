@@ -1,3 +1,5 @@
+require "time"
+
 RSpec.shared_examples "a DDR model" do
   describe "#desc_metadata_terms" do
     it "should have a default value" do
@@ -236,5 +238,13 @@ RSpec.shared_examples "a DDR model" do
       subject.save(validate: false)
       expect(events).to eq([subject.id])
     }
+  end
+
+  describe "#version_name" do
+    let(:now) { DateTime.parse("2016-06-29T18:01:15Z").to_time }
+    before {
+      allow(Time).to receive(:now) { now }
+    }
+    its(:version_name) { is_expected.to eq("version.20160629180115.000000000") }
   end
 end
