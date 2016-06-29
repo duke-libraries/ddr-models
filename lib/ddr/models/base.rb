@@ -9,7 +9,6 @@ module Ddr::Models
     include Indexing
     include Hydra::Validations
     include HasAdminMetadata
-    # extend AutoVersion
     extend Relation
 
     SAVE_NOTIFICATION = "save.base.models.ddr"
@@ -182,6 +181,13 @@ module Ddr::Models
 
     def publishable?
       raise NotImplementedError, "Must be implemented by subclasses"
+    end
+
+    # Override AF::Versionable
+    # @example
+    #   => "version.20160205153424.643252000"
+    def version_name
+      "version.#{Time.now.utc.strftime('%Y%m%d%H%M%S.%N')}"
     end
 
   end
