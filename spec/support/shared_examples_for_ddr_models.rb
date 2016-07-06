@@ -272,4 +272,25 @@ RSpec.shared_examples "a DDR model" do
     }
     its(:version_name) { is_expected.to eq("version.20160629180115.000000000") }
   end
+
+  describe "#ingest_date" do
+    describe "when the object is new" do
+      its(:ingest_date) { is_expected.to be_nil }
+    end
+    describe "when the object is persisted" do
+      let(:ie_date) { DateTime.parse("2016-06-29T18:01:15Z") }
+      before {
+        subject.save(validate: false)
+      }
+      describe "when there is an IngestionEvent" do
+        before {
+          Ddr::Events::IngestionEvent.create(pid: subject.id, event_date_time: ie_date)
+        }
+        its(:ingest_date) { is_expected.to eq(ie_date) }
+      end
+      describe "when there is no event" do
+        its(:ingest_date) { is_expected.to eq(subject.create_date) }
+      end
+    end
+  end
 end

@@ -199,5 +199,13 @@ module Ddr::Models
     def autoversion?
       Ddr::Models.autoversion
     end
+
+    def ingest_date
+      if event = Ddr::Events::IngestionEvent.for_object(self).first
+        event.event_date_time
+      else
+        create_date
+      end
+    end
   end
 end
