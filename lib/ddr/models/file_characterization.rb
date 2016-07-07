@@ -30,7 +30,7 @@ module Ddr::Models
     end
 
     def fits_command
-      File.join(Ddr::Models.fits_home, 'fits.sh')
+      ::File.join(Ddr::Models.fits_home, 'fits.sh')
     end
 
   end
