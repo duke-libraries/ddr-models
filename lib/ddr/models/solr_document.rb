@@ -239,6 +239,16 @@ module Ddr::Models
       self[Ddr::Index::Fields::WORKFLOW_STATE] == Ddr::Managers::WorkflowManager::PUBLISHED
     end
 
+    # For simplicity, initial implementation returns repository ID's only from top-level
+    # (i.e., not nested) div's.  This is done since we have not clarified what
+    # an _ordered_ list of repository ID's should look like if struct map contains nested
+    # div's.
+    def struct_map_ids(type='default')
+      struct_map(type)['divs'].map { |d| d['fptrs'].present? ? d['fptrs'].first : nil }.compact
+    rescue
+      []
+    end
+
     private
 
     def targets_query
@@ -272,21 +282,11 @@ module Ddr::Models
     end
 
     def struct_map_docs(type='default')
-      pids = struct_map_pids(type)
-      return [] if pids.empty?
-      raw_query = "id:(%s)" % pids.map { |p| "\"#{p}\"" }.join(" OR ")
+      ids = struct_map_ids(type)
+      return [] if ids.empty?
+      raw_query = "id:(%s)" % ids.map { |i| "\"#{i}\"" }.join(" OR ")
       q = Ddr::Index::Query.new { raw raw_query }
       q.docs.to_a
-    end
-
-    # For simplicity, initial implementation returns PID's only from top-level
-    # (i.e., not nested) div's.  This is done since we have not clarified what
-    # an _ordered_ list of PID's should look like if struct map contains nested
-    # div's.
-    def struct_map_pids(type='default')
-      struct_map(type)['divs'].map { |d| d['fptrs'].present? ? d['fptrs'].first : nil }.compact
-    rescue
-      []
     end
 
   end

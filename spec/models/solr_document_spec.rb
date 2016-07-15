@@ -196,6 +196,24 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
         end
       end
     end
+    describe "#struct_map_ids" do
+      context "no structural metadata" do
+        its(:struct_map_ids) { is_expected.to match([]) }
+      end
+      context "structural metadata" do
+        let(:struct_map) do
+          {"type"=>"default", "divs"=>
+              [{"id"=>"viccb010010010", "label"=>"1", "order"=>"1", "type"=>"Image", "fptrs"=>["test-6"], "divs"=>[]},
+               {"id"=>"viccb010020010", "label"=>"2", "order"=>"2", "type"=>"Image", "fptrs"=>["test-5"], "divs"=>[]},
+               {"id"=>"viccb010030010", "label"=>"3", "order"=>"3", "type"=>"Image", "fptrs"=>["test-7"], "divs"=>[]}]
+          }
+        end
+        before(:each) {
+          allow(subject).to receive(:struct_map) { struct_map }
+        }
+        its(:struct_map_ids) { is_expected.to match([ "test-6", "test-5", "test-7" ]) }
+      end
+    end
   end
 
   describe "#has_attached_file?" do
