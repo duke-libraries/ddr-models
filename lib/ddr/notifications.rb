@@ -8,6 +8,8 @@ module Ddr
     DELETION = "deletion.events.ddr"
     MIGRATION = "migration.events.ddr"
 
+    FILE_SAVE = "save.file.active_fedora"
+
     def self.notify_event(type, args={})
       name = "#{type}.events.ddr"
       ActiveSupport::Notifications.instrument(name, args)
