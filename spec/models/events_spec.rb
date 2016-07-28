@@ -73,4 +73,10 @@ module Ddr::Events
     it_behaves_like "a preservation-related event"
     its(:display_type) { is_expected.to eq "Migration" }
   end
+
+  RSpec.describe ReplicationEvent, type: :model, events: true do
+    it_behaves_like "an event"
+    it_behaves_like "a preservation-related event"
+    its(:display_type) { is_expected.to eq "Replication" }
+  end
 end
