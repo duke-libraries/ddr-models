@@ -13,6 +13,6 @@ module Ddr
     autoload :VirusCheckEvent
     autoload :PreservationEventBehavior
     autoload :ReindexObjectAfterSave
-
+    autoload :ReplicationEvent
   end
 end
