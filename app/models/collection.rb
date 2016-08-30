@@ -49,6 +49,10 @@ class Collection < Ddr::Models::Base
     roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::POLICY_SCOPE
   end
 
+  def publishable?
+    true
+  end
+
   private
 
   def set_admin_policy

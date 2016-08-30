@@ -21,6 +21,10 @@ class Item < Ddr::Models::Base
   alias_method :collection_id, :parent_id
   alias_method :collection=, :parent=
 
+  def publishable?
+    parent.present? && parent.published?
+  end
+
   def children_having_extracted_text
     item = self
     Ddr::Index::Query.new do
