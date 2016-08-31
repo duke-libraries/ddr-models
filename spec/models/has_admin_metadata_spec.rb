@@ -121,25 +121,10 @@ module Ddr::Models
         end
       end
 
-      describe "#publish" do
-        it "should publish the object" do
-          subject.publish
-          expect(subject).to be_published
-        end
-      end
-
       describe "#publish!" do
         it "should publish and persist the object" do
           subject.publish!
           expect(subject.reload).to be_published
-        end
-      end
-
-      describe "#unpublish" do
-        before { subject.publish }
-        it "should unpublish the object" do
-          subject.unpublish
-          expect(subject).not_to be_published
         end
       end
 

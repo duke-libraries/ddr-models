@@ -25,6 +25,10 @@ class Component < Ddr::Models::Base
     self.collection.internal_uri rescue nil
   end
 
+  def publishable?
+    parent.present? && parent.published?
+  end
+
   def index_parent
     Resque.enqueue(Ddr::Jobs::UpdateIndex, parent_id)
   end

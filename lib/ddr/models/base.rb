@@ -102,6 +102,10 @@ module Ddr
         moved
       end
 
+      def publishable?
+        raise NotImplementedError, "Must be implemented by subclasses"
+      end
+
     end
   end
 end
