@@ -26,6 +26,20 @@ module Ddr::Models
       end
     end
 
+    describe ".keys" do
+      let(:entries) { [ described_class.new(id: 1, slug: 'abc', name: 'contact ABC'),
+                        described_class.new(id: 2, slug: 'def', name: 'contact DEF') ] }
+      let(:response_collection) { ActiveResource::Collection.new }
+      before do
+        response_collection.elements = entries
+        allow(described_class).to receive(:all) { response_collection }
+      end
+      it "returns the defined slugs" do
+        expect(described_class.keys).to match_array([ entries[0].slug, entries[1].slug ])
+      end
+    end
+
+
     describe "instance methods" do
       subject {
         described_class.new(
