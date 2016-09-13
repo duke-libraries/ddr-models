@@ -18,6 +18,10 @@ module Ddr::Models
       raise Ddr::Models::NotFoundError, e
     end
 
+    def self.keys
+      all.map(&:url)
+    end
+
     def pid
       Deprecation.warn(License, "`pid` is deprecated; use `object_id` instead.")
       object_id
