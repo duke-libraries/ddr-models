@@ -11,6 +11,10 @@ module Ddr::Models
       raise Ddr::Models::NotFoundError, e
     end
 
+    def self.keys
+      all.map(&:slug)
+    end
+
     def to_s
       name
     end
