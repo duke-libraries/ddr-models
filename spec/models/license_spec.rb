@@ -36,6 +36,19 @@ module Ddr::Models
       end
     end
 
+    describe ".keys" do
+      let(:entries) { [ described_class.new(id: 1, url: 'http://localhost/licenseA', title: 'License A'),
+                        described_class.new(id: 2, url: 'http://localhost/licenseB', title: 'License B') ] }
+      let(:response_collection) { ActiveResource::Collection.new }
+      before do
+        response_collection.elements = entries
+        allow(described_class).to receive(:all) { response_collection }
+      end
+      it "returns the defined urls" do
+        expect(described_class.keys).to match_array([ entries[0].url, entries[1].url ])
+      end
+    end
+
     describe "instance methods" do
       subject { described_class.new("id"=>1, "url"=>"http://example.com", "title"=>"A License") }
       its(:to_s) { is_expected.to eq("A License") }
