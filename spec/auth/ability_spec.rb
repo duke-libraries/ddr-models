@@ -57,21 +57,38 @@ module Ddr::Auth
     end
 
     describe "Collection abilities" do
-      before do
-        allow(Ddr::Auth).to receive(:collection_creators_group) { "collection_creators" }
-      end
-      describe "when the user is a collection creator" do
+      describe "create" do
         before do
-          allow(auth_context).to receive(:member_of?).with("collection_creators") { true }
+          allow(Ddr::Auth).to receive(:collection_creators_group) { "collection_creators" }
         end
-        it { should be_able_to(:create, Collection) }
-      end
+        describe "when the user is a collection creator" do
+          before do
+            allow(auth_context).to receive(:member_of?).with("collection_creators") { true }
+          end
+          it { should be_able_to(:create, Collection) }
+        end
 
-      describe "when the user is not a collection creator" do
-        before do
-          allow(auth_context).to receive(:member_of?).with("collection_creators") { false }
+        describe "when the user is not a collection creator" do
+          before do
+            allow(auth_context).to receive(:member_of?).with("collection_creators") { false }
+          end
+          it { should_not be_able_to(:create, Collection) }
         end
-        it { should_not be_able_to(:create, Collection) }
+      end
+      describe "export" do
+        let(:collection) { FactoryGirl.build(:collection) }
+        describe "when the user has read permission via policy scope role" do
+          before {
+            collection.roles.grant role_type: "Viewer", agent: auth_context.user.to_s, scope: "policy"
+          }
+          it { is_expected.to be_able_to(:export, collection) }
+        end
+        describe "when the user does not have read permission via policy scope role" do
+          before {
+            collection.roles.grant role_type: "Viewer", agent: auth_context.user.to_s
+          }
+          it { is_expected.not_to be_able_to(:export, collection) }
+        end
       end
     end
 
