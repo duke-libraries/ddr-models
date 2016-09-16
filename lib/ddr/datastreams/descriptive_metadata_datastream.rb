@@ -26,8 +26,11 @@ module Ddr
       vocabularies.each do |vocab|
         Ddr::Vocab::Vocabulary.property_terms(vocab).each do |term|
           term_name = Ddr::Vocab::Vocabulary.term_name(vocab, term)
-          property term_name, predicate: term do |index|
-            index.as *indexers_for(term_name)
+          # Do not include :license as a descriptive metadata property
+          unless term_name == :license
+            property term_name, predicate: term do |index|
+              index.as *indexers_for(term_name)
+            end
           end
         end
       end

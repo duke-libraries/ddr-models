@@ -24,8 +24,8 @@ module Ddr
     RSpec.describe DescriptiveMetadataDatastream do
       context "terminology" do
         subject { described_class.term_names }
-        it "should have a term for each term name in the RDF::DC vocab" do
-          expect(subject).to include(*Ddr::Vocab::Vocabulary.term_names(RDF::DC))
+        it "should have a term for each term name in the RDF::DC vocab except :license" do
+          expect(subject).to include(*Ddr::Vocab::Vocabulary.term_names(RDF::DC)-[:license])
         end
         it "should have a term for each term name in the DukeTerms vocab" do
           expect(subject).to include(*Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms))
@@ -33,8 +33,9 @@ module Ddr
       end
       context "properties" do
         subject { described_class.properties.map { |prop| prop[1].predicate } }
-        it "should include all the RDF::DC predicates" do
-          expect(subject).to include(*Ddr::Vocab::Vocabulary.property_terms(RDF::DC))
+        it "should include all the RDF::DC predicates except http://purl.org/dc/terms/license" do
+          expected_predicates = Ddr::Vocab::Vocabulary.property_terms(RDF::DC).select { |p| p.to_s != 'http://purl.org/dc/terms/license' }
+          expect(subject).to include(*expected_predicates)
         end
         it "should include all the DukeTerms predicates" do
           expect(subject).to include(*Ddr::Vocab::Vocabulary.property_terms(Ddr::Vocab::DukeTerms))
