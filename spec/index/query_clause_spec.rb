@@ -52,6 +52,16 @@ module Ddr::Index
           its(:to_s) { is_expected.to eq "{!lucene q.op=OR df=foo}\"Jungle Fever\" bar" }
         end
       end
+      describe ".join" do
+        subject {
+          described_class.join(from: :id, to: :collection_uri, where: { admin_set: "dvs"})
+        }
+        its(:to_s) { is_expected.to eq "{!join from=id to=collection_uri_ssim}admin_set_ssi:dvs" }
+      end
+      describe ".regexp" do
+        subject { described_class.regexp("foo", "foo/bar.*") }
+        its(:to_s) { is_expected.to eq "foo:/foo\\/bar.*/" }
+      end
     end
 
   end

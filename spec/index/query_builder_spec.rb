@@ -1,6 +1,5 @@
 module Ddr::Index
   RSpec.describe QueryBuilder do
-
     describe "DSL" do
       describe "id" do
         subject { described_class.new { id "test:1" } }
@@ -95,6 +94,22 @@ module Ddr::Index
         subject { described_class.new { before_days "foo", 7 } }
         specify { expect(subject.query.filters).to eq [Filter.before_days("foo", 7)] }
       end
+      describe "join" do
+        subject {
+          described_class.new do
+            join from: :id, to: :collection_uri, where: {admin_set: "dvs"}
+          end
+        }
+        specify {
+          expect(subject.query.filters).to eq [Filter.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})]
+        }
+      end
+      describe "regexp" do
+        subject { described_class.new { regexp "foo", "foo/bar.*" } }
+        specify {
+          expect(subject.query.filters).to eq [Filter.regexp("foo", "foo/bar.*")]
+        }
+      end
     end
 
     describe "using static filters" do
@@ -112,5 +127,14 @@ module Ddr::Index
       end
     end
 
+    describe "passing local vars" do
+      let(:local_var) { double(bar: "bar") }
+      subject {
+        described_class.new(local_var) { |foo| asc foo.bar }
+      }
+      specify {
+        expect(subject.query.sort).to eq [SortOrder.asc("bar")]
+      }
+    end
   end
 end

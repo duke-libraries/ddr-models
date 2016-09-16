@@ -37,6 +37,12 @@ module Ddr::Index
             are_expected.to eq([QueryClause.term(:is_governed_by, "info:fedora/test:1")])
           }
         end
+        describe "with a URI" do
+          subject { described_class.is_governed_by("info:fedora/test:1") }
+          its(:clauses) {
+            are_expected.to eq([QueryClause.term(:is_governed_by, "info:fedora/test:1")])
+          }
+        end
       end
       describe ".is_member_of_collection" do
         describe "with an object" do
@@ -49,6 +55,32 @@ module Ddr::Index
           subject { described_class.is_member_of_collection("test:1") }
           its(:clauses) {
             are_expected.to eq([QueryClause.term(:is_member_of_collection, "info:fedora/test:1")])
+          }
+        end
+        describe "with a URI" do
+          subject { described_class.is_member_of_collection("info:fedora/test:1") }
+          its(:clauses) {
+            are_expected.to eq([QueryClause.term(:is_member_of_collection, "info:fedora/test:1")])
+          }
+        end
+      end
+      describe ".is_part_of" do
+        describe "with an object" do
+          subject { described_class.is_part_of(Item.new(pid: "test:1")) }
+          its(:clauses) {
+            are_expected.to eq([QueryClause.term(:is_part_of, "info:fedora/test:1")])
+          }
+        end
+        describe "with an ID" do
+          subject { described_class.is_part_of("test:1") }
+          its(:clauses) {
+            are_expected.to eq([QueryClause.term(:is_part_of, "info:fedora/test:1")])
+          }
+        end
+        describe "with a URI" do
+          subject { described_class.is_part_of("info:fedora/test:1") }
+          its(:clauses) {
+            are_expected.to eq([QueryClause.term(:is_part_of, "info:fedora/test:1")])
           }
         end
       end
@@ -105,6 +137,20 @@ module Ddr::Index
         subject { described_class.before("foo", DateTime.parse("Thu, 27 Aug 2015 17:42:34 -0400")) }
         its(:clauses) {
           are_expected.to eq([QueryClause.before("foo", DateTime.parse("Thu, 27 Aug 2015 17:42:34 -0400"))])
+        }
+      end
+      describe ".join" do
+        subject {
+          described_class.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})
+        }
+        its(:clauses) {
+          are_expected.to eq([QueryClause.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})])
+        }
+      end
+      describe ".regexp" do
+        subject { described_class.regexp("foo", "foo/bar.*") }
+        its(:clauses) {
+          are_expected.to eq([QueryClause.regexp("foo", "foo/bar.*")])
         }
       end
     end
@@ -166,6 +212,13 @@ module Ddr::Index
           expect(subject.clauses).to eq([QueryClause.before("foo", DateTime.parse("Thu, 27 Aug 2015 17:42:34 -0400"))])
         end
       end
+      describe "#join" do
+        it "adds a join query clause" do
+          subject.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})
+          expect(subject.clauses).to eq([QueryClause.join(from: :id, to: :collection_uri, where: {admin_set: "dvs"})])
+        end
+      end
+
     end
 
   end

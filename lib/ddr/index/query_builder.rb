@@ -28,9 +28,6 @@ module Ddr::Index
   #
   #   See also: asc, order_by
   #
-  # id [doc_id]
-  #   For selecting a single document by ID.
-  #
   # filter [filter1], ...
   #   Adds filters to the query.
   #
@@ -47,6 +44,12 @@ module Ddr::Index
   #
   # fields [field], ...
   #   Alias for: field
+  #
+  # id [doc_id]
+  #   For selecting a single document by ID.
+  #
+  # join [from: {field1}, to: {field2}, where: {condition}]
+  #   Adds a Solr join clause (see https://wiki.apache.org/solr/Join)
   #
   # limit [int]
   #   Limits the number of documents returned by the query.
@@ -74,6 +77,11 @@ module Ddr::Index
   # raw [clause1], ...
   #   Adds a filter of "raw" query clauses (i.e., pre-constructed).
   #
+  # regexp [field], [regexp]
+  #   Adds a filter selecting documents where the field has a value
+  #     matching the regular expression.
+  #     Slashes (/) in the regexp will be escaped as required by Solr.
+  #
   # rows [int]
   #   Alias for: limit
   #
@@ -91,24 +99,12 @@ module Ddr::Index
   #
   class QueryBuilder
 
-    # Builds a Query object
-    # @yield [builder] a new QueryBuilder instance.
-    # @return [Query]
-    def self.build
-      Deprecation.warn(self,
-                       "`Ddr::Index::QueryBuilder.build` is deprecated and will be removed in ddr-models 3.0." \
-                       " Use `Ddr::Index::QueryBuilder.new` instead.")
-      builder = new
-      yield builder
-      builder.query
-    end
-
     attr_reader :query
 
-    def initialize(query = nil, &block)
-      @query = query || Query.new
+    def initialize(*args, &block)
+      @query = args.first.is_a?(Query) ? args.shift : Query.new
       if block_given?
-        instance_eval &block
+        instance_exec(*args, &block)
       end
     end
 
@@ -146,11 +142,6 @@ module Ddr::Index
     # @param orderings [Hash<Field, String>]
     # @return [QueryBuilder] self
     def order_by(*orderings)
-      unless orderings.first.is_a? Hash
-        Deprecation.warn(QueryBuilder, "`order_by` will require a hash of orderings in ddr-models 3.0.")
-        field, order = orderings
-        return order_by(field => order)
-      end
       query.sort += orderings.first.map { |field, order| SortOrder.new(field: field, order: order) }
       self
     end

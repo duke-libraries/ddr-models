@@ -4,14 +4,12 @@ module Ddr
 
     autoload :AbstractQueryResult
     autoload :Connection
-    autoload :CSVOptions
     autoload :CSVQueryResult
     autoload :DocumentBuilder
     autoload :Field
     autoload :FieldAttribute
     autoload :Fields
     autoload :Filter
-    autoload :Filters
     autoload :LegacyLicenseFields
     autoload :Query
     autoload :QueryBuilder
@@ -19,7 +17,6 @@ module Ddr
     autoload :QueryParams
     autoload :QueryResult
     autoload :Response
-    autoload :SolrCSVOptions
     autoload :SortOrder
     autoload :UniqueKeyField
 

@@ -12,6 +12,7 @@ module Ddr::Index
     STANDARD_QUERY  = "%{field}:%{value}"
     NEGATIVE_QUERY  = "-%{field}:%{value}"
     DISJUNCTION     = "{!lucene q.op=OR df=%{field}}%{value}"
+    REGEXP_QUERY    = "%{field}:/%{value}/"
 
     values do
       attribute :field,       FieldAttribute
@@ -29,7 +30,6 @@ module Ddr::Index
     end
 
     class << self
-
       def quote(value)
         # Derived from Blacklight::Solr::SearchBuilderBehavior#solr_param_quote
         unless value =~ /\A[a-zA-Z0-9$_\-\^]+\z/
@@ -75,6 +75,16 @@ module Ddr::Index
         new(field: field, value: value, template: DISJUNCTION)
       end
 
+      # Builds a Solr join clause
+      # @see https://wiki.apache.org/solr/Join
+      def join(from:, to:, where:)
+        field, value = where.to_a.first
+        from_field = FieldAttribute.coerce(from)
+        to_field   = FieldAttribute.coerce(to)
+        template = "{!join from=#{from_field} to=#{to_field}}%{field}:%{value}"
+        new(field: field, value: value, template: template, quote_value: true)
+      end
+
       # Builds a query clause to filter where date field value is earlier than a date/time value.
       def before(field, value)
         new(field: field, value: "[* TO %s]" % Ddr::Utils.solr_date(value))
@@ -91,6 +101,11 @@ module Ddr::Index
         new(field: field, value: value, template: TERM_QUERY)
       end
 
+      # Builds a regular expression query clause
+      def regexp(field, value)
+        val = value.gsub(/\//, "\\/")
+        new(field: field, value: val, template: REGEXP_QUERY)
+      end
     end
 
   end
