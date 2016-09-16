@@ -2,16 +2,15 @@ module Ddr::Index
   class AbstractQueryResult
     include Enumerable
 
-    attr_reader :query, :conn
+    attr_reader :query
     delegate :params, to: :query
 
     def initialize(query)
       @query = query.dup.freeze
-      @conn = Connection.new
     end
 
     def count
-      response = conn.select(params, rows: 0)
+      response = Connection.select(params, rows: 0)
       response.num_found
     end
 

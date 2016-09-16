@@ -57,6 +57,16 @@ module Ddr::Index
         self.clauses << QueryClause.before_days(field, value)
         self
       end
+
+      def join(**args)
+        self.clauses << QueryClause.join(**args)
+        self
+      end
+
+      def regexp(field, value)
+        self.clauses << QueryClause.regexp(field, value)
+        self
+      end
     end
 
     module ClassMethods
@@ -68,16 +78,16 @@ module Ddr::Index
         model "Component", "Attachment", "Target"
       end
 
-      def is_governed_by(object_or_id)
-        term is_governed_by: internal_uri(object_or_id)
+      def is_governed_by(arg)
+        term is_governed_by: get_uri(arg)
       end
 
-      def is_member_of_collection(object_or_id)
-        term is_member_of_collection: internal_uri(object_or_id)
+      def is_member_of_collection(arg)
+        term is_member_of_collection: get_uri(arg)
       end
 
-      def is_part_of(object_or_id)
-        term is_part_of: internal_uri(object_or_id)
+      def is_part_of(arg)
+        term is_part_of: get_uri(arg)
       end
 
       def model(*models)
@@ -86,11 +96,14 @@ module Ddr::Index
 
       private
 
-      def internal_uri(object_or_id)
-        if object_or_id.respond_to?(:internal_uri)
-          object_or_id.internal_uri
+      def get_uri(arg)
+        case arg
+        when ActiveFedora::Base
+          arg.internal_uri
+        when String
+          arg.start_with?("info:fedora/") ? arg : "info:fedora/#{arg}"
         else
-          ActiveFedora::Base.internal_uri(object_or_id)
+          raise TypeError, "Argument must be a String or ActiveFedora::Base instance: #{arg.class}"
         end
       end
 

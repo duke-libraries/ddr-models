@@ -12,8 +12,7 @@ module Ddr::Models
 
     module ClassMethods
       def find(pid_or_uri)
-        pid = pid_or_uri.sub(/\Ainfo:fedora\//, "")
-        query = Ddr::Index::QueryBuilder.build { |q| q.id(pid) }
+        query = Ddr::Index::Query.new { id pid_or_uri.sub(/\Ainfo:fedora\//, "") }
         if doc = query.docs.first
           return doc
         end
