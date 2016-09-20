@@ -32,6 +32,7 @@ module Ddr
     autoload :WebAuthContext
 
     autoload_under 'ability_definitions' do
+      autoload :AdminSetAbilityDefinitions
       autoload :AliasAbilityDefinitions
       autoload :AttachmentAbilityDefinitions
       autoload :CollectionAbilityDefinitions
@@ -106,6 +107,10 @@ module Ddr
 
     mattr_accessor :default_ability do
       "::Ability"
+    end
+
+    mattr_accessor :metadata_managers_group do
+      ENV["METADATA_MANAGERS_GROUP"]
     end
 
     def self.repository_group_filter

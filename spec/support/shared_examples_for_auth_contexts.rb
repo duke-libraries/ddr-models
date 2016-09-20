@@ -23,6 +23,39 @@ module Ddr::Auth
       end
     end
 
+    describe "#metadata_manager?" do
+      describe "when a user is present" do
+        before { allow(subject).to receive(:user) { double(agent: "bob@example.com") } }
+        describe "and there is no metadata managers group" do
+          before {
+            allow(Ddr::Auth).to receive(:metadata_managers_group) { nil }
+          }
+          its(:metadata_manager?) { should be false }
+        end
+        describe "and there is a metadata managers group" do
+          before {
+            allow(Ddr::Auth).to receive(:metadata_managers_group) { "metadata_managers" }
+          }
+          describe "and the auth context is a member of the group" do
+            before {
+              allow(subject).to receive(:groups) { [ Group.new("metadata_managers") ] }
+            }
+            its(:metadata_manager?) { should be true }
+          end
+          describe "and the auth context is not a member of the group" do
+            before {
+              allow(subject).to receive(:groups) { [ Group.new("foo"), Group.new("bar") ] }
+            }
+            its(:metadata_manager?) { should be false }
+          end
+        end
+      end
+      describe "when no user is present" do
+        before { allow(subject).to receive(:user) { nil } }
+        its(:metadata_manager?) { should be false }
+      end
+    end
+
     describe "#duke_agent?" do
       describe "when the auth context is anonymous" do
         before { allow(subject).to receive(:user) { nil } }
