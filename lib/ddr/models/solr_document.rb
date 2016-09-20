@@ -195,6 +195,11 @@ module Ddr::Models
       Ddr::Models::Contact.call(research_help_contact) if research_help_contact
     end
 
+    def external_urls
+      urls = self[Ddr::Index::Fields::EXTERNAL_URL] || inherited_external_url
+      urls.map { |url| Ddr::Models::ExternalUrl.call(url) } if urls
+    end
+
     def parent_uri
       is_part_of || is_member_of_collection
     end
@@ -249,6 +254,12 @@ module Ddr::Models
     def inherited_research_help_contact
       if doc = admin_policy
         doc.research_help_contact
+      end
+    end
+
+    def inherited_external_url
+      if doc = admin_policy
+        doc[Ddr::Index::Fields::EXTERNAL_URL]
       end
     end
 

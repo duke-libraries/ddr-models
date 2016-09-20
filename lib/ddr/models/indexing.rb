@@ -43,6 +43,7 @@ module Ddr
           PERMANENT_URL         => permanent_url,
           POLICY_ROLE           => roles.in_policy_scope.agents,
           PUBLISHER_FACET       => publisher,
+          EXTERNAL_URL          => external_url,
           RESEARCH_HELP_CONTACT => research_help_contact,
           RESOURCE_ROLE         => roles.in_resource_scope.agents,
           SERIES_FACET          => desc_metadata_values('series'),

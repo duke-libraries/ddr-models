@@ -27,6 +27,7 @@ module Ddr::Index
     DISPLAY_FORMAT              = Field.new :display_format, :stored_sortable
     DOI                         = Field.new :doi, :symbol
     EAD_ID                      = Field.new :ead_id, :stored_sortable
+    EXTERNAL_URL                = Field.new :external_url, :symbol
     EXTRACTED_TEXT              = Field.new :extracted_text, solr_name: "extracted_text_tsm"
     FORMAT_FACET                = Field.new :format_facet, :facetable
     HAS_MODEL                   = Field.new :has_model, :symbol

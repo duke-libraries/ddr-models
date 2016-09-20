@@ -1,4 +1,4 @@
- module Ddr
+module Ddr
   module Vocab
     class Asset < RDF::StrictVocabulary("http://repository.lib.duke.edu/vocab/asset/")
 
@@ -17,6 +17,9 @@
 
       property "eadId",
         label: "EAD ID"
+
+      property "externalUrl",
+        label: "External URL"
 
       property "archivesSpaceId",
         label: "ArchivesSpace Identifier"
