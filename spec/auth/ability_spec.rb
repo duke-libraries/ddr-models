@@ -56,6 +56,23 @@ module Ddr::Auth
       end
     end
 
+    describe "AdminSet abilities" do
+      describe "export" do
+        describe "when the user is a metadata manager" do
+          before {
+            allow(auth_context).to receive(:metadata_manager?) { true }
+          }
+          it { is_expected.to be_able_to(:export, Ddr::Models::AdminSet) }
+        end
+        describe "when the user is a metadata manager" do
+          before {
+            allow(auth_context).to receive(:metadata_manager?) { false }
+          }
+          it { is_expected.not_to be_able_to(:export, Ddr::Models::AdminSet) }
+        end
+      end
+    end
+
     describe "Collection abilities" do
       describe "create" do
         before do
@@ -63,6 +80,7 @@ module Ddr::Auth
         end
         describe "when the user is a collection creator" do
           before do
+            allow(auth_context).to receive(:member_of?) { false }
             allow(auth_context).to receive(:member_of?).with("collection_creators") { true }
           end
           it { should be_able_to(:create, Collection) }
@@ -70,6 +88,7 @@ module Ddr::Auth
 
         describe "when the user is not a collection creator" do
           before do
+            allow(auth_context).to receive(:member_of?) { false }
             allow(auth_context).to receive(:member_of?).with("collection_creators") { false }
           end
           it { should_not be_able_to(:create, Collection) }

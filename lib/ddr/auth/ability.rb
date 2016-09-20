@@ -11,7 +11,9 @@ module Ddr
                                    DatastreamAbilityDefinitions,
                                    EventAbilityDefinitions,
                                    PublicationAbilityDefinitions,
-                                   LockAbilityDefinitions ]
+                                   LockAbilityDefinitions,
+                                   AdminSetAbilityDefinitions,
+                                 ]
 
     end
   end

@@ -9,6 +9,20 @@ module Ddr::Auth
       @env = env
     end
 
+    def ability
+      if anonymous?
+        AnonymousAbility.new(self)
+      elsif superuser?
+        SuperuserAbility.new(self)
+      else
+        default_ability_class.new(self)
+      end
+    end
+
+    def default_ability_class
+      Ddr::Auth::default_ability.constantize
+    end
+
     # Return whether a user is absent from the auth context.
     # @return [Boolean]
     def anonymous?
@@ -25,6 +39,10 @@ module Ddr::Auth
     # @return [Boolean]
     def superuser?
       env && env.key?("warden") && env["warden"].authenticate?(scope: :superuser)
+    end
+
+    def metadata_manager?
+      member_of? Ddr::Auth.metadata_managers_group
     end
 
     # Return the user agent for this context.

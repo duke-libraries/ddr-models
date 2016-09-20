@@ -17,7 +17,8 @@ module Ddr::Auth
 
     attr_reader :auth_context
 
-    delegate :anonymous?, :authenticated?, :user, :groups, :agents, :member_of?,
+    delegate :anonymous?, :authenticated?, :metadata_manager?,
+             :user, :groups, :agents, :member_of?,
              :authorized_to_act_as_superuser?,
              to: :auth_context
 
