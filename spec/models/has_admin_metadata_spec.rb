@@ -197,6 +197,26 @@ module Ddr::Models
       end
     end
 
+    describe "external_urls" do
+
+      subject { FactoryGirl.build(:item) }
+
+      before do
+        allow(Ddr::Models::ExternalUrl).to receive(:get).with(:find, url: 'http://guides.library.duke.edu/eaa') do
+          {'id'=>1, 'title'=>'Emergence of Advertising in America Research Guide', 'url'=>'http://guides.library.duke.edu/eaa'}
+        end
+        allow(Ddr::Models::ExternalUrl).to receive(:get).with(:find, url: 'http://guides.library.duke.edu/adaccess') do
+          {'id'=>2, 'title'=>'Ad*Access Research Guide: Getting Started', 'url'=>'http://guides.library.duke.edu/adaccess'}
+        end
+      end
+      describe "#external_urls" do
+        before { subject.external_url = ['http://guides.library.duke.edu/eaa'] }
+        it "should return the appropriate contact" do
+          expect(subject.external_urls.first.url).to eq('http://guides.library.duke.edu/eaa')
+        end
+      end
+    end
+
     describe "locking" do
 
       subject { FactoryGirl.build(:item) }

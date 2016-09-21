@@ -25,6 +25,10 @@ module Ddr::Models
                      datastream: "adminMetadata",
                      multiple: false
 
+      has_attributes :external_url,
+                     datastream: "adminMetadata",
+                     multiple: true
+
       delegate :publish!, :unpublish!, :published?, to: :workflow
 
       after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
@@ -63,6 +67,10 @@ module Ddr::Models
 
     def effective_permissions(agents)
       Ddr::Auth::EffectivePermissions.call(self, agents)
+    end
+
+    def external_urls
+      external_url.map { |url| Ddr::Models::ExternalUrl.call(url) } if external_url
     end
 
     def research_help

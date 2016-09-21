@@ -161,6 +161,42 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     end
   end
 
+  describe "external_urls" do
+    before do
+      allow(Ddr::Models::ExternalUrl).to receive(:get).with(:find, url: 'http://guides.library.duke.edu/eaa') do
+        {'id'=>1, 'title'=>'Emergence of Advertising in America Research Guide', 'url'=>'http://guides.library.duke.edu/eaa'}
+      end
+      allow(Ddr::Models::ExternalUrl).to receive(:get).with(:find, url: 'http://guides.library.duke.edu/adaccess') do
+        {'id'=>2, 'title'=>'Ad*Access Research Guide: Getting Started', 'url'=>'http://guides.library.duke.edu/adaccess'}
+      end
+    end
+    describe "#external_urls" do
+      context "object has external url" do
+        before { subject[Ddr::Index::Fields::EXTERNAL_URL] = ['http://guides.library.duke.edu/adaccess'] }
+        it "should return the object's external url" do
+          expect(subject.external_urls.first.url).to eq('http://guides.library.duke.edu/adaccess')
+        end
+      end
+      context "object does not have external urls" do
+        context "collection has external urls" do
+          let(:admin_policy) { described_class.new({Ddr::Index::Fields::EXTERNAL_URL=>["http://guides.library.duke.edu/eaa"]}) }
+          before do
+            allow(subject).to receive(:admin_policy) { admin_policy }
+          end
+          it "should return the collection's external urls" do
+            expect(subject.external_urls.first.url).to eq("http://guides.library.duke.edu/eaa")
+          end
+        end
+        context "collection does not have external urls" do
+          it "should return nil" do
+            expect(subject.external_urls).to be_nil
+          end
+        end
+      end
+    end
+  end
+
+
   describe "structural metadata" do
     describe "#multires_image_file_paths" do
       context "no structural metadata" do

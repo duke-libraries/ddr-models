@@ -49,6 +49,7 @@ module Ddr
     autoload :Describable
     autoload :Error
     autoload :EventLoggable
+    autoload :ExternalUrl
     autoload :FileCharacterization
     autoload :FileManagement
     autoload :FindingAid
