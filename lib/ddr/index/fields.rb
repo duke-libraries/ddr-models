@@ -13,8 +13,10 @@ module Ddr::Index
     ATTACHED_FILES_HAVING_CONTENT =
       Field.new :attached_files_having_content, :symbol
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
+    CATEGORY_FACET              = Field.new :category_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
+    COMPANY_FACET               = Field.new :company_facet, :facetable
     CONTENT_CONTROL_GROUP       = Field.new :content_control_group, :searchable, type: :string
     CONTENT_CREATE_DATE         = Field.new :content_create_date, :stored_sortable, type: :date
     CONTENT_SIZE                = Field.new :content_size, solr_name: "content_size_lsi"
@@ -48,6 +50,7 @@ module Ddr::Index
     MEDIA_SUB_TYPE              = Field.new :content_media_sub_type, :facetable
     MEDIA_MAJOR_TYPE            = Field.new :content_media_major_type, :facetable
     MEDIA_TYPE                  = Field.new :content_media_type, :symbol
+    MEDIUM_FACET                = Field.new :medium_facet, :facetable
     MULTIRES_IMAGE_FILE_PATH    = Field.new :multires_image_file_path, :stored_sortable
     OBJECT_PROFILE              = Field.new :object_profile, :displayable
     OBJECT_STATE                = Field.new :object_state, :stored_sortable
@@ -55,11 +58,15 @@ module Ddr::Index
     OBJECT_MODIFIED_DATE        = Field.new :system_modified, :stored_sortable, type: :date
     PERMANENT_ID                = Field.new :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = Field.new :permanent_url, :stored_sortable, type: :string
+    PLACEMENT_COMPANY_FACET     = Field.new :placement_company_facet, :facetable
     POLICY_ROLE                 = Field.new :policy_role, :symbol
+    PRODUCT_FACET               = Field.new :product_facet, :facetable
+    PUBLICATION_FACET           = Field.new :publication_facet, :facetable
     PUBLISHER_FACET             = Field.new :publisher_facet, :facetable
     RESEARCH_HELP_CONTACT       = Field.new :research_help_contact, :stored_sortable
     RESOURCE_ROLE               = Field.new :resource_role, :symbol
     SERIES_FACET                = Field.new :series_facet, :facetable
+    SETTING_FACET               = Field.new :setting_facet, :facetable
     SPATIAL_FACET               = Field.new :spatial_facet, :facetable
     STRUCT_MAPS                 = Field.new :struct_maps, :stored_sortable
     SUBJECT_FACET               = Field.new :subject_facet, :facetable
@@ -79,6 +86,7 @@ module Ddr::Index
     TECHMD_VALID                = Field.new :techmd_valid, :symbol
     TECHMD_WELL_FORMED          = Field.new :techmd_well_formed, :symbol
     TITLE                       = Field.new :title, :stored_sortable
+    TONE_FACET                  = Field.new :tone_facet, :facetable
     TYPE_FACET                  = Field.new :type_facet, :facetable
     WORKFLOW_STATE              = Field.new :workflow_state, :stored_sortable
     YEAR_FACET                  = Field.new :year_facet, solr_name: "year_facet_iim"

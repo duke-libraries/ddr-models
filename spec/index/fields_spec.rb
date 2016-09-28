@@ -60,6 +60,18 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "aspace_id" }
       end
 
+      describe "CATEGORY_FACET" do
+        subject { Fields::CATEGORY_FACET }
+        its(:label) { is_expected.to eq "Category Facet" }
+        its(:heading) { is_expected.to eq "category_facet" }
+      end
+
+      describe "COMPANY_FACET" do
+        subject { Fields::COMPANY_FACET }
+        its(:label) { is_expected.to eq "Company Facet" }
+        its(:heading) { is_expected.to eq "company_facet" }
+      end
+
       describe "DOI" do
         subject { Fields::DOI }
         its(:label) { is_expected.to eq "DOI" }
@@ -76,6 +88,12 @@ module Ddr::Index
         subject { Fields::LOCAL_ID }
         its(:label) { is_expected.to eq "Local ID" }
         its(:heading) { is_expected.to eq "local_id" }
+      end
+
+      describe "MEDIUM_FACET" do
+        subject { Fields::MEDIUM_FACET }
+        its(:label) { is_expected.to eq "Medium Facet" }
+        its(:heading) { is_expected.to eq "medium_facet" }
       end
 
       describe "OBJECT_CREATE_DATE" do
@@ -100,6 +118,30 @@ module Ddr::Index
         subject { Fields::PERMANENT_URL }
         its(:label) { is_expected.to eq "Permanent URL" }
         its(:heading) { is_expected.to eq "permanent_url" }
+      end
+
+      describe "PLACEMENT_COMPANY_FACET" do
+        subject { Fields::PLACEMENT_COMPANY_FACET }
+        its(:label) { is_expected.to eq "Placement Company Facet" }
+        its(:heading) { is_expected.to eq "placement_company_facet" }
+      end
+
+      describe "PRODUCT_FACET" do
+        subject { Fields::PRODUCT_FACET }
+        its(:label) { is_expected.to eq "Product Facet" }
+        its(:heading) { is_expected.to eq "product_facet" }
+      end
+
+      describe "PUBLICATION_FACET" do
+        subject { Fields::PUBLICATION_FACET }
+        its(:label) { is_expected.to eq "Publication Facet" }
+        its(:heading) { is_expected.to eq "publication_facet" }
+      end
+
+      describe "SETTING_FACET" do
+        subject { Fields::SETTING_FACET }
+        its(:label) { is_expected.to eq "Setting Facet" }
+        its(:heading) { is_expected.to eq "setting_facet" }
       end
 
       describe "TECHMD_COLOR_SPACE" do
@@ -190,6 +232,12 @@ module Ddr::Index
         subject { Fields::TECHMD_WELL_FORMED }
         its(:label) { is_expected.to eq "Well-formed" }
         its(:heading) { is_expected.to eq "well_formed" }
+      end
+
+      describe "TONE_FACET" do
+        subject { Fields::TONE_FACET }
+        its(:label) { is_expected.to eq "Tone Facet" }
+        its(:heading) { is_expected.to eq "tone_facet" }
       end
     end
 
