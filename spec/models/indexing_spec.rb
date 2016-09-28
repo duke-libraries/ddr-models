@@ -23,6 +23,14 @@ module Ddr::Models
         obj.display_format = "Image"
         obj.roles.grant role1, role2, role3, role4
         obj.aspace_id = "aspace_dccea43034e1b8261e14cf999e86449d"
+        obj.set_desc_metadata_values(:category, "Category Facet")
+        obj.set_desc_metadata_values(:company, "Company Facet")
+        obj.set_desc_metadata_values(:medium, "Medium Facet")
+        obj.set_desc_metadata_values(:placement_company, "Placement Company Facet")
+        obj.set_desc_metadata_values(:product, "Product Facet")
+        obj.set_desc_metadata_values(:publication, "Publication Facet")
+        obj.set_desc_metadata_values(:setting, "Setting Facet")
+        obj.set_desc_metadata_values(:tone, "Tone Facet")
       end
 
       its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
@@ -38,6 +46,14 @@ module Ddr::Models
       its([Indexing::POLICY_ROLE]) { is_expected.to contain_exactly(role2.agent.first, role3.agent.first, role4.agent.first) }
       its([Indexing::RESOURCE_ROLE]) { is_expected.to contain_exactly(role1.agent.first) }
       its([Indexing::ASPACE_ID]) { is_expected.to eq("aspace_dccea43034e1b8261e14cf999e86449d") }
+      its([Indexing::CATEGORY_FACET]) { is_expected.to eq(["Category Facet"]) }
+      its([Indexing::COMPANY_FACET]) { is_expected.to eq(["Company Facet"]) }
+      its([Indexing::MEDIUM_FACET]) { is_expected.to eq(["Medium Facet"]) }
+      its([Indexing::PLACEMENT_COMPANY_FACET]) { is_expected.to eq(["Placement Company Facet"]) }
+      its([Indexing::PRODUCT_FACET]) { is_expected.to eq(["Product Facet"]) }
+      its([Indexing::PUBLICATION_FACET]) { is_expected.to eq(["Publication Facet"]) }
+      its([Indexing::SETTING_FACET]) { is_expected.to eq(["Setting Facet"]) }
+      its([Indexing::TONE_FACET]) { is_expected.to eq(["Tone Facet"]) }
     end
 
     describe "content-bearing object indexing" do
