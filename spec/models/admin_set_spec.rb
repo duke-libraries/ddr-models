@@ -6,19 +6,20 @@ module Ddr::Models
 
       describe "when the object has an admin set" do
         before { obj.admin_set = "dvs" }
+        let(:admin_set) {
+          described_class.new("id"=>1, "code"=>"dvs", "title"=>"Data and Visualization Services", "created_at"=>"2015-09-15T16:15:58.514Z", "updated_at"=>"2015-09-15T16:15:58.514Z")
+        }
         describe "and the admin set code is found" do
           before {
-            allow(described_class).to receive(:get).with(:find, code: "dvs") {
-              {"id"=>1, "code"=>"dvs", "title"=>"Data and Visualization Services", "created_at"=>"2015-09-15T16:15:58.514Z", "updated_at"=>"2015-09-15T16:15:58.514Z"}
-            }
+            allow(described_class).to receive(:find_by_code).with("dvs") { admin_set }
           }
           it "returns an AdminSet instance" do
-            expect(described_class.call(obj)).to be_a(described_class)
+            expect(described_class.call(obj)).to eq(admin_set)
           end
         end
         describe "and the admin set is not found" do
           before {
-            allow(described_class).to receive(:get).with(:find, code: "dvs")
+            allow(described_class).to receive(:find_by_code).with("dvs")
                                        .and_raise(ActiveResource::ResourceNotFound, "404")
           }
           it "raises an exception" do

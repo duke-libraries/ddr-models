@@ -19,6 +19,7 @@ module Ddr
         fields = {
           ACCESS_ROLE             => roles.to_json,
           ADMIN_SET               => admin_set,
+          ADMIN_SET_TITLE         => admin_set_title,
           ASPACE_ID               => aspace_id,
           ATTACHED_FILES_HAVING_CONTENT => attached_files_having_content.keys,
           BOX_NUMBER_FACET        => desc_metadata_values('box_number'),
@@ -118,6 +119,8 @@ module Ddr
       end
 
       def associated_collection
+        # XXX Can/should we use SolrDocument here?
+        # I.e., ::SolrDocument.find(admin_policy_id)
         admin_policy
       end
 
@@ -126,6 +129,17 @@ module Ddr
           admin_set
         elsif associated_collection.present?
           associated_collection.admin_set
+        end
+      end
+
+      def admin_set_title
+        code = if admin_set.present?
+                 admin_set
+               elsif associated_collection.present?
+                 associated_collection.admin_set
+               end
+        if as = AdminSet.find_by_code(code)
+          as.title
         end
       end
 
