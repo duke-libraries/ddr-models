@@ -7,13 +7,24 @@ RSpec.describe Collection, type: :model do
   it_behaves_like "it has an association", :has_many, :targets, :is_external_target_for, "Target"
   it_behaves_like "a publishable object"
 
+  describe "admin set" do
+    let(:admin_set) { Ddr::Models::AdminSet.new(code: "foobar", title: "FooBar") }
+    before do
+      allow(Ddr::Models::AdminSet).to receive(:find_by_code).with("foobar") { admin_set }
+      subject.admin_set = "foobar"
+    end
+    it "indexes the admin set title" do
+      expect(subject.to_solr[Ddr::Index::Fields::ADMIN_SET_TITLE]).to eq("FooBar")
+    end
+  end
+
   describe "legacy license information" do
     before do
       subject.defaultRights.license.title = ["License Title"]
       subject.defaultRights.license.description = ["License Description"]
       subject.defaultRights.license.url = ["http://library.duke.edu"]
     end
-    it "should index the terms" do
+    it "indexes the terms" do
       expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_TITLE]).to eq("License Title")
       expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_DESCRIPTION]).to eq("License Description")
       expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_URL]).to eq("http://library.duke.edu")
@@ -25,7 +36,7 @@ RSpec.describe Collection, type: :model do
     before do
       allow_any_instance_of(Component).to receive(:collection_uri).and_return(subject.internal_uri)
     end
-    it "should return the correct component(s)" do
+    it "returns the correct component(s)" do
       component = Component.create
       docs = subject.components_from_solr
       expect(docs.size).to eq(1)
@@ -34,7 +45,7 @@ RSpec.describe Collection, type: :model do
   end
 
   describe "validation" do
-    it "should require a title" do
+    it "requires a title" do
       expect(subject).to_not be_valid
       expect(subject.errors.messages).to have_key(:title)
     end
@@ -42,7 +53,7 @@ RSpec.describe Collection, type: :model do
 
   describe "creation" do
     subject { Collection.create(title: [ "Test Collection" ]) }
-    it "should be governed by itself" do
+    it "is governed by itself" do
       expect(subject.admin_policy).to eq(subject)
     end
   end
@@ -50,7 +61,7 @@ RSpec.describe Collection, type: :model do
   describe "roles granted to creator" do
     let(:user) { FactoryGirl.build(:user) }
     before { subject.grant_roles_to_creator(user) }
-    it "should include Curator roles in both resource abd policy scopes" do
+    it "includes Curator roles in both resource and policy scopes" do
       expect(subject.roles.to_a).to eq([Ddr::Auth::Roles::Role.build(type: "Curator", agent: user.agent, scope: "resource"), Ddr::Auth::Roles::Role.build(type: "Curator", agent: user.agent, scope: "policy")])
     end
   end

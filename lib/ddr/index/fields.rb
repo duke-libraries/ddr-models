@@ -8,6 +8,7 @@ module Ddr::Index
     ACTIVE_FEDORA_MODEL         = Field.new :active_fedora_model, :stored_sortable
     ADMIN_SET                   = Field.new :admin_set, :stored_sortable
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
+    ADMIN_SET_TITLE             = Field.new :admin_set_title, :stored_sortable
     ALL_TEXT                    = Field.new :all_text, solr_name: "all_text_timv"
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable
     ATTACHED_FILES_HAVING_CONTENT =
@@ -113,8 +114,9 @@ module Ddr::Index
         return ID
       end
       if const = LegacyLicenseFields.const_get(name)
-        Deprecation.warn(Ddr::Index::Fields,
-                         "`Ddr::Index::Fields::#{name}` is deprecated and will be removed in ddr-models 3.0.")
+        # XXX Commented out b/c annoying, but maybe we want later ...
+        # Deprecation.warn(Ddr::Index::Fields,
+        #                  "`Ddr::Index::Fields::#{name}` is deprecated and will be removed in ddr-models 3.0.")
         return const
       end
       super
