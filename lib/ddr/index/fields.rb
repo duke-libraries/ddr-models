@@ -16,6 +16,7 @@ module Ddr::Index
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
     CATEGORY_FACET              = Field.new :category_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
+    COLLECTION_TITLE            = Field.new :collection_title, :stored_sortable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
     COMPANY_FACET               = Field.new :company_facet, :facetable
     CONTENT_CONTROL_GROUP       = Field.new :content_control_group, :searchable, type: :string
