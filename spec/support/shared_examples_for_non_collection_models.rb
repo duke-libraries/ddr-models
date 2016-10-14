@@ -22,4 +22,15 @@ RSpec.shared_examples "a non-collection model" do
       expect(subject.to_solr[Ddr::Index::Fields::ADMIN_SET_TITLE]).to eq("FooBar")
     end
   end
+
+  describe "collection title" do
+    subject { described_class.new }
+    let(:collection) { FactoryGirl.create(:collection) }
+    before {
+      subject.admin_policy = collection
+    }
+    it "indexes the collection title" do
+      expect(subject.to_solr[Ddr::Index::Fields::COLLECTION_TITLE]).to eq("Test Collection")
+    end
+  end
 end

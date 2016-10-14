@@ -24,6 +24,7 @@ module Ddr
           ATTACHED_FILES_HAVING_CONTENT => attached_files_having_content.keys,
           BOX_NUMBER_FACET        => desc_metadata_values('box_number'),
           CATEGORY_FACET          => desc_metadata_values('category'),
+          COLLECTION_TITLE        => collection_title,
           COMPANY_FACET           => desc_metadata_values('company'),
           CONTRIBUTOR_FACET       => contributor,
           CREATOR_FACET           => creator,
@@ -145,6 +146,14 @@ module Ddr
 
       def collection_facet
         associated_collection.internal_uri if associated_collection.present?
+      end
+
+      def collection_title
+        if instance_of?(Collection)
+          title_display
+        elsif associated_collection.present?
+          associated_collection.title_display
+        end
       end
 
       def date_sort
