@@ -2,6 +2,8 @@ module Ddr
   module Models
     class Base < ActiveFedora::Base
 
+      SAVE = "save.base.models.ddr"
+
       include Describable
       include Governable
       include AccessControllable
@@ -20,6 +22,8 @@ module Ddr
       after_destroy do
         notify_event :deletion
       end
+
+      around_save :notify_save
 
       def copy_admin_policy_or_permissions_from(other)
         Deprecation.warn(self.class, "`copy_admin_policy_or_permissions_from` is deprecated." \
@@ -104,6 +108,18 @@ module Ddr
 
       def publishable?
         raise NotImplementedError, "Must be implemented by subclasses"
+      end
+
+      private
+
+      def notify_save
+        ActiveSupport::Notifications.instrument(SAVE,
+                                                pid: pid,
+                                                model: self.class.to_s,
+                                                changes: changes,
+                                                created: new_record?) do |payload|
+          yield
+        end
       end
 
     end

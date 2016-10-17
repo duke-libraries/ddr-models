@@ -6,6 +6,32 @@ RSpec.shared_examples "a DDR model" do
   it_behaves_like "an object that has a display title"
   it_behaves_like "an object that has identifiers"
 
+  describe "notification on save" do
+    let(:events) { [] }
+    before {
+      @subscriber = ActiveSupport::Notifications.subscribe(Ddr::Models::Base::SAVE) do |name, start, finish, id, payload|
+        events << payload
+      end
+    }
+    after {
+      ActiveSupport::Notifications.unsubscribe(@subscriber)
+    }
+    it "happens when save succeeds" do
+      subject.title = [ "My Title Changed" ]
+      subject.save
+      subject.title = [ "My Title Changed Again" ]
+      subject.save
+      expect(events.first[:changes]).to eq({"title"=>[[], ["My Title Changed"]]})
+      expect(events.first[:created]).to be true
+      expect(events.first[:pid]).to eq(subject.pid)
+      expect(events.first[:model]).to eq(subject.class.name)
+      expect(events.last[:changes]).to eq({"title"=>[["My Title Changed"], ["My Title Changed Again"]]})
+      expect(events.last[:created]).to be false
+      expect(events.last[:pid]).to eq(subject.pid)
+      expect(events.last[:model]).to eq(subject.class.name)
+    end
+  end
+
   describe "events" do
     describe "on deletion with #destroy" do
       before { subject.save(validate: false) }
