@@ -9,7 +9,7 @@ RSpec.shared_examples "a DDR model" do
   describe "notification on save" do
     let(:events) { [] }
     before {
-      @subscriber = ActiveSupport::Notifications.subscribe(Ddr::Models::Base::SAVE) do |name, start, finish, id, payload|
+      @subscriber = ActiveSupport::Notifications.subscribe("save.#{described_class.to_s.underscore}") do |name, start, finish, id, payload|
         events << payload
       end
     }
@@ -24,11 +24,9 @@ RSpec.shared_examples "a DDR model" do
       expect(events.first[:changes]).to eq({"title"=>[[], ["My Title Changed"]]})
       expect(events.first[:created]).to be true
       expect(events.first[:pid]).to eq(subject.pid)
-      expect(events.first[:model]).to eq(subject.class.name)
       expect(events.last[:changes]).to eq({"title"=>[["My Title Changed"], ["My Title Changed Again"]]})
       expect(events.last[:created]).to be false
       expect(events.last[:pid]).to eq(subject.pid)
-      expect(events.last[:model]).to eq(subject.class.name)
     end
   end
 
