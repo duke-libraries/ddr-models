@@ -2,8 +2,6 @@ module Ddr
   module Models
     class Base < ActiveFedora::Base
 
-      SAVE = "save.base.models.ddr"
-
       include Describable
       include Governable
       include AccessControllable
@@ -113,9 +111,8 @@ module Ddr
       private
 
       def notify_save
-        ActiveSupport::Notifications.instrument(SAVE,
+        ActiveSupport::Notifications.instrument("save.#{self.class.to_s.underscore}",
                                                 pid: pid,
-                                                model: self.class.to_s,
                                                 changes: changes,
                                                 created: new_record?) do |payload|
           yield
