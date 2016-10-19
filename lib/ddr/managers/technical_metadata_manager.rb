@@ -9,6 +9,7 @@ module Ddr::Managers
              :media_type, :format_label, :format_version, :pronom_identifier,
              :created, :modified, :creating_application, :extent,
              :image_width, :image_height, :color_space,
+             :icc_profile_name, :icc_profile_version,
              to: :fits
 
     alias_method :last_modified, :modified
@@ -81,6 +82,8 @@ module Ddr::Managers
         Ddr::Index::Fields::TECHMD_FILE_SIZE         => file_size,
         Ddr::Index::Fields::TECHMD_FORMAT_LABEL      => format_label,
         Ddr::Index::Fields::TECHMD_FORMAT_VERSION    => format_version,
+        Ddr::Index::Fields::TECHMD_ICC_PROFILE_NAME  => icc_profile_name,
+        Ddr::Index::Fields::TECHMD_ICC_PROFILE_VERSION => icc_profile_version,
         Ddr::Index::Fields::TECHMD_IMAGE_HEIGHT      => image_height,
         Ddr::Index::Fields::TECHMD_IMAGE_WIDTH       => image_width,
         Ddr::Index::Fields::TECHMD_MEDIA_TYPE        => media_type,

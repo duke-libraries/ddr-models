@@ -12,6 +12,8 @@ module Ddr::Index
                                    Fields::TECHMD_FITS_DATETIME,
                                    Fields::TECHMD_FORMAT_LABEL,
                                    Fields::TECHMD_FORMAT_VERSION,
+                                   Fields::TECHMD_ICC_PROFILE_NAME,
+                                   Fields::TECHMD_ICC_PROFILE_VERSION,
                                    Fields::TECHMD_IMAGE_HEIGHT,
                                    Fields::TECHMD_IMAGE_WIDTH,
                                    Fields::TECHMD_MEDIA_TYPE,

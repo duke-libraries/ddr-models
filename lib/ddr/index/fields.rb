@@ -80,6 +80,8 @@ module Ddr::Index
     TECHMD_FITS_DATETIME        = Field.new :techmd_fits_datetime, :stored_sortable, type: :date
     TECHMD_FORMAT_LABEL         = Field.new :techmd_format_label, :symbol
     TECHMD_FORMAT_VERSION       = Field.new :techmd_format_version, :symbol
+    TECHMD_ICC_PROFILE_NAME     = Field.new :techmd_icc_profile_name, :symbol
+    TECHMD_ICC_PROFILE_VERSION  = Field.new :techmd_icc_profile_version, :symbol
     TECHMD_IMAGE_HEIGHT         = Field.new :techmd_image_height, :stored_searchable, type: :integer
     TECHMD_IMAGE_WIDTH          = Field.new :techmd_image_width, :stored_searchable, type: :integer
     TECHMD_MEDIA_TYPE           = Field.new :techmd_media_type, :symbol
