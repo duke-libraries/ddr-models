@@ -72,6 +72,8 @@ module Ddr::Managers
       its(:image_width) { is_expected.to eq(["500"]) }
       its(:image_height) { is_expected.to eq(["569"]) }
       its(:color_space) { is_expected.to eq(["YCbCr"]) }
+      its(:icc_profile_name) { is_expected.to eq(["c2"]) }
+      its(:icc_profile_version) { is_expected.to eq(["2.1.0"]) }
     end
 
     describe "valid? / invalid?" do

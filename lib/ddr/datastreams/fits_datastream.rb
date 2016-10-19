@@ -36,6 +36,8 @@ module Ddr::Datastreams
           t.imageWidth
           t.imageHeight
           t.colorSpace
+          t.iccProfileName
+          t.iccProfileVersion
         }
         t.document {
           # TODO - configure to get from Tika?
@@ -63,6 +65,8 @@ module Ddr::Datastreams
       t.image_width          proxy: [:metadata, :image, :imageWidth]
       t.image_height         proxy: [:metadata, :image, :imageHeight]
       t.color_space          proxy: [:metadata, :image, :colorSpace]
+      t.icc_profile_name     proxy: [:metadata, :image, :iccProfileName]
+      t.icc_profile_version  proxy: [:metadata, :image, :iccProfileVersion]
     end
 
     def self.xml_template
