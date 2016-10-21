@@ -4,7 +4,6 @@ module Ddr
 
       include Describable
       include Governable
-      include AccessControllable
       include HasThumbnail
       include EventLoggable
       include FixityCheckable
