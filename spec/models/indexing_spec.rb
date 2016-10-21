@@ -25,6 +25,7 @@ module Ddr::Models
         obj.roles.grant role1, role2, role3, role4
         obj.set_desc_metadata_values(:category, "Category Facet")
         obj.set_desc_metadata_values(:company, "Company Facet")
+        obj.set_desc_metadata_values(:folder, "Folder Facet")
         obj.set_desc_metadata_values(:medium, "Medium Facet")
         obj.set_desc_metadata_values(:placement_company, "Placement Company Facet")
         obj.set_desc_metadata_values(:product, "Product Facet")
@@ -39,6 +40,7 @@ module Ddr::Models
       its([Indexing::COMPANY_FACET]) { is_expected.to eq(["Company Facet"]) }
       its([Indexing::DISPLAY_FORMAT]) { is_expected.to eq("Image") }
       its([Indexing::DOI]) { is_expected.to eq(["http://doi.org/10.1000/182"]) }
+      its([Indexing::FOLDER_FACET]) { is_expected.to eq(["Folder Facet"]) }
       its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
       its([Indexing::LICENSE_DESCRIPTION]) { is_expected.to eq("License Description") }
       its([Indexing::LICENSE_TITLE]) { is_expected.to eq("License Title") }
