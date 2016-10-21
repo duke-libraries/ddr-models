@@ -34,7 +34,6 @@ module Ddr
   module Models
     extend ActiveSupport::Autoload
 
-    autoload :AccessControllable
     autoload :AdminSet
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
