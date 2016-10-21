@@ -4,6 +4,7 @@ module Ddr
 
     autoload :Event
     autoload :CreationEvent
+    autoload :DeaccessionEvent
     autoload :DeletionEvent
     autoload :FixityCheckEvent
     autoload :IngestionEvent
