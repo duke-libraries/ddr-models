@@ -86,6 +86,12 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "ead_id" }
       end
 
+      describe "FOLDER_FACET" do
+        subject { Fields::FOLDER_FACET }
+        its(:label) { is_expected.to eq "Folder Facet" }
+        its(:heading) { is_expected.to eq "folder_facet" }
+      end
+
       describe "LOCAL_ID" do
         subject { Fields::LOCAL_ID }
         its(:label) { is_expected.to eq "Local ID" }

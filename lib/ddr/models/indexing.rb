@@ -34,6 +34,7 @@ module Ddr
           DISPLAY_FORMAT          => display_format,
           DOI                     => adminMetadata.doi,
           EAD_ID                  => ead_id,
+          FOLDER_FACET            => desc_metadata_values('folder'),
           FORMAT_FACET            => format,
           IDENTIFIER_ALL          => all_identifiers,
           INTERNAL_URI            => internal_uri,
