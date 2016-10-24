@@ -68,5 +68,18 @@ module Ddr
         expect(subject.display_type).to eq "Deletion"
       end
     end
+
+    RSpec.describe DeaccessionEvent, type: :model, events: true do
+      it_behaves_like "an event"
+      it_behaves_like "a preservation-related event"
+      it "should have a display type" do
+        expect(subject.display_type).to eq "Deaccession"
+      end
+
+      describe "permanent id" do
+        subject { described_class.new(pid: "test:1", permanent_id: "ark:/99999/fk4zzz") }
+        its(:permanent_id) { is_expected.to eq("ark:/99999/fk4zzz") }
+      end
+    end
   end
 end

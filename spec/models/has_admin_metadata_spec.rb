@@ -73,6 +73,13 @@ module Ddr::Models
                    .to("unavailable | deleted")
           end
         end
+        describe "object deaccession" do
+          it "marks the identifier as unavailable" do
+            expect { subject.deaccession }
+              .to change(identifier, :status)
+                   .to("unavailable | deaccessioned")
+          end
+        end
       end
 
       describe "events" do
