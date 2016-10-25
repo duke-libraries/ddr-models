@@ -17,41 +17,52 @@ module Ddr
 
       def index_fields
         fields = {
-          ACCESS_ROLE           => roles.to_json,
-          ADMIN_SET             => admin_set,
-          ASPACE_ID             => aspace_id,
+          ACCESS_ROLE             => roles.to_json,
+          ADMIN_SET               => admin_set,
+          ADMIN_SET_TITLE         => admin_set_title,
+          ASPACE_ID               => aspace_id,
           ATTACHED_FILES_HAVING_CONTENT => attached_files_having_content.keys,
-          BOX_NUMBER_FACET      => desc_metadata_values('box_number'),
-          CONTRIBUTOR_FACET     => contributor,
-          CREATOR_FACET         => creator,
-          DATE_FACET            => date,
-          DATE_SORT             => date_sort,
-          DEPOSITOR             => depositor,
-          DISPLAY_FORMAT        => display_format,
-          DOI                   => adminMetadata.doi,
-          EAD_ID                => ead_id,
-          FORMAT_FACET          => format,
-          IDENTIFIER_ALL        => all_identifiers,
-          INTERNAL_URI          => internal_uri,
-          IS_LOCKED             => is_locked,
-          LICENSE               => license,
-          LICENSE_DESCRIPTION   => rightsMetadata.license.description.first,
-          LICENSE_TITLE         => rightsMetadata.license.title.first,
-          LICENSE_URL           => rightsMetadata.license.url.first,
-          LOCAL_ID              => local_id,
-          PERMANENT_ID          => permanent_id,
-          PERMANENT_URL         => permanent_url,
-          POLICY_ROLE           => roles.in_policy_scope.agents,
-          PUBLISHER_FACET       => publisher,
-          RESEARCH_HELP_CONTACT => research_help_contact,
-          RESOURCE_ROLE         => roles.in_resource_scope.agents,
-          SERIES_FACET          => desc_metadata_values('series'),
-          SPATIAL_FACET         => desc_metadata_values('spatial'),
-          SUBJECT_FACET         => subject,
-          TITLE                 => title_display,
-          TYPE_FACET            => type,
-          WORKFLOW_STATE        => workflow_state,
-          YEAR_FACET            => year_facet,
+          BOX_NUMBER_FACET        => desc_metadata_values('box_number'),
+          CATEGORY_FACET          => desc_metadata_values('category'),
+          COLLECTION_TITLE        => collection_title,
+          COMPANY_FACET           => desc_metadata_values('company'),
+          CONTRIBUTOR_FACET       => contributor,
+          CREATOR_FACET           => creator,
+          DATE_FACET              => date,
+          DATE_SORT               => date_sort,
+          DEPOSITOR               => depositor,
+          DISPLAY_FORMAT          => display_format,
+          DOI                     => adminMetadata.doi,
+          EAD_ID                  => ead_id,
+          FOLDER_FACET            => desc_metadata_values('folder'),
+          FORMAT_FACET            => format,
+          IDENTIFIER_ALL          => all_identifiers,
+          INTERNAL_URI            => internal_uri,
+          IS_LOCKED               => is_locked,
+          LICENSE                 => license,
+          LICENSE_DESCRIPTION     => rightsMetadata.license.description.first,
+          LICENSE_TITLE           => rightsMetadata.license.title.first,
+          LICENSE_URL             => rightsMetadata.license.url.first,
+          LOCAL_ID                => local_id,
+          MEDIUM_FACET            => desc_metadata_values('medium'),
+          PERMANENT_ID            => permanent_id,
+          PERMANENT_URL           => permanent_url,
+          PLACEMENT_COMPANY_FACET => desc_metadata_values('placement_company'),
+          POLICY_ROLE             => roles.in_policy_scope.agents,
+          PRODUCT_FACET           => desc_metadata_values('product'),
+          PUBLICATION_FACET       => desc_metadata_values('publication'),
+          PUBLISHER_FACET         => publisher,
+          RESEARCH_HELP_CONTACT   => research_help_contact,
+          RESOURCE_ROLE           => roles.in_resource_scope.agents,
+          SERIES_FACET            => desc_metadata_values('series'),
+          SETTING_FACET           => desc_metadata_values('setting'),
+          SPATIAL_FACET           => desc_metadata_values('spatial'),
+          SUBJECT_FACET           => subject,
+          TITLE                   => title_display,
+          TONE_FACET              => desc_metadata_values('tone'),
+          TYPE_FACET              => type,
+          WORKFLOW_STATE          => workflow_state,
+          YEAR_FACET              => year_facet,
         }
         if respond_to? :fixity_checks
           last_fixity_check = fixity_checks.last
@@ -110,6 +121,8 @@ module Ddr
       end
 
       def associated_collection
+        # XXX Can/should we use SolrDocument here?
+        # I.e., ::SolrDocument.find(admin_policy_id)
         admin_policy
       end
 
@@ -121,8 +134,27 @@ module Ddr
         end
       end
 
+      def admin_set_title
+        code = if admin_set.present?
+                 admin_set
+               elsif associated_collection.present?
+                 associated_collection.admin_set
+               end
+        if as = AdminSet.find_by_code(code)
+          as.title
+        end
+      end
+
       def collection_facet
         associated_collection.internal_uri if associated_collection.present?
+      end
+
+      def collection_title
+        if instance_of?(Collection)
+          title_display
+        elsif associated_collection.present?
+          associated_collection.title_display
+        end
       end
 
       def date_sort

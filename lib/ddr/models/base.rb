@@ -13,12 +13,23 @@ module Ddr
       include Hydra::Validations
       include HasAdminMetadata
 
+      # Prevent accidental use of #delete which lacks callbacks
+      private :delete
+
+      define_model_callbacks :deaccession, only: :around
+
       extend Deprecation
       # Deprecate Hydra permissions-related methods
       deprecation_deprecate *(Hydra::AccessControls::Permissions.public_instance_methods)
 
-      after_destroy do
-        notify_event :deletion
+      around_save :notify_save
+      around_deaccession :notify_deaccession
+      around_destroy :notify_destroy
+
+      def deaccession
+        run_callbacks :deaccession do
+          delete
+        end
       end
 
       def copy_admin_policy_or_permissions_from(other)
@@ -104,6 +115,33 @@ module Ddr
 
       def publishable?
         raise NotImplementedError, "Must be implemented by subclasses"
+      end
+
+      private
+
+      def notify_save
+        ActiveSupport::Notifications.instrument("save.#{self.class.to_s.underscore}",
+                                                pid: pid,
+                                                changes: changes,
+                                                created: new_record?) do |payload|
+          yield
+        end
+      end
+
+      def notify_deaccession
+        ActiveSupport::Notifications.instrument("deaccession.#{self.class.to_s.underscore}",
+                                                pid: pid,
+                                                permanent_id: permanent_id) do |payload|
+          yield
+        end
+      end
+
+      def notify_destroy
+        ActiveSupport::Notifications.instrument("destroy.#{self.class.to_s.underscore}",
+                                                pid: pid,
+                                                permanent_id: permanent_id) do |payload|
+          yield
+        end
       end
 
     end

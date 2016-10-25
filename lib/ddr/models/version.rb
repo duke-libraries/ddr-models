@@ -1,5 +1,5 @@
 module Ddr
   module Models
-    VERSION = "2.4.16"
+    VERSION = "2.5.0"
   end
 end

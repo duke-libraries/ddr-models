@@ -28,7 +28,6 @@ module Ddr::Models
       delegate :publish!, :unpublish!, :published?, to: :workflow
 
       after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
-      around_destroy :update_permanent_id_on_destroy, if: "permanent_id.present?"
     end
 
     def permanent_id_manager

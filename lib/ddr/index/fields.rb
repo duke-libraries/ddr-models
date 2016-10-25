@@ -8,13 +8,17 @@ module Ddr::Index
     ACTIVE_FEDORA_MODEL         = Field.new :active_fedora_model, :stored_sortable
     ADMIN_SET                   = Field.new :admin_set, :stored_sortable
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
+    ADMIN_SET_TITLE             = Field.new :admin_set_title, :stored_sortable
     ALL_TEXT                    = Field.new :all_text, solr_name: "all_text_timv"
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable
     ATTACHED_FILES_HAVING_CONTENT =
       Field.new :attached_files_having_content, :symbol
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
+    CATEGORY_FACET              = Field.new :category_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
+    COLLECTION_TITLE            = Field.new :collection_title, :stored_sortable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
+    COMPANY_FACET               = Field.new :company_facet, :facetable
     CONTENT_CONTROL_GROUP       = Field.new :content_control_group, :searchable, type: :string
     CONTENT_CREATE_DATE         = Field.new :content_create_date, :stored_sortable, type: :date
     CONTENT_SIZE                = Field.new :content_size, solr_name: "content_size_lsi"
@@ -28,6 +32,7 @@ module Ddr::Index
     DOI                         = Field.new :doi, :symbol
     EAD_ID                      = Field.new :ead_id, :stored_sortable
     EXTRACTED_TEXT              = Field.new :extracted_text, solr_name: "extracted_text_tsm"
+    FOLDER_FACET                = Field.new :folder_facet, :facetable
     FORMAT_FACET                = Field.new :format_facet, :facetable
     HAS_MODEL                   = Field.new :has_model, :symbol
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
@@ -48,6 +53,7 @@ module Ddr::Index
     MEDIA_SUB_TYPE              = Field.new :content_media_sub_type, :facetable
     MEDIA_MAJOR_TYPE            = Field.new :content_media_major_type, :facetable
     MEDIA_TYPE                  = Field.new :content_media_type, :symbol
+    MEDIUM_FACET                = Field.new :medium_facet, :facetable
     MULTIRES_IMAGE_FILE_PATH    = Field.new :multires_image_file_path, :stored_sortable
     OBJECT_PROFILE              = Field.new :object_profile, :displayable
     OBJECT_STATE                = Field.new :object_state, :stored_sortable
@@ -55,11 +61,15 @@ module Ddr::Index
     OBJECT_MODIFIED_DATE        = Field.new :system_modified, :stored_sortable, type: :date
     PERMANENT_ID                = Field.new :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = Field.new :permanent_url, :stored_sortable, type: :string
+    PLACEMENT_COMPANY_FACET     = Field.new :placement_company_facet, :facetable
     POLICY_ROLE                 = Field.new :policy_role, :symbol
+    PRODUCT_FACET               = Field.new :product_facet, :facetable
+    PUBLICATION_FACET           = Field.new :publication_facet, :facetable
     PUBLISHER_FACET             = Field.new :publisher_facet, :facetable
     RESEARCH_HELP_CONTACT       = Field.new :research_help_contact, :stored_sortable
     RESOURCE_ROLE               = Field.new :resource_role, :symbol
     SERIES_FACET                = Field.new :series_facet, :facetable
+    SETTING_FACET               = Field.new :setting_facet, :facetable
     SPATIAL_FACET               = Field.new :spatial_facet, :facetable
     STRUCT_MAPS                 = Field.new :struct_maps, :stored_sortable
     SUBJECT_FACET               = Field.new :subject_facet, :facetable
@@ -71,6 +81,8 @@ module Ddr::Index
     TECHMD_FITS_DATETIME        = Field.new :techmd_fits_datetime, :stored_sortable, type: :date
     TECHMD_FORMAT_LABEL         = Field.new :techmd_format_label, :symbol
     TECHMD_FORMAT_VERSION       = Field.new :techmd_format_version, :symbol
+    TECHMD_ICC_PROFILE_NAME     = Field.new :techmd_icc_profile_name, :symbol
+    TECHMD_ICC_PROFILE_VERSION  = Field.new :techmd_icc_profile_version, :symbol
     TECHMD_IMAGE_HEIGHT         = Field.new :techmd_image_height, :stored_searchable, type: :integer
     TECHMD_IMAGE_WIDTH          = Field.new :techmd_image_width, :stored_searchable, type: :integer
     TECHMD_MEDIA_TYPE           = Field.new :techmd_media_type, :symbol
@@ -79,6 +91,7 @@ module Ddr::Index
     TECHMD_VALID                = Field.new :techmd_valid, :symbol
     TECHMD_WELL_FORMED          = Field.new :techmd_well_formed, :symbol
     TITLE                       = Field.new :title, :stored_sortable
+    TONE_FACET                  = Field.new :tone_facet, :facetable
     TYPE_FACET                  = Field.new :type_facet, :facetable
     WORKFLOW_STATE              = Field.new :workflow_state, :stored_sortable
     YEAR_FACET                  = Field.new :year_facet, solr_name: "year_facet_iim"
@@ -105,8 +118,9 @@ module Ddr::Index
         return ID
       end
       if const = LegacyLicenseFields.const_get(name)
-        Deprecation.warn(Ddr::Index::Fields,
-                         "`Ddr::Index::Fields::#{name}` is deprecated and will be removed in ddr-models 3.0.")
+        # XXX Commented out b/c annoying, but maybe we want later ...
+        # Deprecation.warn(Ddr::Index::Fields,
+        #                  "`Ddr::Index::Fields::#{name}` is deprecated and will be removed in ddr-models 3.0.")
         return const
       end
       super
