@@ -101,13 +101,13 @@ module Ddr::Index
     end
 
     def self.techmd
-      @techmd ||= constants(false).select { |c| c =~ /\ATECHMD_/ }.map { |c| const_get(c) }
+      @techmd ||= constants(false).select { |c| c =~ /\ATECHMD_/ }.map { |c| const_get(c) }.freeze
     end
 
     def self.descmd
       @descmd ||= Ddr::Datastreams::DescriptiveMetadataDatastream.properties.map do |base, config|
         Field.new base, *(config.behaviors)
-      end
+      end.freeze
     end
 
     def self.const_missing(name)
