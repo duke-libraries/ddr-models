@@ -16,7 +16,10 @@ module Ddr
           object.save!
         end
         if include_descendants && object.respond_to?(:children)
-          object.children.each { |child| child.publish!(include_descendants: include_descendants) }
+          solr_results = object.children(response_format: :solr)
+          ActiveFedora::SolrService.lazy_reify_solr_results(solr_results).each do |child|
+            child.publish!(include_descendants: include_descendants)
+          end
         end
       end
 
