@@ -10,9 +10,4 @@ class Users::SessionsController < Devise::SessionsController
     end
   end
 
-  def after_sign_out_path_for(scope)
-    return Ddr::Auth.sso_logout_url if Ddr::Auth.require_shib_user_authn
-    super
-  end
-
 end
