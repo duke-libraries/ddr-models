@@ -91,10 +91,6 @@ module Ddr
       false
     end
 
-    mattr_accessor :sso_logout_url do
-      "/Shibboleth.sso/Logout?return=https://shib.oit.duke.edu/cgi-bin/logout.pl"
-    end
-
     # Grouper gateway implementation
     mattr_accessor :grouper_gateway do
       GrouperGateway
