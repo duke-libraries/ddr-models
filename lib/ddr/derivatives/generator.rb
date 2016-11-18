@@ -5,8 +5,6 @@ module Ddr
 
       attr_reader :source, :output, :options
 
-      GeneratorResult = Struct.new(:stdout, :stderr, :status)
-
       def initialize source, output, options=nil
         raise ArgumentError, "Source must be a File or path to a file" unless Ddr::Utils.file_or_path?(source)
         raise ArgumentError, "Output must be a File or path to a file" unless Ddr::Utils.file_or_path?(output)
