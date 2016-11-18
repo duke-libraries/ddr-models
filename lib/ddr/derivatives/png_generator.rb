@@ -1,5 +1,3 @@
-require 'open3'
-
 module Ddr
   module Derivatives
     class PngGenerator < Generator
@@ -10,8 +8,8 @@ module Ddr
 
       def generate
         command = "convert #{Ddr::Utils.file_path(source)}[0] #{options} png:#{Ddr::Utils.file_path(output)}"
-        out, err, s = Open3.capture3(command)
-        GeneratorResult.new(out, err, s)
+        `#{command}`
+        $?.exitstatus
       end
 
     end
