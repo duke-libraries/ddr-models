@@ -93,7 +93,7 @@ module Ddr
     mattr_accessor :auto_assign_permanent_ids
 
     mattr_accessor :permanent_id_target_url_base do
-      "https://repository.lib.duke.edu/id/"
+      "https://repository.duke.edu/id/"
     end
 
     # Home directory for FITS
