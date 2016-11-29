@@ -218,14 +218,15 @@ Devise.setup do |config|
   # Explicit require is needed here for devise to find strategy
   require "omniauth-shibboleth"
   config.omniauth :shibboleth, {
-    uid_field: "eppn",
+    uid_field: lambda { |rpm| rpm.call("eppn") || rpm.call("duDukeID") },
     name_field: "displayName",
     info_fields: {
       email: "mail",
       first_name: "givenName",
       last_name: "sn",
       nickname: "eduPersonNickname"
-    }
+    },
+    extra_fields: ["duDukeID"],
   }
 
   # ==> Warden configuration
