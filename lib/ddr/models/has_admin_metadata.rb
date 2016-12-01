@@ -22,6 +22,7 @@ module Ddr::Models
                      :ead_id,
                      :aspace_id,
                      :is_locked,
+                     :doi,
                      datastream: "adminMetadata",
                      multiple: false
 
