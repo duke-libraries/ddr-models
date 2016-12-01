@@ -56,6 +56,12 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "admin_set" }
       end
 
+      describe "ARRANGER_FACET" do
+        subject { Fields::ARRANGER_FACET }
+        its(:label) { is_expected.to eq "Arranger Facet" }
+        its(:heading) { is_expected.to eq "arranger_facet" }
+      end
+
       describe "ASPACE_ID" do
         subject { Fields::ASPACE_ID }
         its(:label) { is_expected.to eq "ArchivesSpace ID" }
@@ -74,6 +80,12 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "company_facet" }
       end
 
+      describe "COMPOSER_FACET" do
+        subject { Fields::COMPOSER_FACET }
+        its(:label) { is_expected.to eq "Composer Facet" }
+        its(:heading) { is_expected.to eq "composer_facet" }
+      end
+
       describe "DOI" do
         subject { Fields::DOI }
         its(:label) { is_expected.to eq "DOI" }
@@ -86,16 +98,64 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "ead_id" }
       end
 
+      describe "ENGRAVER FACET" do
+        subject { Fields::ENGRAVER_FACET }
+        its(:label) { is_expected.to eq "Engraver Facet" }
+        its(:heading) { is_expected.to eq "engraver_facet" }
+      end
+
       describe "FOLDER_FACET" do
         subject { Fields::FOLDER_FACET }
         its(:label) { is_expected.to eq "Folder Facet" }
         its(:heading) { is_expected.to eq "folder_facet" }
       end
 
+      describe "GENRE_FACET" do
+        subject { Fields::GENRE_FACET }
+        its(:label) { is_expected.to eq "Genre Facet" }
+        its(:heading) { is_expected.to eq "genre_facet" }
+      end
+
       describe "LOCAL_ID" do
         subject { Fields::LOCAL_ID }
         its(:label) { is_expected.to eq "Local ID" }
         its(:heading) { is_expected.to eq "local_id" }
+      end
+
+      describe "ILLUSTRATED_FACET" do
+        subject { Fields::ILLUSTRATED_FACET }
+        its(:label) { is_expected.to eq "Illustrated Facet" }
+        its(:heading) { is_expected.to eq "illustrated_facet" }
+      end
+
+      describe "ILLUSTRATOR_FACET" do
+        subject { Fields::ILLUSTRATOR_FACET }
+        its(:label) { is_expected.to eq "Illustrator Facet" }
+        its(:heading) { is_expected.to eq "illustrator_facet" }
+      end
+
+      describe "INSTRUMENTATION_FACET" do
+        subject { Fields::INSTRUMENTATION_FACET }
+        its(:label) { is_expected.to eq "Instrumentation Facet" }
+        its(:heading) { is_expected.to eq "instrumentation_facet" }
+      end
+
+      describe "INTERVIEWER_NAME_FACET" do
+        subject { Fields::INTERVIEWER_NAME_FACET }
+        its(:label) { is_expected.to eq "Interviewer Name Facet" }
+        its(:heading) { is_expected.to eq "interviewer_name_facet" }
+      end
+
+      describe "LITHOGRAPHER_FACET" do
+        subject { Fields::LITHOGRAPHER_FACET }
+        its(:label) { is_expected.to eq "Lithographer Facet" }
+        its(:heading) { is_expected.to eq "lithographer_facet" }
+      end
+
+      describe "LYRICIST_FACET" do
+        subject { Fields::LYRICIST_FACET }
+        its(:label) { is_expected.to eq "Lyricist Facet" }
+        its(:heading) { is_expected.to eq "lyricist_facet" }
       end
 
       describe "MEDIUM_FACET" do
@@ -116,6 +176,12 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "modification_date" }
       end
 
+      describe "PERFORMER_FACET" do
+        subject { Fields::PERFORMER_FACET }
+        its(:label) { is_expected.to eq "Performer Facet" }
+        its(:heading) { is_expected.to eq "performer_facet" }
+      end
+
       describe "PERMANENT_ID" do
         subject { Fields::PERMANENT_ID }
         its(:label) { is_expected.to eq "Permanent ID" }
@@ -134,6 +200,12 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "placement_company_facet" }
       end
 
+      describe "PRODUCER_FACET" do
+        subject { Fields::PRODUCER_FACET }
+        its(:label) { is_expected.to eq "Producer Facet" }
+        its(:heading) { is_expected.to eq "producer_facet" }
+      end
+
       describe "PRODUCT_FACET" do
         subject { Fields::PRODUCT_FACET }
         its(:label) { is_expected.to eq "Product Facet" }
@@ -146,10 +218,22 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "publication_facet" }
       end
 
+      describe "ROLL_NUMBER_FACET" do
+        subject { Fields::ROLL_NUMBER_FACET }
+        its(:label) { is_expected.to eq "Roll Number Facet" }
+        its(:heading) { is_expected.to eq "roll_number_facet" }
+      end
+
       describe "SETTING_FACET" do
         subject { Fields::SETTING_FACET }
         its(:label) { is_expected.to eq "Setting Facet" }
         its(:heading) { is_expected.to eq "setting_facet" }
+      end
+
+      describe "SUBSERIES_FACET" do
+        subject { Fields::SUBSERIES_FACET }
+        its(:label) { is_expected.to eq "Subseries Facet" }
+        its(:heading) { is_expected.to eq "subseries_facet" }
       end
 
       describe "TECHMD_COLOR_SPACE" do
@@ -242,10 +326,22 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "well_formed" }
       end
 
+      describe "TEMPORAL_FACET" do
+        subject { Fields::TEMPORAL_FACET }
+        its(:label) { is_expected.to eq "Temporal Facet" }
+        its(:heading) { is_expected.to eq "temporal_facet" }
+      end
+
       describe "TONE_FACET" do
         subject { Fields::TONE_FACET }
         its(:label) { is_expected.to eq "Tone Facet" }
         its(:heading) { is_expected.to eq "tone_facet" }
+      end
+
+      describe "VOLUME_FACET" do
+        subject { Fields::VOLUME_FACET }
+        its(:label) { is_expected.to eq "Volume Facet" }
+        its(:heading) { is_expected.to eq "volume_facet" }
       end
     end
 
