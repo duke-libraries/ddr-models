@@ -10,7 +10,7 @@ module Ddr
     #
     class PermanentIdManager
 
-      PERMANENT_URL_BASE = "http://id.library.duke.edu/"
+      PERMANENT_URL_BASE = "https://idn.duke.edu/"
       ASSIGN_EVENT_SUMMARY = "Permanent ID assignment"
       SOFTWARE = Ezid::Client.version
       FCREPO3_PID = "fcrepo3.pid"
