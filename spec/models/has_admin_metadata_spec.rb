@@ -233,13 +233,32 @@ module Ddr::Models
       describe "#locked?" do
         context "object is locked" do
           before { subject.is_locked = true }
-          it "should be true" do
-            expect(subject.locked?).to be true
+          context "repository is locked" do
+            before { Ddr::Models.repository_locked = true }
+            after { Ddr::Models.repository_locked = false }
+            it "should be true" do
+              expect(subject.locked?).to be true
+            end
+          end
+          context "repository is not locked" do
+            it "should be true" do
+              expect(subject.locked?).to be true
+            end
           end
         end
         context "object is not locked" do
-          it "should be false" do
-            expect(subject.locked?).to be false
+          before { subject.is_locked = false }
+          context "repository is locked" do
+            before { Ddr::Models.repository_locked = true }
+            after { Ddr::Models.repository_locked = false }
+            it "should be true" do
+              expect(subject.locked?).to be true
+            end
+          end
+          context "repository is not locked" do
+            it "should be false" do
+              expect(subject.locked?).to be false
+            end
           end
         end
       end
