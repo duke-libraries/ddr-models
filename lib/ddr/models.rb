@@ -116,6 +116,12 @@ module Ddr
       Dir.tmpdir
     end
 
+    # Is repository locked?  Default is false.
+    # A locked repository behaves as though each object in the repository is locked.
+    mattr_accessor :repository_locked do
+      false
+    end
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self

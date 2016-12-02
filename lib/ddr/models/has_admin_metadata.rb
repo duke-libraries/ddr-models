@@ -84,7 +84,7 @@ module Ddr::Models
     end
 
     def locked?
-      !!is_locked
+      !!is_locked || Ddr::Models.repository_locked
     end
 
     def lock
