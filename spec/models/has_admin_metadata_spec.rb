@@ -122,17 +122,34 @@ module Ddr::Models
       end
 
       describe "#published?" do
+        subject { collection }
         context "object is published" do
-          before { allow(collection).to receive(:workflow_state) { Ddr::Managers::WorkflowManager::PUBLISHED } }
-          it "should return true" do
-            expect(collection).to be_published
-          end
+          before { subject.workflow_state = Ddr::Managers::WorkflowManager::PUBLISHED }
+          it { is_expected.to be_published }
         end
-        context "object is not published" do
-          before { allow(collection).to receive(:workflow_state) { nil } }
-          it "should return false" do
-            expect(collection).not_to be_published
-          end
+        context "object workflow is not set" do
+          before { subject.workflow_state = nil }
+          it { is_expected.not_to be_published }
+        end
+        context "object is unpublished" do
+          before { subject.workflow_state = Ddr::Managers::WorkflowManager::UNPUBLISHED }
+          it { is_expected.not_to be_published }
+        end
+      end
+
+      describe "#unpublished?" do
+        subject { collection }
+        context "object is published" do
+          before { subject.workflow_state = Ddr::Managers::WorkflowManager::PUBLISHED }
+          it { is_expected.not_to be_unpublished }
+        end
+        context "object is unpublished" do
+          before { subject.workflow_state = Ddr::Managers::WorkflowManager::UNPUBLISHED }
+          it { is_expected.to be_unpublished }
+        end
+        context "object workflow is not set" do
+          before { subject.workflow_state = nil }
+          it { is_expected.not_to be_unpublished }
         end
       end
 

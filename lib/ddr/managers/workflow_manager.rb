@@ -9,6 +9,9 @@ module Ddr
         object.workflow_state == PUBLISHED
       end
 
+      def unpublished?
+        object.workflow_state == UNPUBLISHED
+      end
 
       def publish!(include_descendants: true)
         unless published?

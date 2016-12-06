@@ -26,7 +26,8 @@ module Ddr::Models
                      datastream: "adminMetadata",
                      multiple: false
 
-      delegate :publish!, :unpublish!, :published?, to: :workflow
+      delegate :publish!, :unpublish!, :published?, :unpublished?,
+               to: :workflow
 
       after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
     end
