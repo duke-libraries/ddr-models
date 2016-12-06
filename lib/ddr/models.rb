@@ -1,11 +1,6 @@
 require 'ddr/models/engine'
 require 'ddr/models/version'
-
-# Awful hack to make Hydra::AccessControls::Permissions accessible
-$: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/concerns"
-
 require 'active_record'
-
 require 'hydra-core'
 require 'hydra/validations'
 
@@ -39,7 +34,6 @@ module Ddr
   module Models
     extend ActiveSupport::Autoload
 
-    autoload :AccessControllable
     autoload :AdminSet
     autoload :Base
     autoload :ChecksumInvalid, 'ddr/models/error'
