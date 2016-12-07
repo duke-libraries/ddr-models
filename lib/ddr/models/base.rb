@@ -23,6 +23,7 @@ module Ddr
       deprecation_deprecate *(Hydra::AccessControls::Permissions.public_instance_methods)
 
       around_save :notify_save
+      after_create :notify_create
       around_deaccession :notify_deaccession
       around_destroy :notify_destroy
 
@@ -126,6 +127,11 @@ module Ddr
                                                 created: new_record?) do |payload|
           yield
         end
+      end
+
+      def notify_create
+        ActiveSupport::Notifications.instrument("create.#{self.class.to_s.underscore}",
+                                                pid: pid)
       end
 
       def notify_deaccession
