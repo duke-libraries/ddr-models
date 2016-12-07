@@ -30,6 +30,26 @@ RSpec.shared_examples "a DDR model" do
     end
   end
 
+  describe "notification on create" do
+    let(:events) { [] }
+    before {
+      @subscriber = ActiveSupport::Notifications.subscribe("create.#{described_class.to_s.underscore}") do |name, start, finish, id, payload|
+        events << payload
+      end
+    }
+    after {
+      ActiveSupport::Notifications.unsubscribe(@subscriber)
+    }
+    it "happens after create" do
+      subject.title = [ "My Title Changed" ]
+      subject.save
+      subject.title = [ "My Title Changed Again" ]
+      subject.save
+      expect(events.size).to eq(1)
+      expect(events.first[:pid]).to eq(subject.pid)
+    end
+  end
+
   describe "events" do
     before {
       subject.permanent_id = "ark:/99999/fk4zzz"

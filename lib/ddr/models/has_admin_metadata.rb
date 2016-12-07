@@ -28,8 +28,6 @@ module Ddr::Models
 
       delegate :publish!, :unpublish!, :published?, :unpublished?,
                to: :workflow
-
-      after_create :assign_permanent_id!, if: "Ddr::Models.auto_assign_permanent_ids"
     end
 
     def permanent_id_manager
@@ -49,6 +47,9 @@ module Ddr::Models
     end
 
     def assign_permanent_id!
+      Deprecation.warn(self.class, "`assign_permanent_id!` is deprecated and will be removed from ddr-models 3.0." \
+                                   " Use `PermanentId.assign!(obj)` in dul-hydra instead" \
+                                   " (called from #{caller.first}).")
       permanent_id_manager.assign_later
     end
 
