@@ -7,6 +7,7 @@ class Collection < Ddr::Models::Base
 
   include Ddr::Models::HasChildren
   include Ddr::Models::HasAttachments
+  include Ddr::Models::HasStructMetadata
 
   has_many :children, property: :is_member_of_collection, class_name: 'Item'
   has_many :targets, property: :is_external_target_for, class_name: 'Target'

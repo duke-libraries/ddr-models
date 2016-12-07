@@ -3,16 +3,6 @@ module Ddr
     module HasContent
       extend ActiveSupport::Concern
 
-      MASTER_FILE_TYPES = [ "image/tiff" ]
-
-      def master_file?
-        if respond_to?(:file_use) && file_use.present?
-          file_use == Ddr::Models::HasStructMetadata::FILE_USE_MASTER
-        else
-          MASTER_FILE_TYPES.include?(content_type)
-        end
-      end
-
       included do
         has_file_datastream \
           name: Ddr::Datastreams::CONTENT,

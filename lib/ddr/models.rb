@@ -65,7 +65,6 @@ module Ddr
     autoload :NotFoundError, 'ddr/models/error'
     autoload :PermanentId
     autoload :SolrDocument
-    autoload :StructDiv
     autoload :Structure
     autoload :WithContentFile
     autoload :YearFacet
@@ -76,6 +75,20 @@ module Ddr
       autoload :License
       autoload :InheritedLicense
       autoload :ParentLicense
+    end
+
+    module Structures
+      extend ActiveSupport::Autoload
+
+      autoload :Agent
+      autoload :Div
+      autoload :File
+      autoload :FileGrp
+      autoload :FileSec
+      autoload :FLocat
+      autoload :Fptr
+      autoload :MetsHdr
+      autoload :StructMap
     end
 
     # Base directory of default external file store
