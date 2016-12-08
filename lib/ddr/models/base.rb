@@ -23,6 +23,7 @@ module Ddr
       deprecation_deprecate *(Hydra::AccessControls::Permissions.public_instance_methods)
 
       around_save :notify_save
+      around_save :notify_workflow_change, if: [:workflow_state_changed?, :persisted?]
       after_create :notify_create
       around_deaccession :notify_deaccession
       around_destroy :notify_destroy
@@ -125,6 +126,12 @@ module Ddr
                                                 pid: pid,
                                                 changes: changes,
                                                 created: new_record?) do |payload|
+          yield
+        end
+      end
+
+      def notify_workflow_change
+        ActiveSupport::Notifications.instrument("#{workflow_state}.#{self.class.to_s.underscore}", pid: pid) do |payload|
           yield
         end
       end
