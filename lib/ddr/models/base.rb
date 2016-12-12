@@ -131,7 +131,7 @@ module Ddr
       end
 
       def notify_workflow_change
-        ActiveSupport::Notifications.instrument("#{workflow_state}.#{self.class.to_s.underscore}", pid: pid) do |payload|
+        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}", pid: pid) do |payload|
           yield
         end
       end

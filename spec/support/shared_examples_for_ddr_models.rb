@@ -53,7 +53,7 @@ RSpec.shared_examples "a DDR model" do
   describe "notification on workflow state change" do
     let(:events) { [] }
     before {
-      @subscriber = ActiveSupport::Notifications.subscribe(/(un)?published\.#{described_class.to_s.underscore}/) do |*args|
+      @subscriber = ActiveSupport::Notifications.subscribe(/workflow\.#{described_class.to_s.underscore}/) do |*args|
         events << ActiveSupport::Notifications::Event.new(*args)
       end
     }
@@ -73,13 +73,13 @@ RSpec.shared_examples "a DDR model" do
         subject.workflow_state = "published"
         subject.save(validate: false)
         expect(events.size).to eq(1)
-        expect(events.first.name).to eq("published.#{described_class.to_s.underscore}")
+        expect(events.first.name).to eq("published.workflow.#{described_class.to_s.underscore}")
       end
       it "happens on unpublish!" do
         subject.workflow_state = "unpublished"
         subject.save(validate: false)
         expect(events.size).to eq(1)
-        expect(events.first.name).to eq("unpublished.#{described_class.to_s.underscore}")
+        expect(events.first.name).to eq("unpublished.workflow.#{described_class.to_s.underscore}")
       end
     end
   end
