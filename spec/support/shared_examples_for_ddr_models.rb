@@ -86,9 +86,7 @@ RSpec.shared_examples "a DDR model" do
 
   describe "events" do
     before {
-      subject.permanent_id = "ark:/99999/fk4zzz"
       subject.save(validate: false)
-      allow(Ddr::Jobs::PermanentId::MakeUnavailable).to receive(:perform) { nil }
     }
     describe "deaccession" do
       it "creates a deaccession event" do
