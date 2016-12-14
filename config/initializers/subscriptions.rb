@@ -17,8 +17,6 @@ ActiveSupport::Notifications.subscribe(Ddr::Notifications::UPDATE, Ddr::Events::
 # Deletion
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::DELETION, Ddr::Events::DeletionEvent)
 ActiveSupport::Notifications.subscribe(/destroy\.\w+/, Ddr::Events::DeletionEvent)
-ActiveSupport::Notifications.subscribe(/destroy\.\w+/, Ddr::Jobs::PermanentId::MakeUnavailable)
 
 # Deaccession
 ActiveSupport::Notifications.subscribe(/deaccession\.\w+/, Ddr::Events::DeaccessionEvent)
-ActiveSupport::Notifications.subscribe(/deaccession\.\w+/, Ddr::Jobs::PermanentId::MakeUnavailable)

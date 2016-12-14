@@ -30,10 +30,6 @@ module Ddr::Models
                to: :workflow
     end
 
-    def permanent_id_manager
-      @permanent_id_manager ||= Ddr::Managers::PermanentIdManager.new(self)
-    end
-
     def roles
       Ddr::Auth::Roles::PropertyRoleSet.new(adminMetadata.access_role)
     end
@@ -44,13 +40,6 @@ module Ddr::Models
 
     def workflow
       @workflow ||= Ddr::Managers::WorkflowManager.new(self)
-    end
-
-    def assign_permanent_id!
-      Deprecation.warn(self.class, "`assign_permanent_id!` is deprecated and will be removed from ddr-models 3.0." \
-                                   " Use `PermanentId.assign!(obj)` in dul-hydra instead" \
-                                   " (called from #{caller.first}).")
-      permanent_id_manager.assign_later
     end
 
     def grant_roles_to_creator(creator)
@@ -105,14 +94,6 @@ module Ddr::Models
     def unlock!
       unlock
       save
-    end
-
-    private
-
-    def update_permanent_id_on_destroy
-      @permanent_id = permanent_id
-      yield
-      Resque.enqueue(Ddr::Jobs::PermanentId::MakeUnavailable, @permanent_id, "deleted")
     end
 
   end

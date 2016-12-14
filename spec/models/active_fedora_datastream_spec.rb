@@ -55,13 +55,13 @@ module ActiveFedora
         context "the datstream is new" do
           before { allow(subject).to receive(:new?) { true } }
           it "should raise an exception" do
-            expect { subject.validate_checksum!(checksum, checksum_type) }.to raise_error
+            expect { subject.validate_checksum!(checksum, checksum_type) }.to raise_error(Ddr::Models::Error)
           end
         end
         context "the datastream content has changed" do
           before { allow(subject).to receive(:content_changed?) { true } }
           it "should raise an exception" do
-            expect { subject.validate_checksum!(checksum, checksum_type) }.to raise_error
+            expect { subject.validate_checksum!(checksum, checksum_type) }.to raise_error(Ddr::Models::Error)
           end
         end
       end
@@ -76,14 +76,15 @@ module ActiveFedora
         context "and the repository internal checksum in invalid" do
           before { allow(subject).to receive(:dsChecksumValid) { false } }
           it "should raise an error" do
-            expect { subject.validate_checksum!(checksum, checksum_type) }.to raise_error
+            expect { subject.validate_checksum!(checksum, checksum_type) }.to raise_error(Ddr::Models::ChecksumInvalid)
           end
         end
         context "and the repository internal checksum is valid" do
           before { allow(subject).to receive(:dsChecksumValid) { true } }
           context "and the checksum type is invalid" do
+            before { allow(subject).to receive(:content) { "foo" } }
             it "should raise an exception" do
-              expect { subject.validate_checksum!("0123456789abcdef", "FOO-BAR") }.to raise_error
+              expect { subject.validate_checksum!("0123456789abcdef", "FOO-BAR") }.to raise_error(ArgumentError)
             end
           end
           context "and the checksum type is nil" do
@@ -106,7 +107,7 @@ module ActiveFedora
           end
           context "and the checksum doesn't match" do
             it "should raise an exception" do
-              expect { subject.validate_checksum!("0123456789abcdef", checksum_type) }.to raise_error
+              expect { subject.validate_checksum!("0123456789abcdef", checksum_type) }.to raise_error(Ddr::Models::ChecksumInvalid)
             end
           end
         end
