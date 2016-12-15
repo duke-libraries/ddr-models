@@ -2,6 +2,33 @@ require 'spec_helper'
 
 RSpec.describe SolrDocument, type: :model, contacts: true do
 
+  describe "class methods" do
+    describe ".find" do
+      describe "when it exists" do
+        before { Item.create(pid: "test:1") }
+        subject { described_class.find("test:1") }
+        its(:id) { is_expected.to eq("test:1") }
+      end
+      describe "when not found" do
+        it "raises an error" do
+          expect { described_class.find("foo") }.to raise_error(SolrDocument::NotFound)
+        end
+      end
+    end
+    describe ".find_by_permanent_id" do
+      describe "when it exists" do
+        before { Item.create(pid: "test:1", permanent_id: "foo") }
+        subject { described_class.find_by_permanent_id("foo") }
+        its(:id) { is_expected.to eq("test:1") }
+      end
+      describe "when not found" do
+        it "raises an error" do
+          expect { described_class.find_by_permanent_id("foo") }.to raise_error(SolrDocument::NotFound)
+        end
+      end
+    end
+  end
+
   describe "index field method access" do
     describe "when there is an index field" do
       before { Ddr::Index::Fields.const_set(:FOO_BAR, "foo_bar_ssim") }
@@ -195,4 +222,5 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
       end
     end
   end
+
 end
