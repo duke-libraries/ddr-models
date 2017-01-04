@@ -6,6 +6,36 @@ RSpec.shared_examples "a DDR model" do
   it_behaves_like "an object that has a display title"
   it_behaves_like "an object that has identifiers"
 
+  describe "permanent ID assignment" do
+    describe "when auto assignment is enabled" do
+      before do
+        allow(Ddr::Models).to receive(:auto_assign_permanent_id) { true }
+      end
+      describe "and a permanent ID is pre-assigned" do
+        before do
+          subject.permanent_id = "foo"
+        end
+        it "does not assign a permanent ID" do
+          expect { subject.save(validate: false) }.not_to change(subject, :permanent_id)
+        end
+      end
+      describe "and no permanent ID has been pre-assigned" do
+        before do
+          expect(Ddr::Models::PermanentId).to receive(:assign!).with(subject) { nil }
+          subject.save(validate: false)
+        end
+      end
+    end
+    describe "when auto assignment is disabled" do
+      before do
+        allow(Ddr::Models).to receive(:auto_assign_permanent_id) { false }
+      end
+      it "does not assign a permanent ID" do
+        expect { subject.save(validate: false) }.not_to change(subject, :permanent_id)
+      end
+    end
+  end
+
   describe "notification on save" do
     let(:events) { [] }
     before {
@@ -27,26 +57,6 @@ RSpec.shared_examples "a DDR model" do
       expect(events.last[:changes]).to eq({"title"=>[["My Title Changed"], ["My Title Changed Again"]]})
       expect(events.last[:created]).to be false
       expect(events.last[:pid]).to eq(subject.pid)
-    end
-  end
-
-  describe "notification on create" do
-    let(:events) { [] }
-    before {
-      @subscriber = ActiveSupport::Notifications.subscribe("create.#{described_class.to_s.underscore}") do |name, start, finish, id, payload|
-        events << payload
-      end
-    }
-    after {
-      ActiveSupport::Notifications.unsubscribe(@subscriber)
-    }
-    it "happens after create" do
-      subject.title = [ "My Title Changed" ]
-      subject.save
-      subject.title = [ "My Title Changed Again" ]
-      subject.save
-      expect(events.size).to eq(1)
-      expect(events.first[:pid]).to eq(subject.pid)
     end
   end
 
