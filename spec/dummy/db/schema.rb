@@ -13,21 +13,21 @@
 
 ActiveRecord::Schema.define(version: 20161021201011) do
 
-  create_table "events", force: true do |t|
+  create_table "events", force: :cascade do |t|
     t.datetime "event_date_time"
     t.integer  "user_id"
-    t.string   "type"
-    t.string   "pid"
-    t.string   "software"
+    t.string   "type",            limit: 255
+    t.string   "pid",             limit: 255
+    t.string   "software",        limit: 255
     t.text     "comment"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "summary"
-    t.string   "outcome"
+    t.string   "summary",         limit: 255
+    t.string   "outcome",         limit: 255
     t.text     "detail"
     t.text     "exception",       limit: 65535
-    t.string   "user_key"
-    t.string   "permanent_id"
+    t.string   "user_key",        limit: 255
+    t.string   "permanent_id",    limit: 255
   end
 
   add_index "events", ["event_date_time"], name: "index_events_on_event_date_time"
@@ -36,25 +36,25 @@ ActiveRecord::Schema.define(version: 20161021201011) do
   add_index "events", ["pid"], name: "index_events_on_pid"
   add_index "events", ["type"], name: "index_events_on_type"
 
-  create_table "users", force: true do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
-    t.string   "reset_password_token"
+  create_table "users", force: :cascade do |t|
+    t.string   "email",                  limit: 255, default: "", null: false
+    t.string   "encrypted_password",     limit: 255, default: "", null: false
+    t.string   "reset_password_token",   limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0
+    t.integer  "sign_in_count",                      default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.string   "username",               default: "", null: false
-    t.string   "first_name"
-    t.string   "middle_name"
-    t.string   "nickname"
-    t.string   "last_name"
-    t.string   "display_name"
+    t.string   "current_sign_in_ip",     limit: 255
+    t.string   "last_sign_in_ip",        limit: 255
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+    t.string   "username",               limit: 255, default: "", null: false
+    t.string   "first_name",             limit: 255
+    t.string   "middle_name",            limit: 255
+    t.string   "nickname",               limit: 255
+    t.string   "last_name",              limit: 255
+    t.string   "display_name",           limit: 255
   end
 
   add_index "users", ["email"], name: "index_users_on_email"
