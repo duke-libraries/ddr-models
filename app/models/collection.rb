@@ -14,7 +14,7 @@ class Collection < Ddr::Models::Base
   alias_method :items, :children
   alias_method :item_ids, :child_ids
 
-  after_create :set_admin_policy
+  after_create :set_admin_policy, unless: :admin_policy
 
   validates_presence_of :title
 
@@ -56,8 +56,9 @@ class Collection < Ddr::Models::Base
   private
 
   def set_admin_policy
+    reload
     self.admin_policy = self
-    self.save
+    save!
   end
 
 end

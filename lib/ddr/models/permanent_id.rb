@@ -244,7 +244,7 @@ EZID Metadata:
       repo_object.reload
       repo_object.permanent_id = identifier.id
       repo_object.permanent_url = PERMANENT_URL_BASE + identifier.id
-      repo_object.save(validate: false)
+      repo_object.save!
       set_metadata!
     end
 
