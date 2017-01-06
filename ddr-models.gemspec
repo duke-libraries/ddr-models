@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   s.test_files  = s.files.grep(%r{^spec/})
 
   s.require_paths = ["lib", "app/models"]
-  s.required_ruby_version = '>= 2.2.2' # Rails 4.1+, 5.0
 
   s.add_dependency "rails", ">= 4.2.7", "< 5" # Hydra 7.x not compatible/tested with Rails 5
   s.add_dependency "activeresource"
