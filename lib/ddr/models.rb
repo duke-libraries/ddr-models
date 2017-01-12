@@ -62,6 +62,7 @@ module Ddr
     autoload :HasThumbnail
     autoload :Indexing
     autoload :NotFoundError, 'ddr/models/error'
+    autoload :PermanentId
     autoload :SolrDocument
     autoload :StructDiv
     autoload :Structure
@@ -115,6 +116,14 @@ module Ddr
     # Is repository locked?  Default is false.
     # A locked repository behaves as though each object in the repository is locked.
     mattr_accessor :repository_locked do
+      false
+    end
+
+    mattr_accessor :auto_assign_permanent_id do
+      false
+    end
+
+    mattr_accessor :auto_update_permanent_id do
       false
     end
 

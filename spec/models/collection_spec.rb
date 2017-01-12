@@ -2,6 +2,8 @@ require 'spec_helper'
 
 RSpec.describe Collection, type: :model do
 
+  subject { described_class.new(title: ["Test Collection"]) }
+
   it_behaves_like "a DDR model"
   it_behaves_like "it has an association", :has_many, :children, :is_member_of_collection, "Item"
   it_behaves_like "it has an association", :has_many, :targets, :is_external_target_for, "Target"
@@ -54,6 +56,9 @@ RSpec.describe Collection, type: :model do
   end
 
   describe "validation" do
+    before do
+      subject.title = nil
+    end
     it "requires a title" do
       expect(subject).to_not be_valid
       expect(subject.errors.messages).to have_key(:title)
