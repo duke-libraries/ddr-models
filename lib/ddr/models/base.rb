@@ -23,6 +23,8 @@ module Ddr
       deprecation_deprecate *(Hydra::AccessControls::Permissions.public_instance_methods)
 
       around_save :notify_save
+      around_save :notify_workflow_change, if: [:workflow_state_changed?, :persisted?]
+      after_create :assign_permanent_id, if: :assign_permanent_id?
       around_deaccession :notify_deaccession
       around_destroy :notify_destroy
 
@@ -128,6 +130,12 @@ module Ddr
         end
       end
 
+      def notify_workflow_change
+        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}", pid: pid) do |payload|
+          yield
+        end
+      end
+
       def notify_deaccession
         ActiveSupport::Notifications.instrument("deaccession.#{self.class.to_s.underscore}",
                                                 pid: pid,
@@ -142,6 +150,14 @@ module Ddr
                                                 permanent_id: permanent_id) do |payload|
           yield
         end
+      end
+
+      def assign_permanent_id?
+        permanent_id.nil? && Ddr::Models.auto_assign_permanent_id
+      end
+
+      def assign_permanent_id
+        PermanentId.assign!(self)
       end
 
     end

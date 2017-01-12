@@ -56,17 +56,16 @@ module Ddr
           tempdir = FileUtils.mkdir(tempdir_path).first
           generator_source = create_source_file(tempdir)
           generator_output = File.new(File.join(tempdir, "output.out"), 'wb')
-          results = derivative.generator.new(generator_source.path, generator_output.path, derivative.options).generate
+          exitstatus = derivative.generator.new(generator_source.path, generator_output.path, derivative.options).generate
           generator_source.close unless generator_source.closed?
-          if results.status.success?
+          if exitstatus == 0
             generator_output = File.open(generator_output, 'rb')
             object.reload if object.persisted?
             object.add_file generator_output, derivative.datastream, mime_type: derivative.generator.output_mime_type
             object.save!
           else
-            Rails.logger.error results.stderr
             raise Ddr::Models::DerivativeGenerationFailure,
-                    "Failure generating #{derivative.name} for #{object.pid}: #{results.stderr}"
+                    "Failure generating #{derivative.name} for #{object.pid}"
           end
           generator_output.close unless generator_output.closed?
         ensure

@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.require_paths = ["lib", "app/models"]
 
-  s.add_dependency "rails", "~> 4.1.6"
+  s.add_dependency "rails", "~> 4.1"
   s.add_dependency "activeresource"
   s.add_dependency "active-fedora", "~> 7.0"
   s.add_dependency "hydra-core", "~> 7.2"
@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ddr-antivirus", "~> 2.1.1"
   s.add_dependency "virtus", "~> 1.0.5"
   s.add_dependency "hashie", "~> 3.4", "< 3.4.4"
+  s.add_dependency "edtf", "~> 3.0"
 
   s.add_development_dependency "bundler", "~> 1.11"
   s.add_development_dependency "rake"

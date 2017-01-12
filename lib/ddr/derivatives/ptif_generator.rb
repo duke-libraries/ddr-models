@@ -1,5 +1,3 @@
-require 'open3'
-
 module Ddr
   module Derivatives
     class PtifGenerator < Generator
@@ -27,19 +25,20 @@ module Ddr
 
       def run_generator(source_to_use)
         command = "vips im_vips2tiff #{Ddr::Utils.file_path(source_to_use)} #{Ddr::Utils.file_path(output)}:#{options}"
-        out, err, s = Open3.capture3(command)
-        GeneratorResult.new(out, err, s)
+        `#{command}`
+        $?.exitstatus
       end
 
       def make_8_bit(tempdir)
         temp_8_bit = File.new(File.join(tempdir, "temp_8_bit.v"), 'wb')
         command = "vips im_msb #{Ddr::Utils.file_path(source)} #{Ddr::Utils::file_path(temp_8_bit)}"
-        out, err, s = Open3.capture3(command)
-        if s.success?
+        `#{command}`
+        exitstatus = $?.exitstatus
+        if exitstatus == 0
           return temp_8_bit
         else
           raise Ddr::Models::DerivativeGenerationFailure,
-                  "Error converting #{Ddr::Utils.file_path(source)} to 8-bit: #{err}"
+                  "Error converting #{Ddr::Utils.file_path(source)} to 8-bit"
         end
       end
 

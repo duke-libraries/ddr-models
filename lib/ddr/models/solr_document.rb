@@ -18,6 +18,14 @@ module Ddr::Models
         end
         raise NotFound, "SolrDocument not found for \"#{pid_or_uri}\"."
       end
+
+      def find_by_permanent_id(ark)
+        query = Ddr::Index::Query.new { where permanent_id: ark }
+        if doc = query.docs.first
+          return doc
+        end
+        raise NotFound, "SolrDocument not found for permanent id \"#{ark}\"."
+      end
     end
 
     def inspect

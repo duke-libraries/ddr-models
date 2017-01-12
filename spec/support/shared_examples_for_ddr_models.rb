@@ -6,6 +6,36 @@ RSpec.shared_examples "a DDR model" do
   it_behaves_like "an object that has a display title"
   it_behaves_like "an object that has identifiers"
 
+  describe "permanent ID assignment" do
+    describe "when auto assignment is enabled" do
+      before do
+        allow(Ddr::Models).to receive(:auto_assign_permanent_id) { true }
+      end
+      describe "and a permanent ID is pre-assigned" do
+        before do
+          subject.permanent_id = "foo"
+        end
+        it "does not assign a permanent ID" do
+          expect { subject.save(validate: false) }.not_to change(subject, :permanent_id)
+        end
+      end
+      describe "and no permanent ID has been pre-assigned" do
+        before do
+          expect(Ddr::Models::PermanentId).to receive(:assign!).with(subject) { nil }
+          subject.save(validate: false)
+        end
+      end
+    end
+    describe "when auto assignment is disabled" do
+      before do
+        allow(Ddr::Models).to receive(:auto_assign_permanent_id) { false }
+      end
+      it "does not assign a permanent ID" do
+        expect { subject.save(validate: false) }.not_to change(subject, :permanent_id)
+      end
+    end
+  end
+
   describe "notification on save" do
     let(:events) { [] }
     before {
@@ -30,11 +60,43 @@ RSpec.shared_examples "a DDR model" do
     end
   end
 
+  describe "notification on workflow state change" do
+    let(:events) { [] }
+    before {
+      @subscriber = ActiveSupport::Notifications.subscribe(/workflow\.#{described_class.to_s.underscore}/) do |*args|
+        events << ActiveSupport::Notifications::Event.new(*args)
+      end
+    }
+    after {
+      ActiveSupport::Notifications.unsubscribe(@subscriber)
+    }
+    it "doesn't happen on create" do
+      subject.workflow_state = "published"
+      subject.save(validate: false)
+      expect(events).to be_empty
+    end
+    describe "with a previously persisted object" do
+      before do
+        subject.save(validate: false)
+      end
+      it "happens on publish!" do
+        subject.workflow_state = "published"
+        subject.save(validate: false)
+        expect(events.size).to eq(1)
+        expect(events.first.name).to eq("published.workflow.#{described_class.to_s.underscore}")
+      end
+      it "happens on unpublish!" do
+        subject.workflow_state = "unpublished"
+        subject.save(validate: false)
+        expect(events.size).to eq(1)
+        expect(events.first.name).to eq("unpublished.workflow.#{described_class.to_s.underscore}")
+      end
+    end
+  end
+
   describe "events" do
     before {
-      subject.permanent_id = "ark:/99999/fk4zzz"
       subject.save(validate: false)
-      allow(Ddr::Jobs::PermanentId::MakeUnavailable).to receive(:perform) { nil }
     }
     describe "deaccession" do
       it "creates a deaccession event" do

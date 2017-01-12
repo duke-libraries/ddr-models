@@ -4,113 +4,7 @@ require 'support/ezid_mock_identifier'
 module Ddr::Models
   RSpec.describe HasAdminMetadata, type: :model, contacts: true do
 
-    describe "permanent id and permanent url" do
-      subject { FactoryGirl.build(:item) }
-
-      describe "#assign_permanent_id!" do
-        it "should assign the permanent id later" do
-          expect(subject.permanent_id_manager).to receive(:assign_later) { nil }
-          subject.assign_permanent_id!
-        end
-        context "when the object is created (first saved)" do
-          context "and auto-assignment is enabled" do
-            before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
-            it "should assign a permanent id" do
-              expect(subject).to receive(:assign_permanent_id!) { nil }
-              subject.save!
-            end
-          end
-          context "and auto-assignment is disabled" do
-            before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false } }
-            it "should not assign a permanent id" do
-              expect(subject).not_to receive(:assign_permanent_id!)
-              subject.save!
-            end
-          end
-        end
-        context "when saved" do
-          context "and auto-assignment is enabled" do
-            before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
-            it "should assign a permanent id once" do
-              expect(subject).to receive(:assign_permanent_id!).once { nil }
-              subject.save!
-              subject.title = ["New Title"]
-              subject.save!
-            end
-          end
-          context "and auto-assignment is disabled" do
-            before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false } }
-            it "should not assign a permanent id" do
-              expect(subject).not_to receive(:assign_permanent_id!)
-              subject.save!
-            end
-          end
-        end
-      end
-
-      describe "lifecycle" do
-        subject { FactoryGirl.create(:item) }
-        let!(:identifier) {
-          Ezid::MockIdentifier.create(subject.permanent_id_manager.default_metadata)
-        }
-        before do
-          allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { false }
-          allow(Ezid::Identifier).to receive(:find).with(identifier.id) { identifier }
-          subject.permanent_id = identifier.id
-          subject.save!
-        end
-        describe "identifier creation" do
-          it "sets default metadata" do
-            expect(identifier.profile).to eq("dc")
-            expect(identifier.export).to eq("no")
-            expect(identifier["fcrepo3.pid"]).to eq(subject.pid)
-          end
-        end
-        describe "object destruction" do
-          it "marks the identifier as unavailable" do
-            expect { subject.destroy }
-              .to change(identifier, :status)
-                   .to("unavailable | deleted")
-          end
-        end
-        describe "object deaccession" do
-          it "marks the identifier as unavailable" do
-            expect { subject.deaccession }
-              .to change(identifier, :status)
-                   .to("unavailable | deaccessioned")
-          end
-        end
-      end
-
-      describe "events" do
-        before { allow(Ddr::Models).to receive(:auto_assign_permanent_ids) { true } }
-        context "when the operation succeeds" do
-          let!(:mock_identifier) { Ezid::MockIdentifier.new(id: "ark:/99999/fk4zzz",
-                                                            metadata: "_target: http://example.com") }
-          before do
-            allow(Ezid::Identifier).to receive(:create) { mock_identifier }
-            allow(Ezid::Identifier).to receive(:find) { mock_identifier }
-            allow(subject.permanent_id_manager).to receive(:record) { mock_identifier }
-          end
-          it "should create a success event" do
-            expect { subject.save }.to change { subject.update_events.count }.by(1)
-          end
-        end
-        context "when there's an exception" do
-          before { allow(Ezid::Identifier).to receive(:create).and_raise(Ezid::Error) }
-          it "should create a failure event" do
-            begin
-              subject.save
-            rescue Ezid::Error
-            end
-            expect(subject.update_events.last).to be_failure
-          end
-        end
-      end
-    end
-
     describe "workflow" do
-
       let(:collection) { FactoryGirl.create(:collection) }
       let(:item) { FactoryGirl.create(:item) }
       let(:component) { FactoryGirl.create(:component) }
@@ -122,17 +16,34 @@ module Ddr::Models
       end
 
       describe "#published?" do
+        subject { collection }
         context "object is published" do
-          before { allow(collection).to receive(:workflow_state) { Ddr::Managers::WorkflowManager::PUBLISHED } }
-          it "should return true" do
-            expect(collection).to be_published
-          end
+          before { subject.workflow_state = Ddr::Managers::WorkflowManager::PUBLISHED }
+          it { is_expected.to be_published }
         end
-        context "object is not published" do
-          before { allow(collection).to receive(:workflow_state) { nil } }
-          it "should return false" do
-            expect(collection).not_to be_published
-          end
+        context "object workflow is not set" do
+          before { subject.workflow_state = nil }
+          it { is_expected.not_to be_published }
+        end
+        context "object is unpublished" do
+          before { subject.workflow_state = Ddr::Managers::WorkflowManager::UNPUBLISHED }
+          it { is_expected.not_to be_published }
+        end
+      end
+
+      describe "#unpublished?" do
+        subject { collection }
+        context "object is published" do
+          before { subject.workflow_state = Ddr::Managers::WorkflowManager::PUBLISHED }
+          it { is_expected.not_to be_unpublished }
+        end
+        context "object is unpublished" do
+          before { subject.workflow_state = Ddr::Managers::WorkflowManager::UNPUBLISHED }
+          it { is_expected.to be_unpublished }
+        end
+        context "object workflow is not set" do
+          before { subject.workflow_state = nil }
+          it { is_expected.not_to be_unpublished }
         end
       end
 
@@ -167,7 +78,6 @@ module Ddr::Models
     end
 
     describe "roles" do
-
       subject { FactoryGirl.build(:item) }
 
       describe "#copy_resource_roles_from" do
@@ -207,9 +117,7 @@ module Ddr::Models
     end
 
     describe "contacts" do
-
       subject { FactoryGirl.build(:item) }
-
       before do
         allow(Ddr::Models::Contact).to receive(:get).with(:find, slug: 'xa') do
           {'id'=>1, 'slug'=>'xa', 'name'=>'Contact A', 'short_name'=>'A'}
@@ -227,19 +135,37 @@ module Ddr::Models
     end
 
     describe "locking" do
-
       subject { FactoryGirl.build(:item) }
 
       describe "#locked?" do
         context "object is locked" do
           before { subject.is_locked = true }
-          it "should be true" do
-            expect(subject.locked?).to be true
+          context "repository is locked" do
+            before { Ddr::Models.repository_locked = true }
+            after { Ddr::Models.repository_locked = false }
+            it "should be true" do
+              expect(subject.locked?).to be true
+            end
+          end
+          context "repository is not locked" do
+            it "should be true" do
+              expect(subject.locked?).to be true
+            end
           end
         end
         context "object is not locked" do
-          it "should be false" do
-            expect(subject.locked?).to be false
+          before { subject.is_locked = false }
+          context "repository is locked" do
+            before { Ddr::Models.repository_locked = true }
+            after { Ddr::Models.repository_locked = false }
+            it "should be true" do
+              expect(subject.locked?).to be true
+            end
+          end
+          context "repository is not locked" do
+            it "should be false" do
+              expect(subject.locked?).to be false
+            end
           end
         end
       end
@@ -273,8 +199,6 @@ module Ddr::Models
           expect(subject.locked?).to be false
         end
       end
-
     end
-
   end
 end

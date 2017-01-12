@@ -297,7 +297,7 @@ module Ddr::Auth
         let(:cache_key) { obj }
         let(:perm_obj) { SolrDocument.new({"id"=>"test:1"}) }
         before do
-          allow_any_instance_of(RoleBasedAbilityDefinitions).to receive(:permissions_doc).with(obj) { perm_obj }
+          allow(SolrDocument).to receive(:find).with("test:1") { perm_obj }
         end
         it_behaves_like "it has role based abilities"
       end

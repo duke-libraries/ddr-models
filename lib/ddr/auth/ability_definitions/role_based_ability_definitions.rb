@@ -12,33 +12,26 @@ module Ddr
 
       private
 
-      def has_permission?(permission, obj)
-        permissions(obj).include? permission
+      def has_permission?(permission, object_or_id)
+        permissions(object_or_id).include? permission
       end
 
-      def permissions(obj)
-        case obj
+      def permissions(object_or_id)
+        case object_or_id
         when Ddr::Models::Base, SolrDocument
-          cached_permissions obj.pid do
-            obj.effective_permissions(agents)
+          cached_permissions(object_or_id.id) do
+            object_or_id.effective_permissions(agents)
           end
         when String
-          cached_permissions obj do
-            permissions_doc(obj).effective_permissions(agents)
+          cached_permissions(object_or_id) do
+            doc = SolrDocument.find(object_or_id) # raises SolrDocument::NotFound
+            doc.effective_permissions(agents)
           end
         end
       end
 
       def cached_permissions(pid, &block)
         cache[pid] ||= block.call
-      end
-
-      def permissions_doc(pid)
-        roles_query_result = ActiveFedora::SolrService.query("id:\"#{pid}\"", rows: 1).first
-        if roles_query_result.nil?
-          raise "Solr document not found for PID \"#{pid}\"."
-        end
-        SolrDocument.new roles_query_result
       end
 
     end
