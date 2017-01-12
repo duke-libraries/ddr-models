@@ -19,7 +19,6 @@ module Ddr
   autoload :Derivatives
   autoload :Events
   autoload :Index
-  autoload :Jobs
   autoload :Managers
   autoload :Metadata
   autoload :Notifications

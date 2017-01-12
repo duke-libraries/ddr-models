@@ -12,8 +12,6 @@ class Component < Ddr::Models::Base
   belongs_to :parent, :property => :is_part_of, :class_name => 'Item'
   belongs_to :target, :property => :has_external_target, :class_name => 'Target'
 
-  after_save :index_parent, if: :has_extracted_text?, unless: "parent.nil?"
-
   alias_method :item, :parent
   alias_method :item=, :parent=
 
@@ -27,10 +25,6 @@ class Component < Ddr::Models::Base
 
   def publishable?
     parent.present? && parent.published?
-  end
-
-  def index_parent
-    Resque.enqueue(Ddr::Jobs::UpdateIndex, parent_id)
   end
 
 end

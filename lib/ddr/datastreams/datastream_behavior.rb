@@ -1,10 +1,16 @@
 module Ddr
   module Datastreams
     module DatastreamBehavior
+      extend ActiveSupport::Concern
 
       DEFAULT_FILE_EXTENSION = "bin"
 
       STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
+
+      included do
+        around_save :notify_save
+        after_destroy :notify_destroy
+      end
 
       def validate_checksum! checksum, checksum_type=nil
         raise Ddr::Models::Error, "Checksum cannot be validated on new datastream." if new?
@@ -101,6 +107,23 @@ module Ddr
           f.close
           yield f
         end
+      end
+
+      private
+
+      def notify_save
+        ActiveSupport::Notifications.instrument("save.#{dsid}.datastream",
+                                                pid: pid,
+                                                changes: changes,
+                                                created: new?,
+                                                content_changed: content_changed?
+                                               ) do |payload|
+          yield
+        end
+      end
+
+      def notify_destroy
+        ActiveSupport::Notifications.instrument("destroy.#{dsid}.datastream", pid: pid)
       end
 
     end
