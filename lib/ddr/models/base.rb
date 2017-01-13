@@ -25,6 +25,7 @@ module Ddr
       around_save :notify_save
       around_save :notify_workflow_change, if: [:workflow_state_changed?, :persisted?]
       before_create :set_ingestion_date, unless: :ingestion_date
+      after_create :notify_create
       after_create :assign_permanent_id, if: :assign_permanent_id?
       around_deaccession :notify_deaccession
       around_destroy :notify_destroy
@@ -139,12 +140,21 @@ module Ddr
                                                 changes: changes,
                                                 created: new_record?) do |payload|
           yield
+          payload[:event_date_time] = modified_date
         end
       end
 
+      def notify_create
+        ActiveSupport::Notifications.instrument("create.#{self.class.to_s.underscore}",
+                                                pid: pid,
+                                                event_date_time: ingestion_date)
+      end
+
       def notify_workflow_change
-        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}", pid: pid) do |payload|
+        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}",
+                                                pid: pid) do |payload|
           yield
+          payload[:event_date_time] = modified_date
         end
       end
 
@@ -153,6 +163,7 @@ module Ddr
                                                 pid: pid,
                                                 permanent_id: permanent_id) do |payload|
           yield
+          payload[:event_date_time] = Time.now.utc
         end
       end
 
@@ -161,6 +172,7 @@ module Ddr
                                                 pid: pid,
                                                 permanent_id: permanent_id) do |payload|
           yield
+          payload[:event_date_time] = Time.now.utc
         end
       end
 
