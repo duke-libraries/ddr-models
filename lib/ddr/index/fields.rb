@@ -42,6 +42,8 @@ module Ddr::Index
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
     ILLUSTRATED_FACET           = Field.new :illustrated_facet, :facetable
     ILLUSTRATOR_FACET           = Field.new :illustrator_facet, :facetable
+    INGESTED_BY                 = Field.new :ingested_by, :stored_sortable
+    INGESTION_DATE              = Field.new :ingestion_date, :stored_sortable, type: :date
     INSTRUMENTATION_FACET       = Field.new :instrumentation_facet, :facetable
     INTERNAL_URI                = Field.new :internal_uri, :stored_sortable
     INTERVIEWER_NAME_FACET      = Field.new :interviewer_name_facet, :facetable
