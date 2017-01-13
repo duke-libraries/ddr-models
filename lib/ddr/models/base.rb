@@ -120,12 +120,8 @@ module Ddr
         raise NotImplementedError, "Must be implemented by subclasses"
       end
 
-      def ingestion_date
-        Time.parse(@ingestion_date) if @ingestion_date
-      end
-
       def set_ingestion_date
-        raise Error, "Ingestion date is already set, cannot overwrite." if @ingestion_date
+        raise Error, "Ingestion date is already set, cannot overwrite." if ingestion_date
         if new_record?
           self.ingestion_date = Time.now.utc.iso8601
         else

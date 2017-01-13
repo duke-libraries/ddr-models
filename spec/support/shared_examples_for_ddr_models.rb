@@ -6,6 +6,57 @@ RSpec.shared_examples "a DDR model" do
   it_behaves_like "an object that has a display title"
   it_behaves_like "an object that has identifiers"
 
+  describe "ingestion date" do
+    describe "on create" do
+      describe "when it's set" do
+        before { subject.ingestion_date = "2017-01-13T19:03:15Z" }
+        it "preserves the date" do
+          expect { subject.save! }.not_to change(subject, :ingestion_date)
+        end
+      end
+      describe "when it's not set" do
+        it "sets the date" do
+          expect { subject.save! }.to change(subject, :ingestion_date)
+        end
+      end
+    end
+    describe "#set_ingestion_date" do
+      before { subject.save! }
+      describe "when it's set" do
+        it "raises an error" do
+          expect { subject.set_ingestion_date }.to raise_error(Ddr::Models::Error)
+        end
+      end
+      describe "when it's not set" do
+        before do
+          subject.ingestion_date = nil
+          subject.save!
+        end
+        describe "and an IngestionEvent exists" do
+          before do
+            @event = Ddr::Events::IngestionEvent.create(pid: subject.pid)
+          end
+          it "sets the ingestion_date to the event_date_time of the event" do
+            expect { subject.set_ingestion_date }.to change(subject, :ingestion_date).to(@event.event_date_time_s)
+          end
+        end
+        describe "and a CreationEvent exists (but no IngestionEvent)" do
+          before do
+            @event = Ddr::Events::CreationEvent.create(pid: subject.pid)
+          end
+          it "sets the ingestion_date to the event_date_time of the event" do
+            expect { subject.set_ingestion_date }.to change(subject, :ingestion_date).to(@event.event_date_time_s)
+          end
+        end
+        describe "neither an IngestionEvent nor a CreationEvent exists" do
+          it "sets the ingestion_date to the create_date" do
+            expect { subject.set_ingestion_date }.to change(subject, :ingestion_date).to(subject.create_date)
+          end
+        end
+      end
+    end
+  end
+
   describe "permanent ID assignment" do
     describe "when auto assignment is enabled" do
       before do
@@ -51,7 +102,7 @@ RSpec.shared_examples "a DDR model" do
       subject.save
       subject.title = [ "My Title Changed Again" ]
       subject.save
-      expect(events.first[:changes]).to eq({"title"=>[[], ["My Title Changed"]]})
+      expect(events.first[:changes]).to include({"title"=>[[], ["My Title Changed"]]})
       expect(events.first[:created]).to be true
       expect(events.first[:pid]).to eq(subject.pid)
       expect(events.last[:changes]).to eq({"title"=>[["My Title Changed"], ["My Title Changed Again"]]})

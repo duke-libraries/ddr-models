@@ -15,6 +15,8 @@ module Ddr::Models
         obj.adminMetadata.doi << "http://doi.org/10.1000/182"
         obj.aspace_id = "aspace_dccea43034e1b8261e14cf999e86449d"
         obj.display_format = "Image"
+        obj.ingested_by = "foo@bar.com"
+        obj.ingestion_date = "2017-01-13T18:55:29Z"
         obj.license = "cc-by-nc-nd-40"
         obj.local_id = "foo"
         obj.permanent_id = "ark:/99999/fk4zzz"
@@ -63,6 +65,8 @@ module Ddr::Models
       its([Indexing::GENRE_FACET]) { is_expected.to eq(["Genre Value"]) }
       its([Indexing::ILLUSTRATED_FACET]) { is_expected.to eq(["Illustrated Value"]) }
       its([Indexing::ILLUSTRATOR_FACET]) { is_expected.to eq(["Illustrator Value"]) }
+      its([Indexing::INGESTED_BY]) { is_expected.to eq("foo@bar.com") }
+      its([Indexing::INGESTION_DATE]) { is_expected.to eq("2017-01-13T18:55:29Z") }
       its([Indexing::INSTRUMENTATION_FACET]) { is_expected.to eq(["Instrumentation Value"]) }
       its([Indexing::INTERVIEWER_NAME_FACET]) { is_expected.to eq(["Interviewer Name Value"]) }
       its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
@@ -88,6 +92,7 @@ module Ddr::Models
       its([Indexing::TEMPORAL_FACET]) { is_expected.to eq(["Temporal Value"]) }
       its([Indexing::TONE_FACET]) { is_expected.to eq(["Tone Value"]) }
       its([Indexing::VOLUME_FACET]) { is_expected.to eq(["100"]) }
+
     end
 
     describe "content-bearing object indexing" do
