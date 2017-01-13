@@ -24,6 +24,7 @@ module Ddr
 
       around_save :notify_save
       around_save :notify_workflow_change, if: [:workflow_state_changed?, :persisted?]
+      before_create :set_ingestion_date, unless: :ingestion_date
       after_create :assign_permanent_id, if: :assign_permanent_id?
       around_deaccession :notify_deaccession
       around_destroy :notify_destroy
@@ -117,6 +118,21 @@ module Ddr
 
       def publishable?
         raise NotImplementedError, "Must be implemented by subclasses"
+      end
+
+      def ingestion_date
+        Time.parse(@ingestion_date) if @ingestion_date
+      end
+
+      def set_ingestion_date
+        raise Error, "Ingestion date is already set, cannot overwrite." if @ingestion_date
+        if new_record?
+          self.ingestion_date = Time.now.utc.iso8601
+        else
+          event = Ddr::Events::IngestionEvent.for_object(self).first ||
+                  Ddr::Events::CreationEvent.for_object(self).first
+          self.ingestion_date = event ? event.event_date_time_s : create_date
+        end
       end
 
       private

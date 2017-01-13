@@ -43,6 +43,8 @@ module Ddr
           IDENTIFIER_ALL          => all_identifiers,
           ILLUSTRATED_FACET       => desc_metadata_values('illustrated'),
           ILLUSTRATOR_FACET       => desc_metadata_values('illustrator'),
+          INGESTED_BY             => ingested_by,
+          INGESTION_DATE          => ingestion_date,
           INSTRUMENTATION_FACET   => desc_metadata_values('instrumentation'),
           INTERNAL_URI            => internal_uri,
           INTERVIEWER_NAME_FACET  => desc_metadata_values('interviewer_name'),
