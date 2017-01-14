@@ -10,7 +10,6 @@ ActiveSupport::Notifications.subscribe(Ddr::Notifications::VIRUS_CHECK, Ddr::Eve
 
 # Ingestion/Creation
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::CREATION, Ddr::Events::CreationEvent)
-ActiveSupport::Notifications.subscribe(/create\.\w+/, Ddr::Events::IngestionEvent)
 
 # Update
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::UPDATE, Ddr::Events::UpdateEvent)

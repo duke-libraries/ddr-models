@@ -6,6 +6,45 @@ RSpec.shared_examples "a DDR model" do
   it_behaves_like "an object that has a display title"
   it_behaves_like "an object that has identifiers"
 
+  describe "ingested by" do
+    let(:user) { User.new(username: "foo@bar.com") }
+    describe "on create" do
+      describe "when :user option passed to #save" do
+        describe "and ingested_by is not set" do
+          it "sets ingested by" do
+            expect { subject.save(user: user) }.to change(subject, :ingested_by).from(nil).to("foo@bar.com")
+          end
+        end
+        describe "and ingested_by is set" do
+          before { subject.ingested_by = "bob@example.com" }
+          it "does not set ingested by" do
+            expect { subject.save(user: user) }.not_to change(subject, :ingested_by)
+          end
+        end
+      end
+      describe "when :user option passed to #save!" do
+        describe "and ingested_by is not set" do
+          it "sets ingested by" do
+            expect { subject.save!(user: user) }.to change(subject, :ingested_by).from(nil).to("foo@bar.com")
+          end
+        end
+        describe "and ingested_by is set" do
+          before { subject.ingested_by = "bob@example.com" }
+          it "does not set ingested by" do
+            expect { subject.save!(user: user) }.not_to change(subject, :ingested_by)
+          end
+        end
+      end
+    end
+    describe "saving after create" do
+      before { subject.save! }
+      it "does not set ingested_by" do
+        expect { subject.save(user: user) }.not_to change(subject, :ingested_by)
+        expect { subject.save!(user: user) }.not_to change(subject, :ingested_by)
+      end
+    end
+  end
+
   describe "ingestion date" do
     describe "on create" do
       describe "when it's set" do
@@ -17,41 +56,6 @@ RSpec.shared_examples "a DDR model" do
       describe "when it's not set" do
         it "sets the date" do
           expect { subject.save! }.to change(subject, :ingestion_date)
-        end
-      end
-    end
-    describe "#set_ingestion_date" do
-      before { subject.save! }
-      describe "when it's set" do
-        it "raises an error" do
-          expect { subject.set_ingestion_date }.to raise_error(Ddr::Models::Error)
-        end
-      end
-      describe "when it's not set" do
-        before do
-          subject.ingestion_date = nil
-          subject.save!
-        end
-        describe "and an IngestionEvent exists" do
-          before do
-            @event = Ddr::Events::IngestionEvent.create(pid: subject.pid)
-          end
-          it "sets the ingestion_date to the event_date_time of the event" do
-            expect { subject.set_ingestion_date }.to change(subject, :ingestion_date).to(@event.event_date_time_s)
-          end
-        end
-        describe "and a CreationEvent exists (but no IngestionEvent)" do
-          before do
-            @event = Ddr::Events::CreationEvent.create(pid: subject.pid)
-          end
-          it "sets the ingestion_date to the event_date_time of the event" do
-            expect { subject.set_ingestion_date }.to change(subject, :ingestion_date).to(@event.event_date_time_s)
-          end
-        end
-        describe "neither an IngestionEvent nor a CreationEvent exists" do
-          it "sets the ingestion_date to the create_date" do
-            expect { subject.set_ingestion_date }.to change(subject, :ingestion_date).to(subject.create_date)
-          end
         end
       end
     end
@@ -146,123 +150,24 @@ RSpec.shared_examples "a DDR model" do
   end
 
   describe "events" do
-    before {
-      subject.save(validate: false)
-    }
     describe "deaccession" do
+      before { subject.save! }
       it "creates a deaccession event" do
         expect { subject.deaccession }.to change { Ddr::Events::DeaccessionEvent.for_object(subject).count }.by(1)
       end
     end
     describe "on deletion with #destroy" do
+      before { subject.save! }
       it "creates a deletion event" do
         expect { subject.destroy }.to change { Ddr::Events::DeletionEvent.for_object(subject).count }.from(0).to(1)
       end
     end
-
     describe "last virus check" do
+      before { subject.save! }
       let!(:fixity_check) { Ddr::Events::FixityCheckEvent.new }
       before { allow(subject).to receive(:last_fixity_check) { fixity_check } }
       its(:last_fixity_check_on) { should eq(fixity_check.event_date_time) }
       its(:last_fixity_check_outcome) { should eq(fixity_check.outcome) }
     end
   end
-
-  describe "move first desc metadata identifier to local id" do
-    let(:local_id) { 'locl001' }
-    let(:identifiers) { [ 'id001', 'id002' ] }
-    context "no desc metadata identifiers" do
-      context "local id present" do
-        before { subject.local_id = local_id }
-        it "should not change the local id" do
-          result = subject.move_first_identifier_to_local_id
-          expect(result).to be false
-          expect(subject.local_id).to eq(local_id)
-        end
-      end
-    end
-    context "one desc metadata identifier" do
-      before { subject.identifier = Array(identifiers.first) }
-      context "local id not present" do
-        it "sets the local id and removes the identifier" do
-          result = subject.move_first_identifier_to_local_id
-          expect(result).to be true
-          expect(subject.local_id).to eq(identifiers.first)
-          expect(subject.identifier).to be_empty
-        end
-      end
-      context "local id present" do
-        before { subject.local_id = local_id }
-        context "replace option is true" do
-          it "sets the local id and removes the identifier" do
-            result = subject.move_first_identifier_to_local_id
-            expect(result).to be true
-            expect(subject.local_id).to eq(identifiers.first)
-            expect(subject.identifier).to be_empty
-          end
-        end
-        context "replace option is false" do
-          context "local id matches first identifier" do
-            before { subject.identifier = Array(local_id) }
-            it "removes the identifier" do
-              result = subject.move_first_identifier_to_local_id(replace: false)
-              expect(result).to be true
-              expect(subject.local_id).to eq(local_id)
-              expect(subject.identifier).to be_empty
-            end
-          end
-          context "local id does not match first identifier" do
-            it "does not change the local id and does not remove the identifier" do
-              result = subject.move_first_identifier_to_local_id(replace: false)
-              expect(result).to be false
-              expect(subject.local_id).to eq(local_id)
-              expect(subject.identifier).to eq(Array(identifiers.first))
-            end
-          end
-        end
-      end
-    end
-    context "more than one desc metadata identifer" do
-      before { subject.identifier = identifiers }
-      context "local id not present" do
-        it "sets the local id and removes the identifier" do
-          result = subject.move_first_identifier_to_local_id
-          expect(result).to be true
-          expect(subject.local_id).to eq(identifiers.first)
-          expect(subject.identifier).to eq(Array(identifiers.last))
-        end
-      end
-      context "local id present" do
-        before { subject.local_id = local_id }
-        context "replace option is true" do
-          it "sets the local id and removes the identifier" do
-            result = subject.move_first_identifier_to_local_id
-            expect(result).to be true
-            expect(subject.local_id).to eq(identifiers.first)
-            expect(subject.identifier).to eq(Array(identifiers.last))
-          end
-        end
-        context "replace option is false" do
-          context "local id matches first identifier" do
-            before { subject.identifier = [ local_id, identifiers.last ] }
-            it "removes the identifier" do
-              result = subject.move_first_identifier_to_local_id(replace: false)
-              expect(result).to be true
-              expect(subject.local_id).to eq(local_id)
-              expect(subject.identifier).to eq(Array(identifiers.last))
-            end
-          end
-          context "local id does not match first identifier" do
-            it "does not change the local id and does not remove the identifier" do
-              result = subject.move_first_identifier_to_local_id(replace: false)
-              expect(result).to be false
-              expect(subject.local_id).to eq(local_id)
-              expect(subject.identifier).to eq(identifiers)
-            end
-          end
-        end
-      end
-    end
-  end
-
 end
