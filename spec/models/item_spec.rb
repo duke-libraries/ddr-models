@@ -17,13 +17,15 @@ RSpec.describe Item, type: :model do
 
     before {
       children[0].extractedText.content = text1
-      children[0].save
+      children[0].save!
       children[1].extractedText.content = text2
-      children[1].save
+      children[1].save!
       children[2].extractedText.content = text3
-      children[2].save
+      children[2].save!
+      children[3].save!
+      children[4].save!
       subject.children = children
-      subject.save
+      subject.save!
     }
 
     it "indexes the combined text of its children" do

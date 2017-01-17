@@ -24,8 +24,9 @@ module Ddr
 
       around_save :notify_save
       around_save :notify_workflow_change, if: [:workflow_state_changed?, :persisted?]
-      before_create :set_ingestion_date, unless: :ingestion_date
-      after_create :assign_permanent_id, if: :assign_permanent_id?
+      before_create :set_ingestion_date!, unless: :ingestion_date
+      after_create :notify_create
+      after_create :assign_permanent_id!, if: :assign_permanent_id?
       around_deaccession :notify_deaccession
       around_destroy :notify_destroy
 
@@ -71,67 +72,42 @@ module Ddr
         Ddr::Auth::LegacyAuthorization.new(self)
       end
 
-      # Moves the first (descriptive metadata) identifier into
-      # (administrative metadata) local_id according to the following
-      # rubric:
-      #
-      # No existing local_id:
-      #   - Set local_id to first identifier value
-      #   - Remove first identifier value
-      #
-      # Existing local_id:
-      #   Same as first identifier value
-      #     - Remove first identifier value
-      #   Not same as first identifier value
-      #     :replace option is true
-      #       - Set local_id to first identifier value
-      #       - Remove first identifier value
-      #     :replace option is false
-      #       - Do nothing
-      #
-      # Returns true or false depending on whether the object was
-      # changed by this method
-      def move_first_identifier_to_local_id(replace: true)
-        moved = false
-        identifiers = identifier.to_a
-        first_id = identifiers.shift
-        if first_id
-          if local_id.blank?
-            self.local_id = first_id
-            self.identifier = identifiers
-            moved = true
-          else
-            if local_id == first_id
-              self.identifier = identifiers
-              moved = true
-            else
-              if replace
-                self.local_id = first_id
-                self.identifier = identifiers
-                moved = true
-              end
-            end
-          end
-        end
-        moved
-      end
-
       def publishable?
         raise NotImplementedError, "Must be implemented by subclasses"
       end
 
-      def set_ingestion_date
-        raise Error, "Ingestion date is already set, cannot overwrite." if ingestion_date
-        if new_record?
-          self.ingestion_date = Time.now.utc.iso8601
-        else
-          event = Ddr::Events::IngestionEvent.for_object(self).first ||
-                  Ddr::Events::CreationEvent.for_object(self).first
-          self.ingestion_date = event ? event.event_date_time_s : create_date
-        end
+      def save(options={})
+        handle_save_options(options)
+        super
+      end
+
+      def save!(options={})
+        handle_save_options(options)
+        super
       end
 
       private
+
+      def handle_save_options(options)
+        if user = options.delete(:user)
+          if new_record? && ingested_by.nil?
+            set_ingested_by(user)
+          end
+        end
+      end
+
+      def set_ingested_by(user)
+        self.ingested_by = user.to_s
+      end
+
+      def set_ingestion_date!
+        self.ingestion_date = Time.now.utc.iso8601
+      end
+
+      def notify_create
+        ActiveSupport::Notifications.instrument("create.#{self.class.to_s.underscore}",
+                                                pid: pid)
+      end
 
       def notify_save
         ActiveSupport::Notifications.instrument("save.#{self.class.to_s.underscore}",
@@ -143,7 +119,8 @@ module Ddr
       end
 
       def notify_workflow_change
-        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}", pid: pid) do |payload|
+        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}",
+                                                pid: pid) do |payload|
           yield
         end
       end
@@ -168,7 +145,7 @@ module Ddr
         permanent_id.nil? && Ddr::Models.auto_assign_permanent_id
       end
 
-      def assign_permanent_id
+      def assign_permanent_id!
         PermanentId.assign!(self)
       end
 

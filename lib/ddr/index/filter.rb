@@ -31,6 +31,7 @@ module Ddr::Index
         self.clauses += conditions.map do |field, v|
           Array(v).map { |value| QueryClause.negative(field, value) }
         end.flatten
+        self
       end
 
       def absent(field)

@@ -1,12 +1,10 @@
-module Ddr
-  module Events
-    class IngestionEvent < Event
+module Ddr::Events
+  class IngestionEvent < Event
 
-      include PreservationEventBehavior
+    include PreservationEventBehavior
 
-      self.preservation_event_type = :ing
-      self.description = "Object ingested into the repository"
+    self.preservation_event_type = :ing
+    self.description = "Object ingested into the repository"
 
-    end
   end
 end

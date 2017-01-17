@@ -26,8 +26,7 @@ class Item < Ddr::Models::Base
   end
 
   def children_having_extracted_text
-    item = self
-    Ddr::Index::Query.new do
+    Ddr::Index::Query.build(self) do |item|
       is_part_of item
       where attached_files_having_content: "extractedText"
       fields :id, :extracted_text
