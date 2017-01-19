@@ -91,26 +91,22 @@ RSpec.shared_examples "a DDR model" do
     end
   end
 
-  describe "notification on save" do
+  describe "notification on update" do
     let(:events) { [] }
-    before {
-      @subscriber = ActiveSupport::Notifications.subscribe("save.#{described_class.to_s.underscore}") do |name, start, finish, id, payload|
+    before do
+      @subscriber = ActiveSupport::Notifications.subscribe("update.#{described_class.to_s.underscore}.repo_object") do |name, start, finish, id, payload|
         events << payload
       end
-    }
-    after {
+    end
+    after do
       ActiveSupport::Notifications.unsubscribe(@subscriber)
-    }
+    end
     it "happens when save succeeds" do
-      subject.title = [ "My Title Changed" ]
-      subject.save
-      subject.title = [ "My Title Changed Again" ]
-      subject.save
-      expect(events.first[:changes]).to include({"title"=>[[], ["My Title Changed"]]})
-      expect(events.first[:created]).to be true
-      expect(events.first[:pid]).to eq(subject.pid)
-      expect(events.last[:changes]).to eq({"title"=>[["My Title Changed"], ["My Title Changed Again"]]})
-      expect(events.last[:created]).to be false
+      subject.creator = [ "Me" ]
+      subject.save!
+      subject.creator = [ "You" ]
+      subject.save!
+      expect(events.last[:detail]).to match /\{"creator"=\>\[\[\"Me\"\], \["You"\]\]\}/
       expect(events.last[:pid]).to eq(subject.pid)
     end
   end
@@ -138,18 +134,29 @@ RSpec.shared_examples "a DDR model" do
         subject.workflow_state = "published"
         subject.save(validate: false)
         expect(events.size).to eq(1)
-        expect(events.first.name).to eq("published.workflow.#{described_class.to_s.underscore}")
+        expect(events.first.name).to eq("published.workflow.#{described_class.to_s.underscore}.repo_object")
       end
       it "happens on unpublish!" do
         subject.workflow_state = "unpublished"
         subject.save(validate: false)
         expect(events.size).to eq(1)
-        expect(events.first.name).to eq("unpublished.workflow.#{described_class.to_s.underscore}")
+        expect(events.first.name).to eq("unpublished.workflow.#{described_class.to_s.underscore}.repo_object")
       end
     end
   end
 
   describe "events" do
+    describe "ingestion" do
+      it "creates an ingestion event" do
+        expect { subject.save! }.to change { Ddr::Events::IngestionEvent.for_object(subject).count }.by(1)
+      end
+    end
+    describe "update" do
+      before { subject.save! }
+      it "creates an update event" do
+        expect { subject.save! }.to change { Ddr::Events::UpdateEvent.for_object(subject).count }.by(1)
+      end
+    end
     describe "deaccession" do
       before { subject.save! }
       it "creates a deaccession event" do

@@ -21,9 +21,6 @@ RSpec.describe Collection, type: :model do
   end
 
   describe "title" do
-    before do
-      subject.title = [ "Test Collection" ]
-    end
     it "indexes the collection title" do
       expect(subject.to_solr[Ddr::Index::Fields::COLLECTION_TITLE]).to eq("Test Collection")
     end

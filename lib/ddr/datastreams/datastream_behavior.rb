@@ -8,8 +8,9 @@ module Ddr
       STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
 
       included do
-        around_save :notify_save
-        after_destroy :notify_destroy
+        after_create :notify_create
+        around_save :notify_update, unless: :new?
+        after_destroy :notify_delete
       end
 
       def validate_checksum! checksum, checksum_type=nil
@@ -111,19 +112,23 @@ module Ddr
 
       private
 
-      def notify_save
-        ActiveSupport::Notifications.instrument("save.#{dsid}.datastream",
+      def notify_create
+        ActiveSupport::Notifications.instrument("create.#{dsid}.datastream",
                                                 pid: pid,
-                                                changes: changes,
-                                                created: new?,
-                                                content_changed: content_changed?
-                                               ) do |payload|
+                                                event_date_time: createDate)
+      end
+
+      def notify_update
+        ActiveSupport::Notifications.instrument("update.#{dsid}.datastream",
+                                                pid: pid) do |payload|
           yield
+          payload[:event_date_time] = createDate
         end
       end
 
-      def notify_destroy
-        ActiveSupport::Notifications.instrument("destroy.#{dsid}.datastream", pid: pid)
+      def notify_delete
+        ActiveSupport::Notifications.instrument("delete.#{dsid}.datastream",
+                                                pid: pid)
       end
 
     end

@@ -16,19 +16,23 @@ module Ddr
       # Prevent accidental use of #delete which lacks callbacks
       private :delete
 
-      define_model_callbacks :deaccession, only: :around
+      define_model_callbacks :deaccession
 
       extend Deprecation
       # Deprecate Hydra permissions-related methods
       deprecation_deprecate *(Hydra::AccessControls::Permissions.public_instance_methods)
 
-      around_save :notify_save
-      around_save :notify_workflow_change, if: [:workflow_state_changed?, :persisted?]
-      before_create :set_ingestion_date!, unless: :ingestion_date
-      after_create :notify_create
+      before_create :set_ingestion_date, unless: :ingestion_date
+      before_create :set_ingested_by, if: :performed_by, unless: :ingested_by
+
+      after_create :notify_ingestion
       after_create :assign_permanent_id!, if: :assign_permanent_id?
-      around_deaccession :notify_deaccession
-      around_destroy :notify_destroy
+
+      around_save :notify_update, unless: :new_record?
+      around_save :notify_workflow_change, if: [:workflow_state_changed?, :persisted?]
+
+      after_deaccession :notify_deaccession
+      after_destroy :notify_deletion
 
       def deaccession
         run_callbacks :deaccession do
@@ -77,68 +81,71 @@ module Ddr
       end
 
       def save(options={})
-        handle_save_options(options)
-        super
-      end
-
-      def save!(options={})
-        handle_save_options(options)
-        super
+        cache.with(options) { super }
       end
 
       private
 
-      def handle_save_options(options)
-        if user = options.delete(:user)
-          if new_record? && ingested_by.nil?
-            set_ingested_by(user)
-          end
+      def cache
+        @__cache ||= Cache.new
+      end
+
+      def performed_by
+        if user = cache.get(:user)
+          user.to_s
         end
       end
 
-      def set_ingested_by(user)
-        self.ingested_by = user.to_s
+      def set_ingested_by
+        self.ingested_by = performed_by
       end
 
-      def set_ingestion_date!
+      def set_ingestion_date
         self.ingestion_date = Time.now.utc.iso8601
       end
 
-      def notify_create
-        ActiveSupport::Notifications.instrument("create.#{self.class.to_s.underscore}",
-                                                pid: pid)
+      def notify_ingestion
+        ActiveSupport::Notifications.instrument("ingestion.#{self.class.to_s.underscore}.repo_object",
+                                                pid: pid,
+                                                user_key: ingested_by,
+                                                event_date_time: ingestion_date)
       end
 
-      def notify_save
-        ActiveSupport::Notifications.instrument("save.#{self.class.to_s.underscore}",
+      def notify_update
+        ds_changed = datastreams.select { |dsid, ds| ds.content_changed? }.keys
+        detail = <<-EOS
+Attributes: #{changes}
+
+Datastreams: #{ds_changed}
+        EOS
+        ActiveSupport::Notifications.instrument("update.#{self.class.to_s.underscore}.repo_object",
                                                 pid: pid,
-                                                changes: changes,
-                                                created: new_record?) do |payload|
+                                                user_key: performed_by,
+                                                detail: detail) do |payload|
           yield
+          payload[:event_date_time] = modified_date
         end
       end
 
       def notify_workflow_change
-        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}",
+        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}.repo_object",
                                                 pid: pid) do |payload|
           yield
         end
       end
 
       def notify_deaccession
-        ActiveSupport::Notifications.instrument("deaccession.#{self.class.to_s.underscore}",
+        ActiveSupport::Notifications.instrument("deaccession.#{self.class.to_s.underscore}.repo_object",
                                                 pid: pid,
-                                                permanent_id: permanent_id) do |payload|
-          yield
-        end
+                                                event_date_time: Time.now.utc.iso8601,
+                                                permanent_id: permanent_id)
       end
 
-      def notify_destroy
-        ActiveSupport::Notifications.instrument("destroy.#{self.class.to_s.underscore}",
+      def notify_deletion
+        ActiveSupport::Notifications.instrument("deletion.#{self.class.to_s.underscore}.repo_object",
                                                 pid: pid,
-                                                permanent_id: permanent_id) do |payload|
-          yield
-        end
+                                                event_date_time: Time.now.utc.iso8601,
+                                                permanent_id: permanent_id)
       end
 
       def assign_permanent_id?
