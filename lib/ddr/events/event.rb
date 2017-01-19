@@ -39,7 +39,8 @@ module Ddr
       # Receive message sent by ActiveSupport::Notifications
       def self.call(*args)
         notification = ActiveSupport::Notifications::Event.new(*args)
-        payload = notification.payload.dup
+        # select only payload entries for which there is an attribute writer.
+        payload = notification.payload.dup.select { |k, v| attribute_method?("#{k}=") }
         payload[:event_date_time] ||= notification.time
         create(payload)
       end

@@ -41,6 +41,7 @@ module Ddr
     autoload :AccessControllable
     autoload :AdminSet
     autoload :Base
+    autoload :Cache
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :Contact
     autoload :ContentModelError, 'ddr/models/error'

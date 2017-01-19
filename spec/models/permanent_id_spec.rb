@@ -39,12 +39,8 @@ module Ddr::Models
         allow(described_class.identifier_class).to receive(:mint) { id }
         allow(described_class.identifier_class).to receive(:find).with("foo") { id }
       end
-      after do
-        obj.permanent_id = nil
-        obj.save!
-      end
       it "creates an update event" do
-        expect { described_class.assign!(obj) }.to change(Ddr::Events::UpdateEvent, :count).to(1)
+        expect { described_class.assign!(obj) }.to change(Ddr::Events::UpdateEvent, :count).by(1)
       end
     end
 

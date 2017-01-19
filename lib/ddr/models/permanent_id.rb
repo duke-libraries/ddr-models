@@ -41,7 +41,7 @@ module Ddr::Models
         if auto_update? && identifier_id
           deaccession!(repo_id, identifier_id, reason)
         end
-      when /^destroy/
+      when /^deletion/
         if auto_update? && identifier_id
           delete!(repo_id, identifier_id, reason)
         end
@@ -104,21 +104,23 @@ module Ddr::Models
     end
 
     def assign!(id = nil)
-      ActiveSupport::Notifications.instrument("assign.permanent_id", pid: repo_object.id) do |payload|
-        assign(id)
-        software = [ "ddr-models #{Ddr::Models::VERSION}", Ezid::Client.version ].join("; ")
-        detail = <<-EOS
-Permanent ID:  #{repo_object.permanent_id}
-Permanent URL: #{repo_object.permanent_url}
-
-EZID Metadata:
-#{identifier.metadata}
-      EOS
-        payload.merge!(summary: "Permanent ID assignment",
-                       detail: detail,
-                       software: software,
-                       permanent_id: identifier.id)
+      if assigned?
+        raise AlreadyAssigned,
+              "Repository object \"#{repo_object.id}\" has already been assigned permanent id \"#{repo_object.permanent_id}\"."
       end
+      @identifier = case id
+                    when identifier_class
+                      id
+                    when String
+                      find_identifier(id)
+                    when nil
+                      mint_identifier
+                    end
+      repo_object.reload
+      repo_object.permanent_id = identifier.id
+      repo_object.permanent_url = PERMANENT_URL_BASE + identifier.id
+      repo_object.save!
+      set_metadata!
     end
 
     def assigned?
@@ -126,10 +128,11 @@ EZID Metadata:
     end
 
     def update!
-      ActiveSupport::Notifications.instrument("update.permanent_id", pid: repo_object.id) do |payload|
-        update
-        payload.merge!(permanent_id: identifier.id)
+      if !assigned?
+        raise IdentifierNotAssigned,
+              "Cannot update identifier for repository object \"#{repo_object.id}\"; not assigned."
       end
+      set_status!
     end
 
     def deaccession!(reason = nil)
@@ -218,34 +221,6 @@ EZID Metadata:
 
     def mint_identifier(*args)
       identifier_class.mint(*args)
-    end
-
-    def update
-      if !assigned?
-        raise IdentifierNotAssigned,
-              "Cannot update identifier for repository object \"#{repo_object.id}\"; not assigned."
-      end
-      set_status!
-    end
-
-    def assign(id = nil)
-      if assigned?
-        raise AlreadyAssigned,
-              "Repository object \"#{repo_object.id}\" has already been assigned permanent id \"#{repo_object.permanent_id}\"."
-      end
-      @identifier = case id
-                    when identifier_class
-                      id
-                    when String
-                      find_identifier(id)
-                    when nil
-                      mint_identifier
-                    end
-      repo_object.reload
-      repo_object.permanent_id = identifier.id
-      repo_object.permanent_url = PERMANENT_URL_BASE + identifier.id
-      repo_object.save!
-      set_metadata!
     end
 
     def delete_or_make_unavailable(reason)

@@ -170,25 +170,29 @@ module ActiveFedora
       after {
         ActiveSupport::Notifications.unsubscribe(@subscriber)
       }
-      describe "on save" do
+      describe "on create" do
         let(:obj) { ActiveFedora::Base.create }
-        let(:event_name) { "save.DS1.datastream" }
+        let(:event_name) { "create.DS1.datastream" }
         specify {
           obj.add_file_datastream("foo", dsid: "DS1", controlGroup: "M")
           obj.save!
-          expect(events.first[:created]).to be true
           expect(events.first[:pid]).to eq obj.pid
-          expect(events.first[:content_changed]).to be true
-          obj.datastreams["DS1"].dsLabel = "Changed label"
+          expect(events.first[:event_date_time]).to eq obj.datastreams["DS1"].createDate
+        }
+      end
+      describe "on update" do
+        let(:obj) { FactoryGirl.create(:item) }
+        let(:event_name) { "update.descMetadata.datastream" }
+        specify {
+          obj.title = [ "Changed Title" ]
           obj.save!
-          expect(events.last[:created]).to be false
-          expect(events.last[:pid]).to eq obj.pid
-          expect(events.last[:content_changed]).to be false
+          expect(events.first[:pid]).to eq obj.pid
+          expect(events.first[:event_date_time]).to eq obj.descMetadata.createDate
         }
       end
       describe "on destroy" do
         let(:obj) { FactoryGirl.create(:item) }
-        let(:event_name) { "destroy.descMetadata.datastream" }
+        let(:event_name) { "delete.descMetadata.datastream" }
         specify {
           obj.descMetadata.delete
           expect(events.first[:pid]).to eq obj.pid
