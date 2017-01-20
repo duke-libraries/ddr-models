@@ -65,11 +65,11 @@ module Ddr
           object.add_external_file(file, "random_ds_3")
         end
         it "should raise an error if datastream is not external" do
-          expect { object.add_external_file(file, "m_content") }.to raise_error
+          expect { object.add_external_file(file, "m_content") }.to raise_error(ArgumentError)
         end
         it "should raise an error if dsLocation has changed" do
           allow(object.e_content).to receive(:dsLocation_changed?) { true }
-          expect { object.add_external_file(file, "e_content") }.to raise_error
+          expect { object.add_external_file(file, "e_content") }.to raise_error(Error)
         end
         it "should set the mimeType" do
           expect(object.e_content).to receive(:mimeType=).with("image/tiff")
@@ -150,7 +150,7 @@ module Ddr
         end
         it "should raise an error if using original file not owned by effective user" do
           allow(File).to receive(:owned?).with(file.path) { false }
-          expect { object.add_external_file(file, "e_content", use_original: true) }.to raise_error
+          expect { object.add_external_file(file, "e_content", use_original: true) }.to raise_error(Error)
         end
         context "external file permissions" do
           context "for a generated file" do

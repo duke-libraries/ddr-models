@@ -104,48 +104,47 @@ module Ddr
         self.ingestion_date = Time.now.utc.iso8601
       end
 
+      def default_notification_payload
+        cache.slice(:summary, :comment, :detail)
+          .merge(pid: pid, user_key: performed_by, permanent_id: permanent_id)
+      end
+
       def notify_ingestion
-        ActiveSupport::Notifications.instrument("ingestion.#{self.class.to_s.underscore}.repo_object",
-                                                pid: pid,
-                                                user_key: ingested_by,
-                                                event_date_time: ingestion_date)
+        event_name = "ingestion.#{self.class.to_s.underscore}.repo_object"
+        payload = default_notification_payload.merge(event_date_time: ingestion_date)
+        ActiveSupport::Notifications.instrument(event_name, payload)
       end
 
       def notify_update
+        event_name = "update.#{self.class.to_s.underscore}.repo_object"
         ds_changed = datastreams.select { |dsid, ds| ds.content_changed? }.keys
-        detail = <<-EOS
-Attributes: #{changes}
-
-Datastreams: #{ds_changed}
-        EOS
-        ActiveSupport::Notifications.instrument("update.#{self.class.to_s.underscore}.repo_object",
-                                                pid: pid,
-                                                user_key: performed_by,
-                                                detail: detail) do |payload|
+        detail = ["Attributes: #{changes}", "Datastreams: #{ds_changed}"]
+        event_params = default_notification_payload
+        if extra_detail = event_params[:detail]
+          detail << extra_detail
+        end
+        event_params[:detail] = detail.join("\n\n")
+        ActiveSupport::Notifications.instrument(event_name, event_params) do |payload|
           yield
           payload[:event_date_time] = modified_date
         end
       end
 
       def notify_workflow_change
-        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}.repo_object",
-                                                pid: pid) do |payload|
+        event_name = "#{workflow_state}.workflow.#{self.class.to_s.underscore}.repo_object"
+        ActiveSupport::Notifications.instrument(event_name, default_notification_payload) do |payload|
           yield
         end
       end
 
       def notify_deaccession
-        ActiveSupport::Notifications.instrument("deaccession.#{self.class.to_s.underscore}.repo_object",
-                                                pid: pid,
-                                                event_date_time: Time.now.utc.iso8601,
-                                                permanent_id: permanent_id)
+        event_name = "deaccession.#{self.class.to_s.underscore}.repo_object"
+        ActiveSupport::Notifications.instrument(event_name, default_notification_payload)
       end
 
       def notify_deletion
-        ActiveSupport::Notifications.instrument("deletion.#{self.class.to_s.underscore}.repo_object",
-                                                pid: pid,
-                                                event_date_time: Time.now.utc.iso8601,
-                                                permanent_id: permanent_id)
+        event_name = "deletion.#{self.class.to_s.underscore}.repo_object"
+        ActiveSupport::Notifications.instrument(event_name, default_notification_payload)
       end
 
       def assign_permanent_id?
