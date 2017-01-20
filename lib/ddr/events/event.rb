@@ -39,8 +39,7 @@ module Ddr
       # Receive message sent by ActiveSupport::Notifications
       def self.call(*args)
         notification = ActiveSupport::Notifications::Event.new(*args)
-        # select only payload entries for which there is an attribute writer.
-        payload = notification.payload.dup.select { |k, v| attribute_method?("#{k}=") }
+        payload = notification.payload.dup
         payload[:event_date_time] ||= notification.time
         create(payload)
       end
@@ -119,7 +118,7 @@ module Ddr
       protected
 
       def set_defaults
-        self.attributes = defaults.reject { |attr, val| attribute_present? attr }
+        self.attributes = defaults.reject { |attr, val| attribute_present?(attr) }
       end
 
       def defaults

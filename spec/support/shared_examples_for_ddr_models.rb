@@ -91,26 +91,6 @@ RSpec.shared_examples "a DDR model" do
     end
   end
 
-  describe "notification on update" do
-    let(:events) { [] }
-    before do
-      @subscriber = ActiveSupport::Notifications.subscribe("update.#{described_class.to_s.underscore}.repo_object") do |name, start, finish, id, payload|
-        events << payload
-      end
-    end
-    after do
-      ActiveSupport::Notifications.unsubscribe(@subscriber)
-    end
-    it "happens when save succeeds" do
-      subject.creator = [ "Me" ]
-      subject.save!
-      subject.creator = [ "You" ]
-      subject.save!
-      expect(events.last[:detail]).to match /\{"creator"=\>\[\[\"Me\"\], \["You"\]\]\}/
-      expect(events.last[:pid]).to eq(subject.pid)
-    end
-  end
-
   describe "notification on workflow state change" do
     let(:events) { [] }
     before {
@@ -156,17 +136,40 @@ RSpec.shared_examples "a DDR model" do
       it "creates an update event" do
         expect { subject.save! }.to change { Ddr::Events::UpdateEvent.for_object(subject).count }.by(1)
       end
+      describe "with options" do
+        let(:user) { FactoryGirl.create(:user) }
+        it "creates an update event with options" do
+          subject.title = [ "Changed Title" ]
+          subject.save(user: user, summary: "This event rocks!", comment: "I was testing things", detail: "A bunch of extra stuff I want to record")
+          event = Ddr::Events::UpdateEvent.for_object(subject).last
+          expect(event.user_key).to eq(user.to_s)
+          expect(event.summary).to eq "This event rocks!"
+          expect(event.comment).to eq "I was testing things"
+        end
+      end
     end
     describe "deaccession" do
       before { subject.save! }
       it "creates a deaccession event" do
         expect { subject.deaccession }.to change { Ddr::Events::DeaccessionEvent.for_object(subject).count }.by(1)
       end
+      it "records attributes with the event" do
+        allow(subject).to receive(:permanent_id) { "foo" }
+        subject.deaccession
+        event = Ddr::Events::DeaccessionEvent.for_object(subject).first
+        expect(event.permanent_id).to eq "foo"
+      end
     end
     describe "on deletion with #destroy" do
       before { subject.save! }
       it "creates a deletion event" do
         expect { subject.destroy }.to change { Ddr::Events::DeletionEvent.for_object(subject).count }.from(0).to(1)
+      end
+      it "records attributes with the event" do
+        allow(subject).to receive(:permanent_id) { "foo" }
+        subject.destroy
+        event = Ddr::Events::DeletionEvent.for_object(subject).first
+        expect(event.permanent_id).to eq "foo"
       end
     end
     describe "last virus check" do
