@@ -41,7 +41,10 @@ module Ddr
         notification = ActiveSupport::Notifications::Event.new(*args)
         payload = notification.payload.dup
         payload[:event_date_time] ||= notification.time
-        create(payload)
+        create do |event|
+          event.attributes = payload.select { |k, v| event.has_attribute?(k) }
+          yield [event, notification] if block_given?
+        end
       end
 
       # Repository software version -- e.g., "Fedora Repository 3.7.0"
