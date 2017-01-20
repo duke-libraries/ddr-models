@@ -118,12 +118,12 @@ module Ddr
       def notify_update
         event_name = "update.#{self.class.to_s.underscore}.repo_object"
         ds_changed = datastreams.select { |dsid, ds| ds.content_changed? }.keys
-        detail = ["Attributes: #{changes}", "Datastreams: #{ds_changed}"]
-        event_params = default_notification_payload
-        if extra_detail = event_params[:detail]
-          detail << extra_detail
-        end
-        event_params[:detail] = detail.join("\n\n")
+        event_params = default_notification_payload.merge(attributes_changed: changes,
+                                                          datastreams_changed: ds_changed)
+        event_params[:detail] = ["Attributes changed: #{changes}",
+                                 "Datastreams changed: #{ds_changed.join(', ')}",
+                                 event_params[:detail],
+                                ].compact.join("\n\n")
         ActiveSupport::Notifications.instrument(event_name, event_params) do |payload|
           yield
           payload[:event_date_time] = modified_date
