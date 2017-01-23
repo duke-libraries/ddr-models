@@ -7,13 +7,11 @@ module Ddr
     ADMIN_METADATA = "adminMetadata"
     CONTENT = "content"
     DC = "DC"
-    DEFAULT_RIGHTS = "defaultRights"
     DESC_METADATA = "descMetadata"
     EXTRACTED_TEXT = "extractedText"
     FITS = "fits".freeze
     MULTIRES_IMAGE = "multiresImage"
     RELS_EXT = "RELS-EXT"
-    RIGHTS_METADATA = "rightsMetadata"
     STRUCT_METADATA = "structMetadata"
     THUMBNAIL = "thumbnail"
 

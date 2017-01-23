@@ -4,7 +4,6 @@ module Ddr
 
       include Describable
       include Governable
-      include AccessControllable
       include HasThumbnail
       include EventLoggable
       include FixityCheckable
@@ -12,15 +11,12 @@ module Ddr
       include Indexing
       include Hydra::Validations
       include HasAdminMetadata
+      extend Deprecation
 
       # Prevent accidental use of #delete which lacks callbacks
       private :delete
 
       define_model_callbacks :deaccession
-
-      extend Deprecation
-      # Deprecate Hydra permissions-related methods
-      deprecation_deprecate *(Hydra::AccessControls::Permissions.public_instance_methods)
 
       before_create :set_ingestion_date, unless: :ingestion_date
       before_create :set_ingested_by, if: :performed_by, unless: :ingested_by
@@ -70,10 +66,6 @@ module Ddr
 
       def has_extracted_text?
         false
-      end
-
-      def legacy_authorization
-        Ddr::Auth::LegacyAuthorization.new(self)
       end
 
       def publishable?
