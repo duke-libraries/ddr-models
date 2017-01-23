@@ -133,15 +133,10 @@ module Ddr::Index
         Deprecation.warn(Ddr::Index::Fields,
                          "`Ddr::Index::Fields::#{name}` is deprecated." \
                          " Use `Ddr::Index::Fields::ID` instead.")
-        return ID
+        ID
+      else
+        super
       end
-      if const = LegacyLicenseFields.const_get(name)
-        # XXX Commented out b/c annoying, but maybe we want later ...
-        # Deprecation.warn(Ddr::Index::Fields,
-        #                  "`Ddr::Index::Fields::#{name}` is deprecated and will be removed in ddr-models 3.0.")
-        return const
-      end
-      super
     end
 
   end

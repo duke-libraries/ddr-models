@@ -21,9 +21,6 @@ module Ddr::Models
         obj.local_id = "foo"
         obj.permanent_id = "ark:/99999/fk4zzz"
         obj.permanent_url = "http://id.library.duke.edu/ark:/99999/fk4zzz"
-        obj.rightsMetadata.license.description = ["License Description"]
-        obj.rightsMetadata.license.title = ["License Title"]
-        obj.rightsMetadata.license.url = ["http://library.duke.edu"]
         obj.roles.grant role1, role2, role3, role4
         obj.set_desc_metadata_values(:arranger, "Arranger Value")
         obj.set_desc_metadata_values(:category, "Category Value")
@@ -70,9 +67,6 @@ module Ddr::Models
       its([Indexing::INSTRUMENTATION_FACET]) { is_expected.to eq(["Instrumentation Value"]) }
       its([Indexing::INTERVIEWER_NAME_FACET]) { is_expected.to eq(["Interviewer Name Value"]) }
       its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
-      its([Indexing::LICENSE_DESCRIPTION]) { is_expected.to eq("License Description") }
-      its([Indexing::LICENSE_TITLE]) { is_expected.to eq("License Title") }
-      its([Indexing::LICENSE_URL]) { is_expected.to eq("http://library.duke.edu") }
       its([Indexing::LITHOGRAPHER_FACET]) { is_expected.to eq(["Lithographer Value"]) }
       its([Indexing::LOCAL_ID]) { is_expected.to eq("foo") }
       its([Indexing::LYRICIST_FACET]) { is_expected.to eq(["Lyricist Value"]) }

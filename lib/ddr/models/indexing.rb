@@ -49,9 +49,6 @@ module Ddr::Models
         INTERVIEWER_NAME_FACET  => desc_metadata_values('interviewer_name'),
         IS_LOCKED               => is_locked,
         LICENSE                 => license,
-        LICENSE_DESCRIPTION     => rightsMetadata.license.description.first,
-        LICENSE_TITLE           => rightsMetadata.license.title.first,
-        LICENSE_URL             => rightsMetadata.license.url.first,
         LITHOGRAPHER_FACET      => desc_metadata_values('lithographer'),
         LOCAL_ID                => local_id,
         LYRICIST_FACET          => desc_metadata_values('lyricist'),
@@ -112,9 +109,6 @@ module Ddr::Models
         fields[COLLECTION_URI] = collection_uri
       end
       if is_a? Collection
-        fields[DEFAULT_LICENSE_DESCRIPTION] = defaultRights.license.description.first
-        fields[DEFAULT_LICENSE_TITLE] = defaultRights.license.title.first
-        fields[DEFAULT_LICENSE_URL] = defaultRights.license.url.first
         fields[ADMIN_SET_FACET] = admin_set_facet
         fields[COLLECTION_FACET] = collection_facet
       end
