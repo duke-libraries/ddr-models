@@ -49,21 +49,39 @@ module Ddr::Models
     end
 
     describe "#dereferenced_structure" do
-      let(:structure) { FactoryGirl.build(:nested_structure) }
-      let(:expected) { nested_structure_dereferenced_hash }
-      before do
-        flocat_x = instance_double("Structures::FLocat", effective_use: 'foo')
-        flocat_y = instance_double("Structures::FLocat", effective_use: 'bar')
-        flocat_z = instance_double("Structures::FLocat", effective_use: 'baz')
-        file_a = instance_double("Structures::File", repo_ids: [ 'test:7' ], flocats: [ flocat_x ])
-        file_b = instance_double("Structures::File", repo_ids: [ 'test:8' ], flocats: [ flocat_y ])
-        file_c = instance_double("Structures::File", repo_ids: [ 'test:9' ], flocats: [ flocat_z ])
-        allow(Structures::File).to receive(:find).with(an_instance_of(Ddr::Models::Structure), 'abc') { file_a }
-        allow(Structures::File).to receive(:find).with(an_instance_of(Ddr::Models::Structure), 'def') { file_b }
-        allow(Structures::File).to receive(:find).with(an_instance_of(Ddr::Models::Structure), 'ghi') { file_c }
+      describe "fptr case" do
+        let(:structure) { FactoryGirl.build(:nested_structure) }
+        let(:expected) { nested_structure_dereferenced_hash }
+        before do
+          flocat_x = instance_double("Structures::FLocat", effective_use: 'foo')
+          flocat_y = instance_double("Structures::FLocat", effective_use: 'bar')
+          flocat_z = instance_double("Structures::FLocat", effective_use: 'baz')
+          file_a = instance_double("Structures::File", repo_ids: [ 'test:7' ], flocats: [ flocat_x ])
+          file_b = instance_double("Structures::File", repo_ids: [ 'test:8' ], flocats: [ flocat_y ])
+          file_c = instance_double("Structures::File", repo_ids: [ 'test:9' ], flocats: [ flocat_z ])
+          allow(Structures::File).to receive(:find).with(an_instance_of(Ddr::Models::Structure), 'abc') { file_a }
+          allow(Structures::File).to receive(:find).with(an_instance_of(Ddr::Models::Structure), 'def') { file_b }
+          allow(Structures::File).to receive(:find).with(an_instance_of(Ddr::Models::Structure), 'ghi') { file_c }
+        end
+        it "returns the dereferenced structure" do
+          expect(structure.dereferenced_structure).to eq(expected)
+        end
       end
-      it "returns the dereferenced structure" do
-        expect(structure.dereferenced_structure).to eq(expected)
+      describe "mptr case" do
+        let(:structure) { FactoryGirl.build(:nested_structure_mptr) }
+        let(:expected) { nested_structure_mptr_dereferenced_hash }
+        before do
+          solr_doc_a = instance_double("SolrDocument", id: 'test:7')
+          solr_doc_b = instance_double("SolrDocument", id: 'test:8')
+          solr_doc_c = instance_double("SolrDocument", id: 'test:9')
+          allow_any_instance_of(Ddr::Models::Structures::Mptr).to receive(:ark?) { true }
+          allow(::SolrDocument).to receive(:find_by_permanent_id).with('ark:/99999/fk4ab3') { solr_doc_a }
+          allow(::SolrDocument).to receive(:find_by_permanent_id).with('ark:/99999/fk4cd9') { solr_doc_b }
+          allow(::SolrDocument).to receive(:find_by_permanent_id).with('ark:/99999/fk4ef1') { solr_doc_c }
+        end
+        it "returns the dereferenced structure" do
+          expect(structure.dereferenced_structure).to eq(expected)
+        end
       end
     end
 
