@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module Ddr
   RSpec.describe Utils do
     describe "sanitize filename" do

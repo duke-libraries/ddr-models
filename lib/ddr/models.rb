@@ -1,6 +1,8 @@
 require 'ddr/models/engine'
 require 'ddr/models/version'
 
+require 'action_view' # https://github.com/haml/haml/issues/695
+
 # Awful hack to make Hydra::AccessControls::Permissions accessible
 $: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/concerns"
 
