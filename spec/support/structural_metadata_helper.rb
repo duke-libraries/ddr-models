@@ -12,6 +12,12 @@ def nested_structure_document
   end
 end
 
+def nested_structure_mptr_document
+  Nokogiri::XML(nested_structure_mptr_xml) do |config|
+    config.noblanks
+  end
+end
+
 def multiple_struct_maps_structure_document
   Nokogiri::XML(multiple_struct_maps_structure) do |config|
     config.noblanks
@@ -85,6 +91,31 @@ def nested_structure_xml
           </div>
           <div ORDER="2" LABEL="Bottom">
             <fptr FILEID="ghi" />
+          </div>
+        </div>
+      </structMap>
+    </mets>
+  eos
+end
+
+def nested_structure_mptr_xml
+  <<-eos
+    <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <metsHdr>
+        <agent ROLE="CREATOR">
+          <name>Sam Spade</name>
+        </agent>
+      </metsHdr>
+      <structMap TYPE="default">
+        <div ORDER="1" LABEL="Front">
+          <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4ab3" />
+        </div>
+        <div ORDER="2" LABEL="Back">
+          <div ORDER="1" LABEL="Top">
+            <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4cd9" />
+          </div>
+          <div ORDER="2" LABEL="Bottom">
+            <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4ef1" />
           </div>
         </div>
       </structMap>
@@ -186,6 +217,30 @@ def nested_structure_dereferenced_hash
   YAML.load(yaml)
 end
 
+def nested_structure_mptr_dereferenced_hash
+  yaml = <<-eos
+    default:
+      :type: 'default'
+      :contents:
+        - :label: 'Front'
+          :order: '1'
+          :contents:
+            - :repo_id: 'test:7'
+        - :label: 'Back'
+          :order: '2'
+          :contents:
+            - :label: 'Top'
+              :order: '1'
+              :contents:
+                - :repo_id: 'test:8'
+            - :label: 'Bottom'
+              :order: '2'
+              :contents:
+                - :repo_id: 'test:9'
+  eos
+  YAML.load(yaml)
+end
+
 def multiple_struct_maps_structure_dereferenced_hash
   yaml = <<-eos
     default:
@@ -240,6 +295,10 @@ end
 
 def nested_structure_to_json
   nested_structure_dereferenced_hash.to_json
+end
+
+def nested_structure_mptr_to_json
+  nested_structure_mptr_dereferenced_hash.to_json
 end
 
 def multiple_struct_maps_structure_to_json

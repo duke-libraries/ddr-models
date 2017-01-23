@@ -44,22 +44,12 @@ module Ddr::Models
                   <name>#{Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT}</name>
                 </agent>
               </metsHdr>
-              <fileSec>
-                <fileGrp>
-                  <file ID="abc-def">
-                    <FLocat LOCTYPE="ARK" xlink:href="ark:/99999/fk4bbb" />
-                  </file>
-                  <file ID="ghi-jkl">
-                    <FLocat LOCTYPE="ARK" xlink:href="ark:/99999/fk4aaa" />
-                  </file>
-                </fileGrp>
-              </fileSec>
               <structMap TYPE="#{Ddr::Models::Structure::TYPE_DEFAULT}">
                 <div ORDER="1">
-                  <fptr FILEID="abc-def" />
+                  <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4bbb" />
                 </div>
                 <div ORDER="2">
-                  <fptr FILEID="ghi-jkl" />
+                  <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4aaa" />
                 </div>
               </structMap>
             </mets>

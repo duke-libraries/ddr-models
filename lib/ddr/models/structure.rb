@@ -111,6 +111,13 @@ module Ddr::Models
       fptr
     end
 
+    def add_mptr(parent:, id: nil, loctype:'ARK', otherloctype: nil, href:)
+      mptr = Ddr::Models::Structures::Mptr.build(id: id, loctype: loctype, otherloctype: otherloctype, href: href,
+                                                 document: as_xml_document)
+      parent.add_child(mptr)
+      mptr
+    end
+
     private
 
     def fileSec_node

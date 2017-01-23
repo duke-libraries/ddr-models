@@ -88,6 +88,7 @@ module Ddr
       autoload :FLocat
       autoload :Fptr
       autoload :MetsHdr
+      autoload :Mptr
       autoload :StructMap
     end
 

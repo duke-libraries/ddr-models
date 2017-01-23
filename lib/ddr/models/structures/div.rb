@@ -32,6 +32,10 @@ module Ddr::Models::Structures
       xpath('xmlns:fptr').map { |node| Fptr.new(node) }
     end
 
+    def mptrs
+      xpath('xmlns:mptr').map { |node| Mptr.new(node) }
+    end
+
     def <=>(other)
       order.to_i <=> other.order.to_i
     end
@@ -40,6 +44,7 @@ module Ddr::Models::Structures
       contents = []
       contents.concat(divs.map { |div| div.dereferenced_hash }) unless divs.empty?
       contents.concat(fptrs.map { |fptr| fptr.dereferenced_hash }) unless fptrs.empty?
+      contents.concat(mptrs.map { |mptr| mptr.dereferenced_hash }) unless mptrs.empty?
       dh = { id: id, label: label, order: order, orderlabel: orderlabel, type: type }.compact
       dh[:contents] = contents unless contents.empty?
       dh
