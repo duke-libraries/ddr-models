@@ -118,37 +118,16 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
     end
   end
 
-  describe "#struct_maps" do
-    context "no indexed struct maps" do
-      it "should return an empty hash" do
-        expect(subject.struct_maps).to be_empty
-      end
-    end
-    context "indexed struct maps" do
-      before { subject[Ddr::Index::Fields::STRUCT_MAPS] = multiple_struct_maps_structure_to_json }
-      it "should return a hash of the struct maps" do
-        expect(subject.struct_maps).to eq(JSON.parse(multiple_struct_maps_structure_to_json))
-      end
-    end
-  end
-
-  describe "#struct_map" do
-    context "no indexed struct maps" do
+  describe "#structure" do
+    context "no indexed structures" do
       it "should return nil" do
-        expect(subject.struct_map('default')).to be_nil
+        expect(subject.structure).to be_nil
       end
     end
-    context "indexed struct maps" do
-      before { subject[Ddr::Index::Fields::STRUCT_MAPS] = multiple_struct_maps_structure_to_json }
-      context "requested struct map is indexed" do
-        it "should return the struct map" do
-          expect(subject.struct_map('default')).to eq(JSON.parse(multiple_struct_maps_structure_to_json)["default"])
-        end
-      end
-      context "requested struct map is not indexed" do
-        it "should raise a KeyError" do
-          expect { subject.struct_map('foo') }.to raise_error(KeyError)
-        end
+    context "indexed structure" do
+      before { subject[Ddr::Index::Fields::STRUCTURE] = simple_structure_to_json }
+      it "should return the structures map" do
+        expect(subject.structure).to eq(JSON.parse(simple_structure_to_json))
       end
     end
   end
@@ -194,28 +173,21 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
         its(:multires_image_file_paths) { is_expected.to match([]) }
       end
       context "structural metadata" do
-        let(:struct_map) do
-          {"type"=>"default", "divs"=>
-            [{"id"=>"viccb010010010", "label"=>"1", "order"=>"1", "type"=>"Image", "fptrs"=>["test:5"], "divs"=>[]},
-             {"id"=>"viccb010020010", "label"=>"2", "order"=>"2", "type"=>"Image", "fptrs"=>["test:6"], "divs"=>[]},
-             {"id"=>"viccb010030010", "label"=>"3", "order"=>"3", "type"=>"Image", "fptrs"=>["test:7"], "divs"=>[]}]
-          }
-        end
-        before { allow(subject).to receive(:struct_map) { struct_map } }
+        before { allow(subject).to receive(:structure) { JSON.parse(simple_structure_to_json) } }
         context "no structural objects with multi-res images" do
           before do
-            allow(SolrDocument).to receive(:find).with('test:5') { double(multires_image_file_path: nil) }
-            allow(SolrDocument).to receive(:find).with('test:6') { double(multires_image_file_path: nil) }
             allow(SolrDocument).to receive(:find).with('test:7') { double(multires_image_file_path: nil) }
+            allow(SolrDocument).to receive(:find).with('test:8') { double(multires_image_file_path: nil) }
+            allow(SolrDocument).to receive(:find).with('test:9') { double(multires_image_file_path: nil) }
           end
           its(:multires_image_file_paths) { is_expected.to match([]) }
         end
         context "structural objects with multi-res images" do
           let(:expected_result) { [ "/path/file1.ptif", "/path/file2.ptif" ] }
           before do
-            allow(SolrDocument).to receive(:find).with('test:5') { double(multires_image_file_path: "/path/file1.ptif") }
-            allow(SolrDocument).to receive(:find).with('test:6') { double(multires_image_file_path: nil) }
-            allow(SolrDocument).to receive(:find).with('test:7') { double(multires_image_file_path: "/path/file2.ptif") }
+            allow(SolrDocument).to receive(:find).with('test:7') { double(multires_image_file_path: "/path/file1.ptif") }
+            allow(SolrDocument).to receive(:find).with('test:8') { double(multires_image_file_path: nil) }
+            allow(SolrDocument).to receive(:find).with('test:9') { double(multires_image_file_path: "/path/file2.ptif") }
           end
           its(:multires_image_file_paths) { is_expected.to match(expected_result) }
         end

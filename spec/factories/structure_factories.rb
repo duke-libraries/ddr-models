@@ -2,7 +2,7 @@ require 'support/structural_metadata_helper'
 
 FactoryGirl.define do
 
-  factory :structure, class: Ddr::Models::Structure do
+  factory :structures, class: Ddr::Models::Structure do
 
     factory :simple_structure do
       initialize_with do
