@@ -88,7 +88,8 @@ module Ddr::Managers
 
     def create_source_file(dir)
       generator_source = File.new(File.join(dir, "source"), "wb")
-      generator_source.write(object.content.content)
+      source_content = object.mezzanine.content || object.content.content
+      generator_source.write(source_content)
       generator_source.close
       generator_source
     end
