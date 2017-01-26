@@ -17,66 +17,41 @@ RSpec.describe Component, type: :model, components: true do
     its(:index_fields) { is_expected.to include(Ddr::Index::Fields::COLLECTION_URI => "info:fedora/test:1") }
   end
 
-  shared_examples "default datastream use" do
-    it "associates the correct datastream with the correct use" do
-      expect(file.use).to eq(use)
-      expect(flocat.href).to eq(ds)
-      expect(fptr.fileid).to eq(file.id)
-    end
-  end
-
   describe "default structure" do
     describe "no content" do
       it "should be nil" do
         expect(subject.default_structure).to be_nil
       end
     end
-    describe "content" do
-      let(:struct) { subject.default_structure }
-      let(:flocat) { file.flocats.first }
+    describe "has content" do
       before { allow(subject).to receive(:has_content?) { true } }
-      describe "with multires image" do
-        before do
-          allow(subject).to receive(:has_multires_image?) { true }
+      before { allow(subject).to receive(:has_thumbnail?) { true } }
+      let(:struct) { subject.default_structure }
+      it "has the correct original file" do
+        expect(struct.uses[Ddr::Models::Structure::USE_ORIGINAL_FILE].first.href).to eq(Ddr::Datastreams::CONTENT )
+      end
+      it "has the correct preservation master file" do
+        expect(struct.uses[Ddr::Models::Structure::USE_PRESERVATION_MASTER_FILE].first.href)
+                                                                                  .to eq(Ddr::Datastreams::CONTENT )
+      end
+      describe "service file" do
+        describe "with multires image" do
+          before do
+            allow(subject).to receive(:has_multires_image?) { true }
+          end
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].first.href)
+                                                                            .to eq(Ddr::Datastreams::MULTIRES_IMAGE )
+          end
         end
-        describe "master" do
-          let(:file) { struct.filesec.filegrps.first.files.first }
-          let(:fptr) { struct.structmap.divs.first.fptrs.first }
-          let(:use) { Ddr::Models::Structure::USE_MASTER }
-          let(:ds) { Ddr::Datastreams::CONTENT }
-          it_behaves_like "default datastream use"
-        end
-        describe "imageserver" do
-          let(:file) { struct.filesec.filegrps.first.files.second }
-          let(:fptr) { struct.structmap.divs.first.fptrs.second }
-          let(:use) { Ddr::Models::Structure::USE_IMAGESERVER }
-          let(:ds) { Ddr::Datastreams::MULTIRES_IMAGE }
-          it_behaves_like "default datastream use"
+        describe "without multires image" do
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].first.href).to eq(Ddr::Datastreams::CONTENT )
+          end
         end
       end
-      describe "without multires image" do
-        describe "master" do
-          let(:file) { struct.filesec.filegrps.first.files.first }
-          let(:fptr) { struct.structmap.divs.first.fptrs.first }
-          let(:use) { Ddr::Models::Structure::USE_MASTER }
-          let(:ds) { Ddr::Datastreams::CONTENT }
-          it_behaves_like "default datastream use"
-        end
-        describe "access" do
-          let(:file) { struct.filesec.filegrps.first.files.second }
-          let(:fptr) { struct.structmap.divs.first.fptrs.second }
-          let(:use) { Ddr::Models::Structure::USE_ACCESS }
-          let(:ds) { Ddr::Datastreams::CONTENT }
-          it_behaves_like "default datastream use"
-        end
-      end
-      describe "thumbnail" do
-        let(:file) { struct.filesec.filegrps.first.files.third }
-        let(:fptr) { struct.structmap.divs.first.fptrs.third }
-        let(:use) { Ddr::Models::Structure::USE_THUMBNAIL }
-        let(:ds) { Ddr::Datastreams::THUMBNAIL }
-        before { allow(subject).to receive(:has_thumbnail?) { true } }
-        it_behaves_like "default datastream use"
+      it "has the correct thumbnail image" do
+        expect(struct.uses[Ddr::Models::Structure::USE_THUMBNAIL_IMAGE].first.href).to eq(Ddr::Datastreams::THUMBNAIL )
       end
     end
 

@@ -6,17 +6,25 @@ module Ddr::Models
 
     TYPE_DEFAULT = 'default'.freeze
 
-    USE_ACCESS = 'access'.freeze
-    USE_IMAGESERVER = 'imageserver'.freeze
-    USE_MASTER = 'master'.freeze
-    USE_THUMBNAIL = 'thumbnail'.freeze
+    # Based on the PCDM Extension 'Use' ontology -- https://github.com/duraspace/pcdm/blob/master/pcdm-ext/use.rdf
+    USE_EXTRACTED_TEXT = 'ExtractedText'.freeze
+    USE_INTERMEDIATE_FILE = 'IntermediateFile'.freeze
+    USE_ORIGINAL_FILE = 'OriginalFile'.freeze
+    USE_PRESERVATION_MASTER_FILE = 'PreservationMasterFile'.freeze
+    USE_SERVICE_FILE = 'ServiceFile'.freeze
+    USE_THUMBNAIL_IMAGE = 'ThumbnailImage'.freeze
+    USE_TRANSCRIPT = 'Transcript'.freeze
 
     def filesec
       @filesec ||= Ddr::Models::Structures::FileSec.new(fileSec_node)
     end
 
     def files
-      @files ||= collect_files(filesec)
+      @files ||= collect_files
+    end
+
+    def uses
+      @uses ||= collect_uses
     end
 
     def structmap(type=nil)
@@ -136,17 +144,31 @@ module Ddr::Models
       xpath("//xmlns:metsHdr")
     end
 
-    def collect_files(container)
+    def file_nodes
+      xpath("//xmlns:file")
+    end
+
+    def flocat_nodes
+      xpath("//xmlns:FLocat")
+    end
+
+    def collect_files
       files = {}
-      container.filegrps.each do |filegrp|
-        files.merge!(collect_files(filegrp))
-      end
-      if container.respond_to?(:files)
-        container.files.each do |file|
-          files[file.id] = file
-        end
+      file_nodes.each do |file_node|
+        file = Ddr::Models::Structures::File.new(file_node)
+        files[file.id] = file
       end
       files
+    end
+
+    def collect_uses
+      uses = {}
+      flocat_nodes.each do |flocat_node|
+        flocat = Ddr::Models::Structures::FLocat.new(flocat_node)
+        uses[flocat.effective_use] ||= []
+        uses[flocat.effective_use] << flocat
+      end
+      uses
     end
 
     def self.xml_template
