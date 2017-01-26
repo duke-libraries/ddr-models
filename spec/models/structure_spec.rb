@@ -14,6 +14,16 @@ module Ddr::Models
       end
     end
 
+    describe "#uses" do
+      let(:structure) { FactoryGirl.build(:simple_structure)}
+      it "returns a hash of uses" do
+        expect(structure.uses.keys).to match_array([ 'foo', 'bar', 'baz' ])
+        expect(structure.uses['foo'].first.href).to eq('ark:/99999/fk4ab3')
+        expect(structure.uses['bar'].first.href).to eq('ark:/99999/fk4cd9')
+        expect(structure.uses['baz'].first.href).to eq('ark:/99999/fk4ef1')
+      end
+    end
+
     describe "#creator" do
       describe "structure has a metsHdr" do
         let(:structure) { FactoryGirl.build(:simple_structure) }
