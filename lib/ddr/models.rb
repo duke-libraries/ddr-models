@@ -53,6 +53,7 @@ module Ddr
     autoload :HasAttachments
     autoload :HasChildren
     autoload :HasContent
+    autoload :HasMezzanine
     autoload :HasMultiresImage
     autoload :HasStructMetadata
     autoload :HasThumbnail

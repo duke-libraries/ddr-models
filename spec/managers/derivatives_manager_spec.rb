@@ -5,6 +5,7 @@ module Ddr::Managers
       class ContentBearing < ActiveFedora::Base
         include Ddr::Models::HasAdminMetadata
         include Ddr::Models::HasContent
+        include Ddr::Models::HasMezzanine
         include Ddr::Models::HasThumbnail
         include Ddr::Models::EventLoggable
         _save_callbacks.clear
@@ -104,6 +105,33 @@ module Ddr::Managers
           expect(object.datastreams[Ddr::Datastreams::MULTIRES_IMAGE]).to be_present
           file_uri = object.datastreams[Ddr::Datastreams::MULTIRES_IMAGE].dsLocation
           expect(File.size(Ddr::Utils.path_from_uri(file_uri))).to be > 0
+        end
+      end
+    end
+
+    describe "mezzanine handling" do
+      let(:object) { MultiresImageable.create }
+      let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
+      before { object.upload! file }
+      describe "object has mezzanine file" do
+        let(:mezzanine) { fixture_file_upload("bird.jpg", "image/jpeg") }
+        before do
+          object.add_file mezzanine, Ddr::Datastreams::MEZZANINE
+          object.save!
+          object.reload
+          expect(object.mezzanine).to receive(:content).and_call_original
+          expect(object.content).to_not receive(:content)
+        end
+        it "uses the mezzanine file as the derivative source" do
+          object.derivatives.generate_derivative! Ddr::Derivatives::DERIVATIVES[:multires_image]
+        end
+      end
+      describe "object does not have mezzanine file" do
+        before do
+          expect(object.content).to receive(:content).and_call_original
+        end
+        it "uses the content file as the derivative source" do
+          object.derivatives.generate_derivative! Ddr::Derivatives::DERIVATIVES[:multires_image]
         end
       end
     end
