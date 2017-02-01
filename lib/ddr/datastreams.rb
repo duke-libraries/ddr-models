@@ -10,7 +10,7 @@ module Ddr
     DESC_METADATA = "descMetadata"
     EXTRACTED_TEXT = "extractedText"
     FITS = "fits".freeze
-    INTERMEDIATE = "intermediate".freeze
+    INTERMEDIATE_FILE = "intermediateFile".freeze
     MULTIRES_IMAGE = "multiresImage"
     RELS_EXT = "RELS-EXT"
     STRUCT_METADATA = "structMetadata"
@@ -31,6 +31,10 @@ module Ddr
     autoload :MetadataDatastream
     autoload :PlainTextDatastream
     autoload :StructuralMetadataDatastream
+
+    mattr_accessor :update_derivatives_on_changed do
+      [ CONTENT, INTERMEDIATE_FILE ]
+    end
 
   end
 end
