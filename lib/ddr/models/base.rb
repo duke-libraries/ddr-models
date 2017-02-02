@@ -103,7 +103,11 @@ module Ddr
 
       def notify_ingestion
         event_name = "ingestion.#{self.class.to_s.underscore}.repo_object"
-        payload = default_notification_payload.merge(event_date_time: ingestion_date)
+        ds_changed = datastreams.select { |dsid, ds| ds.has_content? }.keys
+        payload = default_notification_payload.merge(
+          event_date_time: ingestion_date,
+          datastreams_changed: ds_changed
+        )
         ActiveSupport::Notifications.instrument(event_name, payload)
       end
 

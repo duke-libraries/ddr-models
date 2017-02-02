@@ -5,14 +5,12 @@ module Ddr::Managers
       class ContentBearing < ActiveFedora::Base
         include Ddr::Models::HasAdminMetadata
         include Ddr::Models::HasContent
-        include Ddr::Models::HasIntermediate
+        include Ddr::Models::HasIntermediateFile
         include Ddr::Models::HasThumbnail
         include Ddr::Models::EventLoggable
-        _save_callbacks.clear
       end
       class MultiresImageable < ContentBearing
         include Ddr::Models::HasMultiresImage
-        _save_callbacks.clear
       end
     end
 
@@ -109,28 +107,26 @@ module Ddr::Managers
       end
     end
 
-    describe "intermediate handling" do
+    describe "intermediate file handling" do
       let(:object) { MultiresImageable.create }
       let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
       before { object.upload! file }
       describe "object has intermediate file" do
-        let(:intermediate) { fixture_file_upload("bird.jpg", "image/jpeg") }
+        let(:intermediate_file) { fixture_file_upload("bird.jpg", "image/jpeg") }
         before do
-          object.add_file intermediate, Ddr::Datastreams::INTERMEDIATE
+          object.add_file intermediate_file, Ddr::Datastreams::INTERMEDIATE_FILE
           object.save!
           object.reload
-          expect(object.intermediate).to receive(:content).and_call_original
-          expect(object.content).to_not receive(:content)
         end
         it "uses the intermediate file as the derivative source" do
+          expect(object.intermediateFile).to receive(:content).and_call_original
+          expect(object.content).to_not receive(:content)
           object.derivatives.generate_derivative! Ddr::Derivatives::DERIVATIVES[:multires_image]
         end
       end
       describe "object does not have intermediate file" do
-        before do
-          expect(object.content).to receive(:content).and_call_original
-        end
         it "uses the content file as the derivative source" do
+          expect(object.content).to receive(:content).and_call_original
           object.derivatives.generate_derivative! Ddr::Derivatives::DERIVATIVES[:multires_image]
         end
       end

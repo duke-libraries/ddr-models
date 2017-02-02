@@ -5,6 +5,7 @@ module Ddr
     autoload :Generator
     autoload :PngGenerator
     autoload :PtifGenerator
+    autoload :UpdateDerivatives
 
     Derivative = Struct.new(:name, :datastream, :generator, :options)
 

@@ -28,8 +28,6 @@ module Ddr
 
         include FileManagement
 
-        around_save :update_derivatives, if: :content_changed?
-
         before_save if: :re_characterize? do
           fits.delete
         end
@@ -123,11 +121,6 @@ module Ddr
       end
 
       protected
-
-      def update_derivatives
-        yield
-        derivatives.update_derivatives(:later)
-      end
 
       def re_characterize?
         content_changed? && !fits.new?
