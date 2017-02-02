@@ -45,12 +45,12 @@ module ActiveFedora
       can_have_struct_metadata? && structMetadata.has_content?
     end
 
-    def can_have_mezzanine?
-      datastreams.include? Ddr::Datastreams::MEZZANINE
+    def can_have_intermediate?
+      datastreams.include? Ddr::Datastreams::INTERMEDIATE
     end
 
-    def has_mezzanine?
-      can_have_mezzanine? && datastreams[Ddr::Datastreams::MEZZANINE].has_content?
+    def has_intermediate?
+      can_have_intermediate? && datastreams[Ddr::Datastreams::INTERMEDIATE].has_content?
     end
 
     def can_have_multires_image?

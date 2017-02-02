@@ -1,12 +1,12 @@
 module Ddr
   module Models
-    module HasMezzanine
+    module HasIntermediate
       extend ActiveSupport::Concern
 
       included do
-        has_file_datastream name: Ddr::Datastreams::MEZZANINE,
+        has_file_datastream name: Ddr::Datastreams::INTERMEDIATE,
                             versionable: true,
-                            label: "Mezzanine file for this object",
+                            label: "Intermediate file for this object",
                             control_group: 'M'
 
         include FileManagement unless include?(FileManagement)

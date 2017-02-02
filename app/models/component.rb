@@ -6,7 +6,7 @@
 class Component < Ddr::Models::Base
 
   include Ddr::Models::HasContent
-  include Ddr::Models::HasMezzanine
+  include Ddr::Models::HasIntermediate
   include Ddr::Models::HasMultiresImage
   include Ddr::Models::HasStructMetadata
 

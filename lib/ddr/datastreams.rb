@@ -10,7 +10,7 @@ module Ddr
     DESC_METADATA = "descMetadata"
     EXTRACTED_TEXT = "extractedText"
     FITS = "fits".freeze
-    MEZZANINE = "mezzanine".freeze
+    INTERMEDIATE = "intermediate".freeze
     MULTIRES_IMAGE = "multiresImage"
     RELS_EXT = "RELS-EXT"
     STRUCT_METADATA = "structMetadata"
