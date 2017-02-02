@@ -24,7 +24,7 @@ module Ddr
       private
 
       def run_generator(source_to_use)
-        command = "vips im_vips2tiff #{Ddr::Utils.file_path(source_to_use)} #{Ddr::Utils.file_path(output)}:#{options}"
+        command = "#{vips_command} im_vips2tiff #{Ddr::Utils.file_path(source_to_use)} #{Ddr::Utils.file_path(output)}:#{options}"
         `#{command}`
         $?.exitstatus
       end
@@ -44,6 +44,10 @@ module Ddr
 
       def source_depth
         `identify -quiet -format '%[depth]' #{Ddr::Utils.file_path(source)}[0]`
+      end
+
+      def vips_command
+        Ddr::Models.vips_path ? File.join(Ddr::Models.vips_path, 'vips') : 'vips'
       end
 
     end

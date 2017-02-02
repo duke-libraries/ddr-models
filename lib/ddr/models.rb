@@ -138,6 +138,9 @@ module Ddr
       false
     end
 
+    # File path to vips
+    mattr_accessor :vips_path
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self

@@ -83,6 +83,10 @@ module Ddr
         Ddr::Models.fits_home = ENV["FITS_HOME"]
       end
 
+      initializer "vips_path" do
+        Ddr::Models.vips_path = ENV["VIPS_PATH"]
+      end
+
       initializer "ddr_antivirus" do
         require "ddr-antivirus"
         if Rails.env.test?
