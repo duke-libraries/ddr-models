@@ -20,8 +20,9 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", ">= 4.2.7", "< 5" # Hydra 7.x not compatible/tested with Rails 5
   s.add_dependency "activeresource"
-  s.add_dependency "active-fedora", "~> 7.0"
-  s.add_dependency "hydra-core", "~> 7.2"
+  s.add_dependency "active-fedora", "~> 8.3"
+  s.add_dependency "rubydora", "~> 2.0"
+  s.add_dependency "hydra-core", "~> 8.1"
   s.add_dependency "hydra-validations", "~> 0.5"
   s.add_dependency "devise", "~> 3.4"
   s.add_dependency "omniauth-shibboleth", "~> 1.2.0"
