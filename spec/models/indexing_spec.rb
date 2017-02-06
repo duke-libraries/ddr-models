@@ -33,6 +33,8 @@ module Ddr::Models
         obj.set_desc_metadata_values(:illustrator, "Illustrator Value")
         obj.set_desc_metadata_values(:instrumentation, "Instrumentation Value")
         obj.set_desc_metadata_values(:interviewer_name, "Interviewer Name Value")
+        obj.set_desc_metadata_values(:isFormatOf, "ark:/99999/fk4aaa")
+        obj.set_desc_metadata_values(:isPartOf, "RL10059CS1010")
         obj.set_desc_metadata_values(:lithographer, "Lithographer Value")
         obj.set_desc_metadata_values(:lyricist, "Lyricist Value")
         obj.set_desc_metadata_values(:medium, "Medium Value")
@@ -55,6 +57,7 @@ module Ddr::Models
       its([Indexing::CATEGORY_FACET]) { is_expected.to eq(["Category Value"]) }
       its([Indexing::COMPANY_FACET]) { is_expected.to eq(["Company Value"]) }
       its([Indexing::COMPOSER_FACET]) { is_expected.to eq(["Composer Value"]) }
+      its([Indexing::DC_IS_PART_OF]) { is_expected.to eq(["RL10059CS1010"])}
       its([Indexing::DISPLAY_FORMAT]) { is_expected.to eq("Image") }
       its([Indexing::DOI]) { is_expected.to eq(["http://doi.org/10.1000/182"]) }
       its([Indexing::ENGRAVER_FACET]) { is_expected.to eq(["Engraver Value"]) }
@@ -66,6 +69,7 @@ module Ddr::Models
       its([Indexing::INGESTION_DATE]) { is_expected.to eq("2017-01-13T18:55:29Z") }
       its([Indexing::INSTRUMENTATION_FACET]) { is_expected.to eq(["Instrumentation Value"]) }
       its([Indexing::INTERVIEWER_NAME_FACET]) { is_expected.to eq(["Interviewer Name Value"]) }
+      its([Indexing::IS_FORMAT_OF]) { is_expected.to eq(["ark:/99999/fk4aaa"]) }
       its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
       its([Indexing::LITHOGRAPHER_FACET]) { is_expected.to eq(["Lithographer Value"]) }
       its([Indexing::LOCAL_ID]) { is_expected.to eq("foo") }
