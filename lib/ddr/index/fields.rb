@@ -29,6 +29,7 @@ module Ddr::Index
     CREATOR_FACET               = Field.new :creator_facet, :facetable
     DATE_FACET                  = Field.new :date_facet, :facetable
     DATE_SORT                   = Field.new :date_sort, :sortable
+    DC_IS_PART_OF               = Field.new :isPartOf, :symbol
     DEPOSITOR                   = Field.new :depositor, :stored_sortable
     DISPLAY_FORMAT              = Field.new :display_format, :stored_sortable
     DOI                         = Field.new :doi, :symbol
@@ -49,6 +50,7 @@ module Ddr::Index
     INTERVIEWER_NAME_FACET      = Field.new :interviewer_name_facet, :facetable
     IS_ATTACHED_TO              = Field.new :is_attached_to, :symbol
     IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, :symbol
+    IS_FORMAT_OF                = Field.new :isFormatOf, :symbol
     IS_GOVERNED_BY              = Field.new :is_governed_by, :symbol
     IS_LOCKED                   = Field.new :is_locked, :stored_sortable
     IS_MEMBER_OF                = Field.new :is_member_of, :symbol
