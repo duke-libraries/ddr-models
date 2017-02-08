@@ -2,6 +2,12 @@ module Ddr
   module Models
     class Base < ActiveFedora::Base
 
+      # Lifecycle events
+      INGEST = "ingest.repo_object"
+      UPDATE = "update.repo_object"
+      DELETE = "delete.repo_object"
+      DEACCESSION = "deaccession.repo_object"
+
       include Describable
       include Governable
       include HasThumbnail
@@ -21,14 +27,13 @@ module Ddr
       before_create :set_ingestion_date, unless: :ingestion_date
       before_create :set_ingested_by, if: :performed_by, unless: :ingested_by
 
-      after_create :notify_ingestion
+      after_create :notify_ingest
       after_create :assign_permanent_id!, if: :assign_permanent_id?
 
       around_save :notify_update, unless: :new_record?
-      around_save :notify_workflow_change, if: [:workflow_state_changed?, :persisted?]
 
       after_deaccession :notify_deaccession
-      after_destroy :notify_deletion
+      after_destroy :notify_delete
 
       def deaccession
         run_callbacks :deaccession do
@@ -98,49 +103,39 @@ module Ddr
 
       def default_notification_payload
         cache.slice(:summary, :comment, :detail)
-          .merge(pid: pid, user_key: performed_by, permanent_id: permanent_id)
+          .merge(pid: pid,
+                 user_key: performed_by,
+                 permanent_id: permanent_id,
+                 model: self.class.to_s)
       end
 
-      def notify_ingestion
-        event_name = "ingestion.#{self.class.to_s.underscore}.repo_object"
+      def notify_ingest
         ds_changed = datastreams.select { |dsid, ds| ds.has_content? }.keys
         payload = default_notification_payload.merge(
           event_date_time: ingestion_date,
           datastreams_changed: ds_changed
         )
-        ActiveSupport::Notifications.instrument(event_name, payload)
+        ActiveSupport::Notifications.instrument(INGEST, payload)
       end
 
       def notify_update
-        event_name = "update.#{self.class.to_s.underscore}.repo_object"
         ds_changed = datastreams.select { |dsid, ds| ds.content_changed? }.keys
-        event_params = default_notification_payload.merge(attributes_changed: changes,
-                                                          datastreams_changed: ds_changed)
-        event_params[:detail] = ["Attributes changed: #{changes}",
-                                 "Datastreams changed: #{ds_changed.join(', ')}",
-                                 event_params[:detail],
-                                ].compact.join("\n\n")
-        ActiveSupport::Notifications.instrument(event_name, event_params) do |payload|
+        event_params = default_notification_payload.merge(
+          attributes_changed: changes,
+          datastreams_changed: ds_changed
+        )
+        ActiveSupport::Notifications.instrument(UPDATE, event_params) do |payload|
           yield
           payload[:event_date_time] = modified_date
         end
       end
 
-      def notify_workflow_change
-        event_name = "#{workflow_state}.workflow.#{self.class.to_s.underscore}.repo_object"
-        ActiveSupport::Notifications.instrument(event_name, default_notification_payload) do |payload|
-          yield
-        end
-      end
-
       def notify_deaccession
-        event_name = "deaccession.#{self.class.to_s.underscore}.repo_object"
-        ActiveSupport::Notifications.instrument(event_name, default_notification_payload)
+        ActiveSupport::Notifications.instrument(DEACCESSION, default_notification_payload)
       end
 
-      def notify_deletion
-        event_name = "deletion.#{self.class.to_s.underscore}.repo_object"
-        ActiveSupport::Notifications.instrument(event_name, default_notification_payload)
+      def notify_delete
+        ActiveSupport::Notifications.instrument(DELETE, default_notification_payload)
       end
 
       def assign_permanent_id?

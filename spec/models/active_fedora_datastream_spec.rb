@@ -172,30 +172,23 @@ module ActiveFedora
       }
       describe "on create" do
         let(:obj) { ActiveFedora::Base.create }
-        let(:event_name) { "create.DS1.datastream" }
+        let(:event_name) { "save.repo_file" }
         specify {
           obj.add_file_datastream("foo", dsid: "DS1", controlGroup: "M")
           obj.save!
-          expect(events.first[:pid]).to eq obj.pid
-          expect(events.first[:event_date_time]).to eq obj.datastreams["DS1"].createDate
-        }
-      end
-      describe "on update" do
-        let(:obj) { FactoryGirl.create(:item) }
-        let(:event_name) { "update.descMetadata.datastream" }
-        specify {
-          obj.title = [ "Changed Title" ]
-          obj.save!
-          expect(events.first[:pid]).to eq obj.pid
-          expect(events.first[:event_date_time]).to eq obj.descMetadata.createDate
+          expect(events.last[:pid]).to eq obj.pid
+          expect(events.last[:file_id]).to eq "DS1"
+          expect(events.last[:profile]).to be_present
         }
       end
       describe "on destroy" do
         let(:obj) { FactoryGirl.create(:item) }
-        let(:event_name) { "delete.descMetadata.datastream" }
+        let(:event_name) { "delete.repo_file" }
         specify {
           obj.descMetadata.delete
           expect(events.first[:pid]).to eq obj.pid
+          expect(events.first[:file_id]).to eq "descMetadata"
+          expect(events.first[:profile]).to be_present
         }
       end
     end
