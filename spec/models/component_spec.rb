@@ -8,6 +8,7 @@ RSpec.describe Component, type: :model, components: true do
   it_behaves_like "it has an association", :belongs_to, :target, :has_external_target, "Target"
   it_behaves_like "a non-collection model"
   it_behaves_like "a potentially publishable object"
+  it_behaves_like "an object that can have an intermediate file"
 
   describe "indexing" do
     subject { FactoryGirl.build(:component) }

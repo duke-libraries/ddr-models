@@ -67,7 +67,7 @@ RSpec.shared_examples "an object that can have content" do
         before { subject.add_file file, "content" }
         let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
         it "should generate derivatives" do
-          expect(Ddr::Derivatives::UpdateDerivatives).to receive(:call).and_call_original
+          expect_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:update_derivatives)
           subject.save
         end
       end
@@ -76,7 +76,7 @@ RSpec.shared_examples "an object that can have content" do
         before { subject.upload! fixture_file_upload('imageA.tif', 'image/tiff') }
         let(:file) { fixture_file_upload("imageB.tif", "image/tiff") }
         it "should generate derivatives" do
-          expect(Ddr::Derivatives::UpdateDerivatives).to receive(:call).and_call_original
+          expect_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:update_derivatives)
           subject.upload! file
         end
         context "and the file has not previously been characterized" do

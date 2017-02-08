@@ -35,13 +35,15 @@ module Ddr::Models
       event = ActiveSupport::Notifications::Event.new(*args)
       repo_id, identifier_id, reason = event.payload.values_at(:pid, :permanent_id, :reason)
       case event.name
-      when /workflow/
-        update!(repo_id) if auto_update?
-      when /^deaccession/
+      when Base::UPDATE
+        if auto_update? && event.payload[:attributes_changed].include?("workflow_state")
+          update!(repo_id)
+        end
+      when Base::DEACCESSION
         if auto_update? && identifier_id
           deaccession!(repo_id, identifier_id, reason)
         end
-      when /^deletion/
+      when Base::DELETE
         if auto_update? && identifier_id
           delete!(repo_id, identifier_id, reason)
         end
