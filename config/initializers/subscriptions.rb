@@ -2,8 +2,6 @@
 ## Subscriptions to ActiveSupport::Notifications instrumentation events
 ##
 
-has_content = %w( component target attachment ).join("|")
-
 # Fixity Checks
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::FIXITY_CHECK, Ddr::Events::FixityCheckEvent)
 
