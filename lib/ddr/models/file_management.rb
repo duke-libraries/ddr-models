@@ -45,7 +45,7 @@ module Ddr::Models
 
       run_callbacks(:add_file) do
         if opts.delete(:external) || datastreams.include?(dsid) && datastreams[dsid].external?
-          add_external_file(file, dsid, opts)
+          add_external_file(file, dsid, opts.merge(original_name: original_name))
         else
           file = File.new(file, "rb") if Ddr::Utils.file_path?(file)
           # ActiveFedora method accepts file-like objects, not paths
@@ -84,7 +84,7 @@ module Ddr::Models
         store_path = file_path
       else
         # generate new storage path for file
-        store_path = create_external_file_path!(ds)
+        store_path = create_external_file_path!(ds, opts[:original_name])
         # copy the original file to the storage location
         FileUtils.cp file_path, store_path
       end
@@ -97,8 +97,8 @@ module Ddr::Models
     end
 
     # Create directory (if necessary) for newly generated file path and return path
-    def create_external_file_path! ds
-      file_path = generate_external_file_path(ds)
+    def create_external_file_path! ds, original_name=nil
+      file_path = generate_external_file_path(ds, original_name)
       FileUtils.mkdir_p(File.dirname(file_path))
       file_path
     end
@@ -108,8 +108,8 @@ module Ddr::Models
     #
     # => {external_file_store}/1/e/69/1e691815-0631-4f9b-8e23-2dfb2eec9c70
     #
-    def generate_external_file_path ds
-      file_name = generate_external_file_name(ds)
+    def generate_external_file_path ds, original_name=nil
+      file_name = generate_external_file_name(ds, original_name)
       File.join(external_file_store(ds.dsid), generate_external_directory_subpath, file_name)
     end
 
@@ -122,6 +122,7 @@ module Ddr::Models
     end
 
     def add_external_datastream dsid, opts={}
+      # TODO Change to use Ddr::Datastreams::ExternalDatastream
       klass = self.class.datastream_class_for_name(dsid)
       datastream = create_datastream(klass, dsid, controlGroup: "E")
       add_datastream(datastream)
@@ -164,8 +165,8 @@ module Ddr::Models
       File.chmod(EXTERNAL_FILE_PERMISSIONS, file_path)
     end
 
-    def generate_external_file_name ds
-      content_file_name = Ddr::Utils::sanitize_filename(original_filename) || datastreams[ds.dsid].default_file_name
+    def generate_external_file_name ds, original_name=nil
+      content_file_name = Ddr::Utils::sanitize_filename(original_name) || datastreams[ds.dsid].default_file_name
       case ds.dsid
       when Ddr::Datastreams::MULTIRES_IMAGE
         case ds.mimeType

@@ -47,11 +47,13 @@ module Ddr::Models
         object.add_file file, "m_content"
       end
       it "should call add_external_file when dsid spec is external" do
-        expect(object).to receive(:add_external_file).with(file, "e_content", {mime_type: file.content_type})
+        expect(object).to receive(:add_external_file)
+                           .with(file, "e_content", {mime_type: file.content_type, original_name: "imageA.tif"})
         object.add_file file, "e_content"
       end
       it "should call add_external_file when :external => true option passed" do
-        expect(object).to receive(:add_external_file).with(file, "random_ds_2", {mime_type: file.content_type})
+        expect(object).to receive(:add_external_file)
+                           .with(file, "random_ds_2", {mime_type: file.content_type, original_name: 'imageA.tif'})
         object.add_file file, "random_ds_2", external: true
       end
     end

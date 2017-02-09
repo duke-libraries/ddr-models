@@ -28,8 +28,10 @@ module Ddr
     CHECKSUM_TYPES = [ CHECKSUM_TYPE_MD5, CHECKSUM_TYPE_SHA1, CHECKSUM_TYPE_SHA256, CHECKSUM_TYPE_SHA384, CHECKSUM_TYPE_SHA512 ]
 
     autoload :AdministrativeMetadataDatastream
+    autoload :ContentExternalDatastream
     autoload :DatastreamBehavior
     autoload :DescriptiveMetadataDatastream
+    autoload :ExternalDatastream
     autoload :FitsDatastream
     autoload :MetadataDatastream
     autoload :PlainTextDatastream

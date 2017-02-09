@@ -6,9 +6,9 @@ module Ddr
       included do
         has_file_datastream \
           name: Ddr::Datastreams::CONTENT,
+          type: Ddr::Datastreams::ContentExternalDatastream,
           versionable: true,
-          label: "Content file for this object",
-          control_group: "M"
+          label: "Content file for this object"
 
         has_file_datastream \
           name: Ddr::Datastreams::EXTRACTED_TEXT,
