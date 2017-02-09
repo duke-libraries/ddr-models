@@ -29,7 +29,7 @@ RSpec.describe Item, type: :model do
     }
 
     it "indexes the combined text of its children" do
-      expect(subject.index_fields[Ddr::Index::Fields::ALL_TEXT]).to contain_exactly(text1.read, text2.read, text3.read)
+      expect(subject.index_fields[Ddr::Index::Fields::ALL_TEXT]).to contain_exactly(File.read(text1.path), File.read(text2.path), File.read(text3.path))
     end
   end
 
