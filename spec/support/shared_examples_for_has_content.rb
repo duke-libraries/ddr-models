@@ -6,6 +6,16 @@ RSpec.shared_examples "an object that can have content" do
 
   before { allow(Resque).to receive(:enqueue) }
 
+  its(:can_have_content?) { is_expected.to be true }
+  it { is_expected.to_not have_content }
+  specify {
+    allow(subject.content).to receive(:has_content?) { true }
+    expect(subject).to have_content
+  }
+
+  its(:can_have_children?) { is_expected.to be false }
+  it { is_expected.to_not have_children }
+
   it "should delegate :validate_checksum! to :content" do
     checksum = "dea56f15b309e47b74fa24797f85245dda0ca3d274644a96804438bbd659555a"
     expect(subject.content).to receive(:validate_checksum!).with(checksum, "SHA-256")
@@ -60,9 +70,7 @@ RSpec.shared_examples "an object that can have content" do
   end
 
   describe "save" do
-
     describe "when new content is present" do
-
       context "and it's a new object" do
         before { subject.add_file file, "content" }
         let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
@@ -92,16 +100,6 @@ RSpec.shared_examples "an object that can have content" do
           it "preserves the characterization data" do
             subject.upload! file
             expect(subject.reload.fits).to have_content
-          end
-        end
-        context "and the file has previously been characterized" do
-          before {
-            subject.fits.content = fixture_file_upload("fits/document.xml")
-            subject.save!
-          }
-          it "deletes the existing characterization data" do
-            subject.upload! file
-            expect(subject.reload.fits).to_not have_content
           end
         end
       end

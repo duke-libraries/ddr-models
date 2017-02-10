@@ -2,8 +2,6 @@ module Ddr::Models
   module FileManagement
     extend ActiveSupport::Concern
 
-    EXTERNAL_FILE_PERMISSIONS = 0644
-
     included do
       attr_accessor :file_to_add
 
@@ -36,7 +34,7 @@ module Ddr::Models
     #
     #   :use_original - For external datastream file, do not copy file to new file path,
     #                   but use in place (set dsLocation to file URI for current path.
-    def add_file file, dsid, opts={}
+    def add_file(file, dsid, opts={})
       opts[:mime_type] ||= Ddr::Utils.mime_type_for(file)
 
       # @file_to_add is set for callbacks to access the data
@@ -45,7 +43,7 @@ module Ddr::Models
 
       run_callbacks(:add_file) do
         if opts.delete(:external) || datastreams.include?(dsid) && datastreams[dsid].external?
-          add_external_file(file, dsid, opts.merge(original_name: original_name))
+          add_external_file(file, dsid, opts)
         else
           file = File.new(file, "rb") if Ddr::Utils.file_path?(file)
           # ActiveFedora method accepts file-like objects, not paths
@@ -57,60 +55,17 @@ module Ddr::Models
       self.file_to_add = nil
     end
 
-    # Normally this method should not be called directly. Call `add_file` with dsid for
-    # external datastream id, or with `:external=>true` option if no spec for dsid.
-    def add_external_file file, dsid, opts={}
+    # @api private
+    # Normally this method should not be called directly.
+    # Call `add_file` with dsid for external datastream, or with
+    # `:external=>true` option if no spec for dsid.
+    def add_external_file(file, dsid, opts={})
       file_path = Ddr::Utils.file_path(file) # raises ArgumentError
-
-      # Retrieve or create the datastream
-      ds = datastreams.include?(dsid) ? datastreams[dsid] : add_external_datastream(dsid)
-
+      ds = datastreams[dsid] || add_external_datastream(dsid)
       unless ds.external?
         raise ArgumentError, "Cannot add external file to datastream with controlGroup \"#{ds.controlGroup}\""
       end
-
-      if ds.dsLocation_changed?
-        raise Ddr::Models::Error, "Cannot add external file to datastream when dsLocation change is pending."
-      end
-
-      # Set the MIME type
-      # The :mime_type option will be present when called from `add_file`.
-      # The fallback is there in case `add_external_file` is called directly.
-      ds.mimeType = opts[:mime_type] || Ddr::Utils.mime_type_for(file, file_path)
-
-      # Copy the file to storage unless we're using the original
-      if opts[:use_original]
-        raise Ddr::Models::Error, "Cannot add file to repository that is owned by another user." unless File.owned?(file_path)
-        store_path = file_path
-      else
-        # generate new storage path for file
-        store_path = create_external_file_path!(ds, opts[:original_name])
-        # copy the original file to the storage location
-        FileUtils.cp file_path, store_path
-      end
-
-      # set appropriate permissions on the file
-      set_external_file_permissions!(store_path)
-
-      # set dsLocation to file URI for storage path
-      ds.dsLocation = Ddr::Utils.path_to_uri(store_path)
-    end
-
-    # Create directory (if necessary) for newly generated file path and return path
-    def create_external_file_path! ds, original_name=nil
-      file_path = generate_external_file_path(ds, original_name)
-      FileUtils.mkdir_p(File.dirname(file_path))
-      file_path
-    end
-
-    #
-    # Generates a new external file storage location
-    #
-    # => {external_file_store}/1/e/69/1e691815-0631-4f9b-8e23-2dfb2eec9c70
-    #
-    def generate_external_file_path ds, original_name=nil
-      file_name = generate_external_file_name(ds, original_name)
-      File.join(external_file_store(ds.dsid), generate_external_directory_subpath, file_name)
+      ds.add_file(file_path, opts.slice(:mime_type))
     end
 
     def external_datastreams
@@ -122,12 +77,10 @@ module Ddr::Models
     end
 
     def add_external_datastream dsid, opts={}
-      # TODO Change to use Ddr::Datastreams::ExternalDatastream
-      klass = self.class.datastream_class_for_name(dsid)
-      datastream = create_datastream(klass, dsid, controlGroup: "E")
-      add_datastream(datastream)
-      self.class.build_datastream_accessor(dsid)
-      datastream
+      create_datastream(Ddr::Datastreams::ExternalFileDatastream, dsid).tap do |ds|
+        add_datastream(ds)
+        self.class.build_datastream_accessor(dsid)
+      end
     end
 
     protected
@@ -150,40 +103,6 @@ module Ddr::Models
         result.merge! pid: pid
         ActiveSupport::Notifications.instrument(Ddr::Notifications::VIRUS_CHECK, result)
       end
-    end
-
-    def external_file_store dsid
-      case dsid
-      when Ddr::Datastreams::MULTIRES_IMAGE
-        Ddr::Models.multires_image_external_file_store
-      else
-        Ddr::Models.external_file_store
-      end
-    end
-
-    def set_external_file_permissions! file_path
-      File.chmod(EXTERNAL_FILE_PERMISSIONS, file_path)
-    end
-
-    def generate_external_file_name ds, original_name=nil
-      content_file_name = Ddr::Utils::sanitize_filename(original_name) || datastreams[ds.dsid].default_file_name
-      case ds.dsid
-      when Ddr::Datastreams::MULTIRES_IMAGE
-        case ds.mimeType
-        when "image/tiff"
-          "#{File.basename(content_file_name, File.extname(content_file_name))}.ptif"
-        end
-      else
-        content_file_name
-      end
-    end
-
-    def generate_external_directory_subpath
-      subdir = SecureRandom.uuid
-      m = Ddr::Models.external_file_subpath_regexp.match(subdir)
-      raise "File name does not match external file subpath pattern: #{file_name}" unless m
-      subpath_segments = m.to_a[1..-1]
-      File.join *subpath_segments, subdir
     end
 
     def cleanup_external_files_on_destroy

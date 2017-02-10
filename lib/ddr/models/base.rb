@@ -81,6 +81,10 @@ module Ddr
         cache.with(options) { super }
       end
 
+      def datastreams_changed
+        datastreams.select { |dsid, ds| ds.changed? }
+      end
+
       private
 
       def cache
@@ -110,19 +114,17 @@ module Ddr
       end
 
       def notify_ingest
-        ds_changed = datastreams.select { |dsid, ds| ds.has_content? }.keys
         payload = default_notification_payload.merge(
           event_date_time: ingestion_date,
-          datastreams_changed: ds_changed
+          datastreams_changed: attached_files_having_content.keys
         )
         ActiveSupport::Notifications.instrument(INGEST, payload)
       end
 
       def notify_update
-        ds_changed = datastreams.select { |dsid, ds| ds.content_changed? }.keys
         event_params = default_notification_payload.merge(
           attributes_changed: changes,
-          datastreams_changed: ds_changed
+          datastreams_changed: datastreams_changed.keys
         )
         ActiveSupport::Notifications.instrument(UPDATE, event_params) do |payload|
           yield

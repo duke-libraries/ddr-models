@@ -16,6 +16,7 @@ module Ddr::Index
                                    Fields::TECHMD_ICC_PROFILE_VERSION,
                                    Fields::TECHMD_IMAGE_HEIGHT,
                                    Fields::TECHMD_IMAGE_WIDTH,
+                                   Fields::TECHMD_MD5,
                                    Fields::TECHMD_MEDIA_TYPE,
                                    Fields::TECHMD_MODIFICATION_TIME,
                                    Fields::TECHMD_PRONOM_IDENTIFIER,
@@ -288,6 +289,12 @@ module Ddr::Index
         subject { Fields::TECHMD_IMAGE_WIDTH }
         its(:label) { is_expected.to eq "Image Width" }
         its(:heading) { is_expected.to eq "image_width" }
+      end
+
+      describe "TECHMD_MD5" do
+        subject { Fields::TECHMD_MD5 }
+        its(:label) { is_expected.to eq "MD5" }
+        its(:heading) { is_expected.to eq "md5" }
       end
 
       describe "TECHMD_MEDIA_TYPE" do

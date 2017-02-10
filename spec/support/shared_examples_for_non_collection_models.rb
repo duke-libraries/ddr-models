@@ -33,4 +33,9 @@ RSpec.shared_examples "a non-collection model" do
       expect(subject.to_solr[Ddr::Index::Fields::COLLECTION_TITLE]).to eq("Test Collection")
     end
   end
+
+  describe "attachments" do
+    its(:can_have_attachments?) { is_expected.to be false }
+    it { is_expected.not_to have_attachments }
+  end
 end

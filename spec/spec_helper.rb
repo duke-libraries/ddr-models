@@ -110,7 +110,6 @@ RSpec.configure do |config|
     Ddr::Models.configure do |config|
       config.external_file_store = Dir.mktmpdir
       config.multires_image_external_file_store = Dir.mktmpdir
-      config.external_file_subpath_pattern = "--"
       config.fits_home = Dir.mktmpdir
     end
   end

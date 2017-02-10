@@ -103,6 +103,7 @@ module Ddr::Index
     TECHMD_ICC_PROFILE_VERSION  = Field.new :techmd_icc_profile_version, :symbol
     TECHMD_IMAGE_HEIGHT         = Field.new :techmd_image_height, :stored_searchable, type: :integer
     TECHMD_IMAGE_WIDTH          = Field.new :techmd_image_width, :stored_searchable, type: :integer
+    TECHMD_MD5                  = Field.new :techmd_md5, :stored_sortable
     TECHMD_MEDIA_TYPE           = Field.new :techmd_media_type, :symbol
     TECHMD_MODIFICATION_TIME    = Field.new :techmd_modification_time, :stored_searchable, type: :date
     TECHMD_PRONOM_IDENTIFIER    = Field.new :techmd_pronom_identifier, :symbol

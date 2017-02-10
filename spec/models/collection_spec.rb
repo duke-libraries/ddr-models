@@ -64,4 +64,27 @@ RSpec.describe Collection, type: :model do
     end
   end
 
+  describe "attachments" do
+    its(:can_have_attachments?) { is_expected.to be true }
+    it { is_expected.not_to have_attachments }
+    specify {
+      subject.attachments << Attachment.new
+      expect(subject).to have_attachments
+    }
+  end
+
+  describe "content" do
+    its(:can_have_content?) { is_expected.to be false }
+    it { is_expected.to_not have_content }
+  end
+
+  describe "children" do
+    its(:can_have_children?) { is_expected.to be true }
+    it { is_expected.to_not have_children }
+    specify {
+      subject.children << Item.new
+      expect(subject).to have_children
+    }
+  end
+
 end
