@@ -51,21 +51,12 @@ RSpec.shared_examples "an object that can have content" do
 
   describe "adding a file" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
-    context "defaults" do
-      before { subject.add_file file, "content" }
-      its(:original_filename) { should eq("imageA.tif") }
-      its(:content_type) { should eq("image/tiff") }
-      it "should create a 'virus check' event for the object" do
-        expect { subject.save }.to change { subject.virus_checks.count }
-      end
-    end
-    context "with option `:original_name=>false`" do
-      before { subject.add_file file, "content", original_name: false }
-      its(:original_filename) { should be_nil }
-    end
-    context "with `:original_name` option set to a string" do
-      before { subject.add_file file, "content", original_name: "another-name.tiff" }
-      its(:original_filename) { should eq("another-name.tiff") }
+    before { subject.add_file file, "content" }
+    its(:original_filename) { should eq("imageA.tif") }
+    its(:content_type) { should eq("image/tiff") }
+    it "should create a 'virus check' event for the object" do
+      expect(Ddr::Events::VirusCheckEvent).to receive(:create)
+      subject.save!
     end
   end
 

@@ -2,7 +2,6 @@ module Ddr::Datastreams
   class ExternalFileDatastream < ActiveFedora::Datastream
 
     FILE_PERMISSIONS = 0644
-    DEFAULT_MIME_TYPE = "application/octet-stream"
 
     class_attribute :file_store
 
@@ -43,6 +42,10 @@ module Ddr::Datastreams
       File.join(get_file_store, subpath, file_name)
     end
 
+    def file_paths
+      new? ? Array(file_path) : versions.map(&:file_path)
+    end
+
     private
 
     def store(source_path)
@@ -59,7 +62,7 @@ module Ddr::Datastreams
 
     def get_mime_type(source_path)
       mime_types = MIME::Types.of(source_path)
-      mime_types.empty? ? DEFAULT_MIME_TYPE : mime_types.first.content_type
+      mime_types.empty? ? Ddr::Models.default_mime_type : mime_types.first.content_type
     end
 
     def delete_file!

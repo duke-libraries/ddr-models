@@ -141,6 +141,10 @@ module Ddr
     # File path to vips
     mattr_accessor :vips_path
 
+    mattr_accessor :default_mime_type do
+      "application/octet-stream"
+    end
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self

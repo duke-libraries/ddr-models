@@ -29,11 +29,11 @@ module Ddr
 
         include FileManagement
 
-        after_add_file do
-          if file_to_add.original_name && file_to_add.dsid == "content"
-            self.original_filename = file_to_add.original_name
-          end
-        end
+        # after_add_file do
+        #   if file_to_add.original_name && file_to_add.dsid == "content"
+        #     self.original_filename = file_to_add.original_name
+        #   end
+        # end
 
         delegate :validate_checksum!, to: :content
       end
