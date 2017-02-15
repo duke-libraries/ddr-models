@@ -49,7 +49,6 @@ module Ddr::Managers
       its(:last_modified) { is_expected.to eq(["2015-06-08T21:22:35Z"]) }
       its(:md5) { is_expected.to eq("432ab76d650bfdc8f8d4a98cea9634bb") }
       its(:media_type) { is_expected.to eq(["application/pdf"]) }
-      its(:media_type) { is_expected.to eq(["application/pdf"]) }
       its(:pronom_identifier) { is_expected.to eq(["fmt/20"]) }
       its(:valid) { is_expected.to eq(["false"]) }
       its(:well_formed) { is_expected.to eq(["true"]) }
