@@ -72,6 +72,11 @@ module Ddr
         Ddr::Auth.collection_creators_group = ENV["COLLECTION_CREATORS_GROUP"]
       end
 
+      # Set metadata managers group
+      initializer "ddr_auth.metadata_managers_group" do
+        Ddr::Auth.metadata_managers_group = ENV["METADATA_MANAGERS_GROUP"]
+      end
+
       initializer "ezid_client" do
         unless Rails.env.production?
           require "ezid/test_helper"
