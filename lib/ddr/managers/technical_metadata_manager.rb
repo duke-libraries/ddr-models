@@ -24,10 +24,6 @@ module Ddr::Managers
 
     alias_method :last_modified, :modified
 
-    def extract!
-
-    end
-
     def fits?
       !fits_version.nil?
     end
