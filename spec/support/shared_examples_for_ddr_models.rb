@@ -90,40 +90,6 @@ RSpec.shared_examples "a DDR model" do
     end
   end
 
-  describe "notification on workflow state change" do
-    let(:events) { [] }
-    before {
-      @subscriber = ActiveSupport::Notifications.subscribe(/workflow\.#{described_class.to_s.underscore}/) do |*args|
-        events << ActiveSupport::Notifications::Event.new(*args)
-      end
-    }
-    after {
-      ActiveSupport::Notifications.unsubscribe(@subscriber)
-    }
-    it "doesn't happen on create" do
-      subject.workflow_state = "published"
-      subject.save(validate: false)
-      expect(events).to be_empty
-    end
-    describe "with a previously persisted object" do
-      before do
-        subject.save(validate: false)
-      end
-      it "happens on publish!" do
-        subject.workflow_state = "published"
-        subject.save(validate: false)
-        expect(events.size).to eq(1)
-        expect(events.first.name).to eq("published.workflow.#{described_class.to_s.underscore}.repo_object")
-      end
-      it "happens on unpublish!" do
-        subject.workflow_state = "unpublished"
-        subject.save(validate: false)
-        expect(events.size).to eq(1)
-        expect(events.first.name).to eq("unpublished.workflow.#{described_class.to_s.underscore}.repo_object")
-      end
-    end
-  end
-
   describe "events" do
     describe "ingestion" do
       it "creates an ingestion event" do

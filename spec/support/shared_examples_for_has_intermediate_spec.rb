@@ -8,7 +8,7 @@ RSpec.shared_examples "an object that can have an intermediate file" do
         before { subject.add_file file, "intermediateFile" }
         let(:file) { fixture_file_upload("imageA.jpg", "image/jpeg") }
         it "should generate derivatives" do
-          expect(Ddr::Derivatives::UpdateDerivatives).to receive(:call).and_call_original
+          expect_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:update_derivatives)
           subject.save
         end
       end
@@ -16,7 +16,7 @@ RSpec.shared_examples "an object that can have an intermediate file" do
         before { subject.upload! fixture_file_upload('imageA.jpg', 'image/jpeg') }
         let(:file) { fixture_file_upload("imageB.jpg", "image/jpeg") }
         it "should generate derivatives" do
-          expect(Ddr::Derivatives::UpdateDerivatives).to receive(:call).and_call_original
+          expect_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:update_derivatives)
           subject.upload! file
         end
       end

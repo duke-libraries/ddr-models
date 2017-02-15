@@ -16,6 +16,9 @@ module Ddr
     STRUCT_METADATA = "structMetadata"
     THUMBNAIL = "thumbnail"
 
+    SAVE = "save.repo_file"
+    DELETE = "delete.repo_file"
+
     CHECKSUM_TYPE_MD5 = "MD5"
     CHECKSUM_TYPE_SHA1 = "SHA-1"
     CHECKSUM_TYPE_SHA256 = "SHA-256"

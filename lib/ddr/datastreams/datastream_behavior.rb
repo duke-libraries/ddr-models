@@ -8,9 +8,8 @@ module Ddr
       STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
 
       included do
-        after_create :notify_create
-        around_save :notify_update, unless: :new?
-        after_destroy :notify_delete
+        around_save :notify_save
+        around_destroy :notify_delete
       end
 
       def validate_checksum! checksum, checksum_type=nil
@@ -112,23 +111,27 @@ module Ddr
 
       private
 
-      def notify_create
-        ActiveSupport::Notifications.instrument("create.#{dsid}.datastream",
-                                                pid: pid,
-                                                event_date_time: createDate)
+      def default_notification_payload
+        { pid: pid, file_id: dsid }
       end
 
-      def notify_update
-        ActiveSupport::Notifications.instrument("update.#{dsid}.datastream",
-                                                pid: pid) do |payload|
+      def notify_save
+        ActiveSupport::Notifications.instrument(
+          Ddr::Datastreams::SAVE,
+          default_notification_payload.merge(attributes_changed: changes)
+        ) do |payload|
           yield
-          payload[:event_date_time] = createDate
+          payload[:profile] = profile
         end
       end
 
       def notify_delete
-        ActiveSupport::Notifications.instrument("delete.#{dsid}.datastream",
-                                                pid: pid)
+        ActiveSupport::Notifications.instrument(
+          Ddr::Datastreams::DELETE,
+          default_notification_payload.merge(profile: profile)
+        ) do |payload|
+          yield
+        end
       end
 
     end
