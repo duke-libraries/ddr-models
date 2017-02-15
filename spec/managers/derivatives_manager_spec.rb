@@ -1,29 +1,11 @@
 module Ddr::Managers
   RSpec.describe DerivativesManager do
 
-    before(:all) do
-      class ContentBearing < ActiveFedora::Base
-        include Ddr::Models::HasAdminMetadata
-        include Ddr::Models::HasContent
-        include Ddr::Models::HasIntermediateFile
-        include Ddr::Models::HasThumbnail
-        include Ddr::Models::EventLoggable
-      end
-      class MultiresImageable < ContentBearing
-        include Ddr::Models::HasMultiresImage
-      end
-    end
-
-    after(:all) do
-      Ddr::Managers.send(:remove_const, :MultiresImageable)
-      Ddr::Managers.send(:remove_const, :ContentBearing)
-    end
-
     describe "generators called" do
       before { object.add_file file, Ddr::Datastreams::CONTENT }
       context "all derivatives" do
         context "not multires_image_able" do
-          let(:object) { ContentBearing.new }
+          let(:object) { Target.new }
           context "content is an image" do
             let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
             it "calls the thumbnail generator and not the ptif generator" do
@@ -42,7 +24,7 @@ module Ddr::Managers
           end
         end
         context "multires_image_able" do
-          let(:object) { MultiresImageable.new }
+          let(:object) { Component.new }
           context "content is tiff image" do
             let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
             it "should generate a thumbnail and a ptif" do
@@ -73,7 +55,7 @@ module Ddr::Managers
         let!(:derivs) { Ddr::Derivatives.update_derivatives }
         before { Ddr::Derivatives.update_derivatives = [ :thumbnail ] }
         after { Ddr::Derivatives.update_derivatives = derivs }
-        let(:object) { MultiresImageable.new }
+        let(:object) { Component.new }
         let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
         it "should only generate the thumbnail derivative" do
           expect(object.derivatives).to receive(:generate_derivative).with(Ddr::Derivatives::DERIVATIVES[:thumbnail])
@@ -87,7 +69,7 @@ module Ddr::Managers
       let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
       before { object.upload! file }
       describe "thumbnail" do
-        let(:object) { ContentBearing.create }
+        let(:object) { Component.create }
         it "should create content in the thumbnail datastream" do
           expect(object.datastreams[Ddr::Datastreams::THUMBNAIL]).to_not be_present
           object.derivatives.generate_derivative! Ddr::Derivatives::DERIVATIVES[:thumbnail]
@@ -96,7 +78,7 @@ module Ddr::Managers
         end
       end
       describe "ptif" do
-        let(:object) { MultiresImageable.create }
+        let(:object) { Component.create }
         it "should create content in the multires image datastream" do
           expect(object.datastreams[Ddr::Datastreams::MULTIRES_IMAGE]).to_not be_present
           object.derivatives.generate_derivative! Ddr::Derivatives::DERIVATIVES[:multires_image]
@@ -108,7 +90,7 @@ module Ddr::Managers
     end
 
     describe "intermediate file handling" do
-      let(:object) { MultiresImageable.create }
+      let(:object) { Component.create }
       let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
       before { object.upload! file }
       describe "object has intermediate file" do
@@ -133,7 +115,7 @@ module Ddr::Managers
     end
 
     describe "exception during derivative generation" do
-      let(:object) { ContentBearing.create }
+      let(:object) { Component.create }
       before do
         allow(Dir::Tmpname).to receive(:make_tmpname).with('', nil) { 'test-temp-dir' }
         # simulate raising of exception during derivative generation

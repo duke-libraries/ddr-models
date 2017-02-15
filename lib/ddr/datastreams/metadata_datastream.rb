@@ -39,6 +39,12 @@ module Ddr
         end
       end
 
+      def content_changed?
+        # Patches a bug in AF RDF datastreams where
+        # Content appears to change from nil to empty string
+        super && !empty?
+      end
+
     end
   end
 end

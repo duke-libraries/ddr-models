@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Component, type: :model, components: true do
 
   it_behaves_like "a DDR model"

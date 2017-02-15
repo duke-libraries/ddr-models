@@ -145,4 +145,13 @@ RSpec.shared_examples "a DDR model" do
       its(:last_fixity_check_outcome) { should eq(fixity_check.outcome) }
     end
   end
+
+  describe "thumbnails" do
+    its(:can_have_thumbnail?) { is_expected.to be true }
+    it { is_expected.not_to have_thumbnail }
+    specify {
+      allow(subject.thumbnail).to receive(:has_content?) { true }
+      expect(subject).to have_thumbnail
+    }
+  end
 end

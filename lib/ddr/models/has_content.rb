@@ -6,9 +6,10 @@ module Ddr
       included do
         has_file_datastream \
           name: Ddr::Datastreams::CONTENT,
+          type: Ddr::Datastreams::ContentDatastream,
           versionable: true,
           label: "Content file for this object",
-          control_group: "M"
+          control_group: "E"
 
         has_file_datastream \
           name: Ddr::Datastreams::EXTRACTED_TEXT,
@@ -20,23 +21,13 @@ module Ddr
         has_metadata \
           name: Ddr::Datastreams::FITS,
           type: Ddr::Datastreams::FitsDatastream,
-          versionable: true,
+          versionable: false,
           label: "FITS Output for content file",
           control_group: "M"
 
         has_attributes :original_filename, datastream: "adminMetadata", multiple: false
 
         include FileManagement
-
-        before_save if: :re_characterize? do
-          fits.delete
-        end
-
-        after_add_file do
-          if file_to_add.original_name && file_to_add.dsid == "content"
-            self.original_filename = file_to_add.original_name
-          end
-        end
 
         delegate :validate_checksum!, to: :content
       end
@@ -121,10 +112,6 @@ module Ddr
       end
 
       protected
-
-      def re_characterize?
-        content_changed? && !fits.new?
-      end
 
       def default_content_type
         "application/octet-stream"

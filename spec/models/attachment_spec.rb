@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Attachment, type: :model, attachments: true do
 
   it_behaves_like "a DDR model"

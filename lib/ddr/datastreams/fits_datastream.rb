@@ -22,10 +22,15 @@ module Ddr::Datastreams
         }
       }
       t.fileinfo {
-        t.size
-        t.creatingApplicationName
         t.created
+        t.creatingApplicationName
+        t.creatingos
+        t.filename
+        t.filepath
+        t.fslastmodified
         t.lastmodified
+        t.md5checksum
+        t.size
       }
       t.filestatus {
         t.valid
@@ -49,24 +54,29 @@ module Ddr::Datastreams
       }
 
       ## proxy terms
+
       # identification / identity
-      t.media_type           proxy: [:identification, :identity, :mimetype]
       t.format_label         proxy: [:identification, :identity, :format_label]
       t.format_version       proxy: [:identification, :identity, :version]
+      t.media_type           proxy: [:identification, :identity, :mimetype]
       t.pronom_identifier    proxy: [:identification, :identity, :pronom_identifier]
+
       # filestatus
       t.valid                proxy: [:filestatus, :valid]
       t.well_formed          proxy: [:filestatus, :well_formed]
+
       # fileinfo
       t.created              proxy: [:fileinfo, :created]
       t.creating_application proxy: [:fileinfo, :creatingApplicationName]
       t.extent               proxy: [:fileinfo, :size]
+      t.md5                  proxy: [:fileinfo, :md5checksum]
+
       # image metadata
-      t.image_width          proxy: [:metadata, :image, :imageWidth]
-      t.image_height         proxy: [:metadata, :image, :imageHeight]
       t.color_space          proxy: [:metadata, :image, :colorSpace]
       t.icc_profile_name     proxy: [:metadata, :image, :iccProfileName]
       t.icc_profile_version  proxy: [:metadata, :image, :iccProfileVersion]
+      t.image_height         proxy: [:metadata, :image, :imageHeight]
+      t.image_width          proxy: [:metadata, :image, :imageWidth]
     end
 
     def self.xml_template

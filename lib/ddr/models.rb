@@ -141,17 +141,13 @@ module Ddr
     # File path to vips
     mattr_accessor :vips_path
 
+    mattr_accessor :default_mime_type do
+      "application/octet-stream"
+    end
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self
-    end
-
-    def self.external_file_subpath_pattern= (pattern)
-      unless /^-{1,2}(\/-{1,2}){0,3}$/ =~ pattern
-        raise "Invalid external file subpath pattern: #{pattern}"
-      end
-      re = pattern.split("/").map { |x| "(\\h{#{x.length}})" }.join("")
-      self.external_file_subpath_regexp = Regexp.new("^#{re}")
     end
 
   end

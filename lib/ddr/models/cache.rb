@@ -12,7 +12,7 @@ module Ddr::Models
     def with(options, &block)
       merge!(options)
       yield
-      slice!(options.keys)
+      reject! { |k, v| options.include?(k) }
     end
 
   end
