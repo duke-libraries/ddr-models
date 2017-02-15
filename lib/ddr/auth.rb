@@ -52,6 +52,9 @@ module Ddr
     # Name of group whose members are authorized to create Collections
     mattr_accessor :collection_creators_group
 
+    # Name of group whose members are authorized to act as a metadata manager
+    mattr_accessor :metadata_managers_group
+
     # Group of which everyone (including anonymous users) is a member
     def self.everyone_group
       Deprecation.warn(Ddr::Auth,
@@ -95,10 +98,6 @@ module Ddr
 
     mattr_accessor :default_ability do
       "::Ability"
-    end
-
-    mattr_accessor :metadata_managers_group do
-      ENV["METADATA_MANAGERS_GROUP"]
     end
 
     def self.repository_group_filter
