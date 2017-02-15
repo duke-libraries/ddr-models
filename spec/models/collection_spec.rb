@@ -50,7 +50,7 @@ RSpec.describe Collection, type: :model do
   end
 
   describe "creation" do
-    subject { Collection.create(title: [ "Test Collection" ]) }
+    before { subject.save! }
     it "is governed by itself" do
       expect(subject.admin_policy).to eq(subject)
     end
@@ -59,8 +59,25 @@ RSpec.describe Collection, type: :model do
   describe "roles granted to creator" do
     let(:user) { FactoryGirl.build(:user) }
     before { subject.grant_roles_to_creator(user) }
-    it "includes Curator roles in both resource and policy scopes" do
-      expect(subject.roles.to_a).to eq([Ddr::Auth::Roles::Role.build(type: "Curator", agent: user.agent, scope: "resource"), Ddr::Auth::Roles::Role.build(type: "Curator", agent: user.agent, scope: "policy")])
+    its(:roles) { is_expected.to include(Ddr::Auth::Roles::Role.build(type: "Curator", agent: user, scope: "policy")) }
+  end
+
+  describe "default roles granted" do
+    describe "and the metadata managers group is set" do
+      before do
+        allow(Ddr::Auth).to receive(:metadata_managers_group) { "metadata_managers" }
+        subject.save!
+      end
+      it "includes the MetadataEditor role in policy scope for the Metadata Managers group" do
+        expect(subject.roles.to_a).to eq([Ddr::Auth::Roles::Role.build(type: "MetadataEditor", agent: "metadata_managers", scope: "policy")])
+      end
+    end
+    describe "and the metadata managers group is not set" do
+      before do
+        allow(Ddr::Auth).to receive(:metadata_managers_group) { nil }
+        subject.save!
+      end
+      its(:roles) { is_expected.to be_empty }
     end
   end
 

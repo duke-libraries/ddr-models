@@ -26,6 +26,7 @@ module Ddr
 
       before_create :set_ingestion_date, unless: :ingestion_date
       before_create :set_ingested_by, if: :performed_by, unless: :ingested_by
+      before_create :grant_default_roles
 
       after_create :notify_ingest
       after_create :assign_permanent_id!, if: :assign_permanent_id?
@@ -86,6 +87,16 @@ module Ddr
       end
 
       private
+
+      def grant_default_roles
+        if default_roles.present?
+          roles.grant *default_roles
+        end
+      end
+
+      def default_roles
+        []
+      end
 
       def cache
         @__cache ||= Cache.new
