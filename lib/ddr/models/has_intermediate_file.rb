@@ -5,11 +5,12 @@ module Ddr
 
       included do
         has_file_datastream name: Ddr::Datastreams::INTERMEDIATE_FILE,
+                            type: Ddr::Datastreams::IntermediateFileDatastream,
                             versionable: true,
                             label: "Intermediate file for this object",
-                            control_group: 'M'
+                            control_group: "E"
 
-        include FileManagement unless include?(FileManagement)
+        include FileManagement
       end
 
     end
