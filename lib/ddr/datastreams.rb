@@ -33,6 +33,7 @@ module Ddr
     autoload :DescriptiveMetadataDatastream
     autoload :ExternalFileDatastream
     autoload :FitsDatastream
+    autoload :IntermediateFileDatastream
     autoload :MetadataDatastream
     autoload :MultiresImageDatastream
     autoload :PlainTextDatastream
