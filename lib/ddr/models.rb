@@ -88,15 +88,6 @@ module Ddr
       autoload :StructMap
     end
 
-    # Base directory of default external file store
-    mattr_accessor :external_file_store
-
-    # Base directory of external file store for multires image derivatives
-    mattr_accessor :multires_image_external_file_store
-
-    # Regexp for building external file subpath from hex digest
-    mattr_accessor :external_file_subpath_regexp
-
     # Image server URL
     mattr_accessor :image_server_url
 

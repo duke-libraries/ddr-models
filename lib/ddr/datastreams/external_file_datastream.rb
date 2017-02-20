@@ -28,10 +28,6 @@ module Ddr::Datastreams
       self.dsLocation = Ddr::Utils.path_to_uri(path)
     end
 
-    def get_file_store
-      file_store || Ddr::Models.external_file_store
-    end
-
     def generate_file_name
       SecureRandom.uuid
     end
@@ -39,7 +35,7 @@ module Ddr::Datastreams
     def generate_stored_path
       file_name = generate_file_name
       subpath = File.join([0, 2, 4, 6].map { |i| file_name[i, 2] })
-      File.join(get_file_store, subpath, file_name)
+      File.join(file_store, subpath, file_name)
     end
 
     def file_paths

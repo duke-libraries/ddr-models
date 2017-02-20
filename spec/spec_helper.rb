@@ -108,18 +108,14 @@ RSpec.configure do |config|
       config.update_derivatives = [ :multires_image, :thumbnail ]
     end
     Ddr::Models.configure do |config|
-      config.external_file_store = Dir.mktmpdir
-      config.multires_image_external_file_store = Dir.mktmpdir
       config.fits_home = Dir.mktmpdir
     end
+    Ddr::Datastreams::ExternalFileDatastream.file_store = Dir.mktmpdir
   end
 
   config.after(:suite) do
-    if Ddr::Models.external_file_store && Dir.exist?(Ddr::Models.external_file_store)
-      FileUtils.remove_entry_secure(Ddr::Models.external_file_store)
-    end
-    if Ddr::Models.multires_image_external_file_store && Dir.exist?(Ddr::Models.multires_image_external_file_store)
-      FileUtils.remove_entry_secure(Ddr::Models.multires_image_external_file_store)
+    if Ddr::Datastreams::ExternalFileDatastream.file_store
+      FileUtils.rm_rf Ddr::Datastreams::ExternalFileDatastream.file_store
     end
   end
 
