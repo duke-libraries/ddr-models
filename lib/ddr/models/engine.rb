@@ -48,11 +48,6 @@ module Ddr
                                                 [ :thumbnail ]
       end
 
-      initializer "ddr_models.external_files" do
-        Ddr::Models.external_file_store = ENV["EXTERNAL_FILE_STORE"]
-        Ddr::Datastreams::MultiresImageDatastream.file_store = ENV["MULTIRES_IMAGE_EXTERNAL_FILE_STORE"]
-      end
-
       initializer "ddr_models.image_server" do
         Ddr::Models.image_server_url = ENV["IMAGE_SERVER_URL"]
       end
