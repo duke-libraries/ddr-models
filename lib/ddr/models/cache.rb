@@ -11,8 +11,9 @@ module Ddr::Models
 
     def with(options, &block)
       merge!(options)
-      yield
+      block_result = yield
       reject! { |k, v| options.include?(k) }
+      block_result
     end
 
   end
