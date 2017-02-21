@@ -5,7 +5,7 @@ module Ddr::Datastreams
 
     class_attribute :file_store
 
-    around_destroy :delete_file!
+    after_destroy :delete_file!
 
     def self.default_attributes
       super.merge(controlGroup: "E")
@@ -62,9 +62,8 @@ module Ddr::Datastreams
     end
 
     def delete_file!
-      path = file_path
-      yield
-      FileUtils.rm_f(path)
+      FileUtils.rm_f(file_path)
+      self.dsLocation = nil # Rubydora does not reset dsLocation
     end
 
   end

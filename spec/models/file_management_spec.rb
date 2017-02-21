@@ -46,6 +46,14 @@ module Ddr::Models
                            .with(image_file, "random_ds_2", mime_type: "image/tiff")
         object.add_file image_file, "random_ds_2", external: true
       end
+      it "sets original filename when dsid == 'content'" do
+        expect { object.add_file image_file, "content" }
+          .to change(object, :original_filename).to("imageA.tif")
+      end
+      it "does not set original filename when dsid != 'content'" do
+        expect { object.add_file xml_file, "fits" }
+          .not_to change(object, :original_filename)
+      end
     end
 
     describe "#add_external_file" do
