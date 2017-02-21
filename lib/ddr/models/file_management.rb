@@ -97,7 +97,7 @@ module Ddr::Models
 
     def set_original_filename
       if file_to_add = cache.get(:file_to_add)
-        if file_to_add.dsid = Ddr::Datastreams::CONTENT
+        if file_to_add.dsid == Ddr::Datastreams::CONTENT
           self.original_filename = file_to_add.original_filename
         end
       end
