@@ -23,10 +23,13 @@ ActiveSupport::Notifications.subscribe(Ddr::Models::Base::UPDATE, Ddr::Derivativ
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::DELETION, Ddr::Events::DeletionEvent)
 ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DELETE, Ddr::Models::PermanentId)
 ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DELETE, Ddr::Events::DeletionEvent)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DELETE, Ddr::Datastreams::DeleteExternalFiles)
 
 # Deaccession
 ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DEACCESSION, Ddr::Models::PermanentId)
 ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DEACCESSION, Ddr::Events::DeaccessionEvent)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DEACCESSION, Ddr::Datastreams::DeleteExternalFiles)
 
 # Files
 ActiveSupport::Notifications.subscribe(Ddr::Datastreams::DELETE, Ddr::Derivatives::UpdateDerivatives)
+ActiveSupport::Notifications.subscribe(Ddr::Datastreams::DELETE, Ddr::Datastreams::DeleteExternalFiles)

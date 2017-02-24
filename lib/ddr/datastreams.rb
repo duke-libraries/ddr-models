@@ -30,6 +30,7 @@ module Ddr
     autoload :AdministrativeMetadataDatastream
     autoload :ContentDatastream
     autoload :DatastreamBehavior
+    autoload :DeleteExternalFiles
     autoload :DescriptiveMetadataDatastream
     autoload :ExternalFileDatastream
     autoload :FitsDatastream

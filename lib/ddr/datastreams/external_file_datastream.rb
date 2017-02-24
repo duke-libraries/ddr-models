@@ -5,14 +5,18 @@ module Ddr::Datastreams
 
     class_attribute :file_store
 
-    after_destroy :delete_file!
+    after_destroy do
+      self.dsLocation = nil # Rubydora does not reset dsLocation
+    end
 
     def self.default_attributes
       super.merge(controlGroup: "E")
     end
 
     def file_size
-      File.size(file_path) if file_path
+      if path = file_path
+        File.size(path)
+      end
     end
 
     def add_file(source_path, mime_type: nil)
@@ -59,11 +63,6 @@ module Ddr::Datastreams
     def get_mime_type(source_path)
       mime_types = MIME::Types.of(source_path)
       mime_types.empty? ? Ddr::Models.default_mime_type : mime_types.first.content_type
-    end
-
-    def delete_file!
-      FileUtils.rm_f(file_path)
-      self.dsLocation = nil # Rubydora does not reset dsLocation
     end
 
   end

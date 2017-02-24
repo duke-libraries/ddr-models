@@ -33,8 +33,8 @@ module Ddr
 
       around_save :notify_update, unless: :new_record?
 
-      after_deaccession :notify_deaccession
-      after_destroy :notify_delete
+      around_deaccession :notify_deaccession
+      around_destroy :notify_delete
 
       def deaccession
         run_callbacks :deaccession do
@@ -84,6 +84,19 @@ module Ddr
 
       def datastreams_changed
         datastreams.select { |dsid, ds| ds.changed? }
+      end
+
+      def datastreams_having_content
+        datastreams.select { |dsid, ds| ds.has_content? }
+      end
+      alias_method :attached_files_having_content, :datastreams_having_content
+      alias_method :datastreams_to_validate, :datastreams_having_content
+      deprecation_deprecate :datastreams_to_validate
+
+      def datastream_history
+        datastreams_having_content.each_with_object({}) do |(dsid, ds), memo|
+          memo[dsid] = ds.version_history
+        end
       end
 
       private
@@ -143,12 +156,24 @@ module Ddr
         end
       end
 
+      def delete_notification_payload
+        default_notification_payload.merge(
+          datastream_history: datastream_history,
+          create_date: create_date,
+          modified_date: modified_date
+        )
+      end
+
       def notify_deaccession
-        ActiveSupport::Notifications.instrument(DEACCESSION, default_notification_payload)
+        ActiveSupport::Notifications.instrument(DEACCESSION, delete_notification_payload) do |payload|
+          yield
+        end
       end
 
       def notify_delete
-        ActiveSupport::Notifications.instrument(DELETE, default_notification_payload)
+        ActiveSupport::Notifications.instrument(DELETE, delete_notification_payload) do |payload|
+          yield
+        end
       end
 
       def assign_permanent_id?

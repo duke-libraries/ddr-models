@@ -2,11 +2,6 @@ module Ddr
   module Models
     module FixityCheckable
 
-      def datastreams_to_validate
-        datastreams.select { |dsid, ds| ds.has_content? }
-      end
-      alias_method :attached_files_having_content, :datastreams_to_validate
-
       def fixity_checks
         Ddr::Events::FixityCheckEvent.for_object(self)
       end

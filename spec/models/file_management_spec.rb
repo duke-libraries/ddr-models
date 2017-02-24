@@ -109,23 +109,5 @@ module Ddr::Models
       end
     end
 
-    describe "cleanup on destroy" do
-      let(:file1) { fixture_file_upload("imageA.tif", "image/tiff") }
-      let(:file2) { fixture_file_upload("imageB.tif", "image/tiff") }
-      let(:file3) { fixture_file_upload("imageC.tif", "image/tiff") }
-      before do
-        object.add_file(file1, "e_content")
-        object.save
-        object.add_file(file2, "e_content")
-        object.save
-        object.add_file(file3, "e_content_2", external: true)
-        object.save
-      end
-      it "should delete all files for all versions of all external datastreams" do
-        expect(File).to receive(:unlink).with(*object.external_datastream_file_paths)
-        object.destroy
-      end
-    end
-
   end
 end
