@@ -7,7 +7,6 @@ module Ddr::Models
       before_add_file :virus_scan
       after_add_file :set_original_filename
       after_save :create_virus_check_event
-      around_destroy :cleanup_external_files_on_destroy
     end
 
     FileToAdd = Struct.new(:dsid, :source_path, :original_filename)
@@ -87,12 +86,6 @@ module Ddr::Models
       if result = cache.get(:virus_scan_result)
         Ddr::Events::VirusCheckEvent.create(result.merge(pid: pid))
       end
-    end
-
-    def cleanup_external_files_on_destroy
-      paths = external_datastream_file_paths
-      yield
-      FileUtils.rm_f(paths)
     end
 
     def set_original_filename

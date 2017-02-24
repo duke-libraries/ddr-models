@@ -114,4 +114,42 @@ RSpec.shared_examples "an object that can have content" do
     end
   end
 
+  describe "deleting / deaccessioning" do
+    let(:file1) { fixture_file_upload("sample.pdf") }
+    let(:file2) { fixture_file_upload("sample.docx") }
+    before do
+      subject.upload! file1
+      @path1 = subject.content.file_path
+      subject.upload! file2
+      @path2 = subject.content.file_path
+    end
+    describe "#destroy" do
+      it "deletes the content files" do
+        expect(::File.exist?(@path1)).to be true
+        expect(::File.exist?(@path2)).to be true
+        subject.destroy
+        expect(::File.exist?(@path1)).to be false
+        expect(::File.exist?(@path2)).to be false
+      end
+    end
+    describe "#deaccession" do
+      it "deletes the content files" do
+        expect(::File.exist?(@path1)).to be true
+        expect(::File.exist?(@path2)).to be true
+        subject.deaccession
+        expect(::File.exist?(@path1)).to be false
+        expect(::File.exist?(@path2)).to be false
+      end
+    end
+    describe "deleting the 'content' datastream" do
+      it "deletes the content files" do
+        expect(::File.exist?(@path1)).to be true
+        expect(::File.exist?(@path2)).to be true
+        subject.content.delete
+        expect(::File.exist?(@path1)).to be false
+        expect(::File.exist?(@path2)).to be false
+      end
+    end
+  end
+
 end

@@ -29,6 +29,10 @@ module Ddr
         end
       end
 
+      def version_history
+        versions.map(&:profile)
+      end
+
       def version_uri
         # E.g., info:fedora/duke:1/content/content.0
         ["info:fedora", pid, dsid, dsVersionID].join("/") unless new?
@@ -47,31 +51,37 @@ module Ddr
         Ddr::Utils.digest(self.content, algorithm)
       end
 
-      # Returns a list of the external file paths for all versions of the datastream.
       def file_paths
-        raise "The `file_paths' method is valid only for external datastreams." unless external?
-        return Array(file_path) if new?
-        versions.map(&:file_path).compact
+        if new?
+          return Array(file_path)
+        else
+          versions.map(&:file_path).compact
+        end
       end
 
-      # Returns the external file path for the datastream.
-      # Returns nil if dsLocation is not a file URI.
       def file_path
-        raise "The `file_path' method is valid only for external datastreams." unless external?
-        Ddr::Utils.path_from_uri(dsLocation) if Ddr::Utils.file_uri?(dsLocation)
+        if external?
+          Ddr::Utils.path_from_uri(dsLocation) if Ddr::Utils.file_uri?(dsLocation)
+        elsif managed?
+          # TODO
+        end
       end
 
-      # Returns the file name of the external file for the datastream.
-      # See #external_datastream_file_path(ds)
       def file_name
-        raise "The `file_name' method is valid only for external datastreams." unless external?
-        File.basename(file_path) rescue nil
+        if path = file_path
+          File.basename(path)
+        end
       end
 
       # Returns the size of the external file for the datastream.
       def file_size
-        raise "The `file_size' method is valid only for external datastreams." unless external?
-        File.size(file_path) rescue nil
+        if external?
+          if path = file_path
+            File.size(path)
+          end
+        else
+          dsSize
+        end
       end
 
       # Return default file extension for datastream based on MIME type
@@ -112,7 +122,14 @@ module Ddr
       private
 
       def default_notification_payload
-        { pid: pid, file_id: dsid }
+        { pid: pid, file_id: dsid, control_group: controlGroup }
+      end
+
+      def delete_notification_payload
+        default_notification_payload.merge(
+          profile: profile.dup,
+          version_history: version_history
+        )
       end
 
       def notify_save
@@ -121,14 +138,13 @@ module Ddr
           default_notification_payload.merge(attributes_changed: changes)
         ) do |payload|
           yield
-          payload[:profile] = profile
+          payload[:profile] = profile.dup
         end
       end
 
       def notify_delete
         ActiveSupport::Notifications.instrument(
-          Ddr::Datastreams::DELETE,
-          default_notification_payload.merge(profile: profile)
+          Ddr::Datastreams::DELETE, delete_notification_payload
         ) do |payload|
           yield
         end
