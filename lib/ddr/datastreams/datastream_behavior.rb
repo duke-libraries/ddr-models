@@ -60,10 +60,8 @@ module Ddr
       end
 
       def file_path
-        if external?
-          Ddr::Utils.path_from_uri(dsLocation) if Ddr::Utils.file_uri?(dsLocation)
-        elsif managed?
-          # TODO
+        if external? && dsLocation.start_with?("file:")
+          Ddr::Utils.path_from_uri(dsLocation) 
         end
       end
 
