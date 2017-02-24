@@ -60,7 +60,7 @@ module Ddr
       end
 
       def file_path
-        if external? && dsLocation.start_with?("file:")
+        if external? && dsLocation.present? && dsLocation.start_with?("file:")
           Ddr::Utils.path_from_uri(dsLocation) 
         end
       end
