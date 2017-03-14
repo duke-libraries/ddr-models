@@ -46,6 +46,7 @@ class Component < Ddr::Models::Base
     filegrp = structure.add_filegrp(parent: filesec)
     add_original_file(structure, filegrp, div)
     add_preservation_master_file(structure, filegrp, div)
+    add_intermediate_file(structure, filegrp, div) if has_intermediate_file?
     add_service_file(structure, filegrp, div)
     add_thumbnail_image(structure, filegrp, div) if has_thumbnail?
     structure
@@ -60,6 +61,12 @@ class Component < Ddr::Models::Base
   def add_preservation_master_file(structure, filegrp, div)
     file = structure.add_file(parent: filegrp, use: Ddr::Models::Structure::USE_PRESERVATION_MASTER_FILE)
     structure.add_flocat(parent: file, loctype: 'OTHER', otherloctype: 'AttachedFile', href: Ddr::Datastreams::CONTENT)
+    structure.add_fptr(parent: div, fileid: file['ID'])
+  end
+
+  def add_intermediate_file(structure, filegrp, div)
+    file = structure.add_file(parent: filegrp, use: Ddr::Models::Structure::USE_INTERMEDIATE_FILE)
+    structure.add_flocat(parent: file, loctype: 'OTHER', otherloctype: 'AttachedFile', href: Ddr::Datastreams::INTERMEDIATE_FILE)
     structure.add_fptr(parent: div, fileid: file['ID'])
   end
 

@@ -27,11 +27,27 @@ RSpec.describe Component, type: :model, components: true do
       before { allow(subject).to receive(:has_thumbnail?) { true } }
       let(:struct) { subject.default_structure }
       it "has the correct original file" do
-        expect(struct.uses[Ddr::Models::Structure::USE_ORIGINAL_FILE].first.href).to eq(Ddr::Datastreams::CONTENT )
+        expect(struct.uses[Ddr::Models::Structure::USE_ORIGINAL_FILE].first.href).to eq(Ddr::Datastreams::CONTENT)
       end
       it "has the correct preservation master file" do
         expect(struct.uses[Ddr::Models::Structure::USE_PRESERVATION_MASTER_FILE].first.href)
-                                                                                  .to eq(Ddr::Datastreams::CONTENT )
+                                                                                  .to eq(Ddr::Datastreams::CONTENT)
+      end
+      describe "intermediate file" do
+        describe "with intermediate file" do
+          before do
+            allow(subject).to receive(:has_intermediate_file?) { true }
+          end
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_INTERMEDIATE_FILE].first.href)
+                .to eq(Ddr::Datastreams::INTERMEDIATE_FILE)
+          end
+        end
+        describe "without intermediate image" do
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_INTERMEDIATE_FILE]).to be nil
+          end
+        end
       end
       describe "service file" do
         describe "with multires image" do
@@ -40,17 +56,17 @@ RSpec.describe Component, type: :model, components: true do
           end
           it "has the correct structure file" do
             expect(struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].first.href)
-                                                                            .to eq(Ddr::Datastreams::MULTIRES_IMAGE )
+                                                                            .to eq(Ddr::Datastreams::MULTIRES_IMAGE)
           end
         end
         describe "without multires image" do
           it "has the correct structure file" do
-            expect(struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].first.href).to eq(Ddr::Datastreams::CONTENT )
+            expect(struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].first.href).to eq(Ddr::Datastreams::CONTENT)
           end
         end
       end
       it "has the correct thumbnail image" do
-        expect(struct.uses[Ddr::Models::Structure::USE_THUMBNAIL_IMAGE].first.href).to eq(Ddr::Datastreams::THUMBNAIL )
+        expect(struct.uses[Ddr::Models::Structure::USE_THUMBNAIL_IMAGE].first.href).to eq(Ddr::Datastreams::THUMBNAIL)
       end
     end
 
