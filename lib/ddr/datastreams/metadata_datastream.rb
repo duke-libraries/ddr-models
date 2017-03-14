@@ -31,11 +31,8 @@ module Ddr
       # Add value to term
       # Note that empty value (nil or "") is not added
       def add_value term, value
-        v = value.to_s.strip
-        if v.present?
-          values = get_values(term).to_a << v
-          set_values(term, values)
-        end
+        vals = values(term).to_a << value
+        set_values(term, vals)
       end
 
       def content_changed?
