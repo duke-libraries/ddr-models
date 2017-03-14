@@ -14,13 +14,15 @@ module Ddr
       # Update term with values
       # Note that empty values (nil or "") are rejected from values array
       def set_values term, values
-        if values.respond_to?(:reject!)
-          values.reject! { |v| v.blank? }
-        else
-          values = nil if values.blank?
-        end
+        vals = if values.respond_to?(:to_a)
+                 values.to_a
+               else
+                 Array(values)
+               end
+        vals.map!    { |v| v.to_s.strip }
+        vals.reject! { |v| v.blank? }
         begin
-          self.send("#{term}=", values)
+          self.send("#{term}=", vals)
         rescue NoMethodError
           raise ArgumentError, "No such term: #{term}"
         end
@@ -29,13 +31,10 @@ module Ddr
       # Add value to term
       # Note that empty value (nil or "") is not added
       def add_value term, value
-        begin
-          unless value.blank?
-            values = values(term).to_a << value
-            set_values term, values
-          end
-        rescue NoMethodError
-          raise ArgumentError, "No such term: #{term}"
+        v = value.to_s.strip
+        if v.present?
+          values = get_values(term).to_a << v
+          set_values(term, values)
         end
       end
 
