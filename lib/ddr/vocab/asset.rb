@@ -31,5 +31,9 @@ module Ddr::Vocab
              label: "Ingestion Date",
              comment: "The date/time at which the object was originally ingested into the repository."
 
+    property "rightsNote",
+             label: "Rights Note",
+             comment: "Free-text statement about the rights status of the resource."
+
   end
 end

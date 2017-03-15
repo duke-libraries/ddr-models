@@ -26,6 +26,8 @@ module Ddr::Models
                      datastream: "adminMetadata",
                      multiple: false
 
+      has_attributes :rights_note, datastream: "adminMetadata", multiple: true
+
       delegate :publish!, :unpublish!, :published?, :unpublished?,
                to: :workflow
     end

@@ -58,6 +58,9 @@ module Ddr
       property :ingestion_date,
                predicate: Ddr::Vocab::Asset.ingestionDate
 
+      property :rights_note,
+               predicate: Ddr::Vocab::Asset.rightsNote
+
     end
   end
 end
