@@ -84,6 +84,7 @@ module Ddr::Index
     PUBLISHER_FACET             = Field.new :publisher_facet, :facetable
     RESEARCH_HELP_CONTACT       = Field.new :research_help_contact, :stored_sortable
     RESOURCE_ROLE               = Field.new :resource_role, :symbol
+    RIGHTS_NOTE                 = Field.new :rights_note, :stored_searchable
     ROLL_NUMBER_FACET           = Field.new :roll_number_facet, :facetable
     SERIES_FACET                = Field.new :series_facet, :facetable
     SETTING_FACET               = Field.new :setting_facet, :facetable

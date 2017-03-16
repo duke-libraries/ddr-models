@@ -21,6 +21,7 @@ module Ddr::Models
         obj.local_id = "foo"
         obj.permanent_id = "ark:/99999/fk4zzz"
         obj.permanent_url = "http://id.library.duke.edu/ark:/99999/fk4zzz"
+        obj.rights_note = ["Public domain"]
         obj.roles.grant role1, role2, role3, role4
         obj.set_desc_metadata_values(:arranger, "Arranger Value")
         obj.set_desc_metadata_values(:category, "Category Value")
@@ -84,6 +85,7 @@ module Ddr::Models
       its([Indexing::PRODUCT_FACET]) { is_expected.to eq(["Product Value"]) }
       its([Indexing::PUBLICATION_FACET]) { is_expected.to eq(["Publication Value"]) }
       its([Indexing::RESOURCE_ROLE]) { is_expected.to contain_exactly(role1.agent.first) }
+      its([Indexing::RIGHTS_NOTE]) { is_expected.to eq(["Public domain"]) }
       its([Indexing::ROLL_NUMBER_FACET]) { is_expected.to eq(["10"]) }
       its([Indexing::SETTING_FACET]) { is_expected.to eq(["Setting Value"]) }
       its([Indexing::SUBSERIES_FACET]) { is_expected.to eq(["Subseries Value"]) }
