@@ -66,6 +66,7 @@ module Ddr::Models
         PUBLISHER_FACET         => publisher,
         RESEARCH_HELP_CONTACT   => research_help_contact,
         RESOURCE_ROLE           => roles.in_resource_scope.agents,
+        RIGHTS_NOTE             => rights_note,
         ROLL_NUMBER_FACET       => desc_metadata_values('roll_number'),
         SERIES_FACET            => desc_metadata_values('series'),
         SETTING_FACET           => desc_metadata_values('setting'),
