@@ -17,7 +17,7 @@ module Ddr
         raise Ddr::Models::Error, "Checksum cannot be validated on unpersisted content." if content_changed?
         raise Ddr::Models::ChecksumInvalid, "The repository internal checksum validation failed." unless dsChecksumValid
         algorithm = checksum_type || self.checksumType
-        ds_checksum = if algorithm == self.checksumType
+        ds_checksum = if !external? && algorithm == self.checksumType
                         self.checksum
                       else
                         content_digest(algorithm)
@@ -61,7 +61,7 @@ module Ddr
 
       def file_path
         if external? && dsLocation.present? && dsLocation.start_with?("file:")
-          Ddr::Utils.path_from_uri(dsLocation) 
+          Ddr::Utils.path_from_uri(dsLocation)
         end
       end
 
