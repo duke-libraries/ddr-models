@@ -5,11 +5,21 @@ module Ddr::Managers
 
     delegate :content, :fits, to: :object
 
-    delegate :valid, :well_formed,
-             :media_type, :format_label, :format_version, :pronom_identifier,
-             :created, :modified, :creating_application, :extent,
-             :image_width, :image_height, :color_space,
-             :icc_profile_name, :icc_profile_version,
+    delegate :color_space,
+             :created,
+             :creating_application,
+             :extent,
+             :format_label,
+             :format_version,
+             :icc_profile_name,
+             :icc_profile_version,
+             :image_height,
+             :image_width,
+             :media_type,
+             :modified,
+             :pronom_identifier,
+             :valid,
+             :well_formed,
              to: :fits
 
     alias_method :last_modified, :modified
@@ -38,6 +48,10 @@ module Ddr::Managers
         "%s (%s bytes)" % [ ActiveSupport::NumberHelper.number_to_human_size(fs),
                             ActiveSupport::NumberHelper.number_to_delimited(fs) ]
       end
+    end
+
+    def md5
+      fits.md5.first
     end
 
     def checksum_digest
@@ -86,6 +100,7 @@ module Ddr::Managers
         Ddr::Index::Fields::TECHMD_ICC_PROFILE_VERSION => icc_profile_version,
         Ddr::Index::Fields::TECHMD_IMAGE_HEIGHT      => image_height,
         Ddr::Index::Fields::TECHMD_IMAGE_WIDTH       => image_width,
+        Ddr::Index::Fields::TECHMD_MD5               => md5,
         Ddr::Index::Fields::TECHMD_MEDIA_TYPE        => media_type,
         Ddr::Index::Fields::TECHMD_PRONOM_IDENTIFIER => pronom_identifier,
         Ddr::Index::Fields::TECHMD_VALID             => valid,

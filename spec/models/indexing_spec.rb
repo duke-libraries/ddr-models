@@ -15,13 +15,13 @@ module Ddr::Models
         obj.adminMetadata.doi << "http://doi.org/10.1000/182"
         obj.aspace_id = "aspace_dccea43034e1b8261e14cf999e86449d"
         obj.display_format = "Image"
+        obj.ingested_by = "foo@bar.com"
+        obj.ingestion_date = "2017-01-13T18:55:29Z"
         obj.license = "cc-by-nc-nd-40"
         obj.local_id = "foo"
         obj.permanent_id = "ark:/99999/fk4zzz"
         obj.permanent_url = "http://id.library.duke.edu/ark:/99999/fk4zzz"
-        obj.rightsMetadata.license.description = ["License Description"]
-        obj.rightsMetadata.license.title = ["License Title"]
-        obj.rightsMetadata.license.url = ["http://library.duke.edu"]
+        obj.rights_note = ["Public domain"]
         obj.roles.grant role1, role2, role3, role4
         obj.set_desc_metadata_values(:arranger, "Arranger Value")
         obj.set_desc_metadata_values(:category, "Category Value")
@@ -34,6 +34,8 @@ module Ddr::Models
         obj.set_desc_metadata_values(:illustrator, "Illustrator Value")
         obj.set_desc_metadata_values(:instrumentation, "Instrumentation Value")
         obj.set_desc_metadata_values(:interviewer_name, "Interviewer Name Value")
+        obj.set_desc_metadata_values(:isFormatOf, "ark:/99999/fk4aaa")
+        obj.set_desc_metadata_values(:isPartOf, "RL10059CS1010")
         obj.set_desc_metadata_values(:lithographer, "Lithographer Value")
         obj.set_desc_metadata_values(:lyricist, "Lyricist Value")
         obj.set_desc_metadata_values(:medium, "Medium Value")
@@ -56,6 +58,7 @@ module Ddr::Models
       its([Indexing::CATEGORY_FACET]) { is_expected.to eq(["Category Value"]) }
       its([Indexing::COMPANY_FACET]) { is_expected.to eq(["Company Value"]) }
       its([Indexing::COMPOSER_FACET]) { is_expected.to eq(["Composer Value"]) }
+      its([Indexing::DC_IS_PART_OF]) { is_expected.to eq(["RL10059CS1010"])}
       its([Indexing::DISPLAY_FORMAT]) { is_expected.to eq("Image") }
       its([Indexing::DOI]) { is_expected.to eq(["http://doi.org/10.1000/182"]) }
       its([Indexing::ENGRAVER_FACET]) { is_expected.to eq(["Engraver Value"]) }
@@ -63,12 +66,12 @@ module Ddr::Models
       its([Indexing::GENRE_FACET]) { is_expected.to eq(["Genre Value"]) }
       its([Indexing::ILLUSTRATED_FACET]) { is_expected.to eq(["Illustrated Value"]) }
       its([Indexing::ILLUSTRATOR_FACET]) { is_expected.to eq(["Illustrator Value"]) }
+      its([Indexing::INGESTED_BY]) { is_expected.to eq("foo@bar.com") }
+      its([Indexing::INGESTION_DATE]) { is_expected.to eq("2017-01-13T18:55:29Z") }
       its([Indexing::INSTRUMENTATION_FACET]) { is_expected.to eq(["Instrumentation Value"]) }
       its([Indexing::INTERVIEWER_NAME_FACET]) { is_expected.to eq(["Interviewer Name Value"]) }
+      its([Indexing::IS_FORMAT_OF]) { is_expected.to eq(["ark:/99999/fk4aaa"]) }
       its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
-      its([Indexing::LICENSE_DESCRIPTION]) { is_expected.to eq("License Description") }
-      its([Indexing::LICENSE_TITLE]) { is_expected.to eq("License Title") }
-      its([Indexing::LICENSE_URL]) { is_expected.to eq("http://library.duke.edu") }
       its([Indexing::LITHOGRAPHER_FACET]) { is_expected.to eq(["Lithographer Value"]) }
       its([Indexing::LOCAL_ID]) { is_expected.to eq("foo") }
       its([Indexing::LYRICIST_FACET]) { is_expected.to eq(["Lyricist Value"]) }
@@ -82,12 +85,14 @@ module Ddr::Models
       its([Indexing::PRODUCT_FACET]) { is_expected.to eq(["Product Value"]) }
       its([Indexing::PUBLICATION_FACET]) { is_expected.to eq(["Publication Value"]) }
       its([Indexing::RESOURCE_ROLE]) { is_expected.to contain_exactly(role1.agent.first) }
+      its([Indexing::RIGHTS_NOTE]) { is_expected.to eq(["Public domain"]) }
       its([Indexing::ROLL_NUMBER_FACET]) { is_expected.to eq(["10"]) }
       its([Indexing::SETTING_FACET]) { is_expected.to eq(["Setting Value"]) }
       its([Indexing::SUBSERIES_FACET]) { is_expected.to eq(["Subseries Value"]) }
       its([Indexing::TEMPORAL_FACET]) { is_expected.to eq(["Temporal Value"]) }
       its([Indexing::TONE_FACET]) { is_expected.to eq(["Tone Value"]) }
       its([Indexing::VOLUME_FACET]) { is_expected.to eq(["100"]) }
+
     end
 
     describe "content-bearing object indexing" do

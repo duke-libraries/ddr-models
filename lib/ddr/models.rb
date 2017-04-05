@@ -1,11 +1,7 @@
 require 'ddr/models/engine'
 require 'ddr/models/version'
-
-# Awful hack to make Hydra::AccessControls::Permissions accessible
-$: << Gem.loaded_specs['hydra-access-controls'].full_gem_path + "/app/models/concerns"
-
+require 'action_view' # https://github.com/haml/haml/issues/695
 require 'active_record'
-
 require 'hydra-core'
 require 'hydra/validations'
 
@@ -19,7 +15,6 @@ module Ddr
   autoload :Derivatives
   autoload :Events
   autoload :Index
-  autoload :Jobs
   autoload :Managers
   autoload :Metadata
   autoload :Notifications
@@ -39,9 +34,9 @@ module Ddr
   module Models
     extend ActiveSupport::Autoload
 
-    autoload :AccessControllable
     autoload :AdminSet
     autoload :Base
+    autoload :Cache
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :Contact
     autoload :ContentModelError, 'ddr/models/error'
@@ -58,6 +53,7 @@ module Ddr
     autoload :HasAttachments
     autoload :HasChildren
     autoload :HasContent
+    autoload :HasIntermediateFile
     autoload :HasMultiresImage
     autoload :HasStructMetadata
     autoload :HasThumbnail
@@ -65,7 +61,6 @@ module Ddr
     autoload :NotFoundError, 'ddr/models/error'
     autoload :PermanentId
     autoload :SolrDocument
-    autoload :StructDiv
     autoload :Structure
     autoload :WithContentFile
     autoload :YearFacet
@@ -78,14 +73,20 @@ module Ddr
       autoload :ParentLicense
     end
 
-    # Base directory of default external file store
-    mattr_accessor :external_file_store
+    module Structures
+      extend ActiveSupport::Autoload
 
-    # Base directory of external file store for multires image derivatives
-    mattr_accessor :multires_image_external_file_store
-
-    # Regexp for building external file subpath from hex digest
-    mattr_accessor :external_file_subpath_regexp
+      autoload :Agent
+      autoload :Div
+      autoload :File
+      autoload :FileGrp
+      autoload :FileSec
+      autoload :FLocat
+      autoload :Fptr
+      autoload :MetsHdr
+      autoload :Mptr
+      autoload :StructMap
+    end
 
     # Image server URL
     mattr_accessor :image_server_url
@@ -128,17 +129,16 @@ module Ddr
       false
     end
 
+    # File path to vips
+    mattr_accessor :vips_path
+
+    mattr_accessor :default_mime_type do
+      "application/octet-stream"
+    end
+
     # Yields an object with module configuration accessors
     def self.configure
       yield self
-    end
-
-    def self.external_file_subpath_pattern= (pattern)
-      unless /^-{1,2}(\/-{1,2}){0,3}$/ =~ pattern
-        raise "Invalid external file subpath pattern: #{pattern}"
-      end
-      re = pattern.split("/").map { |x| "(\\h{#{x.length}})" }.join("")
-      self.external_file_subpath_regexp = Regexp.new("^#{re}")
     end
 
   end

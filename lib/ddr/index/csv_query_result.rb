@@ -26,6 +26,7 @@ module Ddr::Index
 
     def csv_opts
       { headers:        csv_headers,
+        converters:     [convert_semicolons, convert_escaped_newlines],
         return_headers: false,
         write_headers:  true,
       }
@@ -60,8 +61,15 @@ module Ddr::Index
     end
 
     def data
-      raw = Connection.get("select", params: solr_csv_params)
-      raw.gsub(/\\#{CSV_MV_SEPARATOR}/, CSV_MV_SEPARATOR)
+      Connection.get("select", params: solr_csv_params)
+    end
+
+    def convert_semicolons
+      lambda { |f| f.gsub(/\\#{CSV_MV_SEPARATOR}/, CSV_MV_SEPARATOR) rescue f }
+    end
+
+    def convert_escaped_newlines
+      lambda { |f| f.gsub(/\\r/, "\r").gsub(/\\n/, "\n") rescue f }
     end
 
   end

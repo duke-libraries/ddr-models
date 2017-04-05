@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Item, type: :model do
 
   it_behaves_like "a DDR model"
@@ -17,18 +15,34 @@ RSpec.describe Item, type: :model do
 
     before {
       children[0].extractedText.content = text1
-      children[0].save
+      children[0].save!
       children[1].extractedText.content = text2
-      children[1].save
+      children[1].save!
       children[2].extractedText.content = text3
-      children[2].save
+      children[2].save!
+      children[3].save!
+      children[4].save!
       subject.children = children
-      subject.save
+      subject.save!
     }
 
     it "indexes the combined text of its children" do
-      expect(subject.index_fields[Ddr::Index::Fields::ALL_TEXT]).to contain_exactly(text1.read, text2.read, text3.read)
+      expect(subject.index_fields[Ddr::Index::Fields::ALL_TEXT]).to contain_exactly(File.read(text1.path), File.read(text2.path), File.read(text3.path))
     end
+  end
+
+  describe "content" do
+    its(:can_have_content?) { is_expected.to be false }
+    it { is_expected.to_not have_content }
+  end
+
+  describe "children" do
+    its(:can_have_children?) { is_expected.to be true }
+    it { is_expected.to_not have_children }
+    specify {
+      subject.children << Component.new
+      expect(subject).to have_children
+    }
   end
 
 end

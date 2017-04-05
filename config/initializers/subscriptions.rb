@@ -8,21 +8,28 @@ ActiveSupport::Notifications.subscribe(Ddr::Notifications::FIXITY_CHECK, Ddr::Ev
 # Virus Checks
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::VIRUS_CHECK, Ddr::Events::VirusCheckEvent)
 
-# Creation
+# Ingestion/Creation
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::CREATION, Ddr::Events::CreationEvent)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::INGEST, Ddr::Events::IngestionEvent)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::INGEST, Ddr::Derivatives::UpdateDerivatives)
 
 # Update
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::UPDATE, Ddr::Events::UpdateEvent)
-ActiveSupport::Notifications.subscribe("assign.permanent_id", Ddr::Events::UpdateEvent)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::UPDATE, Ddr::Events::UpdateEvent)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::UPDATE, Ddr::Models::PermanentId)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::UPDATE, Ddr::Derivatives::UpdateDerivatives)
 
-# Deletion
+# Delete
 ActiveSupport::Notifications.subscribe(Ddr::Notifications::DELETION, Ddr::Events::DeletionEvent)
-ActiveSupport::Notifications.subscribe(/destroy\.\w+/, Ddr::Events::DeletionEvent)
-ActiveSupport::Notifications.subscribe(/destroy\.\w+/, Ddr::Models::PermanentId)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DELETE, Ddr::Models::PermanentId)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DELETE, Ddr::Events::DeletionEvent)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DELETE, Ddr::Datastreams::DeleteExternalFiles)
 
 # Deaccession
-ActiveSupport::Notifications.subscribe(/deaccession\.\w+/, Ddr::Events::DeaccessionEvent)
-ActiveSupport::Notifications.subscribe(/deaccession\.\w+/, Ddr::Models::PermanentId)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DEACCESSION, Ddr::Models::PermanentId)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DEACCESSION, Ddr::Events::DeaccessionEvent)
+ActiveSupport::Notifications.subscribe(Ddr::Models::Base::DEACCESSION, Ddr::Datastreams::DeleteExternalFiles)
 
-# Workflow
-ActiveSupport::Notifications.subscribe(/workflow/, Ddr::Models::PermanentId)
+# Files
+ActiveSupport::Notifications.subscribe(Ddr::Datastreams::DELETE, Ddr::Derivatives::UpdateDerivatives)
+ActiveSupport::Notifications.subscribe(Ddr::Datastreams::DELETE, Ddr::Datastreams::DeleteExternalFiles)

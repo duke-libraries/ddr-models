@@ -21,24 +21,8 @@ RSpec.describe Collection, type: :model do
   end
 
   describe "title" do
-    before do
-      subject.title = [ "Test Collection" ]
-    end
     it "indexes the collection title" do
       expect(subject.to_solr[Ddr::Index::Fields::COLLECTION_TITLE]).to eq("Test Collection")
-    end
-  end
-
-  describe "legacy license information" do
-    before do
-      subject.defaultRights.license.title = ["License Title"]
-      subject.defaultRights.license.description = ["License Description"]
-      subject.defaultRights.license.url = ["http://library.duke.edu"]
-    end
-    it "indexes the terms" do
-      expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_TITLE]).to eq("License Title")
-      expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_DESCRIPTION]).to eq("License Description")
-      expect(subject.to_solr[Ddr::Index::Fields::DEFAULT_LICENSE_URL]).to eq("http://library.duke.edu")
     end
   end
 
@@ -66,7 +50,7 @@ RSpec.describe Collection, type: :model do
   end
 
   describe "creation" do
-    subject { Collection.create(title: [ "Test Collection" ]) }
+    before { subject.save! }
     it "is governed by itself" do
       expect(subject.admin_policy).to eq(subject)
     end
@@ -75,9 +59,49 @@ RSpec.describe Collection, type: :model do
   describe "roles granted to creator" do
     let(:user) { FactoryGirl.build(:user) }
     before { subject.grant_roles_to_creator(user) }
-    it "includes Curator roles in both resource and policy scopes" do
-      expect(subject.roles.to_a).to eq([Ddr::Auth::Roles::Role.build(type: "Curator", agent: user.agent, scope: "resource"), Ddr::Auth::Roles::Role.build(type: "Curator", agent: user.agent, scope: "policy")])
+    its(:roles) { is_expected.to include(Ddr::Auth::Roles::Role.build(type: "Curator", agent: user, scope: "policy")) }
+  end
+
+  describe "default roles granted" do
+    describe "and the metadata managers group is set" do
+      before do
+        allow(Ddr::Auth).to receive(:metadata_managers_group) { "metadata_managers" }
+        subject.save!
+      end
+      it "includes the MetadataEditor role in policy scope for the Metadata Managers group" do
+        expect(subject.roles.to_a).to eq([Ddr::Auth::Roles::Role.build(type: "MetadataEditor", agent: "metadata_managers", scope: "policy")])
+      end
     end
+    describe "and the metadata managers group is not set" do
+      before do
+        allow(Ddr::Auth).to receive(:metadata_managers_group) { nil }
+        subject.save!
+      end
+      its(:roles) { is_expected.to be_empty }
+    end
+  end
+
+  describe "attachments" do
+    its(:can_have_attachments?) { is_expected.to be true }
+    it { is_expected.not_to have_attachments }
+    specify {
+      subject.attachments << Attachment.new
+      expect(subject).to have_attachments
+    }
+  end
+
+  describe "content" do
+    its(:can_have_content?) { is_expected.to be false }
+    it { is_expected.to_not have_content }
+  end
+
+  describe "children" do
+    its(:can_have_children?) { is_expected.to be true }
+    it { is_expected.to_not have_children }
+    specify {
+      subject.children << Item.new
+      expect(subject).to have_children
+    }
   end
 
 end

@@ -18,9 +18,10 @@ Gem::Specification.new do |s|
 
   s.require_paths = ["lib", "app/models"]
 
-  s.add_dependency "rails", "~> 4.1"
+  s.add_dependency "rails", ">= 4.2.7", "< 5" # Hydra 7.x not compatible/tested with Rails 5
   s.add_dependency "activeresource"
-  s.add_dependency "active-fedora", "~> 7.0"
+  s.add_dependency "active-fedora", ">= 7.3.1", "< 8"
+  s.add_dependency "rubydora", "~> 2.0"
   s.add_dependency "hydra-core", "~> 7.2"
   s.add_dependency "hydra-validations", "~> 0.5"
   s.add_dependency "devise", "~> 3.4"

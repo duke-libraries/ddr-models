@@ -10,7 +10,6 @@ module Ddr
     autoload :FieldAttribute
     autoload :Fields
     autoload :Filter
-    autoload :LegacyLicenseFields
     autoload :Query
     autoload :QueryBuilder
     autoload :QueryClause

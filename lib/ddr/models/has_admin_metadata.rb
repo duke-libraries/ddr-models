@@ -1,5 +1,3 @@
-require "resque"
-
 module Ddr::Models
   module HasAdminMetadata
     extend ActiveSupport::Concern
@@ -23,8 +21,12 @@ module Ddr::Models
                      :aspace_id,
                      :is_locked,
                      :doi,
+                     :ingested_by,
+                     :ingestion_date,
                      datastream: "adminMetadata",
                      multiple: false
+
+      has_attributes :rights_note, datastream: "adminMetadata", multiple: true
 
       delegate :publish!, :unpublish!, :published?, :unpublished?,
                to: :workflow

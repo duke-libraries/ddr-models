@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Component, type: :model, components: true do
 
   it_behaves_like "a DDR model"
@@ -8,6 +6,7 @@ RSpec.describe Component, type: :model, components: true do
   it_behaves_like "it has an association", :belongs_to, :target, :has_external_target, "Target"
   it_behaves_like "a non-collection model"
   it_behaves_like "a potentially publishable object"
+  it_behaves_like "an object that can have an intermediate file"
 
   describe "indexing" do
     subject { FactoryGirl.build(:component) }
@@ -17,68 +16,59 @@ RSpec.describe Component, type: :model, components: true do
     its(:index_fields) { is_expected.to include(Ddr::Index::Fields::COLLECTION_URI => "info:fedora/test:1") }
   end
 
-  describe "extracted text" do
-    let(:parent) { FactoryGirl.create(:item) }
-    describe "when the child is not already associated with the parent" do
-      before {
-        subject.extractedText.content = fixture_file_upload('extractedText1.txt')
-        subject.save
-        subject.reload
-      }
-      it "updates the parent index when associated" do
-        expect(subject).to receive(:index_parent)
-        subject.parent = parent
-        subject.save
+  describe "default structure" do
+    describe "no content" do
+      it "should be nil" do
+        expect(subject.default_structure).to be_nil
       end
     end
-    describe "when the child is already associated with the parent" do
-      before {
-        subject.parent = parent
-        subject.save
-      }
-      describe "when there is no extracted text" do
-        describe "and none is added" do
-          it "does not trigger an index update on the parent" do
-            expect(subject).not_to receive(:index_parent)
-            subject.save
+    describe "has content" do
+      before { allow(subject).to receive(:has_content?) { true } }
+      before { allow(subject).to receive(:has_thumbnail?) { true } }
+      let(:struct) { subject.default_structure }
+      it "has the correct original file" do
+        expect(struct.uses[Ddr::Models::Structure::USE_ORIGINAL_FILE].first.href).to eq(Ddr::Datastreams::CONTENT)
+      end
+      it "has the correct preservation master file" do
+        expect(struct.uses[Ddr::Models::Structure::USE_PRESERVATION_MASTER_FILE].first.href)
+                                                                                  .to eq(Ddr::Datastreams::CONTENT)
+      end
+      describe "intermediate file" do
+        describe "with intermediate file" do
+          before do
+            allow(subject).to receive(:has_intermediate_file?) { true }
+          end
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_INTERMEDIATE_FILE].first.href)
+                .to eq(Ddr::Datastreams::INTERMEDIATE_FILE)
           end
         end
-        describe "and extracted text is added" do
-          it "triggers an index update on the parent" do
-            expect(subject).to receive(:index_parent)
-            subject.extractedText.content = fixture_file_upload('extractedText1.txt')
-            subject.save
+        describe "without intermediate image" do
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_INTERMEDIATE_FILE]).to be nil
           end
         end
       end
-      describe "when extracted text exists" do
-        before {
-          subject.extractedText.content = fixture_file_upload('extractedText1.txt')
-          subject.save
-          subject.reload
-        }
-        describe "and is removed" do
-          it "triggers an index update on the parent" do
-            pending "Deleting a datastream does not mark the content as changed"
-            expect(subject).to receive(:index_parent)
-            subject.extractedText.delete
-            subject.save
+      describe "service file" do
+        describe "with multires image" do
+          before do
+            allow(subject).to receive(:has_multires_image?) { true }
+          end
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].first.href)
+                                                                            .to eq(Ddr::Datastreams::MULTIRES_IMAGE)
           end
         end
-        describe "and doesn't change" do
-          it "triggers an index update on the parent" do
-            expect(subject).to receive(:index_parent)
-            subject.save
+        describe "without multires image" do
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].first.href).to eq(Ddr::Datastreams::CONTENT)
           end
         end
-        describe "and changes" do
-          it "triggers an index update on the parent" do
-            expect(subject).to receive(:index_parent)
-            subject.extractedText.content = fixture_file_upload('extractedText2.txt')
-            subject.save
-          end
-        end
+      end
+      it "has the correct thumbnail image" do
+        expect(struct.uses[Ddr::Models::Structure::USE_THUMBNAIL_IMAGE].first.href).to eq(Ddr::Datastreams::THUMBNAIL)
       end
     end
+
   end
 end

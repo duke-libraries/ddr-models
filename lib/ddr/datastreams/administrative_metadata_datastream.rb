@@ -52,6 +52,15 @@ module Ddr
       property :is_locked,
                predicate: Ddr::Vocab::Asset.isLocked
 
+      property :ingested_by,
+               predicate: Ddr::Vocab::Asset.ingestedBy
+
+      property :ingestion_date,
+               predicate: Ddr::Vocab::Asset.ingestionDate
+
+      property :rights_note,
+               predicate: Ddr::Vocab::Asset.rightsNote
+
     end
   end
 end

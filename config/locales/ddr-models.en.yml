@@ -56,6 +56,9 @@ en:
         techmd_image_width:
           label: "Image Width"
           heading: image_width
+        techmd_md5:
+          label: MD5
+          heading: md5
         techmd_media_type:
           label: "Media Type"
           heading: media_type

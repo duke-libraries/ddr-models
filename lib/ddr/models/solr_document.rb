@@ -184,14 +184,10 @@ module Ddr::Models
       @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
     end
 
-    def struct_maps
-      JSON.parse(fetch(Ddr::Index::Fields::STRUCT_MAPS))
+    def structure
+      JSON.parse(fetch(Ddr::Index::Fields::STRUCTURE))
     rescue
-      {}
-    end
-
-    def struct_map(type='default')
-      struct_maps.present? ? struct_maps.fetch(type) : nil
+      nil
     end
 
     def effective_permissions(agents)
@@ -217,8 +213,12 @@ module Ddr::Models
       end
     end
 
-    def multires_image_file_paths(type='default')
-      struct_map_docs(type).map { |doc| doc.multires_image_file_path }.compact
+    def multires_image_file_paths
+      if structure
+        structure_docs.map { |doc| doc.multires_image_file_path }.compact
+      else
+        []
+      end
     end
 
     # DRY HasAdminMetadata
@@ -260,18 +260,20 @@ module Ddr::Models
       end
     end
 
-    def struct_map_docs(type='default')
-      struct_map_pids(type).map { |pid| self.class.find(pid) }.compact
+    def structure_docs
+      structure_repo_ids.map { |repo_id| self.class.find(repo_id) }.compact
     end
 
-    # For simplicity, initial implementation returns PID's only from top-level
-    # (i.e., not nested) div's.  This is done since we have not clarified what
-    # an _ordered_ list of PID's should look like if struct map contains nested
-    # div's.
-    def struct_map_pids(type='default')
-      struct_map(type)['divs'].map { |d| d['fptrs'].present? ? d['fptrs'].first : nil}.compact
-    rescue
-      []
+    # For simplicity, initial implementation returns repo ID's only from top-level
+    # (i.e., not nested) contents.  This is done since we have not clarified what
+    # an _ordered_ list of repo ID's should look like if structure contains nested
+    # contents.
+    def structure_repo_ids
+      default_struct_map['contents'].map { |content| content['contents'].map { |content| content['repo_id'] } }.flatten
+    end
+
+    def default_struct_map
+      structure['default'] || structure.values.first
     end
 
   end

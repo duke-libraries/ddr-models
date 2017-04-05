@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 module ActiveFedora
   RSpec.describe Datastream do
 
@@ -161,6 +159,39 @@ module ActiveFedora
       end
 
     end # external datastreams
+
+    describe "notifications" do
+      let(:events) { [] }
+      before {
+        @subscriber = ActiveSupport::Notifications.subscribe(event_name) do |name, start, finish, id, payload|
+          events << payload
+        end
+      }
+      after {
+        ActiveSupport::Notifications.unsubscribe(@subscriber)
+      }
+      describe "on create" do
+        let(:obj) { ActiveFedora::Base.create }
+        let(:event_name) { "save.repo_file" }
+        specify {
+          obj.add_file_datastream("foo", dsid: "DS1", controlGroup: "M")
+          obj.save!
+          expect(events.last[:pid]).to eq obj.pid
+          expect(events.last[:file_id]).to eq "DS1"
+          expect(events.last[:profile]).to be_present
+        }
+      end
+      describe "on destroy" do
+        let(:obj) { FactoryGirl.create(:item) }
+        let(:event_name) { "delete.repo_file" }
+        specify {
+          obj.descMetadata.delete
+          expect(events.first[:pid]).to eq obj.pid
+          expect(events.first[:file_id]).to eq "descMetadata"
+          expect(events.first[:profile]).to be_present
+        }
+      end
+    end
 
   end
 end

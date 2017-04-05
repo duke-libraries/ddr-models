@@ -7,15 +7,17 @@ module Ddr
     ADMIN_METADATA = "adminMetadata"
     CONTENT = "content"
     DC = "DC"
-    DEFAULT_RIGHTS = "defaultRights"
     DESC_METADATA = "descMetadata"
     EXTRACTED_TEXT = "extractedText"
     FITS = "fits".freeze
+    INTERMEDIATE_FILE = "intermediateFile".freeze
     MULTIRES_IMAGE = "multiresImage"
     RELS_EXT = "RELS-EXT"
-    RIGHTS_METADATA = "rightsMetadata"
     STRUCT_METADATA = "structMetadata"
     THUMBNAIL = "thumbnail"
+
+    SAVE = "save.repo_file"
+    DELETE = "delete.repo_file"
 
     CHECKSUM_TYPE_MD5 = "MD5"
     CHECKSUM_TYPE_SHA1 = "SHA-1"
@@ -26,12 +28,21 @@ module Ddr
     CHECKSUM_TYPES = [ CHECKSUM_TYPE_MD5, CHECKSUM_TYPE_SHA1, CHECKSUM_TYPE_SHA256, CHECKSUM_TYPE_SHA384, CHECKSUM_TYPE_SHA512 ]
 
     autoload :AdministrativeMetadataDatastream
+    autoload :ContentDatastream
     autoload :DatastreamBehavior
+    autoload :DeleteExternalFiles
     autoload :DescriptiveMetadataDatastream
+    autoload :ExternalFileDatastream
     autoload :FitsDatastream
+    autoload :IntermediateFileDatastream
     autoload :MetadataDatastream
+    autoload :MultiresImageDatastream
     autoload :PlainTextDatastream
     autoload :StructuralMetadataDatastream
+
+    mattr_accessor :update_derivatives_on_changed do
+      [ CONTENT, INTERMEDIATE_FILE ]
+    end
 
   end
 end

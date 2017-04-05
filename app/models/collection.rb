@@ -3,10 +3,9 @@
 #
 class Collection < Ddr::Models::Base
 
-  include Hydra::AdminPolicyBehavior
-
   include Ddr::Models::HasChildren
   include Ddr::Models::HasAttachments
+  include Ddr::Models::HasStructMetadata
 
   has_many :children, property: :is_member_of_collection, class_name: 'Item'
   has_many :targets, property: :is_external_target_for, class_name: 'Target'
@@ -45,7 +44,6 @@ class Collection < Ddr::Models::Base
   end
 
   def grant_roles_to_creator(creator)
-    roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::RESOURCE_SCOPE
     roles.grant type: Ddr::Auth::Roles::CURATOR, agent: creator.agent, scope: Ddr::Auth::Roles::POLICY_SCOPE
   end
 
@@ -54,6 +52,16 @@ class Collection < Ddr::Models::Base
   end
 
   private
+
+  def default_roles
+    super.tap do |roles|
+      if Ddr::Auth.metadata_managers_group
+        roles << { type: Ddr::Auth::Roles::METADATA_EDITOR,
+                   agent: Ddr::Auth.metadata_managers_group,
+                   scope: Ddr::Auth::Roles::POLICY_SCOPE }
+      end
+    end
+  end
 
   def set_admin_policy
     reload

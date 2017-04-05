@@ -1,6 +1,4 @@
-require 'spec_helper'
 require 'rdf/isomorphic'
-
 include RDF::Isomorphic
 
 def sample_metadata_triples(subject_string="_:test")
@@ -19,101 +17,115 @@ def sample_metadata_triples(subject_string="_:test")
 EOS
 end
 
-module Ddr
-  module Datastreams
-    RSpec.describe DescriptiveMetadataDatastream do
-      context "terminology" do
-        subject { described_class.term_names }
-        it "should have a term for each term name in the RDF::DC vocab except :license" do
-          expect(subject).to include(*Ddr::Vocab::Vocabulary.term_names(RDF::DC)-[:license])
+module Ddr::Datastreams
+  RSpec.describe DescriptiveMetadataDatastream do
+    describe "terminology" do
+      it "should have a term for each term name in the RDF::DC vocab except :license" do
+        expect(described_class.term_names).to include(*Ddr::Vocab::Vocabulary.term_names(RDF::DC)-[:license])
+      end
+      it "should have a term for each term name in the DukeTerms vocab" do
+        expect(described_class.term_names).to include(*Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms))
+      end
+    end
+    describe "properties" do
+      subject { described_class.properties.map { |prop| prop[1].predicate } }
+      it "should include all the RDF::DC predicates except http://purl.org/dc/terms/license" do
+        expected_predicates = Ddr::Vocab::Vocabulary.property_terms(RDF::DC).select { |p| p.to_s != 'http://purl.org/dc/terms/license' }
+        expect(subject).to include(*expected_predicates)
+      end
+      it "should include all the DukeTerms predicates" do
+        expect(subject).to include(*Ddr::Vocab::Vocabulary.property_terms(Ddr::Vocab::DukeTerms))
+      end
+    end
+    describe "raw content" do
+      let(:obj) { Item.new }
+      subject { obj.descMetadata }
+      before do
+        content = sample_metadata_triples(subject.rdf_subject.to_s)
+        subject.content = content
+        subject.resource.set_subject!(subject.rdf_subject)
+      end
+      it "should retrieve the content using the terminology" do
+        expect(subject.title).to eq(["Sample title"])
+        expect(subject.creator).to eq(["Sample, Example"])
+        expect(subject.type).to eq(["Image", "Still Image"])
+        expect(subject.spatial).to eq(["Durham County (NC)", "Durham (NC)"])
+        expect(subject.date).to eq(["1981-01"])
+        expect(subject.rights).to eq(["The copyright for these materials is unknown."])
+        expect(subject.print_number).to eq(["12-345-6"])
+        expect(subject.series).to eq(["Photographic Materials Series"])
+        expect(subject.subseries).to eq(["Local Court House"])
+      end
+    end
+    describe "using the terminology setters" do
+      let(:obj) { Item.new }
+      subject { obj.descMetadata }
+      let(:content) { sample_metadata_triples(subject.rdf_subject.to_s) }
+      before do
+        subject.title = "Sample title"
+        subject.creator = "Sample, Example"
+        subject.type = ["Image", "Still Image"]
+        subject.spatial = ["Durham County (NC)", "Durham (NC)"]
+        subject.date = "1981-01"
+        subject.rights = "The copyright for these materials is unknown."
+        subject.print_number = "12-345-6"
+        subject.series = "Photographic Materials Series"
+        subject.subseries = "Local Court House"
+      end
+      its(:resource) { is_expected.to be_isomorphic_with(RDF::Reader.for(:ntriples).new(content)) }
+    end
+    describe "using the set_values and add_value methods" do
+      let(:obj) { Item.new }
+      subject { obj.descMetadata }
+      before { subject.type = "Photograph" }
+      describe "#set_values" do
+        it "sets the values of the term to those supplied" do
+          subject.set_values :type, [ "Image", "Still Image" ]
+          expect(subject.type).to eq([ "Image", "Still Image" ])
         end
-        it "should have a term for each term name in the DukeTerms vocab" do
-          expect(subject).to include(*Ddr::Vocab::Vocabulary.term_names(Ddr::Vocab::DukeTerms))
+        it "does not add blank values" do
+          subject.set_values :type, [ "Image", "", nil, "\t" ]
+          expect(subject.type).to eq([ "Image" ])
+        end
+        it "strips whitespace from values" do
+          subject.set_values :type, [ "Image", "Still Image " ]
+          expect(subject.type).to eq([ "Image", "Still Image" ])
         end
       end
-      context "properties" do
-        subject { described_class.properties.map { |prop| prop[1].predicate } }
-        it "should include all the RDF::DC predicates except http://purl.org/dc/terms/license" do
-          expected_predicates = Ddr::Vocab::Vocabulary.property_terms(RDF::DC).select { |p| p.to_s != 'http://purl.org/dc/terms/license' }
-          expect(subject).to include(*expected_predicates)
+      describe "#add_value" do
+        it "should add the supplied value to those of the term" do
+          subject.add_value :type, "Image"
+          expect(subject.type).to eq([ "Photograph", "Image" ])
         end
-        it "should include all the DukeTerms predicates" do
-          expect(subject).to include(*Ddr::Vocab::Vocabulary.property_terms(Ddr::Vocab::DukeTerms))
+        it "strips whitespace from the value" do
+          subject.add_value :type, "Image "
+          expect(subject.type).to eq([ "Photograph", "Image" ])
         end
-      end
-      context "raw content" do
-        let(:ds) { described_class.new(nil, 'descMetadata') }
-        before do
-          content = sample_metadata_triples(ds.rdf_subject.to_s)
-          ds.content = content
-          ds.resource.set_subject!(ds.rdf_subject)
-        end
-        it "should retrieve the content using the terminology" do
-          expect(ds.title).to eq(["Sample title"])
-          expect(ds.creator).to eq(["Sample, Example"])
-          expect(ds.type).to eq(["Image", "Still Image"])
-          expect(ds.spatial).to eq(["Durham County (NC)", "Durham (NC)"])
-          expect(ds.date).to eq(["1981-01"])
-          expect(ds.rights).to eq(["The copyright for these materials is unknown."])
-          expect(ds.print_number).to eq(["12-345-6"])
-          expect(ds.series).to eq(["Photographic Materials Series"])
-          expect(ds.subseries).to eq(["Local Court House"])
+        it "does not add blank values" do
+          subject.add_value :type, nil
+          subject.add_value :type, ""
+          subject.add_value :type, "\t"
+          expect(subject.type).to eq(["Photograph"])
         end
       end
-      context "using the terminology setters" do
-        let(:ds) { described_class.new(nil, 'descMetadata') }
-        let(:content) { sample_metadata_triples(ds.rdf_subject.to_s) }
-        before do
-          ds.title = "Sample title"
-          ds.creator = "Sample, Example"
-          ds.type = ["Image", "Still Image"]
-          ds.spatial = ["Durham County (NC)", "Durham (NC)"]
-          ds.date = "1981-01"
-          ds.rights = "The copyright for these materials is unknown."
-          ds.print_number = "12-345-6"
-          ds.series = "Photographic Materials Series"
-          ds.subseries = "Local Court House"
-        end
-        it "should create equivalent RDF graph to that based on the raw version" do
-          expect(ds.resource).to be_isomorphic_with(RDF::Reader.for(:ntriples).new(content))
-        end
+    end
+    describe "solrization" do
+      let(:obj) { Item.new }
+      subject { obj.descMetadata }
+      before do
+        content = sample_metadata_triples(subject.rdf_subject.to_s)
+        subject.content = content
+        subject.resource.set_subject!(subject.rdf_subject)
       end
-      context "using the set_values and add_value methods" do
-        let(:ds) { described_class.new(nil, 'descMetadata') }
-        before { ds.type = "Photograph" }
-        context "#set_values" do
-          it "should set the values of the term to those supplied" do
-            ds.set_values :type, [ "Image", "Still Image" ]
-            expect(ds.type).to eq([ "Image", "Still Image" ])
-          end
-        end
-        context "#add_value" do
-          it "should add the supplied value to those of the term" do
-            ds.add_value :type, "Image"
-            expect(ds.type).to eq([ "Photograph", "Image" ])
-          end
-        end
-      end
-      context "solrization" do
-        let(:ds) { described_class.new(nil, 'descMetadata') }
-        subject { ds.to_solr }
-        before do
-          content = sample_metadata_triples(ds.rdf_subject.to_s)
-          ds.content = content
-          ds.resource.set_subject!(ds.rdf_subject)
-        end
-        it "should create fields for all the terms that have non-empty values" do
-          expect(subject).to include("title_tesim" => ["Sample title"])
-          expect(subject).to include("creator_tesim" => ["Sample, Example"])
-          expect(subject).to include("type_tesim" => ["Image", "Still Image"])
-          expect(subject).to include("spatial_tesim" => ["Durham County (NC)", "Durham (NC)"])
-          expect(subject).to include("date_tesim" => ["1981-01"])
-          expect(subject).to include("rights_tesim" => ["The copyright for these materials is unknown."])
-          expect(subject).to include("print_number_tesim" => ["12-345-6"])
-          expect(subject).to include("series_tesim" => ["Photographic Materials Series"])
-          expect(subject).to include("subseries_tesim" => ["Local Court House"])
-        end
-      end
+      its(:to_solr) { is_expected.to include("title_tesim" => ["Sample title"]) }
+      its(:to_solr) { is_expected.to include("creator_tesim" => ["Sample, Example"]) }
+      its(:to_solr) { is_expected.to include("type_tesim" => ["Image", "Still Image"]) }
+      its(:to_solr) { is_expected.to include("spatial_tesim" => ["Durham County (NC)", "Durham (NC)"]) }
+      its(:to_solr) { is_expected.to include("date_tesim" => ["1981-01"]) }
+      its(:to_solr) { is_expected.to include("rights_tesim" => ["The copyright for these materials is unknown."]) }
+      its(:to_solr) { is_expected.to include("print_number_tesim" => ["12-345-6"]) }
+      its(:to_solr) { is_expected.to include("series_tesim" => ["Photographic Materials Series"]) }
+      its(:to_solr) { is_expected.to include("subseries_tesim" => ["Local Court House"]) }
     end
   end
 end

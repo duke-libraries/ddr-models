@@ -3,22 +3,13 @@ module Ddr
     module HasContent
       extend ActiveSupport::Concern
 
-      MASTER_FILE_TYPES = [ "image/tiff" ]
-
-      def master_file?
-        if respond_to?(:file_use) && file_use.present?
-          file_use == Ddr::Models::HasStructMetadata::FILE_USE_MASTER
-        else
-          MASTER_FILE_TYPES.include?(content_type)
-        end
-      end
-
       included do
         has_file_datastream \
           name: Ddr::Datastreams::CONTENT,
+          type: Ddr::Datastreams::ContentDatastream,
           versionable: true,
           label: "Content file for this object",
-          control_group: "M"
+          control_group: "E"
 
         has_file_datastream \
           name: Ddr::Datastreams::EXTRACTED_TEXT,
@@ -30,25 +21,13 @@ module Ddr
         has_metadata \
           name: Ddr::Datastreams::FITS,
           type: Ddr::Datastreams::FitsDatastream,
-          versionable: true,
+          versionable: false,
           label: "FITS Output for content file",
           control_group: "M"
 
         has_attributes :original_filename, datastream: "adminMetadata", multiple: false
 
         include FileManagement
-
-        around_save :update_derivatives, if: :content_changed?
-
-        before_save if: :re_characterize? do
-          fits.delete
-        end
-
-        after_add_file do
-          if file_to_add.original_name && file_to_add.dsid == "content"
-            self.original_filename = file_to_add.original_name
-          end
-        end
 
         delegate :validate_checksum!, to: :content
       end
@@ -133,15 +112,6 @@ module Ddr
       end
 
       protected
-
-      def update_derivatives
-        yield
-        derivatives.update_derivatives(:later)
-      end
-
-      def re_characterize?
-        content_changed? && !fits.new?
-      end
 
       def default_content_type
         "application/octet-stream"

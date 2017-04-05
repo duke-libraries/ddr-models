@@ -2,9 +2,14 @@ module Ddr
   module Models
     class Base < ActiveFedora::Base
 
+      # Lifecycle events
+      INGEST = "ingest.repo_object"
+      UPDATE = "update.repo_object"
+      DELETE = "delete.repo_object"
+      DEACCESSION = "deaccession.repo_object"
+
       include Describable
       include Governable
-      include AccessControllable
       include HasThumbnail
       include EventLoggable
       include FixityCheckable
@@ -12,21 +17,24 @@ module Ddr
       include Indexing
       include Hydra::Validations
       include HasAdminMetadata
+      extend Deprecation
 
       # Prevent accidental use of #delete which lacks callbacks
       private :delete
 
-      define_model_callbacks :deaccession, only: :around
+      define_model_callbacks :deaccession
 
-      extend Deprecation
-      # Deprecate Hydra permissions-related methods
-      deprecation_deprecate *(Hydra::AccessControls::Permissions.public_instance_methods)
+      before_create :set_ingestion_date, unless: :ingestion_date
+      before_create :set_ingested_by, if: :performed_by, unless: :ingested_by
+      before_create :grant_default_roles
 
-      around_save :notify_save
-      around_save :notify_workflow_change, if: [:workflow_state_changed?, :persisted?]
-      after_create :assign_permanent_id, if: :assign_permanent_id?
+      after_create :notify_ingest
+      after_create :assign_permanent_id!, if: :assign_permanent_id?
+
+      around_save :notify_update, unless: :new_record?
+
       around_deaccession :notify_deaccession
-      around_destroy :notify_destroy
+      around_destroy :notify_delete
 
       def deaccession
         run_callbacks :deaccession do
@@ -66,88 +74,104 @@ module Ddr
         false
       end
 
-      def legacy_authorization
-        Ddr::Auth::LegacyAuthorization.new(self)
-      end
-
-      # Moves the first (descriptive metadata) identifier into
-      # (administrative metadata) local_id according to the following
-      # rubric:
-      #
-      # No existing local_id:
-      #   - Set local_id to first identifier value
-      #   - Remove first identifier value
-      #
-      # Existing local_id:
-      #   Same as first identifier value
-      #     - Remove first identifier value
-      #   Not same as first identifier value
-      #     :replace option is true
-      #       - Set local_id to first identifier value
-      #       - Remove first identifier value
-      #     :replace option is false
-      #       - Do nothing
-      #
-      # Returns true or false depending on whether the object was
-      # changed by this method
-      def move_first_identifier_to_local_id(replace: true)
-        moved = false
-        identifiers = identifier.to_a
-        first_id = identifiers.shift
-        if first_id
-          if local_id.blank?
-            self.local_id = first_id
-            self.identifier = identifiers
-            moved = true
-          else
-            if local_id == first_id
-              self.identifier = identifiers
-              moved = true
-            else
-              if replace
-                self.local_id = first_id
-                self.identifier = identifiers
-                moved = true
-              end
-            end
-          end
-        end
-        moved
-      end
-
       def publishable?
         raise NotImplementedError, "Must be implemented by subclasses"
       end
 
-      private
+      def save(options={})
+        cache.with(options) { super }
+      end
 
-      def notify_save
-        ActiveSupport::Notifications.instrument("save.#{self.class.to_s.underscore}",
-                                                pid: pid,
-                                                changes: changes,
-                                                created: new_record?) do |payload|
-          yield
+      def datastreams_changed
+        datastreams.select { |dsid, ds| ds.changed? }
+      end
+
+      def datastreams_having_content
+        datastreams.select { |dsid, ds| ds.has_content? }
+      end
+      alias_method :attached_files_having_content, :datastreams_having_content
+      alias_method :datastreams_to_validate, :datastreams_having_content
+      deprecation_deprecate :datastreams_to_validate
+
+      def datastream_history
+        datastreams_having_content.each_with_object({}) do |(dsid, ds), memo|
+          memo[dsid] = ds.version_history
         end
       end
 
-      def notify_workflow_change
-        ActiveSupport::Notifications.instrument("#{workflow_state}.workflow.#{self.class.to_s.underscore}", pid: pid) do |payload|
-          yield
+      private
+
+      def grant_default_roles
+        if default_roles.present?
+          roles.grant *default_roles
         end
+      end
+
+      def default_roles
+        []
+      end
+
+      def cache
+        @__cache ||= Cache.new
+      end
+
+      def performed_by
+        if user = cache.get(:user)
+          user.to_s
+        end
+      end
+
+      def set_ingested_by
+        self.ingested_by = performed_by
+      end
+
+      def set_ingestion_date
+        self.ingestion_date = Time.now.utc.iso8601
+      end
+
+      def default_notification_payload
+        cache.slice(:summary, :comment, :detail)
+          .merge(pid: pid,
+                 user_key: performed_by,
+                 permanent_id: permanent_id,
+                 model: self.class.to_s)
+      end
+
+      def notify_ingest
+        payload = default_notification_payload.merge(
+          event_date_time: ingestion_date,
+          datastreams_changed: attached_files_having_content.keys
+        )
+        ActiveSupport::Notifications.instrument(INGEST, payload)
+      end
+
+      def notify_update
+        event_params = default_notification_payload.merge(
+          attributes_changed: changes,
+          datastreams_changed: datastreams_changed.keys
+        )
+        ActiveSupport::Notifications.instrument(UPDATE, event_params) do |payload|
+          yield
+          payload[:event_date_time] = modified_date
+        end
+      end
+
+      def delete_notification_payload
+        default_notification_payload.merge(
+          datastream_history: datastream_history,
+          create_date: create_date,
+          modified_date: modified_date
+        )
       end
 
       def notify_deaccession
-        ActiveSupport::Notifications.instrument("deaccession.#{self.class.to_s.underscore}",
-                                                pid: pid,
-                                                permanent_id: permanent_id) do |payload|
+        ActiveSupport::Notifications.instrument(DEACCESSION, delete_notification_payload) do |payload|
           yield
         end
       end
 
-      def notify_destroy
-        ActiveSupport::Notifications.instrument("destroy.#{self.class.to_s.underscore}",
-                                                pid: pid,
-                                                permanent_id: permanent_id) do |payload|
+      def notify_delete
+        ActiveSupport::Notifications.instrument(DELETE, delete_notification_payload) do |payload|
           yield
         end
       end
@@ -156,7 +180,7 @@ module Ddr
         permanent_id.nil? && Ddr::Models.auto_assign_permanent_id
       end
 
-      def assign_permanent_id
+      def assign_permanent_id!
         PermanentId.assign!(self)
       end
 

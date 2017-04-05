@@ -37,17 +37,20 @@ module ActiveFedora
       governable? && admin_policy.present?
     end
 
-    def has_rights_metadata?
-      ds = self.datastreams[Ddr::Datastreams::RIGHTS_METADATA]
-      ds && ds.size && ds.size > 0
-    end
-
     def can_have_struct_metadata?
       datastreams.include? Ddr::Datastreams::STRUCT_METADATA
     end
 
     def has_struct_metadata?
       can_have_struct_metadata? && structMetadata.has_content?
+    end
+
+    def can_have_intermediate_file?
+      datastreams.include? Ddr::Datastreams::INTERMEDIATE_FILE
+    end
+
+    def has_intermediate_file?
+      can_have_intermediate_file? && datastreams[Ddr::Datastreams::INTERMEDIATE_FILE].has_content?
     end
 
     def can_have_multires_image?

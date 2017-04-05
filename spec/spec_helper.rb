@@ -85,7 +85,7 @@ RSpec.configure do |config|
   # Print the 10 slowest examples and example groups at the
   # end of the spec run, to help surface which specs are running
   # particularly slow.
-  config.profile_examples = 10
+  # config.profile_examples = 10
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
@@ -108,19 +108,14 @@ RSpec.configure do |config|
       config.update_derivatives = [ :multires_image, :thumbnail ]
     end
     Ddr::Models.configure do |config|
-      config.external_file_store = Dir.mktmpdir
-      config.multires_image_external_file_store = Dir.mktmpdir
-      config.external_file_subpath_pattern = "--"
       config.fits_home = Dir.mktmpdir
     end
+    Ddr::Datastreams::ExternalFileDatastream.file_store = Dir.mktmpdir
   end
 
   config.after(:suite) do
-    if Ddr::Models.external_file_store && Dir.exist?(Ddr::Models.external_file_store)
-      FileUtils.remove_entry_secure(Ddr::Models.external_file_store)
-    end
-    if Ddr::Models.multires_image_external_file_store && Dir.exist?(Ddr::Models.multires_image_external_file_store)
-      FileUtils.remove_entry_secure(Ddr::Models.multires_image_external_file_store)
+    if Ddr::Datastreams::ExternalFileDatastream.file_store
+      FileUtils.rm_rf Ddr::Datastreams::ExternalFileDatastream.file_store
     end
   end
 

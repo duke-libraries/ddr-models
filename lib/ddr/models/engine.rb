@@ -48,12 +48,6 @@ module Ddr
                                                 [ :thumbnail ]
       end
 
-      initializer "ddr_models.external_files" do
-        Ddr::Models.external_file_store = ENV["EXTERNAL_FILE_STORE"]
-        Ddr::Models.multires_image_external_file_store = ENV["MULTIRES_IMAGE_EXTERNAL_FILE_STORE"]
-        Ddr::Models.external_file_subpath_pattern = ENV["EXTERNAL_FILE_SUBPATH_PATTERN"] || "--"
-      end
-
       initializer "ddr_models.image_server" do
         Ddr::Models.image_server_url = ENV["IMAGE_SERVER_URL"]
       end
@@ -86,6 +80,10 @@ module Ddr
 
       initializer "fits_home" do
         Ddr::Models.fits_home = ENV["FITS_HOME"]
+      end
+
+      initializer "vips_path" do
+        Ddr::Models.vips_path = ENV["VIPS_PATH"]
       end
 
       initializer "ddr_antivirus" do

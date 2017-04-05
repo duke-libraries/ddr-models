@@ -2,7 +2,7 @@ require 'support/structural_metadata_helper'
 
 FactoryGirl.define do
 
-  factory :structure, class: Ddr::Models::Structure do
+  factory :structures, class: Ddr::Models::Structure do
 
     factory :simple_structure do
       initialize_with do
@@ -13,6 +13,12 @@ FactoryGirl.define do
     factory :nested_structure do
       initialize_with do
         new(nested_structure_document)
+      end
+    end
+
+    factory :nested_structure_mptr do
+      initialize_with do
+        new(nested_structure_mptr_document)
       end
     end
 

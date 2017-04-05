@@ -39,7 +39,12 @@ module Ddr
       # Receive message sent by ActiveSupport::Notifications
       def self.call(*args)
         notification = ActiveSupport::Notifications::Event.new(*args)
-        create(notification.payload)
+        payload = notification.payload.dup
+        payload[:event_date_time] ||= notification.time
+        create do |event|
+          event.attributes = payload.select { |k, v| event.has_attribute?(k) }
+          yield [event, notification] if block_given?
+        end
       end
 
       # Repository software version -- e.g., "Fedora Repository 3.7.0"
@@ -49,8 +54,6 @@ module Ddr
                                                     .join(" ")
       end
 
-      # Scopes
-
       def self.for_object(obj)
         for_pid(obj.pid)
       end
@@ -58,8 +61,6 @@ module Ddr
       def self.for_pid(pid)
         where(pid: pid)
       end
-
-      # Rendering methods
 
       def display_type
         # Ddr::Events::UpdateEvent => "Update"
@@ -73,8 +74,6 @@ module Ddr
       def comment_or_summary
         comment.present? ? comment : summary
       end
-
-      # Outcome methods
 
       def success!
         self.outcome = SUCCESS
@@ -92,7 +91,6 @@ module Ddr
         outcome == FAILURE
       end
 
-      # Object getter and setter
       def object
         @object ||= ActiveFedora::Base.find(pid) if pid
       end
@@ -123,7 +121,7 @@ module Ddr
       protected
 
       def set_defaults
-        self.attributes = defaults.reject { |attr, val| attribute_present? attr }
+        self.attributes = defaults.reject { |attr, val| attribute_present?(attr) }
       end
 
       def defaults

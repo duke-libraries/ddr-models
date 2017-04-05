@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'openssl'
 
 RSpec.shared_examples "an object that can have content" do
@@ -6,6 +5,16 @@ RSpec.shared_examples "an object that can have content" do
   subject { described_class.new(title: [ "I Have Content!" ]) }
 
   before { allow(Resque).to receive(:enqueue) }
+
+  its(:can_have_content?) { is_expected.to be true }
+  it { is_expected.to_not have_content }
+  specify {
+    allow(subject.content).to receive(:has_content?) { true }
+    expect(subject).to have_content
+  }
+
+  its(:can_have_children?) { is_expected.to be false }
+  it { is_expected.to_not have_children }
 
   it "should delegate :validate_checksum! to :content" do
     checksum = "dea56f15b309e47b74fa24797f85245dda0ca3d274644a96804438bbd659555a"
@@ -42,33 +51,22 @@ RSpec.shared_examples "an object that can have content" do
 
   describe "adding a file" do
     let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
-    context "defaults" do
-      before { subject.add_file file, "content" }
-      its(:original_filename) { should eq("imageA.tif") }
-      its(:content_type) { should eq("image/tiff") }
-      it "should create a 'virus check' event for the object" do
-        expect { subject.save }.to change { subject.virus_checks.count }
-      end
-    end
-    context "with option `:original_name=>false`" do
-      before { subject.add_file file, "content", original_name: false }
-      its(:original_filename) { should be_nil }
-    end
-    context "with `:original_name` option set to a string" do
-      before { subject.add_file file, "content", original_name: "another-name.tiff" }
-      its(:original_filename) { should eq("another-name.tiff") }
+    before { subject.add_file file, "content" }
+    its(:original_filename) { should eq("imageA.tif") }
+    its(:content_type) { should eq("image/tiff") }
+    it "should create a 'virus check' event for the object" do
+      expect(Ddr::Events::VirusCheckEvent).to receive(:create)
+      subject.save!
     end
   end
 
   describe "save" do
-
     describe "when new content is present" do
-
       context "and it's a new object" do
         before { subject.add_file file, "content" }
         let(:file) { fixture_file_upload("imageA.tif", "image/tiff") }
         it "should generate derivatives" do
-          expect(subject.derivatives).to receive(:update_derivatives)
+          expect_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:update_derivatives)
           subject.save
         end
       end
@@ -77,7 +75,7 @@ RSpec.shared_examples "an object that can have content" do
         before { subject.upload! fixture_file_upload('imageA.tif', 'image/tiff') }
         let(:file) { fixture_file_upload("imageB.tif", "image/tiff") }
         it "should generate derivatives" do
-          expect(subject.derivatives).to receive(:update_derivatives)
+          expect_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:update_derivatives)
           subject.upload! file
         end
         context "and the file has not previously been characterized" do
@@ -93,16 +91,6 @@ RSpec.shared_examples "an object that can have content" do
           it "preserves the characterization data" do
             subject.upload! file
             expect(subject.reload.fits).to have_content
-          end
-        end
-        context "and the file has previously been characterized" do
-          before {
-            subject.fits.content = fixture_file_upload("fits/document.xml")
-            subject.save!
-          }
-          it "deletes the existing characterization data" do
-            subject.upload! file
-            expect(subject.reload.fits).to_not have_content
           end
         end
       end
@@ -123,6 +111,44 @@ RSpec.shared_examples "an object that can have content" do
       expect(subject).to receive(:add_file).with(file, "content", {}).and_call_original
       expect(subject).to receive(:save)
       subject.upload!(file)
+    end
+  end
+
+  describe "deleting / deaccessioning" do
+    let(:file1) { fixture_file_upload("sample.pdf") }
+    let(:file2) { fixture_file_upload("sample.docx") }
+    before do
+      subject.upload! file1
+      @path1 = subject.content.file_path
+      subject.upload! file2
+      @path2 = subject.content.file_path
+    end
+    describe "#destroy" do
+      it "deletes the content files" do
+        expect(::File.exist?(@path1)).to be true
+        expect(::File.exist?(@path2)).to be true
+        subject.destroy
+        expect(::File.exist?(@path1)).to be false
+        expect(::File.exist?(@path2)).to be false
+      end
+    end
+    describe "#deaccession" do
+      it "deletes the content files" do
+        expect(::File.exist?(@path1)).to be true
+        expect(::File.exist?(@path2)).to be true
+        subject.deaccession
+        expect(::File.exist?(@path1)).to be false
+        expect(::File.exist?(@path2)).to be false
+      end
+    end
+    describe "deleting the 'content' datastream" do
+      it "deletes the content files" do
+        expect(::File.exist?(@path1)).to be true
+        expect(::File.exist?(@path2)).to be true
+        subject.content.delete
+        expect(::File.exist?(@path1)).to be false
+        expect(::File.exist?(@path2)).to be false
+      end
     end
   end
 

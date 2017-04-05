@@ -8,21 +8,23 @@ module Ddr::Managers
     let(:obj) { Component.new }
 
     describe "when fits datastream not present" do
-      its(:valid) { is_expected.to be_empty }
-      its(:well_formed) { is_expected.to be_empty }
+      its(:fits?) { is_expected.to be false }
+
+      its(:created) { is_expected.to be_empty }
+      its(:creating_application) { is_expected.to be_empty }
+      its(:creation_time) { is_expected.to be_empty }
+      its(:file_size) { is_expected.to be_empty }
+      its(:fits_datetime) { is_expected.to be_nil }
+      its(:fits_version) { is_expected.to be_nil }
       its(:format_label) { is_expected.to be_empty }
-      its(:media_type) { is_expected.to be_empty }
       its(:format_version) { is_expected.to be_empty }
       its(:last_modified) { is_expected.to be_empty }
+      its(:md5) { is_expected.to be_nil }
+      its(:media_type) { is_expected.to be_empty }
       its(:modification_time) { is_expected.to be_empty }
-      its(:created) { is_expected.to be_empty }
-      its(:creation_time) { is_expected.to be_empty }
       its(:pronom_identifier) { is_expected.to be_empty }
-      its(:creating_application) { is_expected.to be_empty }
-      its(:file_size) { is_expected.to be_empty }
-      its(:fits_version) { is_expected.to be_nil }
-      its(:fits_datetime) { is_expected.to be_nil }
-      its(:fits?) { is_expected.to be false }
+      its(:valid) { is_expected.to be_empty }
+      its(:well_formed) { is_expected.to be_empty }
     end
 
     describe "when content is not present" do
@@ -34,20 +36,22 @@ module Ddr::Managers
       before do
         obj.fits.content = fixture_file_upload(File.join("fits", "document.xml"))
       end
+
       its(:fits?) { is_expected.to be true }
-      its(:valid) { is_expected.to eq(["false"]) }
-      its(:well_formed) { is_expected.to eq(["true"]) }
-      its(:format_label) { is_expected.to eq(["Portable Document Format"]) }
-      its(:media_type) { is_expected.to eq(["application/pdf"]) }
-      its(:format_version) { is_expected.to eq(["1.6"]) }
-      its(:last_modified) { is_expected.to eq(["2015-06-08T21:22:35Z"]) }
+
       its(:created) { is_expected.to eq(["2015:06:05 15:16:23-04:00"]) }
-      its(:pronom_identifier) { is_expected.to eq(["fmt/20"]) }
       its(:creating_application) { is_expected.to contain_exactly("Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/PREMIS Editorial Committee", "Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/Acrobat PDFMaker 11 for Word") }
-      its(:fits_version) { is_expected.to eq("0.8.5") }
       its(:extent) { is_expected.to eq(["3786205"]) }
       its(:file_size) { is_expected.to eq([3786205]) }
+      its(:fits_version) { is_expected.to eq("0.8.5") }
+      its(:format_label) { is_expected.to eq(["Portable Document Format"]) }
+      its(:format_version) { is_expected.to eq(["1.6"]) }
+      its(:last_modified) { is_expected.to eq(["2015-06-08T21:22:35Z"]) }
+      its(:md5) { is_expected.to eq("432ab76d650bfdc8f8d4a98cea9634bb") }
       its(:media_type) { is_expected.to eq(["application/pdf"]) }
+      its(:pronom_identifier) { is_expected.to eq(["fmt/20"]) }
+      its(:valid) { is_expected.to eq(["false"]) }
+      its(:well_formed) { is_expected.to eq(["true"]) }
 
       describe "datetime fields" do
         its(:creation_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-05 15:16:23-04:00").to_time.utc) }

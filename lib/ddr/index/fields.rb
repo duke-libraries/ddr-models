@@ -29,6 +29,7 @@ module Ddr::Index
     CREATOR_FACET               = Field.new :creator_facet, :facetable
     DATE_FACET                  = Field.new :date_facet, :facetable
     DATE_SORT                   = Field.new :date_sort, :sortable
+    DC_IS_PART_OF               = Field.new :isPartOf, :symbol
     DEPOSITOR                   = Field.new :depositor, :stored_sortable
     DISPLAY_FORMAT              = Field.new :display_format, :stored_sortable
     DOI                         = Field.new :doi, :symbol
@@ -42,11 +43,14 @@ module Ddr::Index
     IDENTIFIER_ALL              = Field.new :identifier_all, :symbol
     ILLUSTRATED_FACET           = Field.new :illustrated_facet, :facetable
     ILLUSTRATOR_FACET           = Field.new :illustrator_facet, :facetable
+    INGESTED_BY                 = Field.new :ingested_by, :stored_sortable
+    INGESTION_DATE              = Field.new :ingestion_date, :stored_sortable, type: :date
     INSTRUMENTATION_FACET       = Field.new :instrumentation_facet, :facetable
     INTERNAL_URI                = Field.new :internal_uri, :stored_sortable
     INTERVIEWER_NAME_FACET      = Field.new :interviewer_name_facet, :facetable
     IS_ATTACHED_TO              = Field.new :is_attached_to, :symbol
     IS_EXTERNAL_TARGET_FOR      = Field.new :is_external_target_for, :symbol
+    IS_FORMAT_OF                = Field.new :isFormatOf, :symbol
     IS_GOVERNED_BY              = Field.new :is_governed_by, :symbol
     IS_LOCKED                   = Field.new :is_locked, :stored_sortable
     IS_MEMBER_OF                = Field.new :is_member_of, :symbol
@@ -80,11 +84,12 @@ module Ddr::Index
     PUBLISHER_FACET             = Field.new :publisher_facet, :facetable
     RESEARCH_HELP_CONTACT       = Field.new :research_help_contact, :stored_sortable
     RESOURCE_ROLE               = Field.new :resource_role, :symbol
+    RIGHTS_NOTE                 = Field.new :rights_note, :stored_searchable
     ROLL_NUMBER_FACET           = Field.new :roll_number_facet, :facetable
     SERIES_FACET                = Field.new :series_facet, :facetable
     SETTING_FACET               = Field.new :setting_facet, :facetable
     SPATIAL_FACET               = Field.new :spatial_facet, :facetable
-    STRUCT_MAPS                 = Field.new :struct_maps, :stored_sortable
+    STRUCTURE                   = Field.new :structure, :stored_sortable
     SUBJECT_FACET               = Field.new :subject_facet, :facetable
     SUBSERIES_FACET             = Field.new :subseries_facet, :facetable
     TECHMD_COLOR_SPACE          = Field.new :techmd_color_space, :symbol
@@ -99,6 +104,7 @@ module Ddr::Index
     TECHMD_ICC_PROFILE_VERSION  = Field.new :techmd_icc_profile_version, :symbol
     TECHMD_IMAGE_HEIGHT         = Field.new :techmd_image_height, :stored_searchable, type: :integer
     TECHMD_IMAGE_WIDTH          = Field.new :techmd_image_width, :stored_searchable, type: :integer
+    TECHMD_MD5                  = Field.new :techmd_md5, :stored_sortable
     TECHMD_MEDIA_TYPE           = Field.new :techmd_media_type, :symbol
     TECHMD_MODIFICATION_TIME    = Field.new :techmd_modification_time, :stored_searchable, type: :date
     TECHMD_PRONOM_IDENTIFIER    = Field.new :techmd_pronom_identifier, :symbol
@@ -131,15 +137,10 @@ module Ddr::Index
         Deprecation.warn(Ddr::Index::Fields,
                          "`Ddr::Index::Fields::#{name}` is deprecated." \
                          " Use `Ddr::Index::Fields::ID` instead.")
-        return ID
+        ID
+      else
+        super
       end
-      if const = LegacyLicenseFields.const_get(name)
-        # XXX Commented out b/c annoying, but maybe we want later ...
-        # Deprecation.warn(Ddr::Index::Fields,
-        #                  "`Ddr::Index::Fields::#{name}` is deprecated and will be removed in ddr-models 3.0.")
-        return const
-      end
-      super
     end
 
   end
