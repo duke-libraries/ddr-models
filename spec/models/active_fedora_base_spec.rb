@@ -24,4 +24,7 @@ RSpec.describe ActiveFedora::Base do
     end
   end
 
+  its(:can_be_streamable?) { is_expected.to be false }
+  it { is_expected.not_to be_streamable }
+
 end

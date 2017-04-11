@@ -108,6 +108,9 @@ module Ddr::Models
       if has_extracted_text?
         fields[EXTRACTED_TEXT] = extractedText.content
       end
+      if streamable?
+        fields[STREAMABLE_MEDIA_TYPE] = streamable_media_type
+      end
       if is_a? Component
         fields[COLLECTION_URI] = collection_uri
       end

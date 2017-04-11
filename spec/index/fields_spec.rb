@@ -225,6 +225,12 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "setting_facet" }
       end
 
+      describe "STREAMABLE_MEDIA_TYPE" do
+        subject { Fields::STREAMABLE_MEDIA_TYPE }
+        its(:label) { is_expected.to eq "Streamable Media Type" }
+        its(:heading) { is_expected.to eq "streamable_media_type" }
+      end
+
       describe "SUBSERIES_FACET" do
         subject { Fields::SUBSERIES_FACET }
         its(:label) { is_expected.to eq "Subseries Facet" }

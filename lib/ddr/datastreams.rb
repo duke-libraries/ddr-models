@@ -4,17 +4,18 @@ module Ddr
   module Datastreams
     extend ActiveSupport::Autoload
 
-    ADMIN_METADATA = "adminMetadata"
-    CONTENT = "content"
-    DC = "DC"
-    DESC_METADATA = "descMetadata"
-    EXTRACTED_TEXT = "extractedText"
-    FITS = "fits".freeze
+    ADMIN_METADATA    = "adminMetadata"
+    CONTENT           = "content"
+    DC                = "DC"
+    DESC_METADATA     = "descMetadata"
+    EXTRACTED_TEXT    = "extractedText"
+    FITS              = "fits".freeze
     INTERMEDIATE_FILE = "intermediateFile".freeze
-    MULTIRES_IMAGE = "multiresImage"
-    RELS_EXT = "RELS-EXT"
-    STRUCT_METADATA = "structMetadata"
-    THUMBNAIL = "thumbnail"
+    MULTIRES_IMAGE    = "multiresImage"
+    RELS_EXT          = "RELS-EXT"
+    STREAMABLE_MEDIA  = "streamableMedia"
+    STRUCT_METADATA   = "structMetadata"
+    THUMBNAIL         = "thumbnail"
 
     SAVE = "save.repo_file"
     DELETE = "delete.repo_file"
@@ -38,6 +39,7 @@ module Ddr
     autoload :MetadataDatastream
     autoload :MultiresImageDatastream
     autoload :PlainTextDatastream
+    autoload :StreamableMediaDatastream
     autoload :StructuralMetadataDatastream
 
     mattr_accessor :update_derivatives_on_changed do
