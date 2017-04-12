@@ -1,3 +1,5 @@
+require 'digest'
+
 module Ddr::Datastreams
   class ExternalFileDatastream < ActiveFedora::Datastream
 
@@ -44,6 +46,11 @@ module Ddr::Datastreams
 
     def file_paths
       new? ? Array(file_path) : versions.map(&:file_path)
+    end
+
+    def content_digest(algorithm=Ddr::Datastreams::CHECKSUM_TYPE_SHA1)
+      digest_class = Digest.const_get(algorithm.sub("-", ""))
+      digest_class.file(file_path).hexdigest
     end
 
     private

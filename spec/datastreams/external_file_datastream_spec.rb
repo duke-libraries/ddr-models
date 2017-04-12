@@ -33,5 +33,15 @@ module Ddr::Datastreams
       expect(subject.file_path).to be_nil
     }
 
+    describe "checksum validation" do
+      before do
+        subject.add_file(file1.path, mime_type: file1.content_type)
+        obj.save!
+      end
+      it "should not call Rubydora to retrieve datastream content" do
+        expect(subject).to_not receive(:content)
+        subject.validate_checksum!('a6ae0d815c1a2aef551b45fe34a35ceea1828a4d', Ddr::Datastreams::CHECKSUM_TYPE_SHA1)
+      end
+    end
   end
 end
