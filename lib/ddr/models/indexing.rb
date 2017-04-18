@@ -38,7 +38,6 @@ module Ddr
           LICENSE               => license,
           LOCAL_ID              => local_id,
           PERMANENT_ID          => permanent_id,
-          PERMANENT_URL         => permanent_url,
           POLICY_ROLE           => roles.in_policy_scope.agents,
           PUBLISHER_FACET       => desc_metadata.publisher,
           RESEARCH_HELP_CONTACT => research_help_contact,
@@ -90,6 +89,9 @@ module Ddr
           fields[ADMIN_SET_FACET] = admin_set_facet
           fields[COLLECTION_FACET] = collection_facet
           fields[ALL_TEXT] = all_text
+        end
+        if published?
+          fields[PERMANENT_URL] = permanent_url
         end
         fields
       end
