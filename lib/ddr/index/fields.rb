@@ -89,6 +89,7 @@ module Ddr::Index
     SERIES_FACET                = Field.new :series_facet, :facetable
     SETTING_FACET               = Field.new :setting_facet, :facetable
     SPATIAL_FACET               = Field.new :spatial_facet, :facetable
+    STREAMABLE_MEDIA_TYPE       = Field.new :streamable_media_type, :stored_sortable
     STRUCTURE                   = Field.new :structure, :stored_sortable
     SUBJECT_FACET               = Field.new :subject_facet, :facetable
     SUBSERIES_FACET             = Field.new :subseries_facet, :facetable

@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe Collection, type: :model do
 
   subject { described_class.new(title: ["Test Collection"]) }
@@ -8,6 +6,7 @@ RSpec.describe Collection, type: :model do
   it_behaves_like "it has an association", :has_many, :children, :is_member_of_collection, "Item"
   it_behaves_like "it has an association", :has_many, :targets, :is_external_target_for, "Target"
   it_behaves_like "a publishable object"
+  it_behaves_like "an object that cannot be streamable"
 
   describe "admin set" do
     let(:admin_set) { Ddr::Models::AdminSet.new(code: "foobar", title: "FooBar") }

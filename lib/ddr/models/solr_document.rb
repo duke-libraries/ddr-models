@@ -228,6 +228,16 @@ module Ddr::Models
       end
     end
 
+    def streamable?
+      has_datastream?(Ddr::Datastreams::STREAMABLE_MEDIA)
+    end
+
+    def streamable_media_path
+      if streamable?
+        Ddr::Utils.path_from_uri(datastreams[Ddr::Datastreams::STREAMABLE_MEDIA]["dsLocation"])
+      end
+    end
+
     private
 
     def targets_query

@@ -61,6 +61,7 @@ module Ddr
     autoload :NotFoundError, 'ddr/models/error'
     autoload :PermanentId
     autoload :SolrDocument
+    autoload :Streamable
     autoload :Structure
     autoload :WithContentFile
     autoload :YearFacet

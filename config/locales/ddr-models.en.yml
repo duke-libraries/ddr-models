@@ -16,6 +16,8 @@ en:
           label: "EAD ID"
         local_id:
           label: "Local ID"
+        streamable_media_url:
+          label: "Streamable Media URL"
         system_create:
           label: "Creation Date"
           heading: creation_date
