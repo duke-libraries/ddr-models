@@ -102,9 +102,7 @@ module Ddr
       private
 
       def grant_default_roles
-        if default_roles.present?
-          roles.grant *default_roles
-        end
+        roles.grant *default_roles
       end
 
       def default_roles
