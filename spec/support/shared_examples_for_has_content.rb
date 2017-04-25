@@ -78,6 +78,13 @@ RSpec.shared_examples "an object that can have content" do
           expect_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:update_derivatives)
           subject.upload! file
         end
+        context "and it is saved with :skip_update_derivatives=>true" do
+          it "does not generate derivatives" do
+            expect_any_instance_of(Ddr::Managers::DerivativesManager).not_to receive(:update_derivatives)
+            subject.upload file
+            subject.save(skip_update_derivatives: true)
+          end
+        end
         context "and the file has not previously been characterized" do
           it "does not try to delete the existing characterization data" do
             expect(subject.fits).not_to receive(:delete)
