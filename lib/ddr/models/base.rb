@@ -148,7 +148,8 @@ module Ddr
       def notify_update
         event_params = default_notification_payload.merge(
           attributes_changed: changes,
-          datastreams_changed: datastreams_changed.keys
+          datastreams_changed: datastreams_changed.keys,
+          skip_update_derivatives: cache.fetch(:skip_update_derivatives, false)
         )
         ActiveSupport::Notifications.instrument(UPDATE, event_params) do |payload|
           yield
