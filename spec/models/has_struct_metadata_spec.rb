@@ -33,8 +33,28 @@ module Ddr::Models
       end
       it "should index the JSON representation of the structures" do
         indexing = item.to_solr
-        expect(indexing.keys).to include(Ddr::Index::Fields::STRUCTURE)
+        expect(indexing[Ddr::Index::Fields::STRUCT]).to eq(expected_json)
         expect(indexing[Ddr::Index::Fields::STRUCTURE]).to eq(expected_json)
+      end
+      describe "structure source" do
+        describe "repository maintained" do
+          before do
+            item.datastreams[Ddr::Datastreams::STRUCT_METADATA].content = simple_structure_xml
+          end
+          it "should index the structure source as repository maintained" do
+            indexing = item.to_solr
+            expect(indexing[Ddr::Index::Fields::STRUCTURE_SOURCE]).to eq(Ddr::Models::Structure::REPOSITORY_MAINTAINED)
+          end
+        end
+        describe "externally provided" do
+          before do
+            item.datastreams[Ddr::Datastreams::STRUCT_METADATA].content = nested_structure_xml
+          end
+          it "should index the structure source as repository maintained" do
+            indexing = item.to_solr
+            expect(indexing[Ddr::Index::Fields::STRUCTURE_SOURCE]).to eq(Ddr::Models::Structure::EXTERNALLY_PROVIDED)
+          end
+        end
       end
     end
 

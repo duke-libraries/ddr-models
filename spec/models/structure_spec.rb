@@ -28,7 +28,7 @@ module Ddr::Models
       describe "structure has a metsHdr" do
         let(:structure) { FactoryGirl.build(:simple_structure) }
         it "returns the creator" do
-          expect(structure.creator).to eq("Sam Spade")
+          expect(structure.creator).to eq(Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT)
         end
       end
       describe "structure does not have a metsHdr" do
