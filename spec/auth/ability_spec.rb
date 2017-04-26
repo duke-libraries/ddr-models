@@ -3,6 +3,8 @@ module Ddr::Auth
 
     subject { described_class.new(auth_context) }
 
+    before { allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set } }
+
     let(:auth_context) { FactoryGirl.build(:auth_context) }
 
     describe "aliases" do

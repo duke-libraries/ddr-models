@@ -1,5 +1,7 @@
 RSpec.describe SolrDocument, type: :model, contacts: true do
 
+  before { allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set } }
+
   describe "class methods" do
     describe ".find" do
       describe "when it exists" do

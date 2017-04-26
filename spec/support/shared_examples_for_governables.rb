@@ -2,6 +2,7 @@ RSpec.shared_examples "a governable object" do
   let(:object) do
     described_class.new.tap do |obj|
       obj.title = [ 'Describable' ]
+      obj.admin_set = test_admin_set.code if described_class == Collection
       obj.identifier = [ 'id001' ]
       obj.save(validate: false)
     end
