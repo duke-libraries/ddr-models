@@ -29,7 +29,7 @@ def simple_structure_xml
     <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
       <metsHdr>
         <agent ROLE="CREATOR">
-          <name>Sam Spade</name>
+          <name>#{Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT}</name>
         </agent>
       </metsHdr>
       <fileSec>

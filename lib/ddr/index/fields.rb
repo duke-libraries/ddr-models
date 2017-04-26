@@ -89,7 +89,12 @@ module Ddr::Index
     SERIES_FACET                = Field.new :series_facet, :facetable
     SETTING_FACET               = Field.new :setting_facet, :facetable
     SPATIAL_FACET               = Field.new :spatial_facet, :facetable
+    # STRUCT is interim index field to facilitate conversion of the STRUCTURE index field from
+    # stored and indexed to just stored.  The STRUCTURE field will eventually be pointed to this
+    # Field definition.
+    STRUCT                      = Field.new :structure, solr_name: "structure_ss"
     STRUCTURE                   = Field.new :structure, :stored_sortable
+    STRUCTURE_SOURCE            = Field.new :structure_source, :stored_sortable
     SUBJECT_FACET               = Field.new :subject_facet, :facetable
     SUBSERIES_FACET             = Field.new :subseries_facet, :facetable
     TECHMD_COLOR_SPACE          = Field.new :techmd_color_space, :symbol
