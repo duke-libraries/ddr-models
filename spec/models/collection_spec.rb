@@ -1,6 +1,6 @@
 RSpec.describe Collection, type: :model do
 
-  subject { described_class.new(title: ["Test Collection"], admin_set: "foo") }
+  subject { described_class.new(title: ["Test Collection"], admin_set: test_admin_set.code) }
 
   before { allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set } }
 
@@ -12,7 +12,6 @@ RSpec.describe Collection, type: :model do
 
   describe "admin set" do
     before do
-      allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set }
       subject.admin_set = test_admin_set.code
     end
     it "indexes the admin set title" do
