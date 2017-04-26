@@ -1,5 +1,7 @@
 RSpec.describe Target, type: :model, targets: true do
 
+  before { allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set } }
+
   it_behaves_like "a DDR model"
   it_behaves_like "an object that can have content"
   it_behaves_like "it has an association", :has_many, :components, :has_external_target, "Component"

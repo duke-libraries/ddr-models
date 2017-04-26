@@ -1,6 +1,8 @@
 RSpec.describe Collection, type: :model do
 
-  subject { described_class.new(title: ["Test Collection"]) }
+  subject { described_class.new(title: ["Test Collection"], admin_set: "foo") }
+
+  before { allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set } }
 
   it_behaves_like "a DDR model"
   it_behaves_like "it has an association", :has_many, :children, :is_member_of_collection, "Item"
@@ -9,13 +11,12 @@ RSpec.describe Collection, type: :model do
   it_behaves_like "an object that cannot be streamable"
 
   describe "admin set" do
-    let(:admin_set) { Ddr::Models::AdminSet.new(code: "foobar", title: "FooBar") }
     before do
-      allow(Ddr::Models::AdminSet).to receive(:find_by_code).with("foobar") { admin_set }
-      subject.admin_set = "foobar"
+      allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set }
+      subject.admin_set = test_admin_set.code
     end
     it "indexes the admin set title" do
-      expect(subject.to_solr[Ddr::Index::Fields::ADMIN_SET_TITLE]).to eq("FooBar")
+      expect(subject.to_solr[Ddr::Index::Fields::ADMIN_SET_TITLE]).to eq(test_admin_set.title)
     end
   end
 

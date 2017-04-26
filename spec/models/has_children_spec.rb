@@ -3,6 +3,8 @@ module Ddr::Models
 
     subject { FactoryGirl.create(:collection) }
 
+    before { allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set } }
+
     describe "#first_child" do
       describe "when the object has no children" do
         it "should return nil" do

@@ -4,6 +4,8 @@ require 'support/ezid_mock_identifier'
 module Ddr::Models
   RSpec.describe HasAdminMetadata, type: :model, contacts: true do
 
+    before { allow(AdminSet).to receive(:find_by_code) { test_admin_set } }
+
     describe "workflow" do
       let(:collection) { FactoryGirl.create(:collection) }
       let(:item) { FactoryGirl.create(:item) }

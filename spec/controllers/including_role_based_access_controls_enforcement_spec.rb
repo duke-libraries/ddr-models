@@ -23,6 +23,7 @@ RSpec.describe ApplicationController, type: :controller do
   describe "#policy_role_policies" do
     let(:collections) { FactoryGirl.build_list(:collection, 3) }
     before do
+      allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set }
       collections[0].roles.grant type: "Curator", agent: user, scope: "policy"
       collections[0].save
       collections[1].roles.grant type: "Editor", agent: "foo", scope: "policy"
