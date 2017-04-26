@@ -4,6 +4,11 @@ module Ddr::Models
   #
   class Structure < SimpleDelegator
 
+    # Indicates whether the structure is externally provided or maintained by the repository itself (i.e., is the
+    # default structure for the object).
+    EXTERNALLY_PROVIDED = 'provided'.freeze
+    REPOSITORY_MAINTAINED = 'repository'.freeze
+
     TYPE_DEFAULT = 'default'.freeze
 
     # Based on the PCDM Extension 'Use' ontology -- https://github.com/duraspace/pcdm/blob/master/pcdm-ext/use.rdf
