@@ -2,7 +2,7 @@ RSpec.shared_examples "a governable object" do
   let(:object) do
     described_class.new.tap do |obj|
       obj.title = [ 'Describable' ]
-      obj.admin_set = test_admin_set.code if described_class == Collection
+      obj.admin_set = "foo" if obj.is_a?(Collection)
       obj.identifier = [ 'id001' ]
       obj.save(validate: false)
     end
@@ -12,7 +12,7 @@ RSpec.shared_examples "a governable object" do
     it "should set its admin policy with #admin_policy= and get with #admin_policy" do
       object.admin_policy = coll
       object.save(validate: false)
-      expect(ActiveFedora::Base.find(object.pid, cast: true).admin_policy).to eq(coll)
+      expect(ActiveFedora::Base.find(object.pid).admin_policy).to eq(coll)
     end
   end
 end

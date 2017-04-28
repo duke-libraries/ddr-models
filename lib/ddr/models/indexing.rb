@@ -159,8 +159,10 @@ module Ddr::Models
                admin_set
              elsif associated_collection.present?
                associated_collection.admin_set
+             else
+               nil
              end
-      if as = AdminSet.find_by_code(code)
+      if code && ( as = AdminSet.find_by_code(code) )
         as.title
       end
     end

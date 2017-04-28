@@ -119,6 +119,12 @@ RSpec.configure do |config|
     end
   end
 
+  config.before(:each) do
+    allow(Ddr::Models::AdminSet).to receive(:find_by_code).with("foo") {
+      Ddr::Models::AdminSet.new(code: 'foo', title: 'Foo Admin Set')
+    }
+  end
+
   config.after(:each) do
     ActiveFedora::Base.destroy_all
   end

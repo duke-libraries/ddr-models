@@ -1,7 +1,5 @@
 RSpec.describe ActiveFedora::Base do
 
-  before { allow(Ddr::Models::AdminSet).to receive(:find_by_code) { test_admin_set } }
-
   describe ".find" do
     let!(:collection) { FactoryGirl.create(:collection) }
     describe "when called on the wrong class" do
