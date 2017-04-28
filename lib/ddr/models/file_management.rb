@@ -19,10 +19,10 @@ module Ddr::Models
     # @param external [Boolean] Add file to external datastream.
     #   Not required for external datastream classes
     #   or datastream instances having controlGroup 'E'.
-    def add_file(file, dsid, mime_type: nil, external: false)
-      mime_type       ||= Ddr::Utils.mime_type_for(file)
-      source_path       = Ddr::Utils.file_path(file)
-      original_filename = Ddr::Utils.file_name(file)
+    def add_file(file, dsid, mime_type: nil, external: false, original_filename: nil)
+      mime_type         ||= Ddr::Utils.mime_type_for(file)
+      source_path         = Ddr::Utils.file_path(file)
+      original_filename ||= Ddr::Utils.file_name(file)
       file_to_add = FileToAdd.new(dsid, source_path, original_filename)
       cache.with(file_to_add: file_to_add) do
         run_callbacks(:add_file) do
