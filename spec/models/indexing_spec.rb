@@ -54,6 +54,7 @@ module Ddr::Models
 
       specify {
         expect(subject[Indexing::ACCESS_ROLE]).to eq(obj.roles.to_json)
+        expect(subject[Indexing::ADMIN_SET_TITLE]).to be_nil
         expect(subject[Indexing::ARRANGER_FACET]).to eq(["Arranger Value"])
         expect(subject[Indexing::ASPACE_ID]).to eq("aspace_dccea43034e1b8261e14cf999e86449d")
         expect(subject[Indexing::CATEGORY_FACET]).to eq(["Category Value"])
@@ -123,6 +124,18 @@ module Ddr::Models
           expect(subject[Indexing::STREAMABLE_MEDIA_TYPE]).to eq "image/jpeg"
         }
       end
+    end
+
+    describe "admin set title" do
+      subject { FactoryGirl.build(:item) }
+      let(:coll) { FactoryGirl.create(:collection) }
+      before do
+        subject.parent = coll
+        subject.admin_policy = coll
+      end
+      specify {
+        expect(subject.index_fields[Indexing::ADMIN_SET_TITLE]).to eq "Foo Admin Set"
+      }
     end
 
   end
