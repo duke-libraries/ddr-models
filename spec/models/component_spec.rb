@@ -51,18 +51,32 @@ RSpec.describe Component, type: :model, components: true do
         end
       end
       describe "service file" do
-        describe "with multires image" do
-          before do
-            allow(subject).to receive(:has_multires_image?) { true }
-          end
+        let(:service_files) { struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].map(&:href) }
+        describe "with multires image but not streamable media" do
+          before { allow(subject).to receive(:has_multires_image?) { true } }
           it "has the correct structure file" do
-            expect(struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].first.href)
-                                                                            .to eq(Ddr::Datastreams::MULTIRES_IMAGE)
+            expect(service_files).to contain_exactly(Ddr::Datastreams::MULTIRES_IMAGE)
           end
         end
-        describe "without multires image" do
+        describe "with streamable media but not multires image" do
+          before { allow(subject).to receive(:streamable?) { true } }
           it "has the correct structure file" do
-            expect(struct.uses[Ddr::Models::Structure::USE_SERVICE_FILE].first.href).to eq(Ddr::Datastreams::CONTENT)
+            expect(service_files).to contain_exactly(Ddr::Datastreams::STREAMABLE_MEDIA)
+          end
+        end
+        describe "with both multires image and streamable media" do
+          before do
+            allow(subject).to receive(:has_multires_image?) { true }
+            allow(subject).to receive(:streamable?) { true }
+          end
+          it "has the correct structure file" do
+            expect(service_files).to contain_exactly(Ddr::Datastreams::MULTIRES_IMAGE,
+                                                     Ddr::Datastreams::STREAMABLE_MEDIA)
+          end
+        end
+        describe "with neither multires image nor streamable media" do
+          it "has the correct structure file" do
+            expect(service_files).to contain_exactly(Ddr::Datastreams::CONTENT)
           end
         end
       end

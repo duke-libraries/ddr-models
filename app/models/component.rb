@@ -45,42 +45,32 @@ class Component < Ddr::Models::Base
     structmap = structure.add_structmap(type: Ddr::Models::Structure::TYPE_DEFAULT)
     div = structure.add_div(parent: structmap)
     filegrp = structure.add_filegrp(parent: filesec)
-    add_original_file(structure, filegrp, div)
-    add_preservation_master_file(structure, filegrp, div)
-    add_intermediate_file(structure, filegrp, div) if has_intermediate_file?
-    add_service_file(structure, filegrp, div)
-    add_thumbnail_image(structure, filegrp, div) if has_thumbnail?
+    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_ORIGINAL_FILE,
+                              Ddr::Datastreams::CONTENT)
+    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_PRESERVATION_MASTER_FILE,
+                              Ddr::Datastreams::CONTENT)
+    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_INTERMEDIATE_FILE,
+                              Ddr::Datastreams::INTERMEDIATE_FILE) if has_intermediate_file?
+    add_service_file_uses_to_default_structure(structure, filegrp, div)
+    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_THUMBNAIL_IMAGE,
+                         Ddr::Datastreams::THUMBNAIL) if has_thumbnail?
     structure
   end
 
-  def add_original_file(structure, filegrp, div)
-    file = structure.add_file(parent: filegrp, use: Ddr::Models::Structure::USE_ORIGINAL_FILE)
-    structure.add_flocat(parent: file, loctype: 'OTHER', otherloctype: 'AttachedFile', href: Ddr::Datastreams::CONTENT)
-    structure.add_fptr(parent: div, fileid: file['ID'])
+  def add_service_file_uses_to_default_structure(structure, filegrp, div)
+    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_SERVICE_FILE,
+                         Ddr::Datastreams::MULTIRES_IMAGE) if has_multires_image?
+    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_SERVICE_FILE,
+                         Ddr::Datastreams::STREAMABLE_MEDIA) if streamable?
+    if !has_multires_image? && !streamable?
+      add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_SERVICE_FILE,
+                           Ddr::Datastreams::CONTENT)
+    end
   end
 
-  def add_preservation_master_file(structure, filegrp, div)
-    file = structure.add_file(parent: filegrp, use: Ddr::Models::Structure::USE_PRESERVATION_MASTER_FILE)
-    structure.add_flocat(parent: file, loctype: 'OTHER', otherloctype: 'AttachedFile', href: Ddr::Datastreams::CONTENT)
-    structure.add_fptr(parent: div, fileid: file['ID'])
-  end
-
-  def add_intermediate_file(structure, filegrp, div)
-    file = structure.add_file(parent: filegrp, use: Ddr::Models::Structure::USE_INTERMEDIATE_FILE)
-    structure.add_flocat(parent: file, loctype: 'OTHER', otherloctype: 'AttachedFile', href: Ddr::Datastreams::INTERMEDIATE_FILE)
-    structure.add_fptr(parent: div, fileid: file['ID'])
-  end
-
-  def add_service_file(structure, filegrp, div)
-    file = structure.add_file(parent: filegrp, use: Ddr::Models::Structure::USE_SERVICE_FILE)
-    service_file = has_multires_image? ? Ddr::Datastreams::MULTIRES_IMAGE : Ddr::Datastreams::CONTENT
-    structure.add_flocat(parent: file, loctype: 'OTHER', otherloctype: 'AttachedFile', href: service_file)
-    structure.add_fptr(parent: div, fileid: file['ID'])
-  end
-
-  def add_thumbnail_image(structure, filegrp, div)
-    file = structure.add_file(parent: filegrp, use: Ddr::Models::Structure::USE_THUMBNAIL_IMAGE)
-    structure.add_flocat(parent: file, loctype: 'OTHER', otherloctype: 'AttachedFile', href: Ddr::Datastreams::THUMBNAIL)
+  def add_use_to_structure(structure, filegrp, div, use, datastream_name)
+    file = structure.add_file(parent: filegrp, use: use)
+    structure.add_flocat(parent: file, loctype: 'OTHER', otherloctype: 'AttachedFile', href: datastream_name)
     structure.add_fptr(parent: div, fileid: file['ID'])
   end
 
