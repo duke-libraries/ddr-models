@@ -15,6 +15,10 @@ module Ddr::Datastreams
       super.merge(controlGroup: "E")
     end
 
+    def content
+      File.read(file_path)
+    end
+
     def file_size
       if path = file_path
         File.size(path)
