@@ -16,7 +16,7 @@ module Ddr::Datastreams
     end
 
     def content
-      File.read(file_path)
+      external? ? File.read(file_path) : super
     end
 
     def file_size
