@@ -23,6 +23,7 @@ module Ddr::Models
                      :doi,
                      :ingested_by,
                      :ingestion_date,
+                     :aleph_id,
                      datastream: "adminMetadata",
                      multiple: false
 
