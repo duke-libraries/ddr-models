@@ -45,12 +45,12 @@ module Ddr::Managers
       tempdir_path = File.join(Dir.tmpdir, Dir::Tmpname.make_tmpname('',nil))
       begin
         tempdir = FileUtils.mkdir(tempdir_path).first
-        generator_source = create_source_file(tempdir)
-        generator_output = File.new(File.join(tempdir, "output.out"), 'wb')
-        exitstatus = derivative.generator.new(generator_source.path, generator_output.path, derivative.options).generate
-        generator_source.close unless generator_source.closed?
+        generator_source_path = source_datastream.external? ? source_datastream.file_path
+                                                            : create_source_file(source_datastream,tempdir)
+        generator_output_path = File.new(File.join(tempdir, "output.out"), 'wb').path
+        exitstatus = derivative.generator.new(generator_source_path, generator_output_path, derivative.options).generate
         if exitstatus == 0
-          generator_output = File.open(generator_output, 'rb')
+          generator_output = File.open(generator_output_path, 'rb')
           object.reload if object.persisted?
           object.add_file generator_output, derivative.datastream, mime_type: derivative.generator.output_mime_type
           object.save!
@@ -75,6 +75,11 @@ module Ddr::Managers
 
     alias_method :delete_derivative, :delete_derivative!
 
+    def source_datastream
+      @source_datastream ||= object.has_intermediate_file? ? object.datastreams[Ddr::Datastreams::INTERMEDIATE_FILE]
+                                                           : object.datastreams[Ddr::Datastreams::CONTENT]
+    end
+
     class DerivativeJob
       @queue = :derivatives
       def self.perform(pid, derivative_name)
@@ -86,9 +91,9 @@ module Ddr::Managers
 
     private
 
-    def create_source_file(dir)
+    def create_source_file(datastream, dir)
       generator_source = File.new(File.join(dir, "source"), "wb")
-      source_content = object.has_intermediate_file? ? object.intermediateFile.content : object.content.content
+      source_content = datastream.content
       generator_source.write(source_content)
       generator_source.close
       generator_source
