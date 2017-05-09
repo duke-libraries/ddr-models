@@ -19,6 +19,7 @@ module Ddr::Models
         ACCESS_ROLE             => roles.to_json,
         ADMIN_SET               => admin_set,
         ADMIN_SET_TITLE         => admin_set_title,
+        ALEPH_ID                => aleph_id,
         ARRANGER_FACET          => desc_metadata_values('arranger'),
         ASPACE_ID               => aspace_id,
         ATTACHED_FILES_HAVING_CONTENT => attached_files_having_content.keys,

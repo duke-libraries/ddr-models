@@ -9,6 +9,7 @@ module Ddr::Index
     ADMIN_SET                   = Field.new :admin_set, :stored_sortable
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
     ADMIN_SET_TITLE             = Field.new :admin_set_title, :stored_sortable
+    ALEPH_ID                    = Field.new :aleph_id, :stored_sortable
     ALL_TEXT                    = Field.new :all_text, solr_name: "all_text_timv"
     ARRANGER_FACET              = Field.new :arranger_facet, :facetable
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable

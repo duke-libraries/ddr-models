@@ -8,6 +8,8 @@ en:
         active_fedora_model:
           label: Model
           heading: model
+        aleph_id:
+          label: "Aleph ID"
         aspace_id:
           label: "ArchivesSpace ID"
         doi:
