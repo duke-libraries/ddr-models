@@ -104,8 +104,7 @@ module Ddr::Models
         fields[MULTIRES_IMAGE_FILE_PATH] = multires_image_file_path
       end
       if has_struct_metadata?
-        # STRUCT is an interim index field to facilitate conversion of STRUCTURE field definition.
-        fields[STRUCT] = fields[STRUCTURE] = structure.dereferenced_structure.to_json
+        fields[STRUCTURE] = structure.dereferenced_structure.to_json
         fields[STRUCTURE_SOURCE] = structure.repository_maintained? ? Ddr::Models::Structure::REPOSITORY_MAINTAINED
                                                                     : Ddr::Models::Structure::EXTERNALLY_PROVIDED
       end
