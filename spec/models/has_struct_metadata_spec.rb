@@ -33,7 +33,6 @@ module Ddr::Models
       end
       it "should index the JSON representation of the structures" do
         indexing = item.to_solr
-        expect(indexing[Ddr::Index::Fields::STRUCT]).to eq(expected_json)
         expect(indexing[Ddr::Index::Fields::STRUCTURE]).to eq(expected_json)
       end
       describe "structure source" do
