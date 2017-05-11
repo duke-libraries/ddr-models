@@ -13,6 +13,7 @@ module Ddr::Models
 
       before do
         obj.adminMetadata.doi << "http://doi.org/10.1000/182"
+        obj.affiliation << "Talk to me in the back alley."
         obj.aleph_id = "lkheajklfwbsef"
         obj.aspace_id = "aspace_dccea43034e1b8261e14cf999e86449d"
         obj.display_format = "Image"
@@ -56,6 +57,7 @@ module Ddr::Models
       specify {
         expect(subject[Indexing::ACCESS_ROLE]).to eq(obj.roles.to_json)
         expect(subject[Indexing::ADMIN_SET_TITLE]).to be_nil
+        expect(subject[Indexing::AFFILIATION]).to eq(["Talk to me in the back alley."])
         expect(subject[Indexing::ALEPH_ID]).to eq "lkheajklfwbsef"
         expect(subject[Indexing::ARRANGER_FACET]).to eq(["Arranger Value"])
         expect(subject[Indexing::ASPACE_ID]).to eq("aspace_dccea43034e1b8261e14cf999e86449d")

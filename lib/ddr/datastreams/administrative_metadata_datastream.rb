@@ -64,6 +64,9 @@ module Ddr
       property :aleph_id,
                predicate: Ddr::Vocab::Asset.alephId
 
+      property :affiliation,
+               predicate: Ddr::Vocab::Asset.affiliation
+
     end
   end
 end
