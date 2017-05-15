@@ -142,5 +142,17 @@ module Ddr::Models
       }
     end
 
+    describe "language name" do
+      subject { FactoryGirl.build(:item) }
+      before do
+        subject.language = ["cym", "Not a Code"]
+        subject.save!
+      end
+      specify {
+        expect(subject.index_fields[Indexing::LANGUAGE_FACET]).to eq ["Welsh", "Not a Code"]
+        expect(subject.index_fields[Indexing::LANGUAGE_NAME]).to eq ["Welsh", "Not a Code"]
+      }
+    end
+
   end
 end

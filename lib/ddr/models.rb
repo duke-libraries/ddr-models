@@ -58,6 +58,7 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
+    autoload :Language
     autoload :MediaType
     autoload :NotFoundError, 'ddr/models/error'
     autoload :PermanentId
