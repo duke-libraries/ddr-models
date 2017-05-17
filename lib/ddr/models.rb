@@ -62,6 +62,7 @@ module Ddr
     autoload :MediaType
     autoload :NotFoundError, 'ddr/models/error'
     autoload :PermanentId
+    autoload :RightsStatement
     autoload :SolrDocument
     autoload :Streamable
     autoload :Structure
