@@ -58,6 +58,8 @@ module Ddr::Index
     IS_MEMBER_OF                = Field.new :is_member_of, :symbol
     IS_MEMBER_OF_COLLECTION     = Field.new :is_member_of_collection, :symbol
     IS_PART_OF                  = Field.new :is_part_of, :symbol
+    LANGUAGE_FACET              = Field.new :language_facet, :facetable
+    LANGUAGE_NAME               = Field.new :language_name, :stored_searchable
     LAST_FIXITY_CHECK_ON        = Field.new :last_fixity_check_on, :stored_sortable, type: :date
     LAST_FIXITY_CHECK_OUTCOME   = Field.new :last_fixity_check_outcome, :symbol
     LAST_VIRUS_CHECK_ON         = Field.new :last_virus_check_on, :stored_sortable, type: :date

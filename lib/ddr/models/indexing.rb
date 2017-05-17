@@ -52,6 +52,8 @@ module Ddr::Models
         INTERVIEWER_NAME_FACET  => desc_metadata_values('interviewer_name'),
         IS_FORMAT_OF            => desc_metadata_values('isFormatOf'),
         IS_LOCKED               => is_locked,
+        LANGUAGE_FACET          => language_name,
+        LANGUAGE_NAME           => language_name,
         LICENSE                 => license,
         LITHOGRAPHER_FACET      => desc_metadata_values('lithographer'),
         LOCAL_ID                => local_id,
@@ -182,6 +184,12 @@ module Ddr::Models
 
     def date_sort
       date.first
+    end
+
+    def language_name
+      language.map do |lang|
+        Language.find_by_code(lang).to_s rescue lang
+      end
     end
 
     def year_facet

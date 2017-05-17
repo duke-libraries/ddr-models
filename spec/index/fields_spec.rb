@@ -141,6 +141,18 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "interviewer_name_facet" }
       end
 
+      describe "LANGUAGE_FACET" do
+        subject { Fields::LANGUAGE_FACET }
+        its(:label) { is_expected.to eq "Language Facet" }
+        its(:heading) { is_expected.to eq "language_facet" }
+      end
+
+      describe "LANGUAGE_NAME" do
+        subject { Fields::LANGUAGE_NAME }
+        its(:label) { is_expected.to eq "Language Name" }
+        its(:heading) { is_expected.to eq "language_name" }
+      end
+
       describe "LITHOGRAPHER_FACET" do
         subject { Fields::LITHOGRAPHER_FACET }
         its(:label) { is_expected.to eq "Lithographer Facet" }
