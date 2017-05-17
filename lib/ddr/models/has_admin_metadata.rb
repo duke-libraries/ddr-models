@@ -1,6 +1,9 @@
 module Ddr::Models
   module HasAdminMetadata
     extend ActiveSupport::Concern
+    extend Deprecation
+
+    self.deprecation_horizon = 'ddr-models v3.0'
 
     included do
       has_metadata "adminMetadata",
@@ -69,10 +72,12 @@ module Ddr::Models
     def effective_license
       EffectiveLicense.call(self)
     end
+    deprecation_deprecate :effective_license
 
     def inherited_license
       InheritedLicense.call(self)
     end
+    deprecation_deprecate :inherited_license
 
     def finding_aid
       if ead_id

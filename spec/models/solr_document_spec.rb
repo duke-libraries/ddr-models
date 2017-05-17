@@ -231,4 +231,54 @@ EOS
     }
   end
 
+  describe "#rights" do
+    specify {
+      obj = Item.create(rights: ["http://example.com"])
+      doc = described_class.find(obj.id)
+      expect(doc.rights).to eq ["http://example.com"]
+    }
+  end
+
+  describe "#rights_statement" do
+    let(:rights_statement) { Ddr::Models::RightsStatement.new(url: "http://example.com") }
+    let(:license) { Ddr::Models::License.new(url: "http://example.com") }
+    before do
+      allow(Ddr::Models::RightsStatement).to receive(:get).with(:find, url: "http://example.com") do
+        { url: "http://example.com" }
+      end
+    end
+    describe "when `rights` is present" do
+      specify {
+        allow(subject).to receive(:rights) { ["http://example.com"] }
+        expect(Ddr::Models::EffectiveLicense).not_to receive(:call).with(subject)
+        expect(subject.rights_statement).to eq rights_statement
+      }
+    end
+    describe "when `rights` is not present" do
+      describe "and effective license is present" do
+        before do
+          allow(Ddr::Models::License).to receive(:get).with(:find, url: "http://example.com") do
+            { url: "http://example.com" }
+          end
+        end
+        specify {
+          allow(subject).to receive(:rights) { [] }
+          subject[Ddr::Index::Fields::LICENSE] = "http://example.com"
+          expect(Ddr::Models::RightsStatement).to receive(:call).with(subject).and_call_original
+          expect(Ddr::Models::EffectiveLicense).to receive(:call).with(subject).and_call_original
+          expect(subject.rights_statement).to eq license
+        }
+      end
+      describe "and `license` is not present" do
+        specify {
+          allow(subject).to receive(:rights) { [] }
+          subject[Ddr::Index::Fields::LICENSE] = nil
+          expect(Ddr::Models::RightsStatement).to receive(:call).with(subject).and_call_original
+          expect(Ddr::Models::EffectiveLicense).to receive(:call).with(subject).and_call_original
+          expect(subject.rights_statement).to be_nil
+        }
+      end
+    end
+  end
+
 end

@@ -36,6 +36,10 @@ module Ddr
       around_deaccession :notify_deaccession
       around_destroy :notify_delete
 
+      def rights_statement
+        RightsStatement.call(self) || EffectiveLicense.call(self)
+      end
+
       def deaccession
         run_callbacks :deaccession do
           delete

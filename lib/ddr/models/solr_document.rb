@@ -3,6 +3,9 @@ require 'json'
 module Ddr::Models
   module SolrDocument
     extend ActiveSupport::Concern
+    extend Deprecation
+
+    self.deprecation_horizon = 'ddr-models v3.0'
 
     included do
       alias_method :pid, :id
@@ -179,6 +182,11 @@ module Ddr::Models
     def effective_license
       @effective_license ||= EffectiveLicense.call(self)
     end
+    deprecation_deprecate :effective_license
+
+    def rights_statement
+      @rights_statement ||= RightsStatement.call(self) || EffectiveLicense.call(self)
+    end
 
     def roles
       @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
@@ -236,6 +244,11 @@ module Ddr::Models
       if streamable?
         Ddr::Utils.path_from_uri(datastreams[Ddr::Datastreams::STREAMABLE_MEDIA]["dsLocation"])
       end
+    end
+
+    # FIXME - Probably need a more general solution mapping object reader methods to index field names.
+    def rights
+      self["rights_tesim"]
     end
 
     private
