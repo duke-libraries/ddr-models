@@ -20,7 +20,7 @@ module Ddr::Models
     #   Not required for external datastream classes
     #   or datastream instances having controlGroup 'E'.
     def add_file(file, dsid, mime_type: nil, external: false, original_filename: nil)
-      mime_type         ||= Ddr::Utils.mime_type_for(file)
+      mime_type         ||= MediaType.call(file) # XXX Should we use original_filename, if present?
       source_path         = Ddr::Utils.file_path(file)
       original_filename ||= Ddr::Utils.file_name(file)
       file_to_add = FileToAdd.new(dsid, source_path, original_filename)

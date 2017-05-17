@@ -1,6 +1,7 @@
 require 'openssl'
 
 module Ddr::Utils
+  extend Deprecation
 
   def self.digest content, algorithm
     raise TypeError, "Algorithm must be a string: #{algorithm.inspect}" unless algorithm.is_a?(String)
@@ -14,10 +15,9 @@ module Ddr::Utils
   # file can be a File object or file path (String)
   # @return [String] the mime type or default
   def self.mime_type_for(file, file_name=nil)
-    return file.content_type if file.respond_to?(:content_type) # E.g., Rails uploaded file
-    path = file_name || file_path(file) rescue nil
-    mime_types = MIME::Types.of(path) rescue []                 # MIME::Types.of blows up on nil
-    mime_types.empty? ? Ddr::Models.default_mime_type : mime_types.first.content_type
+    Deprecation.warn(self, "`Ddr::Utils.mime_type_for` is deprecated and will be removed in ddr-models 3.0." \
+                           " Use `Ddr::Models::MediaType.call(file)` instead. (called from #{caller.first})")
+    Ddr::Models::MediaType.call(file_name || file)
   end
 
   def self.file_or_path?(file)
