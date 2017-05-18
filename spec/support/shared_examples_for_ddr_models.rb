@@ -157,43 +157,13 @@ RSpec.shared_examples "a DDR model" do
 
   describe "#rights_statement" do
     let(:rights_statement) { Ddr::Models::RightsStatement.new(url: "http://example.com") }
-    let(:license) { Ddr::Models::License.new(url: "http://example.com") }
     before do
       allow(Ddr::Models::RightsStatement).to receive(:get).with(:find, url: "http://example.com") do
         { url: "http://example.com" }
       end
+      subject.rights = ["http://example.com"]
     end
-    describe "when `rights` is present" do
-      before {
-        subject.rights = ["http://example.com"]
-      }
-      specify {
-        expect(Ddr::Models::EffectiveLicense).not_to receive(:call).with(subject)
-        expect(subject.rights_statement).to eq rights_statement
-      }
-    end
-    describe "when `rights` is not present" do
-      describe "and effective license is present" do
-        before do
-          allow(Ddr::Models::License).to receive(:get).with(:find, url: "http://example.com") do
-            { url: "http://example.com" }
-          end
-        end
-        specify {
-          subject.license = "http://example.com"
-          expect(Ddr::Models::RightsStatement).to receive(:call).with(subject).and_call_original
-          expect(Ddr::Models::EffectiveLicense).to receive(:call).with(subject).and_call_original
-          expect(subject.rights_statement).to eq license
-        }
-      end
-      describe "and `license` is not present" do
-        specify {
-          expect(Ddr::Models::RightsStatement).to receive(:call).with(subject).and_call_original
-          expect(Ddr::Models::EffectiveLicense).to receive(:call).with(subject).and_call_original
-          expect(subject.rights_statement).to be_nil
-        }
-      end
-    end
+    its(:rights_statement) { is_expected.to eq rights_statement }
   end
 
 end
