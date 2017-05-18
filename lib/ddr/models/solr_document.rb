@@ -179,14 +179,11 @@ module Ddr::Models
       active_fedora_model.tableize
     end
 
-    def effective_license
-      @effective_license ||= EffectiveLicense.call(self)
-    end
-    deprecation_deprecate :effective_license
-
     def rights_statement
-      @rights_statement ||= RightsStatement.call(self) || EffectiveLicense.call(self)
+      @rights_statement ||= RightsStatement.call(self)
     end
+    alias_method :effective_license, :rights_statement
+    deprecation_deprecate :effective_license
 
     def roles
       @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)

@@ -1,6 +1,9 @@
 module Ddr
   module Models
     class Base < ActiveFedora::Base
+      extend Deprecation
+
+      self.deprecation_horizon = 'ddr-models v3.0'
 
       # Lifecycle events
       INGEST = "ingest.repo_object"
@@ -37,8 +40,10 @@ module Ddr
       around_destroy :notify_delete
 
       def rights_statement
-        RightsStatement.call(self) || EffectiveLicense.call(self)
+        RightsStatement.call(self)
       end
+      alias_method :effective_license, :rights_statement
+      deprecation_deprecate :effective_license
 
       def deaccession
         run_callbacks :deaccession do

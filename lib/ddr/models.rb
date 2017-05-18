@@ -69,17 +69,8 @@ module Ddr
     autoload :WithContentFile
     autoload :YearFacet
 
-    autoload_under "licenses" do
-      autoload :AdminPolicyLicense
-      autoload :EffectiveLicense
-      autoload :License
-      autoload :InheritedLicense
-      autoload :ParentLicense
-    end
-
     module Structures
       extend ActiveSupport::Autoload
-
       autoload :Agent
       autoload :Div
       autoload :File

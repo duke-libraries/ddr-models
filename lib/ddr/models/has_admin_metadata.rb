@@ -69,16 +69,6 @@ module Ddr::Models
       Ddr::Models::Contact.call(research_help_contact) if research_help_contact
     end
 
-    def effective_license
-      EffectiveLicense.call(self)
-    end
-    deprecation_deprecate :effective_license
-
-    def inherited_license
-      InheritedLicense.call(self)
-    end
-    deprecation_deprecate :inherited_license
-
     def finding_aid
       if ead_id
         FindingAid.new(ead_id)
