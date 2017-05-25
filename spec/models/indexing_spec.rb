@@ -58,6 +58,7 @@ module Ddr::Models
         expect(subject[Indexing::ACCESS_ROLE]).to eq(obj.roles.to_json)
         expect(subject[Indexing::ADMIN_SET_TITLE]).to be_nil
         expect(subject[Indexing::AFFILIATION]).to eq(["Talk to me in the back alley."])
+        expect(subject[Indexing::AFFILIATION_FACET]).to eq(["Talk to me in the back alley."])
         expect(subject[Indexing::ALEPH_ID]).to eq "lkheajklfwbsef"
         expect(subject[Indexing::ARRANGER_FACET]).to eq(["Arranger Value"])
         expect(subject[Indexing::ASPACE_ID]).to eq("aspace_dccea43034e1b8261e14cf999e86449d")

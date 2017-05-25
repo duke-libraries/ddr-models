@@ -20,6 +20,7 @@ module Ddr::Models
         ADMIN_SET               => admin_set,
         ADMIN_SET_TITLE         => admin_set_title,
         AFFILIATION             => affiliation,
+        AFFILIATION_FACET       => affiliation,
         ALEPH_ID                => aleph_id,
         ARRANGER_FACET          => desc_metadata_values('arranger'),
         ASPACE_ID               => aspace_id,
