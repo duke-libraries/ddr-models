@@ -102,6 +102,7 @@ module Ddr::Models
         fields[MEDIA_TYPE] = content_type
         fields[MEDIA_MAJOR_TYPE] = content_major_type
         fields[MEDIA_SUB_TYPE] = content_sub_type
+        fields[ORIGINAL_DIRNAME] = original_dirname
         fields.merge! techmd.index_fields
       end
       if has_multires_image?

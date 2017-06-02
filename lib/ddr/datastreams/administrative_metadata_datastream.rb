@@ -15,6 +15,9 @@ module Ddr
         index.as :stored_sortable
       end
 
+      property :original_dirname,
+               predicate: Ddr::Vocab::Asset.hasOriginalDirname
+
       property :workflow_state,
                predicate: Ddr::Vocab::Asset.workflowState
 

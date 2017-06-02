@@ -248,6 +248,22 @@ module Ddr::Models
       self["rights_tesim"]
     end
 
+    def original_dirname
+      if self[Ddr::Index::Fields::ORIGINAL_DIRNAME]
+        self[Ddr::Index::Fields::ORIGINAL_DIRNAME]
+      elsif self[Ddr::Index::Fields::ACTIVE_FEDORA_MODEL] == 'Item'
+        if childrn = children
+          if childrn.count == 1
+            childrn.first.original_dirname
+          end
+        end
+      end
+    end
+
+    def children
+      children_query.docs rescue []
+    end
+
     private
 
     def targets_query
@@ -296,5 +312,17 @@ module Ddr::Models
       structure['default'] || structure.values.first
     end
 
+    def children_query
+      case self[Ddr::Index::Fields::ACTIVE_FEDORA_MODEL]
+        when 'Collection'
+          Ddr::Index::Query.build(self) do |parent|
+            is_member_of_collection parent.id
+          end
+        when 'Item'
+          Ddr::Index::Query.build(self) do |parent|
+            is_part_of parent.id
+          end
+      end
+    end
   end
 end

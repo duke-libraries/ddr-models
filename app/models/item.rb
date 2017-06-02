@@ -37,4 +37,8 @@ class Item < Ddr::Models::Base
     children_having_extracted_text.docs.map(&:extracted_text).flatten
   end
 
+  def original_dirname
+    children.first.original_dirname if children.count == 1
+  end
+
 end

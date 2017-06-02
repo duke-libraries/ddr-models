@@ -106,8 +106,10 @@ module Ddr::Models
     describe "content-bearing object indexing" do
       let(:obj) { FactoryGirl.create(:component) }
       let!(:create_date) { Time.parse("2016-01-22T21:50:33Z") }
+      let(:original_dirname) { "foo/bar/baz/" }
       before {
         allow(obj.content).to receive(:createDate) { create_date }
+        allow(obj).to receive(:original_dirname) { original_dirname }
       }
 
       specify {
@@ -118,6 +120,7 @@ module Ddr::Models
         expect(subject[Indexing::MEDIA_TYPE]).to eq "image/tiff"
         expect(subject[Indexing::MEDIA_MAJOR_TYPE]).to eq "image"
         expect(subject[Indexing::MEDIA_SUB_TYPE]).to eq "tiff"
+        expect(subject[Indexing::ORIGINAL_DIRNAME]).to eq original_dirname
       }
 
       describe "streamable object indexing" do
