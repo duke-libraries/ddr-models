@@ -43,5 +43,9 @@ module Ddr::Vocab
              label: "Affiliation",
              comment: "An organizational entity associated with the object content."
 
+    property "hasOriginalDirname",
+             label: "Original Dirname",
+             comment: "The dirname (directory path without the file name) of the object in the source filesystem."
+
   end
 end

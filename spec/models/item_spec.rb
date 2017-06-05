@@ -46,4 +46,34 @@ RSpec.describe Item, type: :model do
     }
   end
 
+  describe "original_dirname" do
+    let(:original_dirname) { 'foo/bar/baz' }
+    describe "no children" do
+      specify {
+        allow(subject).to receive(:children) { [ ] }
+        expect(subject.original_dirname).to be_nil
+      }
+    end
+    describe "one child" do
+      describe "child has original filepath" do
+        specify {
+          allow(subject).to receive(:children) { [ Component.new(original_dirname: original_dirname) ] }
+          expect(subject.original_dirname).to eq(original_dirname)
+        }
+      end
+      describe "child does not have original filepath" do
+        specify {
+          allow(subject).to receive(:children) { [ Component.new ] }
+          expect(subject.original_dirname).to be_nil
+        }
+      end
+    end
+    describe "more than one child" do
+      specify {
+        allow(subject).to receive(:children) { [ Component.new(original_dirname: original_dirname),
+                                                 Component.new ] }
+        expect(subject.original_dirname).to be_nil
+      }
+    end
+  end
 end

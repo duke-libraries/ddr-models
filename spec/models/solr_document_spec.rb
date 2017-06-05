@@ -250,4 +250,58 @@ EOS
     its(:rights_statement) { is_expected.to eq rights_statement }
   end
 
+  describe "#original_dirname" do
+    let(:original_dirname) { 'foo/bar/baz' }
+    describe "component" do
+      let(:comp_id) { 'test:1' }
+      specify {
+        allow(SolrDocument).to receive(:find).with(comp_id) do
+          SolrDocument.new(Ddr::Index::Fields::ACTIVE_FEDORA_MODEL => 'Component',
+                           Ddr::Index::Fields::ORIGINAL_DIRNAME => original_dirname)
+        end
+        doc = described_class.find(comp_id)
+        expect(doc.original_dirname).to eq(original_dirname)
+      }
+    end
+    describe "item" do
+      let(:item_id) { 'test:1' }
+      let(:item_doc) { SolrDocument.new(Ddr::Index::Fields::ACTIVE_FEDORA_MODEL => 'Item') }
+      before do
+        allow(SolrDocument).to receive(:find).with(item_id) { item_doc }
+        allow(item_doc).to receive(:children) { child_docs }
+      end
+      describe "no children" do
+        let(:child_docs) { [ ] }
+        specify {
+          doc = described_class.find(item_id)
+          expect(doc.original_dirname).to be_nil
+        }
+      end
+      describe "one child" do
+        describe "has original filepath" do
+          let(:child_docs) { [ SolrDocument.new(Ddr::Index::Fields::ORIGINAL_DIRNAME => original_dirname) ] }
+          specify {
+            doc = described_class.find(item_id)
+            expect(doc.original_dirname).to eq(original_dirname)
+          }
+        end
+        describe "does not have original filepath" do
+          let(:child_docs) { [ SolrDocument.new ] }
+          specify {
+            doc = described_class.find(item_id)
+            expect(doc.original_dirname).to be_nil
+          }
+        end
+      end
+      describe "more than one child" do
+        let(:child_docs) { [ SolrDocument.new(Ddr::Index::Fields::ORIGINAL_DIRNAME => original_dirname),
+                             SolrDocument.new ] }
+        specify {
+          doc = described_class.find(item_id)
+          expect(doc.original_dirname).to be_nil
+        }
+      end
+    end
+  end
+
 end

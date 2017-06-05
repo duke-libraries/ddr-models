@@ -25,7 +25,10 @@ module Ddr
           label: "FITS Output for content file",
           control_group: "M"
 
-        has_attributes :original_filename, datastream: "adminMetadata", multiple: false
+        has_attributes :original_filename,
+                       :original_dirname,
+                       datastream: "adminMetadata",
+                       multiple: false
 
         include FileManagement
 

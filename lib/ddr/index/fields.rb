@@ -78,6 +78,7 @@ module Ddr::Index
     OBJECT_STATE                = Field.new :object_state, :stored_sortable
     OBJECT_CREATE_DATE          = Field.new :system_create, :stored_sortable, type: :date
     OBJECT_MODIFIED_DATE        = Field.new :system_modified, :stored_sortable, type: :date
+    ORIGINAL_DIRNAME            = Field.new :original_dirname, :stored_sortable, type: :string
     PERFORMER_FACET             = Field.new :performer_facet, :facetable
     PERMANENT_ID                = Field.new :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = Field.new :permanent_url, :stored_sortable, type: :string
