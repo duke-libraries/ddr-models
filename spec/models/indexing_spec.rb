@@ -158,5 +158,12 @@ module Ddr::Models
       }
     end
 
+    describe "nested path" do
+      subject { FactoryGirl.build(:item) }
+      before { subject.nested_path = "/foo/bar/baz" }
+      specify {
+        expect(subject.index_fields[Indexing::NESTED_PATH]).to eq "/foo/bar/baz"
+      }
+    end
   end
 end
