@@ -18,6 +18,9 @@ module Ddr
       property :original_dirname,
                predicate: Ddr::Vocab::Asset.hasOriginalDirname
 
+      property :nested_path,
+               predicate: Ddr::Vocab::Asset.nestedPath
+
       property :workflow_state,
                predicate: Ddr::Vocab::Asset.workflowState
 

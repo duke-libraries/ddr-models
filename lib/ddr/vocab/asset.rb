@@ -47,5 +47,9 @@ module Ddr::Vocab
              label: "Original Dirname",
              comment: "The dirname (directory path without the file name) of the object in the source filesystem."
 
+    property "nestedPath",
+             label: "Nested Path",
+             comment: "The nested/tree path to the object to be reflected in structural metadata."
+
   end
 end
