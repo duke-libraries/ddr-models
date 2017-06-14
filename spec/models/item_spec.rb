@@ -46,4 +46,55 @@ RSpec.describe Item, type: :model do
     }
   end
 
+  describe "#default_structure" do
+    describe "when the item has no components" do
+      it "should be nil" do
+        expect(subject.default_structure).to be_nil
+      end
+    end
+    describe "when the item has components" do
+      let(:comp1) { FactoryGirl.create(:component) }
+      let(:comp2) { FactoryGirl.create(:component) }
+      let(:expected) do
+        xml = <<-EOS
+            <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <metsHdr>
+                <agent ROLE="#{Ddr::Models::Structures::Agent::ROLE_CREATOR}">
+                  <name>#{Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT}</name>
+                </agent>
+              </metsHdr>
+              <structMap TYPE="#{Ddr::Models::Structure::TYPE_DEFAULT}">
+                <div ORDER="1">
+                  <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4bbb" />
+                </div>
+                <div ORDER="2">
+                  <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4aaa" />
+                </div>
+              </structMap>
+            </mets>
+        EOS
+        xml
+      end
+      before do
+        comp1.local_id = "test002"
+        comp1.permanent_id = "ark:/99999/fk4aaa"
+        comp1.save!
+        comp2.local_id = "test001"
+        comp2.permanent_id = "ark:/99999/fk4bbb"
+        comp2.save!
+        subject.children << comp1
+        subject.children << comp2
+        subject.save!
+        allow(SecureRandom).to receive(:uuid).and_return("abc-def", "ghi-jkl")
+      end
+      after do
+        comp1.destroy
+        comp2.destroy
+      end
+      it "should be the appropriate structure" do
+        expect(subject.default_structure.to_xml).to be_equivalent_to(expected)
+      end
+    end
+  end
+
 end

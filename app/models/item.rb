@@ -39,4 +39,32 @@ class Item < Ddr::Models::Base
     children_having_extracted_text.docs.map(&:extracted_text).flatten
   end
 
+  def default_structure
+    if components.present?
+      build_default_structure
+    end
+  end
+
+  private
+
+  def build_default_structure
+    document = Ddr::Models::Structure.xml_template
+    structure = Ddr::Models::Structure.new(document)
+    metshdr = structure.add_metshdr
+    structure.add_agent(parent: metshdr, role: Ddr::Models::Structures::Agent::ROLE_CREATOR,
+                        name: Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT)
+    structmap = structure.add_structmap(type: Ddr::Models::Structure::TYPE_DEFAULT)
+    add_components_to_structure(structure, structmap)
+    structure
+  end
+
+  def add_components_to_structure(structure, structmap)
+    count = 0
+    sorted_children.each do |child|
+      count += 1
+      div = structure.add_div(parent: structmap, order: count)
+      structure.add_mptr(parent: div, href: child[Ddr::Index::Fields::PERMANENT_ID])
+    end
+  end
+
 end
