@@ -1,22 +1,19 @@
-require 'spec_helper'
-
 RSpec.describe Collection, type: :model do
 
-  subject { described_class.new(title: ["Test Collection"]) }
+  subject { described_class.new(title: ["Test Collection"], admin_set: "foo") }
 
   it_behaves_like "a DDR model"
   it_behaves_like "it has an association", :has_many, :children, :is_member_of_collection, "Item"
   it_behaves_like "it has an association", :has_many, :targets, :is_external_target_for, "Target"
   it_behaves_like "a publishable object"
+  it_behaves_like "an object that cannot be streamable"
 
   describe "admin set" do
-    let(:admin_set) { Ddr::Models::AdminSet.new(code: "foobar", title: "FooBar") }
     before do
-      allow(Ddr::Models::AdminSet).to receive(:find_by_code).with("foobar") { admin_set }
-      subject.admin_set = "foobar"
+      subject.admin_set = "foo"
     end
     it "indexes the admin set title" do
-      expect(subject.to_solr[Ddr::Index::Fields::ADMIN_SET_TITLE]).to eq("FooBar")
+      expect(subject.to_solr[Ddr::Index::Fields::ADMIN_SET_TITLE]).to eq("Foo Admin Set")
     end
   end
 

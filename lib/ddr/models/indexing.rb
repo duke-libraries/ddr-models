@@ -19,6 +19,9 @@ module Ddr::Models
         ACCESS_ROLE             => roles.to_json,
         ADMIN_SET               => admin_set,
         ADMIN_SET_TITLE         => admin_set_title,
+        AFFILIATION             => affiliation,
+        AFFILIATION_FACET       => affiliation,
+        ALEPH_ID                => aleph_id,
         ARRANGER_FACET          => desc_metadata_values('arranger'),
         ASPACE_ID               => aspace_id,
         ATTACHED_FILES_HAVING_CONTENT => attached_files_having_content.keys,
@@ -50,6 +53,8 @@ module Ddr::Models
         INTERVIEWER_NAME_FACET  => desc_metadata_values('interviewer_name'),
         IS_FORMAT_OF            => desc_metadata_values('isFormatOf'),
         IS_LOCKED               => is_locked,
+        LANGUAGE_FACET          => language_name,
+        LANGUAGE_NAME           => language_name,
         LICENSE                 => license,
         LITHOGRAPHER_FACET      => desc_metadata_values('lithographer'),
         LOCAL_ID                => local_id,
@@ -103,13 +108,15 @@ module Ddr::Models
         fields[MULTIRES_IMAGE_FILE_PATH] = multires_image_file_path
       end
       if has_struct_metadata?
-        # STRUCT is an interim index field to facilitate conversion of STRUCTURE field definition.
-        fields[STRUCT] = fields[STRUCTURE] = structure.dereferenced_structure.to_json
+        fields[STRUCTURE] = structure.dereferenced_structure.to_json
         fields[STRUCTURE_SOURCE] = structure.repository_maintained? ? Ddr::Models::Structure::REPOSITORY_MAINTAINED
                                                                     : Ddr::Models::Structure::EXTERNALLY_PROVIDED
       end
       if has_extracted_text?
         fields[EXTRACTED_TEXT] = extractedText.content
+      end
+      if streamable?
+        fields[STREAMABLE_MEDIA_TYPE] = streamable_media_type
       end
       if is_a? Component
         fields[COLLECTION_URI] = collection_uri
@@ -156,8 +163,10 @@ module Ddr::Models
                admin_set
              elsif associated_collection.present?
                associated_collection.admin_set
+             else
+               nil
              end
-      if as = AdminSet.find_by_code(code)
+      if code && ( as = AdminSet.find_by_code(code) )
         as.title
       end
     end
@@ -176,6 +185,12 @@ module Ddr::Models
 
     def date_sort
       date.first
+    end
+
+    def language_name
+      language.map do |lang|
+        Language.find_by_code(lang).to_s rescue lang
+      end
     end
 
     def year_facet

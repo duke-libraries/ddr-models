@@ -35,5 +35,13 @@ module Ddr::Vocab
              label: "Rights Note",
              comment: "Free-text statement about the rights status of the resource."
 
+    property "alephId",
+             label: "Aleph ID",
+             comment: "The Aleph identifier for a catalog record corresponding to the object."
+
+    property "affiliation",
+             label: "Affiliation",
+             comment: "An organizational entity associated with the object content."
+
   end
 end

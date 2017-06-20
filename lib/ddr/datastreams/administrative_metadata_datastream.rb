@@ -61,6 +61,12 @@ module Ddr
       property :rights_note,
                predicate: Ddr::Vocab::Asset.rightsNote
 
+      property :aleph_id,
+               predicate: Ddr::Vocab::Asset.alephId
+
+      property :affiliation,
+               predicate: Ddr::Vocab::Asset.affiliation
+
     end
   end
 end

@@ -141,6 +141,18 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "interviewer_name_facet" }
       end
 
+      describe "LANGUAGE_FACET" do
+        subject { Fields::LANGUAGE_FACET }
+        its(:label) { is_expected.to eq "Language Facet" }
+        its(:heading) { is_expected.to eq "language_facet" }
+      end
+
+      describe "LANGUAGE_NAME" do
+        subject { Fields::LANGUAGE_NAME }
+        its(:label) { is_expected.to eq "Language Name" }
+        its(:heading) { is_expected.to eq "language_name" }
+      end
+
       describe "LITHOGRAPHER_FACET" do
         subject { Fields::LITHOGRAPHER_FACET }
         its(:label) { is_expected.to eq "Lithographer Facet" }
@@ -223,6 +235,12 @@ module Ddr::Index
         subject { Fields::SETTING_FACET }
         its(:label) { is_expected.to eq "Setting Facet" }
         its(:heading) { is_expected.to eq "setting_facet" }
+      end
+
+      describe "STREAMABLE_MEDIA_TYPE" do
+        subject { Fields::STREAMABLE_MEDIA_TYPE }
+        its(:label) { is_expected.to eq "Streamable Media Type" }
+        its(:heading) { is_expected.to eq "streamable_media_type" }
       end
 
       describe "SUBSERIES_FACET" do

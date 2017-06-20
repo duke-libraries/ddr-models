@@ -69,6 +69,14 @@ module ActiveFedora
       can_have_thumbnail? && thumbnail.has_content?
     end
 
+    def can_be_streamable?
+      datastreams.include? Ddr::Datastreams::STREAMABLE_MEDIA
+    end
+
+    def streamable?
+      can_be_streamable? && datastreams[Ddr::Datastreams::STREAMABLE_MEDIA].has_content?
+    end
+
     def safe_id
       id.sub(/:/, "-")
     end

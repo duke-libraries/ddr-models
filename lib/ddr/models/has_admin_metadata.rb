@@ -1,6 +1,9 @@
 module Ddr::Models
   module HasAdminMetadata
     extend ActiveSupport::Concern
+    extend Deprecation
+
+    self.deprecation_horizon = 'ddr-models v3.0'
 
     included do
       has_metadata "adminMetadata",
@@ -23,10 +26,14 @@ module Ddr::Models
                      :doi,
                      :ingested_by,
                      :ingestion_date,
+                     :aleph_id,
                      datastream: "adminMetadata",
                      multiple: false
 
-      has_attributes :rights_note, datastream: "adminMetadata", multiple: true
+      has_attributes :affiliation,
+                     :rights_note,
+                     datastream: "adminMetadata",
+                     multiple: true
 
       delegate :publish!, :unpublish!, :published?, :unpublished?,
                to: :workflow
@@ -60,14 +67,6 @@ module Ddr::Models
 
     def research_help
       Ddr::Models::Contact.call(research_help_contact) if research_help_contact
-    end
-
-    def effective_license
-      EffectiveLicense.call(self)
-    end
-
-    def inherited_license
-      InheritedLicense.call(self)
     end
 
     def finding_aid

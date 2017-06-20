@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 RSpec.describe SolrDocument, type: :model, contacts: true do
 
   describe "class methods" do
@@ -193,6 +191,63 @@ RSpec.describe SolrDocument, type: :model, contacts: true do
         end
       end
     end
+  end
+
+  describe "datastreams" do
+    let(:profile) do <<-EOS
+{"datastreams":{"DC":{"dsLabel":"Dublin Core Record for this object","dsVersionID":"DC1.0","dsCreateDate":"2016-02-09T12:38:56Z","dsState":"A","dsMIME":"text/xml","dsFormatURI":"http://www.openarchives.org/OAI/2.0/oai_dc/","dsControlGroup":"X","dsSize":340,"dsVersionable":true,"dsInfoType":null,"dsLocation":"duke:308221+DC+DC1.0","dsLocationType":null,"dsChecksumType":"SHA-1","dsChecksum":"69880409098d8dec1a5c41240a9daac2dd6832e0"}}}
+EOS
+    end
+    before {
+      subject[Ddr::Index::Fields::OBJECT_PROFILE] = [ profile ]
+    }
+    specify {
+      expect(subject.has_datastream?("DC")).to be true
+      expect(subject.has_datastream?("foo")).to be false
+    }
+  end
+
+  describe "#streamable?" do
+    specify {
+      allow(subject).to receive(:has_datastream?).with(Ddr::Datastreams::STREAMABLE_MEDIA) { false }
+      expect(subject).not_to be_streamable
+    }
+    specify {
+      allow(subject).to receive(:has_datastream?).with(Ddr::Datastreams::STREAMABLE_MEDIA) { true }
+      expect(subject).to be_streamable
+    }
+  end
+
+  describe "#streamable_media_path" do
+    specify {
+      allow(subject).to receive(:streamable?) { false }
+      expect(subject.streamable_media_path).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:datastreams) do
+        {"streamableMedia"=>{"dsLocation"=>"file:/foo/bar/baz.txt"}}
+      end
+      expect(subject.streamable_media_path).to eq "/foo/bar/baz.txt"
+    }
+  end
+
+  describe "#rights" do
+    specify {
+      obj = Item.create(rights: ["http://example.com"])
+      doc = described_class.find(obj.id)
+      expect(doc.rights).to eq ["http://example.com"]
+    }
+  end
+
+  describe "#rights_statement" do
+    let(:rights_statement) { Ddr::Models::RightsStatement.new(url: "http://example.com") }
+    before do
+      allow(Ddr::Models::RightsStatement).to receive(:get).with(:find, url: "http://example.com") do
+        { url: "http://example.com" }
+      end
+      allow(subject).to receive(:rights) { ["http://example.com"] }
+    end
+    its(:rights_statement) { is_expected.to eq rights_statement }
   end
 
 end

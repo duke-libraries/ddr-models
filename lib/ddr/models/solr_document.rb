@@ -3,6 +3,9 @@ require 'json'
 module Ddr::Models
   module SolrDocument
     extend ActiveSupport::Concern
+    extend Deprecation
+
+    self.deprecation_horizon = 'ddr-models v3.0'
 
     included do
       alias_method :pid, :id
@@ -176,9 +179,11 @@ module Ddr::Models
       active_fedora_model.tableize
     end
 
-    def effective_license
-      @effective_license ||= EffectiveLicense.call(self)
+    def rights_statement
+      @rights_statement ||= RightsStatement.call(self)
     end
+    alias_method :effective_license, :rights_statement
+    deprecation_deprecate :effective_license
 
     def roles
       @roles ||= Ddr::Auth::Roles::DetachedRoleSet.from_json(access_role)
@@ -226,6 +231,21 @@ module Ddr::Models
       if ead_id
         FindingAid.new(ead_id)
       end
+    end
+
+    def streamable?
+      has_datastream?(Ddr::Datastreams::STREAMABLE_MEDIA)
+    end
+
+    def streamable_media_path
+      if streamable?
+        Ddr::Utils.path_from_uri(datastreams[Ddr::Datastreams::STREAMABLE_MEDIA]["dsLocation"])
+      end
+    end
+
+    # FIXME - Probably need a more general solution mapping object reader methods to index field names.
+    def rights
+      self["rights_tesim"]
     end
 
     private

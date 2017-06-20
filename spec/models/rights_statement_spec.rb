@@ -1,23 +1,20 @@
 module Ddr::Models
-  RSpec.describe License, ddr_aux: true do
+  RSpec.describe RightsStatement, ddr_aux: true do
 
     describe ".call" do
-      describe "when the object has a license URL" do
-        let(:obj) { double(pid: "test:1", license: "http://example.com") }
-        describe "and the license is found" do
+      describe "when the object has a rights statement URL" do
+        let(:obj) { double(pid: "test:1", rights: ["http://example.com"]) }
+        describe "and the rights statement is found" do
           before {
             allow(described_class).to receive(:get).with(:find, url: "http://example.com") {
-              {"id"=>1, "url"=>"http://example.com", "title"=>"A License"}
+              {"id"=>1, "url"=>"http://example.com", "title"=>"A Rights Statement"}
             }
           }
-          it "returns a License instance" do
+          it "returns a Rights Statement instance" do
             expect(described_class.call(obj)).to be_a(described_class)
           end
-          it "sets `pid` to the object pid" do
-            expect(described_class.call(obj).pid).to eq("test:1")
-          end
         end
-        describe "and the license is not found" do
+        describe "and the rights statement is not found" do
           before {
             allow(described_class).to receive(:get).with(:find, url: "http://example.com")
                                        .and_raise(ActiveResource::ResourceNotFound, "404")
@@ -28,8 +25,8 @@ module Ddr::Models
         end
       end
 
-      describe "when the object does not have a license" do
-        let(:obj) { double(pid: "test:1", license: nil) }
+      describe "when the object does not have a rights statement" do
+        let(:obj) { double(pid: "test:1", rights: []) }
         it "returns nil" do
           expect(described_class.call(obj)).to be_nil
         end

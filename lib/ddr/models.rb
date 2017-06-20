@@ -58,24 +58,19 @@ module Ddr
     autoload :HasStructMetadata
     autoload :HasThumbnail
     autoload :Indexing
+    autoload :Language
+    autoload :MediaType
     autoload :NotFoundError, 'ddr/models/error'
     autoload :PermanentId
+    autoload :RightsStatement
     autoload :SolrDocument
+    autoload :Streamable
     autoload :Structure
     autoload :WithContentFile
     autoload :YearFacet
 
-    autoload_under "licenses" do
-      autoload :AdminPolicyLicense
-      autoload :EffectiveLicense
-      autoload :License
-      autoload :InheritedLicense
-      autoload :ParentLicense
-    end
-
     module Structures
       extend ActiveSupport::Autoload
-
       autoload :Agent
       autoload :Div
       autoload :File
@@ -134,6 +129,21 @@ module Ddr
 
     mattr_accessor :default_mime_type do
       "application/octet-stream"
+    end
+
+    # Maps file extensions to preferred media types
+    mattr_accessor :preferred_media_types do
+      {
+        '.mp4'  => 'video/mp4',
+        '.flv'  => 'video/flv',
+        '.webm' => 'video/webm',
+        '.aac'  => 'audio/mp4',
+        '.m4a'  => 'audio/mp4',
+        '.f4a'  => 'audio/mp4',
+        '.mp3'  => 'audio/mpeg',
+        '.ogg'  => 'audio/ogg',
+        '.oga'  => 'audio/ogg',
+      }
     end
 
     # Yields an object with module configuration accessors

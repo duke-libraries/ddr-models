@@ -9,6 +9,9 @@ module Ddr::Index
     ADMIN_SET                   = Field.new :admin_set, :stored_sortable
     ADMIN_SET_FACET             = Field.new :admin_set_facet, :facetable
     ADMIN_SET_TITLE             = Field.new :admin_set_title, :stored_sortable
+    AFFILIATION                 = Field.new :affiliation, :stored_searchable
+    AFFILIATION_FACET           = Field.new :affiliation_facet, :facetable
+    ALEPH_ID                    = Field.new :aleph_id, :stored_sortable
     ALL_TEXT                    = Field.new :all_text, solr_name: "all_text_timv"
     ARRANGER_FACET              = Field.new :arranger_facet, :facetable
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable
@@ -56,6 +59,8 @@ module Ddr::Index
     IS_MEMBER_OF                = Field.new :is_member_of, :symbol
     IS_MEMBER_OF_COLLECTION     = Field.new :is_member_of_collection, :symbol
     IS_PART_OF                  = Field.new :is_part_of, :symbol
+    LANGUAGE_FACET              = Field.new :language_facet, :facetable
+    LANGUAGE_NAME               = Field.new :language_name, :stored_searchable
     LAST_FIXITY_CHECK_ON        = Field.new :last_fixity_check_on, :stored_sortable, type: :date
     LAST_FIXITY_CHECK_OUTCOME   = Field.new :last_fixity_check_outcome, :symbol
     LAST_VIRUS_CHECK_ON         = Field.new :last_virus_check_on, :stored_sortable, type: :date
@@ -89,11 +94,8 @@ module Ddr::Index
     SERIES_FACET                = Field.new :series_facet, :facetable
     SETTING_FACET               = Field.new :setting_facet, :facetable
     SPATIAL_FACET               = Field.new :spatial_facet, :facetable
-    # STRUCT is interim index field to facilitate conversion of the STRUCTURE index field from
-    # stored and indexed to just stored.  The STRUCTURE field will eventually be pointed to this
-    # Field definition.
-    STRUCT                      = Field.new :structure, solr_name: "structure_ss"
-    STRUCTURE                   = Field.new :structure, :stored_sortable
+    STREAMABLE_MEDIA_TYPE       = Field.new :streamable_media_type, :stored_sortable
+    STRUCTURE                   = Field.new :structure, solr_name: "structure_ss"
     STRUCTURE_SOURCE            = Field.new :structure_source, :stored_sortable
     SUBJECT_FACET               = Field.new :subject_facet, :facetable
     SUBSERIES_FACET             = Field.new :subseries_facet, :facetable

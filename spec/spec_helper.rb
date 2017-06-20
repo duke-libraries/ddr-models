@@ -119,6 +119,17 @@ RSpec.configure do |config|
     end
   end
 
+  config.before(:each) do
+    allow(Ddr::Models::AdminSet).to receive(:find_by_code).with("foo") {
+      Ddr::Models::AdminSet.new(code: 'foo', title: 'Foo Admin Set')
+    }
+    allow(Ddr::Models::Language).to receive(:find_by_code).with("cym") {
+      Ddr::Models::Language.new(code: 'cym', label: 'Welsh')
+    }
+    allow(Ddr::Models::Language).to receive(:find_by_code).with("Not a Code")
+                                     .and_raise(ActiveResource::ResourceNotFound, "404")
+  end
+
   config.after(:each) do
     ActiveFedora::Base.destroy_all
   end

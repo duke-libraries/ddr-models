@@ -13,6 +13,8 @@ module Ddr::Models
 
       before do
         obj.adminMetadata.doi << "http://doi.org/10.1000/182"
+        obj.affiliation << "Talk to me in the back alley."
+        obj.aleph_id = "lkheajklfwbsef"
         obj.aspace_id = "aspace_dccea43034e1b8261e14cf999e86449d"
         obj.display_format = "Image"
         obj.ingested_by = "foo@bar.com"
@@ -52,47 +54,53 @@ module Ddr::Models
         obj.set_desc_metadata_values(:volume, "100")
       end
 
-      its([Indexing::ACCESS_ROLE]) { is_expected.to eq(obj.roles.to_json) }
-      its([Indexing::ARRANGER_FACET]) { is_expected.to eq(["Arranger Value"]) }
-      its([Indexing::ASPACE_ID]) { is_expected.to eq("aspace_dccea43034e1b8261e14cf999e86449d") }
-      its([Indexing::CATEGORY_FACET]) { is_expected.to eq(["Category Value"]) }
-      its([Indexing::COMPANY_FACET]) { is_expected.to eq(["Company Value"]) }
-      its([Indexing::COMPOSER_FACET]) { is_expected.to eq(["Composer Value"]) }
-      its([Indexing::DC_IS_PART_OF]) { is_expected.to eq(["RL10059CS1010"])}
-      its([Indexing::DISPLAY_FORMAT]) { is_expected.to eq("Image") }
-      its([Indexing::DOI]) { is_expected.to eq(["http://doi.org/10.1000/182"]) }
-      its([Indexing::ENGRAVER_FACET]) { is_expected.to eq(["Engraver Value"]) }
-      its([Indexing::FOLDER_FACET]) { is_expected.to eq(["Folder Value"]) }
-      its([Indexing::GENRE_FACET]) { is_expected.to eq(["Genre Value"]) }
-      its([Indexing::ILLUSTRATED_FACET]) { is_expected.to eq(["Illustrated Value"]) }
-      its([Indexing::ILLUSTRATOR_FACET]) { is_expected.to eq(["Illustrator Value"]) }
-      its([Indexing::INGESTED_BY]) { is_expected.to eq("foo@bar.com") }
-      its([Indexing::INGESTION_DATE]) { is_expected.to eq("2017-01-13T18:55:29Z") }
-      its([Indexing::INSTRUMENTATION_FACET]) { is_expected.to eq(["Instrumentation Value"]) }
-      its([Indexing::INTERVIEWER_NAME_FACET]) { is_expected.to eq(["Interviewer Name Value"]) }
-      its([Indexing::IS_FORMAT_OF]) { is_expected.to eq(["ark:/99999/fk4aaa"]) }
-      its([Indexing::LICENSE]) { is_expected.to eq("cc-by-nc-nd-40") }
-      its([Indexing::LITHOGRAPHER_FACET]) { is_expected.to eq(["Lithographer Value"]) }
-      its([Indexing::LOCAL_ID]) { is_expected.to eq("foo") }
-      its([Indexing::LYRICIST_FACET]) { is_expected.to eq(["Lyricist Value"]) }
-      its([Indexing::MEDIUM_FACET]) { is_expected.to eq(["Medium Value"]) }
-      its([Indexing::PERFORMER_FACET]) { is_expected.to eq(["Performer Value"]) }
-      its([Indexing::PERMANENT_ID]) { is_expected.to eq("ark:/99999/fk4zzz") }
-      its([Indexing::PERMANENT_URL]) { is_expected.to eq("http://id.library.duke.edu/ark:/99999/fk4zzz") }
-      its([Indexing::PLACEMENT_COMPANY_FACET]) { is_expected.to eq(["Placement Company Value"]) }
-      its([Indexing::POLICY_ROLE]) { is_expected.to contain_exactly(role2.agent.first, role3.agent.first, role4.agent.first) }
-      its([Indexing::PRODUCER_FACET]) { is_expected.to eq(["Producer Value"]) }
-      its([Indexing::PRODUCT_FACET]) { is_expected.to eq(["Product Value"]) }
-      its([Indexing::PUBLICATION_FACET]) { is_expected.to eq(["Publication Value"]) }
-      its([Indexing::RESOURCE_ROLE]) { is_expected.to contain_exactly(role1.agent.first) }
-      its([Indexing::RIGHTS_NOTE]) { is_expected.to eq(["Public domain"]) }
-      its([Indexing::ROLL_NUMBER_FACET]) { is_expected.to eq(["10"]) }
-      its([Indexing::SETTING_FACET]) { is_expected.to eq(["Setting Value"]) }
-      its([Indexing::SUBSERIES_FACET]) { is_expected.to eq(["Subseries Value"]) }
-      its([Indexing::TEMPORAL_FACET]) { is_expected.to eq(["Temporal Value"]) }
-      its([Indexing::TONE_FACET]) { is_expected.to eq(["Tone Value"]) }
-      its([Indexing::VOLUME_FACET]) { is_expected.to eq(["100"]) }
-
+      specify {
+        expect(subject[Indexing::ACCESS_ROLE]).to eq(obj.roles.to_json)
+        expect(subject[Indexing::ADMIN_SET_TITLE]).to be_nil
+        expect(subject[Indexing::AFFILIATION]).to eq(["Talk to me in the back alley."])
+        expect(subject[Indexing::AFFILIATION_FACET]).to eq(["Talk to me in the back alley."])
+        expect(subject[Indexing::ALEPH_ID]).to eq "lkheajklfwbsef"
+        expect(subject[Indexing::ARRANGER_FACET]).to eq(["Arranger Value"])
+        expect(subject[Indexing::ASPACE_ID]).to eq("aspace_dccea43034e1b8261e14cf999e86449d")
+        expect(subject[Indexing::CATEGORY_FACET]).to eq(["Category Value"])
+        expect(subject[Indexing::COMPANY_FACET]).to eq(["Company Value"])
+        expect(subject[Indexing::COMPOSER_FACET]).to eq(["Composer Value"])
+        expect(subject[Indexing::DC_IS_PART_OF]).to eq(["RL10059CS1010"])
+        expect(subject[Indexing::DISPLAY_FORMAT]).to eq("Image")
+        expect(subject[Indexing::DOI]).to eq(["http://doi.org/10.1000/182"])
+        expect(subject[Indexing::ENGRAVER_FACET]).to eq(["Engraver Value"])
+        expect(subject[Indexing::FOLDER_FACET]).to eq(["Folder Value"])
+        expect(subject[Indexing::GENRE_FACET]).to eq(["Genre Value"])
+        expect(subject[Indexing::ILLUSTRATED_FACET]).to eq(["Illustrated Value"])
+        expect(subject[Indexing::ILLUSTRATOR_FACET]).to eq(["Illustrator Value"])
+        expect(subject[Indexing::INGESTED_BY]).to eq("foo@bar.com")
+        expect(subject[Indexing::INGESTION_DATE]).to eq("2017-01-13T18:55:29Z")
+        expect(subject[Indexing::INSTRUMENTATION_FACET]).to eq(["Instrumentation Value"])
+        expect(subject[Indexing::INTERVIEWER_NAME_FACET]).to eq(["Interviewer Name Value"])
+        expect(subject[Indexing::IS_FORMAT_OF]).to eq(["ark:/99999/fk4aaa"])
+        expect(subject[Indexing::LICENSE]).to eq("cc-by-nc-nd-40")
+        expect(subject[Indexing::LITHOGRAPHER_FACET]).to eq(["Lithographer Value"])
+        expect(subject[Indexing::LOCAL_ID]).to eq("foo")
+        expect(subject[Indexing::LYRICIST_FACET]).to eq(["Lyricist Value"])
+        expect(subject[Indexing::MEDIUM_FACET]).to eq(["Medium Value"])
+        expect(subject[Indexing::PERFORMER_FACET]).to eq(["Performer Value"])
+        expect(subject[Indexing::PERMANENT_ID]).to eq("ark:/99999/fk4zzz")
+        expect(subject[Indexing::PERMANENT_URL]).to eq("http://id.library.duke.edu/ark:/99999/fk4zzz")
+        expect(subject[Indexing::PLACEMENT_COMPANY_FACET]).to eq(["Placement Company Value"])
+        expect(subject[Indexing::POLICY_ROLE]).to contain_exactly(role2.agent.first, role3.agent.first, role4.agent.first)
+        expect(subject[Indexing::PRODUCER_FACET]).to eq(["Producer Value"])
+        expect(subject[Indexing::PRODUCT_FACET]).to eq(["Product Value"])
+        expect(subject[Indexing::PUBLICATION_FACET]).to eq(["Publication Value"])
+        expect(subject[Indexing::RESOURCE_ROLE]).to contain_exactly(role1.agent.first)
+        expect(subject[Indexing::RIGHTS_NOTE]).to eq(["Public domain"])
+        expect(subject[Indexing::ROLL_NUMBER_FACET]).to eq(["10"])
+        expect(subject[Indexing::SETTING_FACET]).to eq(["Setting Value"])
+        expect(subject[Indexing::STREAMABLE_MEDIA_TYPE]).to be_nil
+        expect(subject[Indexing::SUBSERIES_FACET]).to eq(["Subseries Value"])
+        expect(subject[Indexing::TEMPORAL_FACET]).to eq(["Temporal Value"])
+        expect(subject[Indexing::TONE_FACET]).to eq(["Tone Value"])
+        expect(subject[Indexing::VOLUME_FACET]).to eq(["100"])
+      }
     end
 
     describe "content-bearing object indexing" do
@@ -102,9 +110,48 @@ module Ddr::Models
         allow(obj.content).to receive(:createDate) { create_date }
       }
 
-      its([Indexing::CONTENT_CREATE_DATE]) { is_expected.to eq "2016-01-22T21:50:33Z" }
-      its([Indexing::ATTACHED_FILES_HAVING_CONTENT]) {
-        is_expected.to contain_exactly("content", "RELS-EXT", "descMetadata", "adminMetadata")
+      specify {
+        expect(subject[Indexing::CONTENT_CREATE_DATE]).to eq "2016-01-22T21:50:33Z"
+        expect(subject[Indexing::ATTACHED_FILES_HAVING_CONTENT]).to contain_exactly("content", "RELS-EXT", "descMetadata", "adminMetadata")
+        expect(subject[Indexing::CONTENT_SIZE]).to eq 230714
+        expect(subject[Indexing::CONTENT_SIZE_HUMAN]).to eq "225 KB"
+        expect(subject[Indexing::MEDIA_TYPE]).to eq "image/tiff"
+        expect(subject[Indexing::MEDIA_MAJOR_TYPE]).to eq "image"
+        expect(subject[Indexing::MEDIA_SUB_TYPE]).to eq "tiff"
+      }
+
+      describe "streamable object indexing" do
+        before {
+          obj.add_file(fixture_file_upload('bird.jpg', 'image/jpeg'), 'streamableMedia')
+          obj.save!
+        }
+        specify {
+          expect(subject[Indexing::STREAMABLE_MEDIA_TYPE]).to eq "image/jpeg"
+        }
+      end
+    end
+
+    describe "admin set title" do
+      subject { FactoryGirl.build(:item) }
+      let(:coll) { FactoryGirl.create(:collection) }
+      before do
+        subject.parent = coll
+        subject.admin_policy = coll
+      end
+      specify {
+        expect(subject.index_fields[Indexing::ADMIN_SET_TITLE]).to eq "Foo Admin Set"
+      }
+    end
+
+    describe "language name" do
+      subject { FactoryGirl.build(:item) }
+      before do
+        subject.language = ["cym", "Not a Code"]
+        subject.save!
+      end
+      specify {
+        expect(subject.index_fields[Indexing::LANGUAGE_FACET]).to eq ["Welsh", "Not a Code"]
+        expect(subject.index_fields[Indexing::LANGUAGE_NAME]).to eq ["Welsh", "Not a Code"]
       }
     end
 

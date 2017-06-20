@@ -101,15 +101,12 @@ module Ddr::Managers
           object.reload
         end
         it "uses the intermediate file as the derivative source" do
-          expect(object.intermediateFile).to receive(:content).and_call_original
-          expect(object.content).to_not receive(:content)
-          object.derivatives.generate_derivative! Ddr::Derivatives::DERIVATIVES[:multires_image]
+          expect(object.derivatives.source_datastream).to equal(object.datastreams[Ddr::Datastreams::INTERMEDIATE_FILE])
         end
       end
       describe "object does not have intermediate file" do
         it "uses the content file as the derivative source" do
-          expect(object.content).to receive(:content).and_call_original
-          object.derivatives.generate_derivative! Ddr::Derivatives::DERIVATIVES[:multires_image]
+          expect(object.derivatives.source_datastream).to equal(object.datastreams[Ddr::Datastreams::CONTENT])
         end
       end
     end

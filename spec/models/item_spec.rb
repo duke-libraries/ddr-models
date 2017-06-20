@@ -5,6 +5,7 @@ RSpec.describe Item, type: :model do
   it_behaves_like "it has an association", :has_many, :children, :is_part_of, "Component"
   it_behaves_like "a non-collection model"
   it_behaves_like "a potentially publishable object"
+  it_behaves_like "an object that cannot be streamable"
 
   describe "indexing text" do
     let(:children) { FactoryGirl.build_list(:component, 5) }

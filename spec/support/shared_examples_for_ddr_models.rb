@@ -154,4 +154,16 @@ RSpec.shared_examples "a DDR model" do
       expect(subject).to have_thumbnail
     }
   end
+
+  describe "#rights_statement" do
+    let(:rights_statement) { Ddr::Models::RightsStatement.new(url: "http://example.com") }
+    before do
+      allow(Ddr::Models::RightsStatement).to receive(:get).with(:find, url: "http://example.com") do
+        { url: "http://example.com" }
+      end
+      subject.rights = ["http://example.com"]
+    end
+    its(:rights_statement) { is_expected.to eq rights_statement }
+  end
+
 end

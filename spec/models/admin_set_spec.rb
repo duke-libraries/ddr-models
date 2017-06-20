@@ -1,5 +1,5 @@
 module Ddr::Models
-  RSpec.describe AdminSet, ddr_aux: true do
+  RSpec.describe AdminSet, ddr_aux: true, admin_set: true do
 
     describe ".call" do
       let(:obj) { Item.new }
@@ -30,6 +30,7 @@ module Ddr::Models
 
       describe "when the object does not have an admin set" do
         it "returns nil" do
+          expect(described_class).to receive(:find_by_code).and_call_original
           expect(described_class.call(obj)).to be_nil
         end
       end
