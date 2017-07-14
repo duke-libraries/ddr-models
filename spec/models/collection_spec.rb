@@ -168,7 +168,7 @@ RSpec.describe Collection, type: :model do
               </metsHdr>
               <structMap TYPE="#{Ddr::Models::Structure::TYPE_DEFAULT}">
                 <div LABEL="foo" ORDER="1" TYPE="Directory">
-                  <div LABEL="bar" ORDER="1" TYPE="Directory">
+                  <div LABEL="b&amp;apos;a&amp;quot;r&amp;quot;" ORDER="1" TYPE="Directory">
                     <div ORDER="1">
                       <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4aaa" />
                     </div>
@@ -214,17 +214,17 @@ RSpec.describe Collection, type: :model do
           subject.children << item5
           subject.children << item6
           subject.save!
-          item1.nested_path = 'foo/bar/a.doc'
+          item1.nested_path = %Q[foo/b'a"r"/a.doc]
           item1.save!
-          item2.nested_path = 'foo/bar/b.txt'
+          item2.nested_path = %Q[foo/b'a"r"/b.txt]
           item2.save!
-          item3.nested_path = 'foo/baz/d.pdf'
+          item3.nested_path = %Q[foo/baz/d.pdf]
           item3.save!
-          item4.nested_path = 'foo/baz/c.txt'
+          item4.nested_path = %Q[foo/baz/c.txt]
           item4.save!
-          item5.nested_path = 'foo/f.doc'
+          item5.nested_path = %Q[foo/f.doc]
           item5.save!
-          item6.nested_path = 'foo/e.pdf'
+          item6.nested_path = %Q[foo/e.pdf]
           item6.save!
         end
         after do

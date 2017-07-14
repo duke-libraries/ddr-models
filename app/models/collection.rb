@@ -1,3 +1,4 @@
+require 'htmlentities'
 #
 # A Collection is a conceptual and administrative entity containing a set of items.
 #
@@ -104,7 +105,8 @@ class Collection < Ddr::Models::Base
       div = structure.add_div(parent: parent, order: order)
       add_mptr(structure, div, permanent_id)
     else
-      div = parent.xpath("xmlns:div[@LABEL='#{label}']").first ||
+      label = HTMLEntities.new.encode(label)
+      div = parent.xpath(%Q[xmlns:div[@LABEL="#{label}"]]).first ||
             structure.add_div(parent: parent, type: 'Directory', label: label, order: order)
       find_or_create_div(structure, div, nest, permanent_id)
     end
