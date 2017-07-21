@@ -130,6 +130,7 @@ module Ddr::Models
         fields[ADMIN_SET_FACET] = admin_set_facet
         fields[COLLECTION_FACET] = collection_facet
         fields[NESTED_PATH] = nested_path
+        fields[NESTED_PATH_TEXT] = nested_path
         fields[ALL_TEXT] = all_text
       end
       fields
