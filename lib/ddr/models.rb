@@ -37,6 +37,7 @@ module Ddr
     autoload :AdminSet
     autoload :Base
     autoload :Cache
+    autoload :Captionable
     autoload :ChecksumInvalid, 'ddr/models/error'
     autoload :Contact
     autoload :ContentModelError, 'ddr/models/error'
@@ -143,6 +144,7 @@ module Ddr
         '.mp3'  => 'audio/mpeg',
         '.ogg'  => 'audio/ogg',
         '.oga'  => 'audio/ogg',
+        '.vtt'  => 'text/vtt',
       }
     end
 

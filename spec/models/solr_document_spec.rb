@@ -207,6 +207,30 @@ EOS
     }
   end
 
+  describe "#captionable?" do
+    specify {
+      allow(subject).to receive(:has_datastream?).with(Ddr::Datastreams::CAPTION) { false }
+      expect(subject).not_to be_captionable
+    }
+    specify {
+      allow(subject).to receive(:has_datastream?).with(Ddr::Datastreams::CAPTION) { true }
+      expect(subject).to be_captionable
+    }
+  end
+
+  describe "#caption_path" do
+    specify {
+      allow(subject).to receive(:captionable?) { false }
+      expect(subject.caption_path).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:datastreams) do
+        {"caption"=>{"dsLocation"=>"file:/foo/bar/baz.txt"}}
+      end
+      expect(subject.caption_path).to eq "/foo/bar/baz.txt"
+    }
+  end
+
   describe "#streamable?" do
     specify {
       allow(subject).to receive(:has_datastream?).with(Ddr::Datastreams::STREAMABLE_MEDIA) { false }

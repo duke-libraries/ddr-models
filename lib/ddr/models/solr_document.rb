@@ -233,6 +233,16 @@ module Ddr::Models
       end
     end
 
+    def captionable?
+      has_datastream?(Ddr::Datastreams::CAPTION)
+    end
+
+    def caption_path
+      if captionable?
+        Ddr::Utils.path_from_uri(datastreams[Ddr::Datastreams::CAPTION]["dsLocation"])
+      end
+    end
+
     def streamable?
       has_datastream?(Ddr::Datastreams::STREAMABLE_MEDIA)
     end

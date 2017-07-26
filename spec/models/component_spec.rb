@@ -6,6 +6,7 @@ RSpec.describe Component, type: :model, components: true do
   it_behaves_like "it has an association", :belongs_to, :target, :has_external_target, "Target"
   it_behaves_like "a non-collection model"
   it_behaves_like "a potentially publishable object"
+  it_behaves_like "an object that can be captioned"
   it_behaves_like "an object that can have an intermediate file"
   it_behaves_like "an object that can be streamable"
 
@@ -77,6 +78,22 @@ RSpec.describe Component, type: :model, components: true do
         describe "with neither multires image nor streamable media" do
           it "has the correct structure file" do
             expect(service_files).to contain_exactly(Ddr::Datastreams::CONTENT)
+          end
+        end
+      end
+      describe "transcript" do
+        describe "with caption file" do
+          before do
+            allow(subject).to receive(:captioned?) { true }
+          end
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_TRANSCRIPT].first.href)
+                .to eq(Ddr::Datastreams::CAPTION)
+          end
+        end
+        describe "without caption file" do
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_TRANSCRIPT]).to be nil
           end
         end
       end
