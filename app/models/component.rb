@@ -5,6 +5,7 @@
 #
 class Component < Ddr::Models::Base
 
+  include Ddr::Models::Captionable
   include Ddr::Models::HasContent
   include Ddr::Models::HasIntermediateFile
   include Ddr::Models::HasMultiresImage
@@ -53,7 +54,9 @@ class Component < Ddr::Models::Base
                               Ddr::Datastreams::INTERMEDIATE_FILE) if has_intermediate_file?
     add_service_file_uses_to_default_structure(structure, filegrp, div)
     add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_THUMBNAIL_IMAGE,
-                         Ddr::Datastreams::THUMBNAIL) if has_thumbnail?
+                              Ddr::Datastreams::THUMBNAIL) if has_thumbnail?
+    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_TRANSCRIPT,
+                              Ddr::Datastreams::CAPTION) if captioned?
     structure
   end
 

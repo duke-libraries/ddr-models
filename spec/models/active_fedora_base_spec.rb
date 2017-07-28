@@ -24,6 +24,9 @@ RSpec.describe ActiveFedora::Base do
     end
   end
 
+  its(:captionable?) { is_expected.to be false }
+  it { is_expected.not_to be_captioned }
+
   its(:can_be_streamable?) { is_expected.to be false }
   it { is_expected.not_to be_streamable }
 
