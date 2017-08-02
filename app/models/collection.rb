@@ -53,9 +53,7 @@ class Collection < Ddr::Models::Base
   end
 
   def default_structure
-    if items.present?
-      build_default_structure
-    end
+    build_default_structure
   end
 
   private
