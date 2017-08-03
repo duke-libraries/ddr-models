@@ -40,9 +40,7 @@ class Item < Ddr::Models::Base
   end
 
   def default_structure
-    if components.present?
-      build_default_structure
-    end
+    build_default_structure
   end
 
   private

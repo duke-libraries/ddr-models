@@ -31,7 +31,7 @@ class Component < Ddr::Models::Base
   end
 
   def default_structure
-    build_default_structure if has_content?
+    build_default_structure
   end
 
   private
@@ -42,21 +42,24 @@ class Component < Ddr::Models::Base
     metshdr = structure.add_metshdr
     structure.add_agent(parent: metshdr, role: Ddr::Models::Structures::Agent::ROLE_CREATOR,
                         name: Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT)
-    filesec = structure.add_filesec
     structmap = structure.add_structmap(type: Ddr::Models::Structure::TYPE_DEFAULT)
-    div = structure.add_div(parent: structmap)
-    filegrp = structure.add_filegrp(parent: filesec)
-    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_ORIGINAL_FILE,
-                              Ddr::Datastreams::CONTENT)
-    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_PRESERVATION_MASTER_FILE,
-                              Ddr::Datastreams::CONTENT)
-    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_INTERMEDIATE_FILE,
-                              Ddr::Datastreams::INTERMEDIATE_FILE) if has_intermediate_file?
-    add_service_file_uses_to_default_structure(structure, filegrp, div)
-    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_THUMBNAIL_IMAGE,
-                              Ddr::Datastreams::THUMBNAIL) if has_thumbnail?
-    add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_TRANSCRIPT,
-                              Ddr::Datastreams::CAPTION) if captioned?
+    if has_content?
+      filesec = structure.add_filesec
+      div = structure.add_div(parent: structmap)
+      filegrp = structure.add_filegrp(parent: filesec)
+      add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_ORIGINAL_FILE,
+                           Ddr::Datastreams::CONTENT)
+      add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_PRESERVATION_MASTER_FILE,
+                           Ddr::Datastreams::CONTENT)
+      add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_INTERMEDIATE_FILE,
+                           Ddr::Datastreams::INTERMEDIATE_FILE) if has_intermediate_file?
+      add_service_file_uses_to_default_structure(structure, filegrp, div)
+      add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_THUMBNAIL_IMAGE,
+                           Ddr::Datastreams::THUMBNAIL) if has_thumbnail?
+      add_use_to_structure(structure, filegrp, div, Ddr::Models::Structure::USE_TRANSCRIPT,
+                           Ddr::Datastreams::CAPTION) if captioned?
+
+    end
     structure
   end
 

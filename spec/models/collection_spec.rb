@@ -106,8 +106,21 @@ RSpec.describe Collection, type: :model do
       allow(SecureRandom).to receive(:uuid).and_return("abc-def", "ghi-jkl", "mno-pqr", "stu-vwx", "yza-bcd", "efg-hij")
     end
     describe "when the collection has no items" do
-      it "should be nil" do
-        expect(subject.default_structure).to be_nil
+      let(:expected) do
+        xml = <<-EOS
+            <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <metsHdr>
+                <agent ROLE="#{Ddr::Models::Structures::Agent::ROLE_CREATOR}">
+                  <name>#{Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT}</name>
+                </agent>
+              </metsHdr>
+              <structMap TYPE="#{Ddr::Models::Structure::TYPE_DEFAULT}" />
+            </mets>
+        EOS
+        xml
+      end
+      it "should be the appropriate structure" do
+        expect(subject.default_structure.to_xml).to be_equivalent_to(expected)
       end
     end
     describe "when the collection has items" do
