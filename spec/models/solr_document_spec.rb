@@ -218,6 +218,19 @@ EOS
     }
   end
 
+  describe "#caption_type" do
+    specify {
+      allow(subject).to receive(:captionable?) { false }
+      expect(subject.caption_path).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:datastreams) do
+        {"caption"=>{"dsMIME"=>"text/vtt"}}
+      end
+      expect(subject.caption_type).to eq "text/vtt"
+    }
+  end
+
   describe "#caption_path" do
     specify {
       allow(subject).to receive(:captionable?) { false }
@@ -230,6 +243,30 @@ EOS
       expect(subject.caption_path).to eq "/foo/bar/baz.txt"
     }
   end
+
+  describe "#caption_extension" do
+    let(:extensions) { {'text/vtt' => 'vtt', 'application/zip' => 'zip'} }
+    before { allow(Ddr::Models).to receive(:preferred_file_extensions) { extensions } }
+    before { allow(subject).to receive(:captionable?) { true } }
+    specify {
+      allow(subject).to receive(:captionable?) { false }
+      expect(subject.caption_extension).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:caption_type) { 'text/vtt'}
+      expect(subject.caption_extension).to eq "vtt"
+    }
+    specify {
+      allow(subject).to receive(:caption_type) { 'application/zip'}
+      expect(subject.caption_extension).to eq "zip"
+    }
+    specify {
+      allow(subject).to receive(:caption_type) { 'application/foo'}
+      allow(subject).to receive(:caption_extension_default) { "bin" }
+      expect(subject.caption_extension).to eq "bin"
+    }
+  end
+
 
   describe "#streamable?" do
     specify {
@@ -254,6 +291,26 @@ EOS
       expect(subject.streamable_media_path).to eq "/foo/bar/baz.txt"
     }
   end
+
+  describe "#streamable_media_extension" do
+    let(:extensions) { {'audio/mpeg' => 'mp3', 'video/mp4' => 'mp4'} }
+    before { allow(Ddr::Models).to receive(:preferred_file_extensions) { extensions } }
+    before { allow(subject).to receive(:streamable?) { true } }
+    specify {
+      allow(subject).to receive(:streamable?) { false }
+      expect(subject.streamable_media_extension).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:streamable_media_type) { 'audio/mpeg'}
+      expect(subject.streamable_media_extension).to eq "mp3"
+    }
+    specify {
+      allow(subject).to receive(:streamable_media_type) { 'application/foo'}
+      allow(subject).to receive(:streamable_media_extension_default) { "bin" }
+      expect(subject.streamable_media_extension).to eq "bin"
+    }
+  end
+
 
   describe "#rights" do
     specify {

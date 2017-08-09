@@ -16,6 +16,8 @@ RSpec.shared_examples "an object that can be captioned" do
       expect(subject).to be_captioned
       expect(subject.caption_path).to be_present
       expect(subject.caption_path).to eq subject.caption.file_path
+      expect(subject.caption_type).to eq 'text/vtt'
+      expect(subject.caption_extension).to eq 'vtt'
     }
   end
 end
