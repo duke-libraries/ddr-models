@@ -237,6 +237,23 @@ module Ddr::Models
       has_datastream?(Ddr::Datastreams::CAPTION)
     end
 
+    def caption_type
+      if captionable?
+        datastreams[Ddr::Datastreams::CAPTION]["dsMIME"]
+      end
+    end
+
+    def caption_extension
+      if captionable?
+        extensions = Ddr::Models.preferred_file_extensions
+        if extensions.include? caption_type
+          extensions[caption_type]
+        else
+          caption_extension_default
+        end
+      end
+    end
+
     def caption_path
       if captionable?
         Ddr::Utils.path_from_uri(datastreams[Ddr::Datastreams::CAPTION]["dsLocation"])
@@ -245,6 +262,23 @@ module Ddr::Models
 
     def streamable?
       has_datastream?(Ddr::Datastreams::STREAMABLE_MEDIA)
+    end
+    
+    def streamable_media_extension
+      if streamable?
+        extensions = Ddr::Models.preferred_file_extensions
+        if extensions.include? streamable_media_type
+          extensions[streamable_media_type]
+        else
+          streamable_media_extension_default
+        end
+      end
+    end
+
+    def streamable_media_type
+      if streamable?
+        datastreams[Ddr::Datastreams::STREAMABLE_MEDIA]["dsMIME"]
+      end
     end
 
     def streamable_media_path
@@ -320,6 +354,14 @@ module Ddr::Models
 
     def default_struct_map
       structure['default'] || structure.values.first
+    end
+
+    def caption_extension_default
+      datastreams[Ddr::Datastreams::CAPTION].default_file_extension
+    end
+
+    def streamable_media_extension_default
+      datastreams[Ddr::Datastreams::STREAMABLE_MEDIA].default_file_extension
     end
 
     def children_query

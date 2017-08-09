@@ -17,6 +17,7 @@ RSpec.shared_examples "an object that can be streamable" do
       expect(subject.streamable_media_type).to eq 'image/jpeg'
       expect(subject.streamable_media_path).to be_present
       expect(subject.streamable_media_path).to eq subject.streamableMedia.file_path
+      expect(subject.streamable_media_extension).to eq 'jpeg'
     }
   end
 end

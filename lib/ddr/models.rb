@@ -135,16 +135,31 @@ module Ddr
     # Maps file extensions to preferred media types
     mattr_accessor :preferred_media_types do
       {
-        '.mp4'  => 'video/mp4',
-        '.flv'  => 'video/flv',
-        '.webm' => 'video/webm',
         '.aac'  => 'audio/mp4',
-        '.m4a'  => 'audio/mp4',
         '.f4a'  => 'audio/mp4',
+        '.flv'  => 'video/flv',
+        '.m4a'  => 'audio/mp4',
         '.mp3'  => 'audio/mpeg',
-        '.ogg'  => 'audio/ogg',
+        '.mp4'  => 'video/mp4',
         '.oga'  => 'audio/ogg',
+        '.ogg'  => 'audio/ogg',
         '.vtt'  => 'text/vtt',
+        '.webm' => 'video/webm',
+        '.zip'  => 'application/zip'
+      }
+    end
+
+    # Maps media types to preferred file extensions
+    mattr_accessor :preferred_file_extensions do
+      {
+        'application/zip' => 'zip',
+        'audio/mp4'       => 'm4a',
+        'audio/mpeg'      => 'mp3',
+        'audio/ogg'       => 'ogg',
+        'text/vtt'        => 'vtt',
+        'video/flv'       => 'flv',
+        'video/mp4'       => 'mp4',
+        'video/webm'      => 'webm'
       }
     end
 
