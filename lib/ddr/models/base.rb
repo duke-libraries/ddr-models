@@ -108,6 +108,12 @@ module Ddr
         end
       end
 
+      def parent_id
+        parent.id
+      rescue NoMethodError
+        nil
+      end
+
       private
 
       def grant_default_roles
@@ -168,7 +174,8 @@ module Ddr
         default_notification_payload.merge(
           datastream_history: datastream_history,
           create_date: create_date,
-          modified_date: modified_date
+          modified_date: modified_date,
+          parent: parent_id
         )
       end
 
