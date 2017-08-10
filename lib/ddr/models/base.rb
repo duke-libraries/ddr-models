@@ -147,7 +147,8 @@ module Ddr
           .merge(pid: pid,
                  user_key: performed_by,
                  permanent_id: permanent_id,
-                 model: self.class.to_s)
+                 model: self.class.to_s,
+                 parent: parent_id)
       end
 
       def notify_ingest
@@ -174,8 +175,7 @@ module Ddr
         default_notification_payload.merge(
           datastream_history: datastream_history,
           create_date: create_date,
-          modified_date: modified_date,
-          parent: parent_id
+          modified_date: modified_date
         )
       end
 
