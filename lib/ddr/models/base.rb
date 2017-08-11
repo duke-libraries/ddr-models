@@ -31,8 +31,8 @@ module Ddr
       before_create :set_ingested_by, if: :performed_by, unless: :ingested_by
       before_create :grant_default_roles
 
-      after_create :notify_ingest
       after_create :assign_permanent_id!, if: :assign_permanent_id?
+      after_create :notify_ingest
 
       around_save :notify_update, unless: :new_record?
 
