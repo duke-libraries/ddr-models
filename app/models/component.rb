@@ -18,6 +18,10 @@ class Component < Ddr::Models::Base
   alias_method :item, :parent
   alias_method :item=, :parent=
 
+  STRUCTURALLY_RELEVANT_DATASTREAMS = [ Ddr::Datastreams::CAPTION, Ddr::Datastreams::CONTENT,
+                                        Ddr::Datastreams::INTERMEDIATE_FILE, Ddr::Datastreams::MULTIRES_IMAGE,
+                                        Ddr::Datastreams::STREAMABLE_MEDIA, Ddr::Datastreams::THUMBNAIL ]
+
   def collection
     self.parent.parent rescue nil
   end

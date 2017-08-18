@@ -149,7 +149,7 @@ module Ddr
                  permanent_id: permanent_id,
                  model: self.class.to_s,
                  parent: parent_id,
-                 skip_update_parent_structure: cache.fetch(:skip_update_parent_structure, false))
+                 skip_structure_updates: cache.fetch(:skip_structure_updates, false))
       end
 
       def notify_ingest
