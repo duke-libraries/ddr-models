@@ -18,6 +18,7 @@ module Ddr
     STRUCT_METADATA   = "structMetadata"
     THUMBNAIL         = "thumbnail"
 
+    CREATE = "create.repo_file"
     SAVE = "save.repo_file"
     DELETE = "delete.repo_file"
 
