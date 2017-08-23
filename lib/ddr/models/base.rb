@@ -95,6 +95,10 @@ module Ddr
         datastreams.select { |dsid, ds| ds.changed? }
       end
 
+      def new_datastreams_having_content
+        datastreams.select { |dsid, ds| ds.new? && ds.has_content? }
+      end
+
       def datastreams_having_content
         datastreams.select { |dsid, ds| ds.has_content? }
       end
@@ -164,6 +168,7 @@ module Ddr
         event_params = default_notification_payload.merge(
           attributes_changed: changes,
           datastreams_changed: datastreams_changed.keys,
+          new_datastreams: new_datastreams_having_content.keys,
           skip_update_derivatives: cache.fetch(:skip_update_derivatives, false)
         )
         ActiveSupport::Notifications.instrument(UPDATE, event_params) do |payload|

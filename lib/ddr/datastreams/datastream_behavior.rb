@@ -8,7 +8,6 @@ module Ddr
       STRFTIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%LZ"
 
       included do
-        after_create :notify_create
         around_save :notify_save
         around_destroy :notify_delete
       end
@@ -129,10 +128,6 @@ module Ddr
           profile: profile.dup,
           version_history: version_history
         )
-      end
-
-      def notify_create
-        ActiveSupport::Notifications.instrument(Ddr::Datastreams::CREATE, default_notification_payload)
       end
 
       def notify_save
