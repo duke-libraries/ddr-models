@@ -139,11 +139,14 @@ module Ddr
         '.f4a'  => 'audio/mp4',
         '.flv'  => 'video/flv',
         '.m4a'  => 'audio/mp4',
+        '.mov'  => 'video/quicktime',
         '.mp3'  => 'audio/mpeg',
         '.mp4'  => 'video/mp4',
         '.oga'  => 'audio/ogg',
         '.ogg'  => 'audio/ogg',
+        '.srt'  => 'text/plain',
         '.vtt'  => 'text/vtt',
+        '.wav'  => 'audio/wav',
         '.webm' => 'video/webm',
         '.zip'  => 'application/zip'
       }
@@ -156,9 +159,11 @@ module Ddr
         'audio/mp4'       => 'm4a',
         'audio/mpeg'      => 'mp3',
         'audio/ogg'       => 'ogg',
+        'audio/wav'       => 'wav',
         'text/vtt'        => 'vtt',
         'video/flv'       => 'flv',
         'video/mp4'       => 'mp4',
+        'video/quicktime' => 'mov',
         'video/webm'      => 'webm'
       }
     end

@@ -141,6 +141,10 @@ module Ddr::Models
       has_datastream?(Ddr::Datastreams::CONTENT)
     end
 
+    def has_intermediate_file?
+      has_datastream?(Ddr::Datastreams::INTERMEDIATE_FILE)
+    end
+
     def has_extracted_text?
       has_datastream?(Ddr::Datastreams::EXTRACTED_TEXT)
     end
@@ -230,6 +234,29 @@ module Ddr::Models
     def finding_aid
       if ead_id
         FindingAid.new(ead_id)
+      end
+    end
+
+    def intermediate_type
+      if has_intermediate_file?
+        datastreams[Ddr::Datastreams::INTERMEDIATE_FILE]["dsMIME"]
+      end
+    end
+
+    def intermediate_path
+      if has_intermediate_file?
+        Ddr::Utils.path_from_uri(datastreams[Ddr::Datastreams::INTERMEDIATE_FILE]["dsLocation"])
+      end
+    end
+
+    def intermediate_extension
+      if has_intermediate_file?
+        extensions = Ddr::Models.preferred_file_extensions
+        if extensions.include? intermediate_type
+          extensions[intermediate_type]
+        else
+          intermediate_extension_default
+        end
       end
     end
 
@@ -354,6 +381,10 @@ module Ddr::Models
 
     def default_struct_map
       structure['default'] || structure.values.first
+    end
+
+    def intermediate_extension_default
+      datastreams[Ddr::Datastreams::INTERMEDIATE_FILE].default_file_extension
     end
 
     def caption_extension_default
