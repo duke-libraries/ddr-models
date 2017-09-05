@@ -207,6 +207,56 @@ EOS
     }
   end
 
+  describe "#intermediate_type" do
+    specify {
+      allow(subject).to receive(:has_intermediate_file?) { false }
+      expect(subject.intermediate_path).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:datastreams) do
+        {"intermediateFile"=>{"dsMIME"=>"audio/wav"}}
+      end
+      expect(subject.intermediate_type).to eq "audio/wav"
+    }
+  end
+
+  describe "#intermediate_path" do
+    specify {
+      allow(subject).to receive(:has_intermediate_file?) { false }
+      expect(subject.intermediate_path).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:datastreams) do
+        {"intermediateFile"=>{"dsLocation"=>"file:/foo/bar/baz.txt"}}
+      end
+      expect(subject.intermediate_path).to eq "/foo/bar/baz.txt"
+    }
+  end
+
+  describe "#intermediate_extension" do
+    let(:extensions) { {'audio/wav' => 'wav', 'video/quicktime' => 'mov'} }
+    before { allow(Ddr::Models).to receive(:preferred_file_extensions) { extensions } }
+    before { allow(subject).to receive(:has_intermediate_file?) { true } }
+    specify {
+      allow(subject).to receive(:has_intermediate_file?) { false }
+      expect(subject.intermediate_extension).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:intermediate_type) { 'audio/wav'}
+      expect(subject.intermediate_extension).to eq "wav"
+    }
+    specify {
+      allow(subject).to receive(:intermediate_type) { 'video/quicktime'}
+      expect(subject.intermediate_extension).to eq "mov"
+    }
+    specify {
+      allow(subject).to receive(:intermediate_type) { 'application/foo'}
+      allow(subject).to receive(:intermediate_extension_default) { "bin" }
+      expect(subject.intermediate_extension).to eq "bin"
+    }
+  end
+
+
   describe "#captionable?" do
     specify {
       allow(subject).to receive(:has_datastream?).with(Ddr::Datastreams::CAPTION) { false }
@@ -221,7 +271,7 @@ EOS
   describe "#caption_type" do
     specify {
       allow(subject).to receive(:captionable?) { false }
-      expect(subject.caption_path).to be_nil
+      expect(subject.caption_type).to be_nil
     }
     specify {
       allow(subject).to receive(:datastreams) do
