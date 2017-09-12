@@ -15,9 +15,6 @@ module Ddr
         index.as :stored_sortable
       end
 
-      property :original_dirname,
-               predicate: Ddr::Vocab::Asset.hasOriginalDirname
-
       property :nested_path,
                predicate: Ddr::Vocab::Asset.nestedPath
 

@@ -290,7 +290,7 @@ module Ddr::Models
     def streamable?
       has_datastream?(Ddr::Datastreams::STREAMABLE_MEDIA)
     end
-    
+
     def streamable_media_extension
       if streamable?
         extensions = Ddr::Models.preferred_file_extensions
@@ -317,18 +317,6 @@ module Ddr::Models
     # FIXME - Probably need a more general solution mapping object reader methods to index field names.
     def rights
       self["rights_tesim"]
-    end
-
-    def original_dirname
-      if self[Ddr::Index::Fields::ORIGINAL_DIRNAME]
-        self[Ddr::Index::Fields::ORIGINAL_DIRNAME]
-      elsif self[Ddr::Index::Fields::ACTIVE_FEDORA_MODEL] == 'Item'
-        if childrn = children
-          if childrn.count == 1
-            childrn.first.original_dirname
-          end
-        end
-      end
     end
 
     def children
