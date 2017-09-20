@@ -5,6 +5,7 @@ module Ddr
     extend ActiveSupport::Autoload
 
     ADMIN_METADATA    = "adminMetadata"
+    CAPTION           = "caption"
     CONTENT           = "content"
     DC                = "DC"
     DESC_METADATA     = "descMetadata"
@@ -29,6 +30,7 @@ module Ddr
     CHECKSUM_TYPES = [ CHECKSUM_TYPE_MD5, CHECKSUM_TYPE_SHA1, CHECKSUM_TYPE_SHA256, CHECKSUM_TYPE_SHA384, CHECKSUM_TYPE_SHA512 ]
 
     autoload :AdministrativeMetadataDatastream
+    autoload :CaptionDatastream
     autoload :ContentDatastream
     autoload :DatastreamBehavior
     autoload :DeleteExternalFiles

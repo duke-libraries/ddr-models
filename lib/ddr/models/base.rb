@@ -31,8 +31,8 @@ module Ddr
       before_create :set_ingested_by, if: :performed_by, unless: :ingested_by
       before_create :grant_default_roles
 
-      after_create :notify_ingest
       after_create :assign_permanent_id!, if: :assign_permanent_id?
+      after_create :notify_ingest
 
       around_save :notify_update, unless: :new_record?
 
@@ -95,6 +95,10 @@ module Ddr
         datastreams.select { |dsid, ds| ds.changed? }
       end
 
+      def new_datastreams_having_content
+        datastreams.select { |dsid, ds| ds.new? && ds.has_content? }
+      end
+
       def datastreams_having_content
         datastreams.select { |dsid, ds| ds.has_content? }
       end
@@ -106,6 +110,12 @@ module Ddr
         datastreams_having_content.each_with_object({}) do |(dsid, ds), memo|
           memo[dsid] = ds.version_history
         end
+      end
+
+      def parent_id
+        parent.id
+      rescue NoMethodError
+        nil
       end
 
       private
@@ -141,7 +151,9 @@ module Ddr
           .merge(pid: pid,
                  user_key: performed_by,
                  permanent_id: permanent_id,
-                 model: self.class.to_s)
+                 model: self.class.to_s,
+                 parent: parent_id,
+                 skip_structure_updates: cache.fetch(:skip_structure_updates, false))
       end
 
       def notify_ingest
@@ -156,6 +168,7 @@ module Ddr
         event_params = default_notification_payload.merge(
           attributes_changed: changes,
           datastreams_changed: datastreams_changed.keys,
+          new_datastreams: new_datastreams_having_content.keys,
           skip_update_derivatives: cache.fetch(:skip_update_derivatives, false)
         )
         ActiveSupport::Notifications.instrument(UPDATE, event_params) do |payload|

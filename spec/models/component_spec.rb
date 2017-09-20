@@ -6,6 +6,7 @@ RSpec.describe Component, type: :model, components: true do
   it_behaves_like "it has an association", :belongs_to, :target, :has_external_target, "Target"
   it_behaves_like "a non-collection model"
   it_behaves_like "a potentially publishable object"
+  it_behaves_like "an object that can be captioned"
   it_behaves_like "an object that can have an intermediate file"
   it_behaves_like "an object that can be streamable"
 
@@ -19,8 +20,21 @@ RSpec.describe Component, type: :model, components: true do
 
   describe "default structure" do
     describe "no content" do
-      it "should be nil" do
-        expect(subject.default_structure).to be_nil
+      let(:expected) do
+        xml = <<-EOS
+            <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <metsHdr>
+                <agent ROLE="#{Ddr::Models::Structures::Agent::ROLE_CREATOR}">
+                  <name>#{Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT}</name>
+                </agent>
+              </metsHdr>
+              <structMap TYPE="#{Ddr::Models::Structure::TYPE_DEFAULT}" />
+            </mets>
+        EOS
+        xml
+      end
+      it "should be the appropriate structure" do
+        expect(described_class.new.default_structure.to_xml).to be_equivalent_to(expected)
       end
     end
     describe "has content" do
@@ -77,6 +91,22 @@ RSpec.describe Component, type: :model, components: true do
         describe "with neither multires image nor streamable media" do
           it "has the correct structure file" do
             expect(service_files).to contain_exactly(Ddr::Datastreams::CONTENT)
+          end
+        end
+      end
+      describe "transcript" do
+        describe "with caption file" do
+          before do
+            allow(subject).to receive(:captioned?) { true }
+          end
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_TRANSCRIPT].first.href)
+                .to eq(Ddr::Datastreams::CAPTION)
+          end
+        end
+        describe "without caption file" do
+          it "has the correct structure file" do
+            expect(struct.uses[Ddr::Models::Structure::USE_TRANSCRIPT]).to be nil
           end
         end
       end

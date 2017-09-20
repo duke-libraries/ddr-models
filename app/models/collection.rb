@@ -1,3 +1,4 @@
+require 'htmlentities'
 #
 # A Collection is a conceptual and administrative entity containing a set of items.
 #
@@ -51,6 +52,10 @@ class Collection < Ddr::Models::Base
     true
   end
 
+  def default_structure
+    build_default_structure
+  end
+
   private
 
   def default_roles
@@ -67,6 +72,56 @@ class Collection < Ddr::Models::Base
     reload
     self.admin_policy = self
     save!
+  end
+
+  def build_default_structure
+    document = Ddr::Models::Structure.xml_template
+    structure = Ddr::Models::Structure.new(document)
+    metshdr = structure.add_metshdr
+    structure.add_agent(parent: metshdr, role: Ddr::Models::Structures::Agent::ROLE_CREATOR,
+                        name: Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT)
+    structmap = structure.add_structmap(type: Ddr::Models::Structure::TYPE_DEFAULT)
+    add_items_to_structure(structure, structmap)
+    structure
+  end
+
+  def add_items_to_structure(structure, structmap)
+    sorted_items_for_structure.each do |item|
+      if path = item[Ddr::Index::Fields::NESTED_PATH]
+        nest = path.split(File::SEPARATOR)
+      else
+        nest = []
+      end
+      find_or_create_div(structure, structmap, nest, item[Ddr::Index::Fields::PERMANENT_ID])
+    end
+  end
+
+  def find_or_create_div(structure, parent, nest, permanent_id)
+    label = nest.shift
+    order = parent.elements.count + 1
+    if nest.empty?
+      div = structure.add_div(parent: parent, order: order)
+      add_mptr(structure, div, permanent_id)
+    else
+      label = HTMLEntities.new.encode(label)
+      div = parent.xpath(%Q[xmlns:div[@LABEL="#{label}"]]).first ||
+            structure.add_div(parent: parent, type: 'Directory', label: label, order: order)
+      find_or_create_div(structure, div, nest, permanent_id)
+    end
+  end
+
+  def add_mptr(structure, div, permanent_id)
+    structure.add_mptr(parent: div, href: permanent_id)
+  end
+
+  def sorted_items_for_structure
+    ActiveFedora::SolrService.query(association_query(:children), sort: item_sort_for_structure, rows: 999999)
+  end
+
+  def item_sort_for_structure
+    "#{Ddr::Index::Fields::NESTED_PATH} ASC,
+     #{Ddr::Index::Fields::LOCAL_ID} ASC,
+     #{Ddr::Index::Fields::OBJECT_CREATE_DATE} ASC"
   end
 
 end

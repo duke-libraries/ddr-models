@@ -14,8 +14,23 @@ module Ddr::Models
       datastreams[Ddr::Datastreams::STREAMABLE_MEDIA].mimeType
     end
 
+    def streamable_media_extension
+      extensions = Ddr::Models.preferred_file_extensions
+      if extensions.include? streamable_media_type
+        extensions[streamable_media_type]
+      else
+        streamable_media_extension_default
+      end
+    end
+
     def streamable_media_path
       datastreams[Ddr::Datastreams::STREAMABLE_MEDIA].file_path
+    end
+
+    private
+
+    def streamable_media_extension_default
+      datastreams[Ddr::Datastreams::STREAMABLE_MEDIA].default_file_extension
     end
 
   end

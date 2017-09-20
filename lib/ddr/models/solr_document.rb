@@ -141,6 +141,10 @@ module Ddr::Models
       has_datastream?(Ddr::Datastreams::CONTENT)
     end
 
+    def has_intermediate_file?
+      has_datastream?(Ddr::Datastreams::INTERMEDIATE_FILE)
+    end
+
     def has_extracted_text?
       has_datastream?(Ddr::Datastreams::EXTRACTED_TEXT)
     end
@@ -233,8 +237,75 @@ module Ddr::Models
       end
     end
 
+    def intermediate_type
+      if has_intermediate_file?
+        datastreams[Ddr::Datastreams::INTERMEDIATE_FILE]["dsMIME"]
+      end
+    end
+
+    def intermediate_path
+      if has_intermediate_file?
+        Ddr::Utils.path_from_uri(datastreams[Ddr::Datastreams::INTERMEDIATE_FILE]["dsLocation"])
+      end
+    end
+
+    def intermediate_extension
+      if has_intermediate_file?
+        extensions = Ddr::Models.preferred_file_extensions
+        if extensions.include? intermediate_type
+          extensions[intermediate_type]
+        else
+          intermediate_extension_default
+        end
+      end
+    end
+
+    def captionable?
+      has_datastream?(Ddr::Datastreams::CAPTION)
+    end
+
+    def caption_type
+      if captionable?
+        datastreams[Ddr::Datastreams::CAPTION]["dsMIME"]
+      end
+    end
+
+    def caption_extension
+      if captionable?
+        extensions = Ddr::Models.preferred_file_extensions
+        if extensions.include? caption_type
+          extensions[caption_type]
+        else
+          caption_extension_default
+        end
+      end
+    end
+
+    def caption_path
+      if captionable?
+        Ddr::Utils.path_from_uri(datastreams[Ddr::Datastreams::CAPTION]["dsLocation"])
+      end
+    end
+
     def streamable?
       has_datastream?(Ddr::Datastreams::STREAMABLE_MEDIA)
+    end
+
+    def streamable_media_extension
+      if streamable?
+        extensions = Ddr::Models.preferred_file_extensions
+        if extensions.include? streamable_media_type
+          extensions[streamable_media_type]
+        else
+          streamable_media_extension_default
+        end
+      end
+    end
+
+    def streamable_media_type
+      if streamable?
+        datastreams[Ddr::Datastreams::STREAMABLE_MEDIA]["dsMIME"]
+      end
     end
 
     def streamable_media_path
@@ -246,6 +317,10 @@ module Ddr::Models
     # FIXME - Probably need a more general solution mapping object reader methods to index field names.
     def rights
       self["rights_tesim"]
+    end
+
+    def children
+      children_query.docs rescue []
     end
 
     private
@@ -296,5 +371,29 @@ module Ddr::Models
       structure['default'] || structure.values.first
     end
 
+    def intermediate_extension_default
+      datastreams[Ddr::Datastreams::INTERMEDIATE_FILE].default_file_extension
+    end
+
+    def caption_extension_default
+      datastreams[Ddr::Datastreams::CAPTION].default_file_extension
+    end
+
+    def streamable_media_extension_default
+      datastreams[Ddr::Datastreams::STREAMABLE_MEDIA].default_file_extension
+    end
+
+    def children_query
+      case self[Ddr::Index::Fields::ACTIVE_FEDORA_MODEL]
+        when 'Collection'
+          Ddr::Index::Query.build(self) do |parent|
+            is_member_of_collection parent.id
+          end
+        when 'Item'
+          Ddr::Index::Query.build(self) do |parent|
+            is_part_of parent.id
+          end
+      end
+    end
   end
 end

@@ -43,5 +43,9 @@ module Ddr::Vocab
              label: "Affiliation",
              comment: "An organizational entity associated with the object content."
 
+    property "nestedPath",
+             label: "Nested Path",
+             comment: "The nested/tree path to the object to be reflected in structural metadata."
+
   end
 end

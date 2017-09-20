@@ -74,6 +74,8 @@ module Ddr::Index
     MEDIA_TYPE                  = Field.new :content_media_type, :symbol
     MEDIUM_FACET                = Field.new :medium_facet, :facetable
     MULTIRES_IMAGE_FILE_PATH    = Field.new :multires_image_file_path, :stored_sortable
+    NESTED_PATH                 = Field.new :nested_path, :stored_sortable
+    NESTED_PATH_TEXT            = Field.new :nested_path_text, :searchable
     OBJECT_PROFILE              = Field.new :object_profile, :displayable
     OBJECT_STATE                = Field.new :object_state, :stored_sortable
     OBJECT_CREATE_DATE          = Field.new :system_create, :stored_sortable, type: :date

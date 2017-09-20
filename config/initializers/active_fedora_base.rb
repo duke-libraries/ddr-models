@@ -69,6 +69,14 @@ module ActiveFedora
       can_have_thumbnail? && thumbnail.has_content?
     end
 
+    def captionable?
+      datastreams.include? Ddr::Datastreams::CAPTION
+    end
+
+    def captioned?
+      captionable? && datastreams[Ddr::Datastreams::CAPTION].has_content?
+    end
+
     def can_be_streamable?
       datastreams.include? Ddr::Datastreams::STREAMABLE_MEDIA
     end

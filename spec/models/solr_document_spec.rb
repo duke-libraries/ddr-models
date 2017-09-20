@@ -207,6 +207,117 @@ EOS
     }
   end
 
+  describe "#intermediate_type" do
+    specify {
+      allow(subject).to receive(:has_intermediate_file?) { false }
+      expect(subject.intermediate_path).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:datastreams) do
+        {"intermediateFile"=>{"dsMIME"=>"audio/wav"}}
+      end
+      expect(subject.intermediate_type).to eq "audio/wav"
+    }
+  end
+
+  describe "#intermediate_path" do
+    specify {
+      allow(subject).to receive(:has_intermediate_file?) { false }
+      expect(subject.intermediate_path).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:datastreams) do
+        {"intermediateFile"=>{"dsLocation"=>"file:/foo/bar/baz.txt"}}
+      end
+      expect(subject.intermediate_path).to eq "/foo/bar/baz.txt"
+    }
+  end
+
+  describe "#intermediate_extension" do
+    let(:extensions) { {'audio/wav' => 'wav', 'video/quicktime' => 'mov'} }
+    before { allow(Ddr::Models).to receive(:preferred_file_extensions) { extensions } }
+    before { allow(subject).to receive(:has_intermediate_file?) { true } }
+    specify {
+      allow(subject).to receive(:has_intermediate_file?) { false }
+      expect(subject.intermediate_extension).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:intermediate_type) { 'audio/wav'}
+      expect(subject.intermediate_extension).to eq "wav"
+    }
+    specify {
+      allow(subject).to receive(:intermediate_type) { 'video/quicktime'}
+      expect(subject.intermediate_extension).to eq "mov"
+    }
+    specify {
+      allow(subject).to receive(:intermediate_type) { 'application/foo'}
+      allow(subject).to receive(:intermediate_extension_default) { "bin" }
+      expect(subject.intermediate_extension).to eq "bin"
+    }
+  end
+
+
+  describe "#captionable?" do
+    specify {
+      allow(subject).to receive(:has_datastream?).with(Ddr::Datastreams::CAPTION) { false }
+      expect(subject).not_to be_captionable
+    }
+    specify {
+      allow(subject).to receive(:has_datastream?).with(Ddr::Datastreams::CAPTION) { true }
+      expect(subject).to be_captionable
+    }
+  end
+
+  describe "#caption_type" do
+    specify {
+      allow(subject).to receive(:captionable?) { false }
+      expect(subject.caption_type).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:datastreams) do
+        {"caption"=>{"dsMIME"=>"text/vtt"}}
+      end
+      expect(subject.caption_type).to eq "text/vtt"
+    }
+  end
+
+  describe "#caption_path" do
+    specify {
+      allow(subject).to receive(:captionable?) { false }
+      expect(subject.caption_path).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:datastreams) do
+        {"caption"=>{"dsLocation"=>"file:/foo/bar/baz.txt"}}
+      end
+      expect(subject.caption_path).to eq "/foo/bar/baz.txt"
+    }
+  end
+
+  describe "#caption_extension" do
+    let(:extensions) { {'text/vtt' => 'vtt', 'application/zip' => 'zip'} }
+    before { allow(Ddr::Models).to receive(:preferred_file_extensions) { extensions } }
+    before { allow(subject).to receive(:captionable?) { true } }
+    specify {
+      allow(subject).to receive(:captionable?) { false }
+      expect(subject.caption_extension).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:caption_type) { 'text/vtt'}
+      expect(subject.caption_extension).to eq "vtt"
+    }
+    specify {
+      allow(subject).to receive(:caption_type) { 'application/zip'}
+      expect(subject.caption_extension).to eq "zip"
+    }
+    specify {
+      allow(subject).to receive(:caption_type) { 'application/foo'}
+      allow(subject).to receive(:caption_extension_default) { "bin" }
+      expect(subject.caption_extension).to eq "bin"
+    }
+  end
+
+
   describe "#streamable?" do
     specify {
       allow(subject).to receive(:has_datastream?).with(Ddr::Datastreams::STREAMABLE_MEDIA) { false }
@@ -230,6 +341,26 @@ EOS
       expect(subject.streamable_media_path).to eq "/foo/bar/baz.txt"
     }
   end
+
+  describe "#streamable_media_extension" do
+    let(:extensions) { {'audio/mpeg' => 'mp3', 'video/mp4' => 'mp4'} }
+    before { allow(Ddr::Models).to receive(:preferred_file_extensions) { extensions } }
+    before { allow(subject).to receive(:streamable?) { true } }
+    specify {
+      allow(subject).to receive(:streamable?) { false }
+      expect(subject.streamable_media_extension).to be_nil
+    }
+    specify {
+      allow(subject).to receive(:streamable_media_type) { 'audio/mpeg'}
+      expect(subject.streamable_media_extension).to eq "mp3"
+    }
+    specify {
+      allow(subject).to receive(:streamable_media_type) { 'application/foo'}
+      allow(subject).to receive(:streamable_media_extension_default) { "bin" }
+      expect(subject.streamable_media_extension).to eq "bin"
+    }
+  end
+
 
   describe "#rights" do
     specify {

@@ -101,4 +101,156 @@ RSpec.describe Collection, type: :model do
     }
   end
 
+  describe "#default_structure" do
+    before do
+      allow(SecureRandom).to receive(:uuid).and_return("abc-def", "ghi-jkl", "mno-pqr", "stu-vwx", "yza-bcd", "efg-hij")
+    end
+    describe "when the collection has no items" do
+      let(:expected) do
+        xml = <<-EOS
+            <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <metsHdr>
+                <agent ROLE="#{Ddr::Models::Structures::Agent::ROLE_CREATOR}">
+                  <name>#{Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT}</name>
+                </agent>
+              </metsHdr>
+              <structMap TYPE="#{Ddr::Models::Structure::TYPE_DEFAULT}" />
+            </mets>
+        EOS
+        xml
+      end
+      it "should be the appropriate structure" do
+        expect(subject.default_structure.to_xml).to be_equivalent_to(expected)
+      end
+    end
+    describe "when the collection has items" do
+      let(:item1) { FactoryGirl.create(:item) }
+      let(:item2) { FactoryGirl.create(:item) }
+      before do
+        item1.local_id = "test002"
+        item1.permanent_id = "ark:/99999/fk4aaa"
+        item1.save!
+        item2.local_id = "test001"
+        item2.permanent_id = "ark:/99999/fk4bbb"
+        item2.save!
+        subject.children << item1
+        subject.children << item2
+        subject.save!
+      end
+      after do
+        item1.destroy
+        item2.destroy
+      end
+      describe "without nested paths" do
+        let(:expected) do
+          xml = <<-EOS
+            <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <metsHdr>
+                <agent ROLE="#{Ddr::Models::Structures::Agent::ROLE_CREATOR}">
+                  <name>#{Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT}</name>
+                </agent>
+              </metsHdr>
+              <structMap TYPE="#{Ddr::Models::Structure::TYPE_DEFAULT}">
+                <div ORDER="1">
+                  <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4bbb" />
+                </div>
+                <div ORDER="2">
+                  <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4aaa" />
+                </div>
+              </structMap>
+            </mets>
+          EOS
+          xml
+        end
+        it "should be the appropriate structure" do
+          expect(subject.default_structure.to_xml).to be_equivalent_to(expected)
+        end
+      end
+      describe "with nested paths" do
+        let(:item3) { FactoryGirl.create(:item) }
+        let(:item4) { FactoryGirl.create(:item) }
+        let(:item5) { FactoryGirl.create(:item) }
+        let(:item6) { FactoryGirl.create(:item) }
+        let(:expected) do
+          xml = <<-EOS
+            <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <metsHdr>
+                <agent ROLE="#{Ddr::Models::Structures::Agent::ROLE_CREATOR}">
+                  <name>#{Ddr::Models::Structures::Agent::NAME_REPOSITORY_DEFAULT}</name>
+                </agent>
+              </metsHdr>
+              <structMap TYPE="#{Ddr::Models::Structure::TYPE_DEFAULT}">
+                <div LABEL="foo" ORDER="1" TYPE="Directory">
+                  <div LABEL="b&amp;apos;a&amp;quot;r&amp;quot;" ORDER="1" TYPE="Directory">
+                    <div ORDER="1">
+                      <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4aaa" />
+                    </div>
+                    <div ORDER="2">
+                      <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4bbb" />
+                    </div>
+                  </div>
+                  <div LABEL="baz" ORDER="2" TYPE="Directory">
+                    <div ORDER="1">
+                      <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4ddd" />
+                    </div>
+                    <div ORDER="2">
+                      <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4ccc" />
+                    </div>
+                  </div>
+                  <div ORDER="3">
+                    <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4fff" />
+                  </div>
+                  <div ORDER="4">
+                    <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4eee" />
+                  </div>
+                </div>
+              </structMap>
+            </mets>
+          EOS
+          xml
+        end
+        before do
+          item3.local_id = "test003"
+          item3.permanent_id = "ark:/99999/fk4ccc"
+          item3.save!
+          item4.local_id = "test004"
+          item4.permanent_id = "ark:/99999/fk4ddd"
+          item4.save!
+          item5.local_id = "test005"
+          item5.permanent_id = "ark:/99999/fk4eee"
+          item5.save!
+          item6.local_id = "test006"
+          item6.permanent_id = "ark:/99999/fk4fff"
+          item6.save!
+          subject.children << item3
+          subject.children << item4
+          subject.children << item5
+          subject.children << item6
+          subject.save!
+          item1.nested_path = %Q[foo/b'a"r"/a.doc]
+          item1.save!
+          item2.nested_path = %Q[foo/b'a"r"/b.txt]
+          item2.save!
+          item3.nested_path = %Q[foo/baz/d.pdf]
+          item3.save!
+          item4.nested_path = %Q[foo/baz/c.txt]
+          item4.save!
+          item5.nested_path = %Q[foo/f.doc]
+          item5.save!
+          item6.nested_path = %Q[foo/e.pdf]
+          item6.save!
+        end
+        after do
+          item3.destroy
+          item4.destroy
+          item5.destroy
+          item6.destroy
+        end
+        it "should be the appropriate structure" do
+          expect(subject.default_structure.to_xml).to be_equivalent_to(expected)
+        end
+      end
+    end
+  end
+
 end
