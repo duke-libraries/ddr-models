@@ -1,5 +1,5 @@
 module Ddr
   module Models
-    VERSION = "2.9.0.rc1"
+    VERSION = "2.9.0"
   end
 end
