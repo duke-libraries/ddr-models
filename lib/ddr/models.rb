@@ -103,7 +103,7 @@ module Ddr
     end
 
     mattr_accessor :ead_xml_base_url do
-      "http://library.duke.edu/rubenstein/findingaids/"
+      "https://library.duke.edu/rubenstein/findingaids/"
     end
 
     # Application temp dir - defaults to system temp dir
