@@ -69,6 +69,13 @@ RSpec.shared_examples "an object that can have content" do
           expect_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:update_derivatives)
           subject.save
         end
+        it "should notify that content has changed" do
+          callback = lambda { |*args| args }
+          ActiveSupport::Notifications.subscribed(callback, "content_changed.content.repo_file") do
+            expect(callback).to receive(:call) { nil }
+            subject.save
+          end
+        end
       end
 
       context "and it's an existing object with content" do
@@ -77,6 +84,13 @@ RSpec.shared_examples "an object that can have content" do
         it "should generate derivatives" do
           expect_any_instance_of(Ddr::Managers::DerivativesManager).to receive(:update_derivatives)
           subject.upload! file
+        end
+        it "should notify that content has changed" do
+          callback = lambda { |*args| args }
+          ActiveSupport::Notifications.subscribed(callback, "content_changed.content.repo_file") do
+            expect(callback).to receive(:call) { nil }
+            subject.upload! file
+          end
         end
         context "and it is saved with :skip_update_derivatives=>true" do
           it "does not generate derivatives" do

@@ -39,23 +39,23 @@ module Ddr::Managers
 
       its(:fits?) { is_expected.to be true }
 
-      its(:created) { is_expected.to eq(["2015:06:05 15:16:23-04:00"]) }
-      its(:creating_application) { is_expected.to contain_exactly("Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/PREMIS Editorial Committee", "Adobe Acrobat Pro 11.0.3 Paper Capture Plug-in/Acrobat PDFMaker 11 for Word") }
-      its(:extent) { is_expected.to eq(["3786205"]) }
-      its(:file_size) { is_expected.to eq([3786205]) }
-      its(:fits_version) { is_expected.to eq("0.8.5") }
+      its(:created) { is_expected.to eq(["2015:12:09 13:23:09-05:00"]) }
+      its(:creating_application) { is_expected.to contain_exactly("Adobe PDF Library 11.0/Acrobat PDFMaker 11 for Word") }
+      its(:extent) { is_expected.to eq(["2176353"]) }
+      its(:file_size) { is_expected.to eq([2176353]) }
+      its(:fits_version) { is_expected.to eq("1.2.0") }
       its(:format_label) { is_expected.to eq(["Portable Document Format"]) }
       its(:format_version) { is_expected.to eq(["1.6"]) }
-      its(:last_modified) { is_expected.to eq(["2015-06-08T21:22:35Z"]) }
-      its(:md5) { is_expected.to eq("432ab76d650bfdc8f8d4a98cea9634bb") }
+      its(:last_modified) { is_expected.to eq(["2016-01-07T14:49:50Z"]) }
+      its(:md5) { is_expected.to eq("58fee04df34490ee7ecf3cdd5ddafc72") }
       its(:media_type) { is_expected.to eq(["application/pdf"]) }
       its(:pronom_identifier) { is_expected.to eq(["fmt/20"]) }
-      its(:valid) { is_expected.to eq(["false"]) }
+      its(:valid) { is_expected.to eq(["true"]) }
       its(:well_formed) { is_expected.to eq(["true"]) }
 
       describe "datetime fields" do
-        its(:creation_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-05 15:16:23-04:00").to_time.utc) }
-        its(:modification_time) { is_expected.to contain_exactly(DateTime.parse("2015-06-08T21:22:35Z").to_time.utc) }
+        its(:creation_time) { is_expected.to contain_exactly(DateTime.parse("2015-12-09 13:23:09-05:00").to_time.utc) }
+        its(:modification_time) { is_expected.to contain_exactly(DateTime.parse("2016-01-07T14:49:50Z").to_time.utc) }
       end
     end
 
@@ -73,8 +73,8 @@ module Ddr::Managers
       before do
         obj.fits.content = fixture_file_upload(File.join("fits", "image.xml"))
       end
-      its(:image_width) { is_expected.to eq(["500"]) }
-      its(:image_height) { is_expected.to eq(["569"]) }
+      its(:image_width) { is_expected.to eq(["512"]) }
+      its(:image_height) { is_expected.to eq(["583"]) }
       its(:color_space) { is_expected.to eq(["YCbCr"]) }
       its(:icc_profile_name) { is_expected.to eq(["c2"]) }
       its(:icc_profile_version) { is_expected.to eq(["2.1.0"]) }
