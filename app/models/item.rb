@@ -59,10 +59,8 @@ class Item < Ddr::Models::Base
   def add_components_to_structure(structure, structmap)
     component_structure_types(sorted_children).each do |type_term, children|
       div = structure.add_div(parent: structmap, type: type_term)
-      count = 0
-      children.each do |child|
-        count += 1
-        sub_div = structure.add_div(parent: div, order: count)
+      children.each_with_index do |child, index|
+        sub_div = structure.add_div(parent: div, order: index + 1)
         structure.add_mptr(parent: sub_div, href: child[Ddr::Index::Fields::PERMANENT_ID])
       end
     end
