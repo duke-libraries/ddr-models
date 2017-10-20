@@ -66,8 +66,10 @@ RSpec.describe Item, type: :model do
       end
     end
     describe "when the item has components" do
-      let(:comp1) { FactoryGirl.create(:component) }
-      let(:comp2) { FactoryGirl.create(:component) }
+      let(:comp1) { Component.new }
+      let(:comp2) { Component.new }
+      let(:comp3) { Component.new }
+      let(:comp4) { Component.new }
       let(:expected) do
         xml = <<-EOS
             <mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -77,11 +79,23 @@ RSpec.describe Item, type: :model do
                 </agent>
               </metsHdr>
               <structMap TYPE="#{Ddr::Models::Structure::TYPE_DEFAULT}">
-                <div ORDER="1">
-                  <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4bbb" />
+                <div TYPE="Documents">
+                  <div ORDER="1">
+                    <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4ccc" />
+                  </div>
                 </div>
-                <div ORDER="2">
-                  <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4aaa" />
+                <div TYPE="Images">
+                  <div ORDER="1">
+                    <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4bbb" />
+                  </div>
+                  <div ORDER="2">
+                    <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4aaa" />
+                  </div>
+                </div>
+                <div TYPE="Other">
+                  <div ORDER="1">
+                    <mptr LOCTYPE="ARK" xlink:href="ark:/99999/fk4ddd" />
+                  </div>
                 </div>
               </structMap>
             </mets>
@@ -89,20 +103,32 @@ RSpec.describe Item, type: :model do
         xml
       end
       before do
-        comp1.local_id = "test002"
+        comp1.local_id = "test001002"
         comp1.permanent_id = "ark:/99999/fk4aaa"
+        comp1.upload fixture_file_upload("imageB.tif", "image/tiff")
         comp1.save!
-        comp2.local_id = "test001"
+        comp2.local_id = "test001001"
         comp2.permanent_id = "ark:/99999/fk4bbb"
+        comp2.upload fixture_file_upload("imageA.tif", "image/tiff")
         comp2.save!
+        comp3.local_id = "test001"
+        comp3.permanent_id = "ark:/99999/fk4ccc"
+        comp3.upload fixture_file_upload("sample.pdf", "application/pdf")
+        comp3.save!
+        comp4.local_id = "test123"
+        comp4.permanent_id = "ark:/99999/fk4ddd"
+        comp4.upload fixture_file_upload("abcd1234.vtt", "application/octet-stream")
+        comp4.save!
         subject.children << comp1
         subject.children << comp2
+        subject.children << comp3
+        subject.children << comp4
         subject.save!
-        allow(SecureRandom).to receive(:uuid).and_return("abc-def", "ghi-jkl")
       end
       after do
         comp1.destroy
         comp2.destroy
+        comp3.destroy
       end
       it "should be the appropriate structure" do
         expect(subject.default_structure.to_xml).to be_equivalent_to(expected)
