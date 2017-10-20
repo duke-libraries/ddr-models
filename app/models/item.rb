@@ -57,12 +57,33 @@ class Item < Ddr::Models::Base
   end
 
   def add_components_to_structure(structure, structmap)
-    count = 0
-    sorted_children.each do |child|
-      count += 1
-      div = structure.add_div(parent: structmap, order: count)
-      structure.add_mptr(parent: div, href: child[Ddr::Index::Fields::PERMANENT_ID])
+    component_structure_types(sorted_children).each do |type_term, children|
+      div = structure.add_div(parent: structmap, type: type_term)
+      count = 0
+      children.each do |child|
+        count += 1
+        sub_div = structure.add_div(parent: div, order: count)
+        structure.add_mptr(parent: sub_div, href: child[Ddr::Index::Fields::PERMANENT_ID])
+      end
     end
+  end
+
+  def component_structure_types(sorted_children)
+    type_divs = {}
+    sorted_children.each do |child|
+      term = type_term(child) || "Other"
+      if type_divs.has_key?(term)
+        type_divs[term] << child
+      else
+        type_divs[term] = [ child ]
+      end
+    end
+    type_divs
+  end
+
+  def type_term(component_doc)
+    media_type = component_doc[Ddr::Index::Fields::MEDIA_TYPE].first
+    Ddr::Models::Structures::ComponentTypeTerm.term(media_type)
   end
 
 end
