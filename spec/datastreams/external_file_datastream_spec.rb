@@ -12,6 +12,7 @@ module Ddr::Datastreams
     its(:file_paths) { is_expected.to be_empty }
 
     specify {
+      expect(File).not_to receive(:read).with(file1.path)
       subject.add_file(file1.path, mime_type: file1.content_type)
       obj.save!
       path1 = subject.file_path
