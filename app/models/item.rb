@@ -11,8 +11,6 @@ class Item < Ddr::Models::Base
   has_many :children, property: :is_part_of, class_name: 'Component'
   belongs_to :parent, property: :is_member_of_collection, class_name: 'Collection'
 
-  has_attributes :nested_path, datastream: Ddr::Datastreams::ADMIN_METADATA, multiple: false
-
   alias_method :components, :children
   alias_method :component_ids, :child_ids
 
