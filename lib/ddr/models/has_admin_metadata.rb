@@ -16,6 +16,7 @@ module Ddr::Models
                      :display_format,
                      :license,
                      :local_id,
+                     :nested_path,
                      :permanent_id,
                      :permanent_url,
                      :research_help_contact,
