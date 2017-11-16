@@ -91,6 +91,10 @@ module Ddr::Datastreams
           subject.set_values :type, [ "Image", "Still Image " ]
           expect(subject.type).to eq([ "Image", "Still Image" ])
         end
+        it "strips controls characters from values" do
+          subject.set_values :type, [ "Image", "Still\f Image" ]
+          expect(subject.type).to eq([ "Image", "Still Image" ])
+        end
       end
       describe "#add_value" do
         it "should add the supplied value to those of the term" do
