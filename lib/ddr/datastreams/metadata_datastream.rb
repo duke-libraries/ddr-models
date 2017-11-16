@@ -15,8 +15,8 @@ module Ddr
       # Note that empty values (nil or "") are rejected from values array
       def set_values(term, values)
         vals = Array(values)
-               .map { |v| v.to_s.strip }
-               .reject { |v| v.blank? }
+               .map    { |v| sanitize_value(v) }
+               .reject { |v| reject_value?(v)  }
         begin
           self.send("#{term}=", vals)
         rescue NoMethodError
@@ -35,6 +35,19 @@ module Ddr
         # Patches a bug in AF RDF datastreams where
         # Content appears to change from nil to empty string
         super && !empty?
+      end
+
+      private
+
+      def sanitize_value(value)
+        value
+          .to_s
+          .strip
+          .gsub(/[[:cntrl:]]/, "")
+      end
+
+      def reject_value?(value)
+        value.blank?
       end
 
     end
