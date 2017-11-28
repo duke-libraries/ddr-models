@@ -45,12 +45,42 @@ module Ddr::Datastreams
           t.iccProfileVersion
         }
         t.document {
-          # TODO - configure to get from Tika?
-          # t.encoding
+          t.hasAnnotations
+          t.isProtected
+          t.language
+          t.pageCount
         }
-        t.text
-        t.audio
-        t.video
+        t.text {
+          t.charset
+          t.markupLanguage
+        }
+        t.audio {
+          t.time
+          t.duration
+          t.audioDataEncoding
+          t.channels
+          t.sampleRate
+          t.software
+          t.avgBitRate
+          t.bitDepth
+          t.bitRate
+          t.software
+          t.soundField
+          t.wordSize
+        }
+        t.video {
+          t.duration
+          t.frameRate
+          t.imageHeight
+          t.imageWidth
+          t.sampleRate
+          t.bitDepth
+          t.bitRate
+          t.channels
+          t.creatingApplicationName
+          t.dataFormatType
+          t.videoStreamType
+        }
       }
 
       ## proxy terms
@@ -71,12 +101,36 @@ module Ddr::Datastreams
       t.extent               proxy: [:fileinfo, :size]
       t.md5                  proxy: [:fileinfo, :md5checksum]
 
+      # document metadata
+      t.has_annotations      proxy: [:metadata, :document, :hasAnnotations]
+      t.is_protected         proxy: [:metadata, :document, :isProtected]
+      t.language             proxy: [:metadata, :document, :language]
+      t.page_count           proxy: [:metadata, :document, :pageCount]
+
       # image metadata
       t.color_space          proxy: [:metadata, :image, :colorSpace]
       t.icc_profile_name     proxy: [:metadata, :image, :iccProfileName]
       t.icc_profile_version  proxy: [:metadata, :image, :iccProfileVersion]
       t.image_height         proxy: [:metadata, :image, :imageHeight]
       t.image_width          proxy: [:metadata, :image, :imageWidth]
+
+      # text metadata
+      t.charset              proxy: [:metadata, :text, :charset]
+      t.markup_language      proxy: [:metadata, :text, :markupLanguage]
+
+      # audio metadata
+      t.time
+      t.duration
+      t.audioDataEncoding
+      t.channels
+      t.sampleRate
+      t.software
+      t.avgBitRate
+      t.bitDepth
+      t.bitRate
+      t.software
+      t.soundField
+      t.wordSize
     end
 
     def self.xml_template
