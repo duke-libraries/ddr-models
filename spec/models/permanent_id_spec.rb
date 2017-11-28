@@ -11,10 +11,6 @@ module Ddr::Models
           allow(described_class.identifier_class).to receive(:find).with("foo") { id }
           allow(Ddr::Models).to receive(:auto_assign_permanent_id) { true }
         end
-        after do
-          obj.permanent_id = nil
-          obj.save!
-        end
         it "assigns a permanent id to the object" do
           obj.reload
           expect(obj.permanent_id).to eq("foo")
