@@ -2,6 +2,9 @@ module Ddr
   module Datastreams
     class MetadataDatastream < ActiveFedora::NtriplesRDFDatastream
 
+      # ASCII control chars, except newline
+      ILLEGAL_CHARS = Regexp.new('[\x00-\x09\x0B-\x1F]')
+
       def self.term_names
         properties.keys.map(&:to_sym).sort
       end
@@ -43,7 +46,7 @@ module Ddr
         value
           .to_s
           .strip
-          .gsub(/[[:cntrl:]]/, "")
+          .gsub(ILLEGAL_CHARS, "")
       end
 
       def reject_value?(value)
