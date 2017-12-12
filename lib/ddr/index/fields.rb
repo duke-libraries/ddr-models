@@ -80,6 +80,7 @@ module Ddr::Index
     OBJECT_STATE                = Field.new :object_state, :stored_sortable
     OBJECT_CREATE_DATE          = Field.new :system_create, :stored_sortable, type: :date
     OBJECT_MODIFIED_DATE        = Field.new :system_modified, :stored_sortable, type: :date
+    ORIGINAL_FILENAME           = Field.new :original_filename, solr_name: "admin_metadata__original_filename_ssi"
     PERFORMER_FACET             = Field.new :performer_facet, :facetable
     PERMANENT_ID                = Field.new :permanent_id, :stored_sortable, type: :string
     PERMANENT_URL               = Field.new :permanent_url, :stored_sortable, type: :string
@@ -138,6 +139,16 @@ module Ddr::Index
     def self.descmd
       @descmd ||= Ddr::Datastreams::DescriptiveMetadataDatastream.properties.map do |base, config|
         Field.new base, *(config.behaviors)
+      end.freeze
+    end
+
+    def self.adminmd
+      @adminmd ||= Ddr::Datastreams::AdministrativeMetadataDatastream.properties.map do |base, config|
+        begin
+          get(base)
+        rescue NameError
+          Field.new base, *(config.behaviors)
+        end
       end.freeze
     end
 

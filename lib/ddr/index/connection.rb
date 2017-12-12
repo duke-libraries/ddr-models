@@ -10,14 +10,14 @@ module Ddr::Index
     module Methods
       extend Forwardable
 
-      delegate [:get, :paginate] => :solr
+      delegate [:get, :post, :paginate] => :solr
 
       def solr
         RSolr.connect(ActiveFedora.solr_config)
       end
 
       def select(params, extra={})
-        Response.new get("select", params: params.merge(extra))
+        Response.new post("select", params: params.merge(extra))
       end
 
       def page(*args)

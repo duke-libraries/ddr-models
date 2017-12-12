@@ -9,12 +9,9 @@ module Ddr
       end
 
       def structure
-        unless @structure
-          if datastreams[Ddr::Datastreams::STRUCT_METADATA].content
-            @structure = Ddr::Models::Structure.new(Nokogiri::XML(datastreams[Ddr::Datastreams::STRUCT_METADATA].content))
-          end
+        if datastreams[Ddr::Datastreams::STRUCT_METADATA].has_content?
+          Ddr::Models::Structure.new(Nokogiri::XML(datastreams[Ddr::Datastreams::STRUCT_METADATA].content))
         end
-        @structure
       end
 
       def multires_image_file_paths

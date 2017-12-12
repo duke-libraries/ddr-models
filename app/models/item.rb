@@ -11,8 +11,6 @@ class Item < Ddr::Models::Base
   has_many :children, property: :is_part_of, class_name: 'Component'
   belongs_to :parent, property: :is_member_of_collection, class_name: 'Collection'
 
-  has_attributes :nested_path, datastream: Ddr::Datastreams::ADMIN_METADATA, multiple: false
-
   alias_method :components, :children
   alias_method :component_ids, :child_ids
 
@@ -57,12 +55,31 @@ class Item < Ddr::Models::Base
   end
 
   def add_components_to_structure(structure, structmap)
-    count = 0
-    sorted_children.each do |child|
-      count += 1
-      div = structure.add_div(parent: structmap, order: count)
-      structure.add_mptr(parent: div, href: child[Ddr::Index::Fields::PERMANENT_ID])
+    component_structure_types(sorted_children).each do |type_term, children|
+      div = structure.add_div(parent: structmap, type: type_term)
+      children.each_with_index do |child, index|
+        sub_div = structure.add_div(parent: div, order: index + 1)
+        structure.add_mptr(parent: sub_div, href: child[Ddr::Index::Fields::PERMANENT_ID])
+      end
     end
+  end
+
+  def component_structure_types(sorted_children)
+    type_divs = {}
+    sorted_children.each do |child|
+      term = type_term(child) || "Other"
+      if type_divs.has_key?(term)
+        type_divs[term] << child
+      else
+        type_divs[term] = [ child ]
+      end
+    end
+    type_divs
+  end
+
+  def type_term(component_doc)
+    media_type = component_doc[Ddr::Index::Fields::MEDIA_TYPE].first
+    Ddr::Models::Structures::ComponentTypeTerm.term(media_type)
   end
 
 end

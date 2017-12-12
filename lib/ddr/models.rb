@@ -82,6 +82,7 @@ module Ddr
       autoload :MetsHdr
       autoload :Mptr
       autoload :StructMap
+      autoload :ComponentTypeTerm
     end
 
     # Image server URL
