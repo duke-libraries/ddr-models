@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ezid-client", "~> 1.6"
   s.add_dependency "resque", "~> 1.25"
   s.add_dependency "rdf-vocab", "~> 0.8"
-  s.add_dependency "net-ldap", "~> 0.11"
+  s.add_dependency "net-ldap", "~> 0.16"
   s.add_dependency "cancancan", "~> 1.12"
   s.add_dependency "ddr-antivirus", "~> 2.1.1"
   s.add_dependency "virtus", "~> 1.0.5"
