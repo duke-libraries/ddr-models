@@ -63,10 +63,22 @@ module Ddr::Index
         its(:heading) { is_expected.to eq "aspace_id" }
       end
 
+      describe "BIBLICAL_BOOK_FACET" do
+        subject { Fields::BIBLICAL_BOOK_FACET }
+        its(:label) { is_expected.to eq "Biblical Book Facet" }
+        its(:heading) { is_expected.to eq "biblical_book_facet" }
+      end
+
       describe "CATEGORY_FACET" do
         subject { Fields::CATEGORY_FACET }
         its(:label) { is_expected.to eq "Category Facet" }
         its(:heading) { is_expected.to eq "category_facet" }
+      end
+
+      describe "CHAPTER_AND_VERSE_FACET" do
+        subject { Fields::CHAPTER_AND_VERSE_FACET }
+        its(:label) { is_expected.to eq "Chapter And Verse Facet" }
+        its(:heading) { is_expected.to eq "chapter_and_verse_facet" }
       end
 
       describe "COMPANY_FACET" do
