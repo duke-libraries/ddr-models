@@ -843,14 +843,28 @@
         <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/terms/IsPartOf"/>
     </rdf:Description>
 
+    <rdf:Description rdf:about="http://library.duke.edu/metadata/terms/biblical_book">
+        <rdfs:label xml:lang="en-US">Biblical Book</rdfs:label>
+        <rdfs:comment xml:lang="en-US"></rdfs:comment>
+        <dcterms:description xml:lang="en-US">Recommended best practice is to </dcterms:description>
+        <rdfs:isDefinedBy rdf:resource="http://purl.org/dc/terms/"/>
+        <dcterms:issued>2018-06-01</dcterms:issued>
+        <dcterms:modified>2018-06-01</dcterms:modified>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/terms/subject"/>
+    </rdf:Description>
 
-
-
-
-
-
-
-
-
+    <rdf:Description rdf:about="http://library.duke.edu/metadata/terms/chapter_and_verse">
+        <rdfs:label xml:lang="en-US">Chapter and Verse</rdfs:label>
+        <rdfs:comment xml:lang="en-US"></rdfs:comment>
+        <dcterms:description xml:lang="en-US">Recommended best practice is to </dcterms:description>
+        <rdfs:isDefinedBy rdf:resource="http://purl.org/dc/terms/"/>
+        <dcterms:issued>2018-06-01</dcterms:issued>
+        <dcterms:modified>2018-06-01</dcterms:modified>
+        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/>
+        <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/terms/subject"/>
+    </rdf:Description>
 
 </rdf:RDF>

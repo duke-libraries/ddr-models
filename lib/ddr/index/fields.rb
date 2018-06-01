@@ -17,8 +17,10 @@ module Ddr::Index
     ASPACE_ID                   = Field.new :aspace_id, :stored_sortable
     ATTACHED_FILES_HAVING_CONTENT =
       Field.new :attached_files_having_content, :symbol
+    BIBLICAL_BOOK_FACET         = Field.new :biblical_book_facet, :facetable
     BOX_NUMBER_FACET            = Field.new :box_number_facet, :facetable
     CATEGORY_FACET              = Field.new :category_facet, :facetable
+    CHAPTER_AND_VERSE_FACET     = Field.new :chapter_and_verse_facet, :facetable
     COLLECTION_FACET            = Field.new :collection_facet, :facetable
     COLLECTION_TITLE            = Field.new :collection_title, :stored_sortable
     COLLECTION_URI              = Field.new :collection_uri, :symbol
