@@ -26,7 +26,9 @@ module Ddr::Models
         obj.rights_note = ["Public domain"]
         obj.roles.grant role1, role2, role3, role4
         obj.set_desc_metadata_values(:arranger, "Arranger Value")
+        obj.set_desc_metadata_values(:biblical_book, "Ecclesiastes")
         obj.set_desc_metadata_values(:category, "Category Value")
+        obj.set_desc_metadata_values(:chapter_and_verse, "Ecclesiastes 3:19-4:3")
         obj.set_desc_metadata_values(:company, "Company Value")
         obj.set_desc_metadata_values(:composer, "Composer Value")
         obj.set_desc_metadata_values(:engraver, "Engraver Value")
@@ -62,7 +64,9 @@ module Ddr::Models
         expect(subject[Indexing::ALEPH_ID]).to eq "lkheajklfwbsef"
         expect(subject[Indexing::ARRANGER_FACET]).to eq(["Arranger Value"])
         expect(subject[Indexing::ASPACE_ID]).to eq("aspace_dccea43034e1b8261e14cf999e86449d")
+        expect(subject[Indexing::BIBLICAL_BOOK_FACET]).to eq(["Ecclesiastes"])
         expect(subject[Indexing::CATEGORY_FACET]).to eq(["Category Value"])
+        expect(subject[Indexing::CHAPTER_AND_VERSE_FACET]).to eq(["Ecclesiastes 3:19-4:3"])
         expect(subject[Indexing::COMPANY_FACET]).to eq(["Company Value"])
         expect(subject[Indexing::COMPOSER_FACET]).to eq(["Composer Value"])
         expect(subject[Indexing::DC_IS_PART_OF]).to eq(["RL10059CS1010"])

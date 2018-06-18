@@ -4,7 +4,7 @@ module Ddr::Models
     def self.call(file_or_path)
       path = file_or_path.respond_to?(:path) ? file_or_path.path : file_or_path
       # Use preferred media type, if available
-      media_type = Ddr::Models.preferred_media_types[File.extname(path)]
+      media_type = Ddr::Models.preferred_media_types[(File.extname(path)).downcase]
       if !media_type
         if file_or_path.respond_to?(:content_type)
           # Rails ActionDispatch::Http::UploadedFile
