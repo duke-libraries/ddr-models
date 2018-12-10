@@ -3,7 +3,7 @@ require 'ddr/models/version'
 require 'action_view' # https://github.com/haml/haml/issues/695
 require 'active_record'
 require 'hydra-core'
-require 'hydra/validations'
+# require 'hydra/validations'
 
 module Ddr
   extend ActiveSupport::Autoload

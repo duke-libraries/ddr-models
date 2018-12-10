@@ -4,5 +4,8 @@ ruby '2.3.1'
 gemspec
 
 gem "devise"
-gem "rails", "4.2.7"
-gem "blacklight", "5.19.2"
+gem "rails", "5.1.6"
+gem "blacklight", "6.15.0"
+
+gem "active-triples", "1.1.0"
+gem "rdf", "3.0.7"
