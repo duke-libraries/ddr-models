@@ -3,11 +3,11 @@ module Ddr::Models
     extend ActiveSupport::Concern
 
     included do
-      has_file_datastream name: Ddr::Datastreams::STREAMABLE_MEDIA,
-                          type: Ddr::Datastreams::StreamableMediaDatastream,
-                          versionable: true,
-                          label: "Streamable media file for this object",
-                          control_group: "E"
+      # has_file_datastream name: Ddr::Datastreams::STREAMABLE_MEDIA,
+      #                     type: Ddr::Datastreams::StreamableMediaDatastream,
+      #                     versionable: true,
+      #                     label: "Streamable media file for this object",
+      #                     control_group: "E"
     end
 
     def streamable_media_type

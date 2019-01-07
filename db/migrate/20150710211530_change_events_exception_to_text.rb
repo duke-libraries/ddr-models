@@ -1,4 +1,4 @@
-class ChangeEventsExceptionToText < ActiveRecord::Migration
+class ChangeEventsExceptionToText < ActiveRecord::Migration[4.2]
   def up
     change_column :events, :exception, :text
   end

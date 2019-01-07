@@ -11,15 +11,15 @@ module Ddr
       DELETE = "delete.repo_object"
       DEACCESSION = "deaccession.repo_object"
 
-      include Describable
-      include Governable
-      include HasThumbnail
-      include EventLoggable
-      include FixityCheckable
-      include FileManagement
-      include Indexing
-      include Hydra::Validations
-      include HasAdminMetadata
+      # include Describable
+      # include Governable
+      # include HasThumbnail
+      # include EventLoggable
+      # include FixityCheckable
+      # include FileManagement
+      # include Indexing
+      # include Hydra::Validations
+      # include HasAdminMetadata
       extend Deprecation
 
       # Prevent accidental use of #delete which lacks callbacks

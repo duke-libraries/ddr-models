@@ -12,11 +12,11 @@ class Component < Ddr::Models::Base
   include Ddr::Models::HasStructMetadata
   include Ddr::Models::Streamable
 
-  belongs_to :parent, :property => :is_part_of, :class_name => 'Item'
-  belongs_to :target, :property => :has_external_target, :class_name => 'Target'
-
-  alias_method :item, :parent
-  alias_method :item=, :parent=
+  # belongs_to :parent, :property => :is_part_of, :class_name => 'Item'
+  # belongs_to :target, :property => :has_external_target, :class_name => 'Target'
+  #
+  # alias_method :item, :parent
+  # alias_method :item=, :parent=
 
   STRUCTURALLY_RELEVANT_DATASTREAMS = [ Ddr::Datastreams::CAPTION, Ddr::Datastreams::CONTENT,
                                         Ddr::Datastreams::INTERMEDIATE_FILE, Ddr::Datastreams::MULTIRES_IMAGE,

@@ -8,11 +8,11 @@ class Collection < Ddr::Models::Base
   include Ddr::Models::HasAttachments
   include Ddr::Models::HasStructMetadata
 
-  has_many :children, property: :is_member_of_collection, class_name: 'Item'
-  has_many :targets, property: :is_external_target_for, class_name: 'Target'
+  # has_many :children, property: :is_member_of_collection, class_name: 'Item'
+  # has_many :targets, property: :is_external_target_for, class_name: 'Target'
 
-  alias_method :items, :children
-  alias_method :item_ids, :child_ids
+  # alias_method :items, :children
+  # alias_method :item_ids, :child_ids
 
   after_create :set_admin_policy, unless: :admin_policy
 

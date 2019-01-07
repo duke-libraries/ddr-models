@@ -3,10 +3,10 @@ module Ddr
     module HasStructMetadata
       extend ActiveSupport::Concern
 
-      included do
-        has_file_datastream name: Ddr::Datastreams::STRUCT_METADATA,
-                            type: Ddr::Datastreams::StructuralMetadataDatastream
-      end
+      # included do
+      #   has_file_datastream name: Ddr::Datastreams::STRUCT_METADATA,
+      #                       type: Ddr::Datastreams::StructuralMetadataDatastream
+      # end
 
       def structure
         if datastreams[Ddr::Datastreams::STRUCT_METADATA].has_content?

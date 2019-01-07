@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
   s.add_dependency "virtus", "~> 1.0.5"
   s.add_dependency "hashie", "~> 3.4", "< 3.4.4"
   s.add_dependency "edtf", "~> 3.0"
+  s.add_dependency "htmlentities"
 
   s.add_dependency "valkyrie", "~> 1.3"
 

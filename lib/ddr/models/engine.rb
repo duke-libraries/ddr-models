@@ -18,14 +18,14 @@ module Ddr
       #
 
       initializer "active_fedora.content_model" do
-        ActiveFedora::ContentModel.module_eval do
-          # Returns the first known model for the object is equal to or a
-          # subclass of the object's class.
-          # This bubbles up, e.g., to prevent mis-casting via `.find`.
-          def self.best_model_for(obj)
-            known_models_for(obj).find { |model| model <= obj.class }
-          end
-        end
+        # ActiveFedora::ContentModel.module_eval do
+        #   # Returns the first known model for the object is equal to or a
+        #   # subclass of the object's class.
+        #   # This bubbles up, e.g., to prevent mis-casting via `.find`.
+        #   def self.best_model_for(obj)
+        #     known_models_for(obj).find { |model| model <= obj.class }
+        #   end
+        # end
       end
 
       initializer "active_fedora.finder_methods" do
@@ -53,9 +53,9 @@ module Ddr
       end
 
       # Add custom predicates to ActiveFedora
-      initializer "ddr_models.predicates" do
-        ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
-      end
+      # initializer "ddr_models.predicates" do
+      #   ActiveFedora::Predicates.set_predicates(Ddr::Metadata::PREDICATES)
+      # end
 
       # Set superuser group
       initializer "ddr_auth.superuser" do

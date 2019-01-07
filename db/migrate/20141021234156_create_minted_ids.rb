@@ -1,4 +1,4 @@
-class CreateMintedIds < ActiveRecord::Migration
+class CreateMintedIds < ActiveRecord::Migration[4.2]
   def up
     unless table_exists?("minted_ids")
       create_table "minted_ids" do |t|

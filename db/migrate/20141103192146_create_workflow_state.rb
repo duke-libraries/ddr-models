@@ -1,4 +1,4 @@
-class CreateWorkflowState < ActiveRecord::Migration
+class CreateWorkflowState < ActiveRecord::Migration[4.2]
   def up
     unless table_exists?("workflow_states")
       create_table "workflow_states" do |t|

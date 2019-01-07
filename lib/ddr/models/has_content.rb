@@ -4,28 +4,28 @@ module Ddr
       extend ActiveSupport::Concern
 
       included do
-        has_file_datastream \
-          name: Ddr::Datastreams::CONTENT,
-          type: Ddr::Datastreams::ContentDatastream,
-          versionable: true,
-          label: "Content file for this object",
-          control_group: "E"
+        # has_file_datastream \
+        #   name: Ddr::Datastreams::CONTENT,
+        #   type: Ddr::Datastreams::ContentDatastream,
+        #   versionable: true,
+        #   label: "Content file for this object",
+        #   control_group: "E"
 
-        has_file_datastream \
-          name: Ddr::Datastreams::EXTRACTED_TEXT,
-          type: Ddr::Datastreams::PlainTextDatastream,
-          versionable: true,
-          label: "Text extracted from the content file",
-          control_group: "M"
+        # has_file_datastream \
+        #   name: Ddr::Datastreams::EXTRACTED_TEXT,
+        #   type: Ddr::Datastreams::PlainTextDatastream,
+        #   versionable: true,
+        #   label: "Text extracted from the content file",
+        #   control_group: "M"
 
-        has_metadata \
-          name: Ddr::Datastreams::FITS,
-          type: Ddr::Datastreams::FitsDatastream,
-          versionable: false,
-          label: "FITS Output for content file",
-          control_group: "M"
+        # has_metadata \
+        #   name: Ddr::Datastreams::FITS,
+        #   type: Ddr::Datastreams::FitsDatastream,
+        #   versionable: false,
+        #   label: "FITS Output for content file",
+        #   control_group: "M"
 
-        has_attributes :original_filename, datastream: "adminMetadata", multiple: false
+        # has_attributes :original_filename, datastream: "adminMetadata", multiple: false
 
         include FileManagement
 

@@ -1,4 +1,4 @@
-class AddColumnsToUser < ActiveRecord::Migration
+class AddColumnsToUser < ActiveRecord::Migration[4.2]
   def up
     if table_exists?("users")
       unless column_exists?("users", "username")

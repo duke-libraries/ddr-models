@@ -5,7 +5,7 @@ module Ddr::Index
     include Singleton
 
     def initialize
-      super SOLR_DOCUMENT_ID
+      super Solrizer.default_field_mapper.id_field
     end
 
   end
