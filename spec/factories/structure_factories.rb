@@ -1,6 +1,6 @@
 require 'support/structural_metadata_helper'
 
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :structures, class: Ddr::Models::Structure do
 

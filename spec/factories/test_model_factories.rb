@@ -22,7 +22,7 @@ class TestModelOmnibus < TestModel
   belongs_to :parent, property: :is_part_of, class_name: 'TestParent'
 end
 
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :test_model do
     title [ "DulHydra Test Object" ]
@@ -38,7 +38,7 @@ FactoryGirl.define do
         child_count 3
       end
       after(:create) do |parent, evaluator|
-        FactoryGirl.create_list(:test_child, evaluator.child_count, :parent => parent)
+        FactoryBot.create_list(:test_child, evaluator.child_count, :parent => parent)
       end
     end
   end

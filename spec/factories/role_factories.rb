@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :role, class: Ddr::Auth::Roles::Role do
 

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :event, class: Ddr::Events::Event do
     sequence(:pid) { |n| "test:#{n}"}

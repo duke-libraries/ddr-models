@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :ability, class: Ddr::Auth::AbstractAbility do
     association :user, factory: :user, strategy: :build

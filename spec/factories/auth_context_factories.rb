@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :auth_context, class: Ddr::Auth::AuthContext do
     association :user, factory: :user, strategy: :build
