@@ -8,7 +8,7 @@ module Ddr
 
         DEFAULT_SCOPE = Roles::RESOURCE_SCOPE
 
-        include Hydra::Validations
+        # include Hydra::Validations
 
         configure type: Ddr::Vocab::Roles.Role
         property :role_type, predicate: Ddr::Vocab::Roles.type
