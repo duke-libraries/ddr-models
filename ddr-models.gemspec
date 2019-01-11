@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
   s.add_dependency "hashie", "~> 3.4", "< 3.4.4"
   s.add_dependency "edtf", "~> 3.0"
   s.add_dependency "pg", "~> 0.15"
+  s.add_dependency "valkyrie", "~> 1.4"
 
   s.add_development_dependency "bundler", "~> 1.11"
   s.add_development_dependency "rake"
