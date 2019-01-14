@@ -2,7 +2,7 @@ language: ruby
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install libvips-dev
-  - gem install bundler
+  - gem install bundler -v '< 2'
 bundler_args: --without production
 rvm:
   - 2.3.1
