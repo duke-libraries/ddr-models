@@ -48,4 +48,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "jettywrapper", "~> 1.8"
   s.add_development_dependency "database_cleaner"
   s.add_development_dependency "byebug"
+  s.add_development_dependency "solr_wrapper"
 end
