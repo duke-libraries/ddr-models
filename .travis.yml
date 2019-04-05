@@ -5,7 +5,7 @@ before_install:
   - gem install bundler
 bundler_args: --without production
 rvm:
-  - 2.3.1
+  - 2.3.8
 script: "bundle exec rake ci"
 env:
   - DDR_AUX_API_URL=http://localhost:3000/api
